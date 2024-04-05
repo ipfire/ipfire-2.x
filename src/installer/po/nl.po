@@ -1,162 +1,196 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR The IPFire Project (www.ipfire.org)
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Jacques Hylkema <j.hylkema@intronics.nl>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-05 01:29+0000\n"
+"POT-Creation-Date: 2024-04-05 12:15+0000\n"
 "PO-Revision-Date: 2017-09-20 08:56+0000\n"
 "Last-Translator: Jacques Hylkema <j.hylkema@intronics.nl>\n"
-"Language-Team: Dutch (http://www.transifex.com/mstremer/ipfire/language/nl/)\n"
+"Language-Team: Dutch (http://www.transifex.com/mstremer/ipfire/language/"
+"nl/)\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
+#: main.c:80 main.c:181 main.c:436 main.c:714 main.c:741 main.c:961
 msgid "OK"
 msgstr "Oke"
 
-#: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
-#: main.c:702
+#: main.c:81 main.c:493 main.c:520 main.c:549 main.c:656 main.c:666 main.c:714
+#: main.c:741
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: main.c:176
+#: main.c:178
 msgid "I accept this license"
 msgstr "Ik accepteer deze licentie"
 
-#: main.c:384
+#: main.c:415
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr "Waarschuwing: Installatie zonder toezicht zal binnen 10 seconden starten..."
+msgstr ""
+"Waarschuwing: Installatie zonder toezicht zal binnen 10 seconden starten..."
 
-#: main.c:403
+#: main.c:435
 msgid "Language selection"
 msgstr "Taal selectie"
 
-#: main.c:403
+#: main.c:435
 msgid "Select the language you wish to use for the installation."
 msgstr "Selecteer de taal die je wil gebruiken voor de installatie."
 
-#: main.c:418
+#: main.c:450
 msgid "Unattended mode"
 msgstr "Zonder toezicht modus"
 
-#: main.c:420
+#: main.c:452
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr "<Tab>/<Alt-Tab> tussen onderdelen | <Space> selecteer | <F12> volgend scherm"
+msgstr ""
+"<Tab>/<Alt-Tab> tussen onderdelen | <Space> selecteer | <F12> volgend scherm"
 
-#: main.c:426
+#: main.c:459
 #, c-format
 msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "Welkom bij het %s installatie programma.\n\nKiezen van Annuleren op een van de volgende schermen zal de computer opnieuw laten starten."
+msgstr ""
+"Welkom bij het %s installatie programma.\n"
+"\n"
+"Kiezen van Annuleren op een van de volgende schermen zal de computer opnieuw "
+"laten starten."
 
-#: main.c:428
+#: main.c:461
 msgid "Start installation"
 msgstr "Start installatie"
 
-#: main.c:449
+#: main.c:482
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr "Het installatie programma zal nu proberen het installatiebestand te downloaden."
+msgstr ""
+"Het installatie programma zal nu proberen het installatiebestand te "
+"downloaden."
 
-#: main.c:452
+#: main.c:485
 #, c-format
 msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr "Er kon geen bron-schijf worden gevonden.\n\nJe kan proberen het benodigde installatie bestand te downloaden."
+msgstr ""
+"Er kon geen bron-schijf worden gevonden.\n"
+"\n"
+"Je kan proberen het benodigde installatie bestand te downloaden."
 
-#: main.c:456
+#: main.c:489
 msgid ""
-"Please make sure to connect your machine to a network and the installer will"
-" try connect to acquire an IP address."
-msgstr "Verbindt uw machine aan een netwerk en het installatie programma zal proberen een IP adres te verkrijgen."
+"Please make sure to connect your machine to a network and the installer will "
+"try connect to acquire an IP address."
+msgstr ""
+"Verbindt uw machine aan een netwerk en het installatie programma zal "
+"proberen een IP adres te verkrijgen."
 
-#: main.c:460
+#: main.c:493
 msgid "Download installation image"
 msgstr "Download installatie bestand"
 
-#: main.c:473
+#: main.c:506
 msgid "Trying to start networking (DHCP)..."
 msgstr "Bezig met starten van het netwerk (DHCP)..."
 
-#: main.c:484
+#: main.c:517
 msgid ""
-"Networking could not be started but is required to go on with the installation.\n"
+"Networking could not be started but is required to go on with the "
+"installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr "Netwerk kon niet worden gestart, maar is vereist om door te kunnen gaan met de installatie.\n\nKoppel je machine aan een netwerk met een DHCP server en probeer opnieuw."
+msgstr ""
+"Netwerk kon niet worden gestart, maar is vereist om door te kunnen gaan met "
+"de installatie.\n"
+"\n"
+"Koppel je machine aan een netwerk met een DHCP server en probeer opnieuw."
 
-#: main.c:487 main.c:516
+#: main.c:520 main.c:549
 msgid "Retry"
 msgstr "Opnieuw"
 
-#: main.c:501
+#: main.c:534
 msgid "Downloading installation image..."
 msgstr "Bezig met downloaden van het installatie bestand..."
 
-#: main.c:510
+#: main.c:543
 #, c-format
 msgid "BLAKE2 checksum mismatch"
 msgstr "BLAKE2 checksum verschil"
 
-#: main.c:513
+#: main.c:546
 #, c-format
 msgid ""
 "The installation image could not be downloaded.\n"
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr "Het installatie bestand kon niet worden ge-download.\nReden: %s\n\n%s"
+msgstr ""
+"Het installatie bestand kon niet worden ge-download.\n"
+"Reden: %s\n"
+"\n"
+"%s"
 
-#: main.c:528
+#: main.c:564
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr "Kon %s niet aankoppelen naar %s:\n%s\n"
+msgstr ""
+"Kon %s niet aankoppelen naar %s:\n"
+"%s\n"
 
-#: main.c:543
+#: main.c:579
 msgid "License Agreement"
 msgstr "Licentie overeenkomst"
 
-#: main.c:544
+#: main.c:580
 msgid "License not accepted!"
 msgstr "Licentie niet geaccepteerd!"
 
-#: main.c:566
+#: main.c:602
 msgid "No hard disk found."
 msgstr "Geen harde schijf gevonden."
 
-#: main.c:587
+#: main.c:623
 msgid "Disk Selection"
 msgstr "Schijf selectie"
 
-#: main.c:588
+#: main.c:624
 msgid ""
-"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"Select the disk(s) you want to install IPFire on. First those will be "
+"partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr "Selecteer de schijf/schijven waarop je IPFire op wil installeren. Deze zullen eerst worden gepartitioneerd, waarna er een bestandssysteem op zal worden gezet.\n\nALLE HUIDIGE GEGEVENS OP DE SCHIJF ZULLEN WORDEN VERNIETIGD. "
+msgstr ""
+"Selecteer de schijf/schijven waarop je IPFire op wil installeren. Deze "
+"zullen eerst worden gepartitioneerd, waarna er een bestandssysteem op zal "
+"worden gezet.\n"
+"\n"
+"ALLE HUIDIGE GEGEVENS OP DE SCHIJF ZULLEN WORDEN VERNIETIGD. "
 
-#: main.c:599
+#: main.c:635
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr "Er is geen schijf geselecteerd.\n\nSelecteer een of meerdere schijven waarop je IPFire op wil installeren."
+msgstr ""
+"Er is geen schijf geselecteerd.\n"
+"\n"
+"Selecteer een of meerdere schijven waarop je IPFire op wil installeren."
 
-#: main.c:617
+#: main.c:653
 #, c-format
 msgid ""
 "The installation program will now prepare the chosen harddisk:\n"
@@ -164,167 +198,227 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Het installatie programma zal nu de geselecteerde harde schijf voorbereiden:\n\n%s\n\nGa je ermee accoord om door te gaan?"
+msgstr ""
+"Het installatie programma zal nu de geselecteerde harde schijf "
+"voorbereiden:\n"
+"\n"
+"%s\n"
+"\n"
+"Ga je ermee accoord om door te gaan?"
 
-#: main.c:619
+#: main.c:655
 msgid "Disk Setup"
 msgstr "Schijf configuratie"
 
-#: main.c:620 main.c:630
+#: main.c:656 main.c:666
 msgid "Delete all data"
 msgstr "Verwijder alle gegevens"
 
-#: main.c:627
+#: main.c:663
 #, c-format
 msgid ""
-"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"The installation program will now set up a RAID configuration on the "
+"selected harddisks:\n"
 "\n"
 "  %s\n"
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Het installatie programma zal nu een RAID configureren op de geselecteerde harde schijven:\n\n%s\n%s\n\nGa je ermee accoord om door te gaan?"
+msgstr ""
+"Het installatie programma zal nu een RAID configureren op de geselecteerde "
+"harde schijven:\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"Ga je ermee accoord om door te gaan?"
 
-#: main.c:629
+#: main.c:665
 msgid "RAID Setup"
 msgstr "RAID configuratie"
 
-#: main.c:640
+#: main.c:676
 msgid "Your disk configuration is currently not supported."
 msgstr "Je schijf configuratie wordt momenteel niet ondersteund."
 
-#: main.c:655
-msgid "Your harddisk is too small."
-msgstr "Je harde schijf is te klein."
-
-#: main.c:671
-msgid ""
-"Your harddisk is very small, but you can continue without a swap partition."
-msgstr "Je harde schijf is erg klein, maar je kan doorgaan zonder een swap partitie."
-
-#: main.c:684
+#: main.c:696
 msgid "ext4 Filesystem"
 msgstr "ext4 bestandssysteem"
 
-#: main.c:685
+#: main.c:697
 msgid "ext4 Filesystem without journal"
 msgstr "ext4 bestandssysteem zonder journaal"
 
-#: main.c:686
+#: main.c:698
 msgid "XFS Filesystem"
 msgstr "XFS bestandssysteem"
 
-#: main.c:687
-msgid "ReiserFS Filesystem"
-msgstr "ReiserFS bestandssysteem"
+#: main.c:699
+msgid "BTRFS Filesystem (EXPERIMENTAL)"
+msgstr ""
 
-#: main.c:701
+#: main.c:713
 msgid "Filesystem Selection"
 msgstr "Bestandssysteem selectie"
 
-#: main.c:701
+#: main.c:713
 msgid "Please choose your filesystem:"
 msgstr "Kies uw bestandssysteem:"
 
-#: main.c:712
+#: main.c:726
+msgid "Your harddisk is too small."
+msgstr "Je harde schijf is te klein."
+
+#: main.c:742
+msgid ""
+"Your harddisk is very small, but you can continue without a swap partition."
+msgstr ""
+"Je harde schijf is erg klein, maar je kan doorgaan zonder een swap partitie."
+
+#: main.c:751
 msgid "Building RAID..."
 msgstr "Opbouwen RAID..."
 
-#: main.c:716
+#: main.c:755
 msgid "Unable to build the RAID."
 msgstr "Kon RAID niet opbouwen."
 
-#: main.c:728
+#: main.c:767
 msgid "Partitioning disk..."
 msgstr "Bezig met partitioneren van de schijf"
 
-#: main.c:732
+#: main.c:771
 msgid "Unable to partition the disk."
 msgstr "Kon schijf niet partitioneren."
 
-#: main.c:739
+#: main.c:778
 msgid "Creating filesystems..."
 msgstr "Bezig met creëren bestandssystemen"
 
-#: main.c:743
+#: main.c:782
 msgid "Unable to create filesystems."
 msgstr "Kon bestandssystemen niet creëren."
 
-#: main.c:749
+#: main.c:788
 msgid "Unable to mount filesystems."
 msgstr "Kon bestandssystemen niet aankoppelen."
 
-#: main.c:760
+#: main.c:799
 msgid "Installing the system..."
 msgstr "Bezig met de installatie van het systeem..."
 
-#: main.c:761
+#: main.c:800
 msgid "Unable to install the system."
 msgstr "Kon het systeem niet installeren."
 
-#: main.c:777
+#: main.c:816
 msgid "Installing the language cache..."
 msgstr "Bezig met installeren van de taal-cache..."
 
-#: main.c:778
+#: main.c:817
 msgid "Unable to install the language cache."
 msgstr "Kon de taal-cache niet installeren."
 
-#: main.c:783
+#: main.c:823
+msgid "Trigger udev to redetect partitions..."
+msgstr ""
+
+#: main.c:824
+msgid "Error triggering udev to redetect partitions."
+msgstr ""
+
+#: main.c:829
 msgid "Installing the bootloader..."
 msgstr "Bezig met installeren van de bootloader"
 
-#: main.c:790
+#: main.c:836 main.c:852
 msgid "Unable to open /etc/default/grub for writing."
 msgstr "Kan /etc/default/grub niet openen met schrijfrechten"
 
-#: main.c:812
+#: main.c:862
 msgid "Unable to install the bootloader."
 msgstr "Kon de bootloader niet installeren."
 
-#: main.c:826
+#: main.c:879
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr "Er is een backup bestand gevonden op de installatie disk.\n\nWil je deze backup terugzetten?"
+msgstr ""
+"Er is een backup bestand gevonden op de installatie disk.\n"
+"\n"
+"Wil je deze backup terugzetten?"
 
-#: main.c:827
+#: main.c:880
 msgid "Yes"
 msgstr "Ja"
 
-#: main.c:827
+#: main.c:880
 msgid "No"
 msgstr "Nee"
 
-#: main.c:834
+#: main.c:887
 msgid "An error occured when the backup file was restored."
 msgstr "Er is een fout opgetreden bij het terugzetten van de backup."
 
-#: main.c:869
+#: main.c:900
 msgid "Running post-install script..."
 msgstr "Uitvoeren post-install script..."
 
-#: main.c:870
+#: main.c:901
 msgid "Post-install script failed."
 msgstr "Fout bij uitvoeren van Post-install script"
 
-#: main.c:877
+#: main.c:907
+#, fuzzy
+msgid "Umounting filesystems..."
+msgstr "Bezig met creëren bestandssystemen"
+
+#: main.c:913
+#, fuzzy, c-format
+msgid ""
+"Could not umount all filesystems successfully:\n"
+"\n"
+"  %s"
+msgstr ""
+"Kon %s niet aankoppelen naar %s:\n"
+"%s\n"
+
+#: main.c:941
+msgid ""
+"Unattended installation has finished. The system will be shutting down in a "
+"moment..."
+msgstr ""
+
+#: main.c:945
 #, c-format
 msgid ""
 "%s was successfully installed!\n"
 "\n"
-"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s was met succes geïnstalleerd!\n\nVerwijder de installatie disk en druk op de reboot knop. Nadat het systeem is herstart zal je worden gevraagd om het netwerk en systeem wachtwoorden in te stellen. Daarna moet je in je webbrowser navigeren naar https://%s:444 (of hoe je %s hebt genoemd) voor de web configuratie console."
+"Please remove any installation mediums from this system and hit the reboot "
+"button. Once the system has restarted you will be asked to setup networking "
+"and system passwords. After that, you should point your web browser at "
+"https://%s:444 (or what ever you name your %s) for the web configuration "
+"console."
+msgstr ""
+"%s was met succes geïnstalleerd!\n"
+"\n"
+"Verwijder de installatie disk en druk op de reboot knop. Nadat het systeem "
+"is herstart zal je worden gevraagd om het netwerk en systeem wachtwoorden in "
+"te stellen. Daarna moet je in je webbrowser navigeren naar https://%s:444 "
+"(of hoe je %s hebt genoemd) voor de web configuratie console."
 
-#: main.c:882
+#: main.c:950
 msgid "Congratulations!"
 msgstr "Gefeliciteerd!"
 
-#: main.c:882
+#: main.c:950
 msgid "Reboot"
 msgstr "Herstarten"
 
-#: main.c:893
+#: main.c:961
 msgid "Setup has failed. Press Ok to reboot."
 msgstr "Installatie is mislukt. Druk op OK om te herstarten."
+
+#~ msgid "ReiserFS Filesystem"
+#~ msgstr "ReiserFS bestandssysteem"

@@ -1,162 +1,190 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR The IPFire Project (www.ipfire.org)
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Khalil Delavaran <khalil.delavaran@gmail.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-05 01:29+0000\n"
+"POT-Creation-Date: 2024-04-05 12:15+0000\n"
 "PO-Revision-Date: 2017-09-23 20:08+0000\n"
 "Last-Translator: Khalil Delavaran <khalil.delavaran@gmail.com>\n"
-"Language-Team: Persian (http://www.transifex.com/mstremer/ipfire/language/fa/)\n"
+"Language-Team: Persian (http://www.transifex.com/mstremer/ipfire/language/"
+"fa/)\n"
+"Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fa\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
+#: main.c:80 main.c:181 main.c:436 main.c:714 main.c:741 main.c:961
 msgid "OK"
 msgstr "بله"
 
-#: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
-#: main.c:702
+#: main.c:81 main.c:493 main.c:520 main.c:549 main.c:656 main.c:666 main.c:714
+#: main.c:741
 msgid "Cancel"
 msgstr "نمی خواهم"
 
-#: main.c:176
+#: main.c:178
 msgid "I accept this license"
 msgstr "من این پروانه را می پذیرم."
 
-#: main.c:384
+#: main.c:415
 msgid "Warning: Unattended installation will start in 10 seconds..."
 msgstr "گوشزد: برپاسازی خودکار تا 10 ثانیه دیگر شروع می شود..."
 
-#: main.c:403
+#: main.c:435
 msgid "Language selection"
 msgstr "گزینش زبان"
 
-#: main.c:403
+#: main.c:435
 msgid "Select the language you wish to use for the installation."
 msgstr "گزینش زبان شما برای بکارگیری در برپاسازی."
 
-#: main.c:418
+#: main.c:450
 msgid "Unattended mode"
 msgstr "حالت خودکار"
 
-#: main.c:420
+#: main.c:452
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
 msgstr "<Tab>/<Alt-Tab> میان عنصری  | <Space> گزینش | <F12>  برای برگه پسین"
 
-#: main.c:426
+#: main.c:459
 #, c-format
 msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "به برنامه برپا سازی %s خوش آمدید.\n\nبرای راه اندازی دوباره کامپیوتر، نمی خواهم را در هر صفحه ای می توانید گزینش کنید."
+msgstr ""
+"به برنامه برپا سازی %s خوش آمدید.\n"
+"\n"
+"برای راه اندازی دوباره کامپیوتر، نمی خواهم را در هر صفحه ای می توانید گزینش "
+"کنید."
 
-#: main.c:428
+#: main.c:461
 msgid "Start installation"
 msgstr "آغاز برپا سازی"
 
-#: main.c:449
+#: main.c:482
 #, c-format
 msgid "The installer will now try downloading the installation image."
 msgstr "برنامه نصب تلاش خواهد کرد که ایمیج نصب را دانلود کند."
 
-#: main.c:452
+#: main.c:485
 #, c-format
 msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr "درایو منبع پیدا نشد.\n\nشما می توانید ایمیج مورد نیاز نصب را دانلود کنید. "
+msgstr ""
+"درایو منبع پیدا نشد.\n"
+"\n"
+"شما می توانید ایمیج مورد نیاز نصب را دانلود کنید. "
 
-#: main.c:456
+#: main.c:489
 msgid ""
-"Please make sure to connect your machine to a network and the installer will"
-" try connect to acquire an IP address."
-msgstr "لطفا مطمئن شوید که دستگاه شما به شبکه متصل است و برنامه نصب برای بدست آوردن IP تلاش خواهد کرد."
+"Please make sure to connect your machine to a network and the installer will "
+"try connect to acquire an IP address."
+msgstr ""
+"لطفا مطمئن شوید که دستگاه شما به شبکه متصل است و برنامه نصب برای بدست آوردن "
+"IP تلاش خواهد کرد."
 
-#: main.c:460
+#: main.c:493
 msgid "Download installation image"
 msgstr "دانلود ایمیج برپاسازی"
 
-#: main.c:473
+#: main.c:506
 msgid "Trying to start networking (DHCP)..."
 msgstr "تلاش برای شروع شبکه (DHCP)..."
 
-#: main.c:484
+#: main.c:517
 msgid ""
-"Networking could not be started but is required to go on with the installation.\n"
+"Networking could not be started but is required to go on with the "
+"installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr "شبکه نمی تواند شروع کند، و رفتن به نصب ضروری می باشد.\n\nخواهشمند است سیستم را به یک شبکه با DHCP سرور وصل کرده و دوباره تلاش کنید."
+msgstr ""
+"شبکه نمی تواند شروع کند، و رفتن به نصب ضروری می باشد.\n"
+"\n"
+"خواهشمند است سیستم را به یک شبکه با DHCP سرور وصل کرده و دوباره تلاش کنید."
 
-#: main.c:487 main.c:516
+#: main.c:520 main.c:549
 msgid "Retry"
 msgstr "دوباره"
 
-#: main.c:501
+#: main.c:534
 msgid "Downloading installation image..."
 msgstr "در حال دانلود ایمیج برای برپا سازی..."
 
-#: main.c:510
+#: main.c:543
 #, c-format
 msgid "BLAKE2 checksum mismatch"
 msgstr "ناهماهنگی در کنرل جمعی BLAKE2"
 
-#: main.c:513
+#: main.c:546
 #, c-format
 msgid ""
 "The installation image could not be downloaded.\n"
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr "ایمیج برپاسازی را نمی توان دانلود کرد.\nزیرا: %s\n\n%s"
+msgstr ""
+"ایمیج برپاسازی را نمی توان دانلود کرد.\n"
+"زیرا: %s\n"
+"\n"
+"%s"
 
-#: main.c:528
+#: main.c:564
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr "نمی توان %s را به %s مونت کرد:\n%s\n"
+msgstr ""
+"نمی توان %s را به %s مونت کرد:\n"
+"%s\n"
 
-#: main.c:543
+#: main.c:579
 msgid "License Agreement"
 msgstr "موافقنامه"
 
-#: main.c:544
+#: main.c:580
 msgid "License not accepted!"
 msgstr "پروانه پذیرفته نشد!"
 
-#: main.c:566
+#: main.c:602
 msgid "No hard disk found."
 msgstr "هارد دیسک یافت نشد."
 
-#: main.c:587
+#: main.c:623
 msgid "Disk Selection"
 msgstr "گزینش دیسک"
 
-#: main.c:588
+#: main.c:624
 msgid ""
-"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"Select the disk(s) you want to install IPFire on. First those will be "
+"partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr "دیسک (های) را برای برپاسازی IPFire گزینش کنید. نخست آنها را پارنیشین بندی کرده، و سپس، سیستم فایلی برای پارتیشن ها برگزینید.\n\nهمه داده های دیسک پاک می شوند."
+msgstr ""
+"دیسک (های) را برای برپاسازی IPFire گزینش کنید. نخست آنها را پارنیشین بندی "
+"کرده، و سپس، سیستم فایلی برای پارتیشن ها برگزینید.\n"
+"\n"
+"همه داده های دیسک پاک می شوند."
 
-#: main.c:599
+#: main.c:635
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr "هیچ دیسکی گزینش نشده است.\n\nخواهشمند است یک دیسک یا بیشتر را برای برپا سازی IPFire گزینش کنید."
+msgstr ""
+"هیچ دیسکی گزینش نشده است.\n"
+"\n"
+"خواهشمند است یک دیسک یا بیشتر را برای برپا سازی IPFire گزینش کنید."
 
-#: main.c:617
+#: main.c:653
 #, c-format
 msgid ""
 "The installation program will now prepare the chosen harddisk:\n"
@@ -164,167 +192,226 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "آماده سازی دیسک سخت برای برپا سازی برنامه :\n\n%s\n\nآیا شما گرایش به ادامه دارید؟"
+msgstr ""
+"آماده سازی دیسک سخت برای برپا سازی برنامه :\n"
+"\n"
+"%s\n"
+"\n"
+"آیا شما گرایش به ادامه دارید؟"
 
-#: main.c:619
+#: main.c:655
 msgid "Disk Setup"
 msgstr "پیکربندی دیسک"
 
-#: main.c:620 main.c:630
+#: main.c:656 main.c:666
 msgid "Delete all data"
 msgstr "پاک کردن همه داده ها"
 
-#: main.c:627
+#: main.c:663
 #, c-format
 msgid ""
-"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"The installation program will now set up a RAID configuration on the "
+"selected harddisks:\n"
 "\n"
 "  %s\n"
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "پیکربندی RAID بر روی هارد دیسکهای گزینش شده برای برپا سازی برنامه\n\n%s\n%s\n\nآیا شما گرایش به ادامه دارید؟"
+msgstr ""
+"پیکربندی RAID بر روی هارد دیسکهای گزینش شده برای برپا سازی برنامه\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"آیا شما گرایش به ادامه دارید؟"
 
-#: main.c:629
+#: main.c:665
 msgid "RAID Setup"
 msgstr "پیکربندی RAID"
 
-#: main.c:640
+#: main.c:676
 msgid "Your disk configuration is currently not supported."
 msgstr "پیکربندی دیسک شما پشتیبانی نمی شود."
 
-#: main.c:655
-msgid "Your harddisk is too small."
-msgstr "هارد دیسک شما بسیار کوچک است."
-
-#: main.c:671
-msgid ""
-"Your harddisk is very small, but you can continue without a swap partition."
-msgstr "هارد دیسک شما بسیار کوچک است، ولی می توانید بدون ساخت swap پارتیشن ادامه دهید."
-
-#: main.c:684
+#: main.c:696
 msgid "ext4 Filesystem"
 msgstr "فایل سیستم ext4"
 
-#: main.c:685
+#: main.c:697
 msgid "ext4 Filesystem without journal"
 msgstr "سیستم فایل ext4 بدون روزنامه"
 
-#: main.c:686
+#: main.c:698
 msgid "XFS Filesystem"
 msgstr "فایل سیستم XFS"
 
-#: main.c:687
-msgid "ReiserFS Filesystem"
-msgstr "فایل سیستم RaiserFS"
+#: main.c:699
+msgid "BTRFS Filesystem (EXPERIMENTAL)"
+msgstr ""
 
-#: main.c:701
+#: main.c:713
 msgid "Filesystem Selection"
 msgstr "گزینش فایل سیستم"
 
-#: main.c:701
+#: main.c:713
 msgid "Please choose your filesystem:"
 msgstr "خواهشمند است فایل سیستم خود را گزینش کنید:"
 
-#: main.c:712
+#: main.c:726
+msgid "Your harddisk is too small."
+msgstr "هارد دیسک شما بسیار کوچک است."
+
+#: main.c:742
+msgid ""
+"Your harddisk is very small, but you can continue without a swap partition."
+msgstr ""
+"هارد دیسک شما بسیار کوچک است، ولی می توانید بدون ساخت swap پارتیشن ادامه "
+"دهید."
+
+#: main.c:751
 msgid "Building RAID..."
 msgstr "ساخت RAID..."
 
-#: main.c:716
+#: main.c:755
 msgid "Unable to build the RAID."
 msgstr "ناتوانی در ساخت RAID."
 
-#: main.c:728
+#: main.c:767
 msgid "Partitioning disk..."
 msgstr "پارتیشن بندی دیسک..."
 
-#: main.c:732
+#: main.c:771
 msgid "Unable to partition the disk."
 msgstr "ناتوانی در پارتیشین بندی دیسک."
 
-#: main.c:739
+#: main.c:778
 msgid "Creating filesystems..."
 msgstr "ساخت سیستم فایل..."
 
-#: main.c:743
+#: main.c:782
 msgid "Unable to create filesystems."
 msgstr "ناتوانی در ساخت سیستم فایل."
 
-#: main.c:749
+#: main.c:788
 msgid "Unable to mount filesystems."
 msgstr "ناتوانی در مونت کردن سیستم فایل."
 
-#: main.c:760
+#: main.c:799
 msgid "Installing the system..."
 msgstr "برپا سازی سیستم..."
 
-#: main.c:761
+#: main.c:800
 msgid "Unable to install the system."
 msgstr "ناتوانی در برپاسازی سیستم."
 
-#: main.c:777
+#: main.c:816
 msgid "Installing the language cache..."
 msgstr "در حال برپا سازی کش زبان..."
 
-#: main.c:778
+#: main.c:817
 msgid "Unable to install the language cache."
 msgstr "ناتوانی در برپا سازی کش زبان."
 
-#: main.c:783
+#: main.c:823
+msgid "Trigger udev to redetect partitions..."
+msgstr ""
+
+#: main.c:824
+msgid "Error triggering udev to redetect partitions."
+msgstr ""
+
+#: main.c:829
 msgid "Installing the bootloader..."
 msgstr "برپا سازی بوت لودر..."
 
-#: main.c:790
+#: main.c:836 main.c:852
 msgid "Unable to open /etc/default/grub for writing."
 msgstr "نمی توان /etc/default/grub را برای ویرایش باز کرد."
 
-#: main.c:812
+#: main.c:862
 msgid "Unable to install the bootloader."
 msgstr "ناتوانی در برپا سازی بوت لودر."
 
-#: main.c:826
+#: main.c:879
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr "یک فایل بک آپ در ایمیج نصب پیدا شد.\n\nآیا می خواهید بک آپ را بازیابی کنید؟"
+msgstr ""
+"یک فایل بک آپ در ایمیج نصب پیدا شد.\n"
+"\n"
+"آیا می خواهید بک آپ را بازیابی کنید؟"
 
-#: main.c:827
+#: main.c:880
 msgid "Yes"
 msgstr "بله"
 
-#: main.c:827
+#: main.c:880
 msgid "No"
 msgstr "خیر"
 
-#: main.c:834
+#: main.c:887
 msgid "An error occured when the backup file was restored."
 msgstr "در هنگامه بازیابی فایل بک آپ شکستی رخ داده است."
 
-#: main.c:869
+#: main.c:900
 msgid "Running post-install script..."
 msgstr "اجرای اسکریپت پس از نصب ..."
 
-#: main.c:870
+#: main.c:901
 msgid "Post-install script failed."
 msgstr "اسکریپت پس از نصب شکست خورد."
 
-#: main.c:877
+#: main.c:907
+#, fuzzy
+msgid "Umounting filesystems..."
+msgstr "ساخت سیستم فایل..."
+
+#: main.c:913
+#, fuzzy, c-format
+msgid ""
+"Could not umount all filesystems successfully:\n"
+"\n"
+"  %s"
+msgstr ""
+"نمی توان %s را به %s مونت کرد:\n"
+"%s\n"
+
+#: main.c:941
+msgid ""
+"Unattended installation has finished. The system will be shutting down in a "
+"moment..."
+msgstr ""
+
+#: main.c:945
 #, c-format
 msgid ""
 "%s was successfully installed!\n"
 "\n"
-"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s برپا سازی شده است!\n\nخواهشمند است هر برپاسازی میانه ای از سیستم را پاک کنید و دکمه ریبوت را بزنید. پس از یک بار ریستارت سیستم، شما به پرسش های پیکربندی شبکه و گذر واژه سیستم پاسخ دهید. سپس برای پیکربندی پیشخوان وب، باید در مرورگر خود آدرس https://%s:444 (یا هر نامیکه گزینشی شما %s )را بنویسید."
+"Please remove any installation mediums from this system and hit the reboot "
+"button. Once the system has restarted you will be asked to setup networking "
+"and system passwords. After that, you should point your web browser at "
+"https://%s:444 (or what ever you name your %s) for the web configuration "
+"console."
+msgstr ""
+"%s برپا سازی شده است!\n"
+"\n"
+"خواهشمند است هر برپاسازی میانه ای از سیستم را پاک کنید و دکمه ریبوت را "
+"بزنید. پس از یک بار ریستارت سیستم، شما به پرسش های پیکربندی شبکه و گذر واژه "
+"سیستم پاسخ دهید. سپس برای پیکربندی پیشخوان وب، باید در مرورگر خود آدرس "
+"https://%s:444 (یا هر نامیکه گزینشی شما %s )را بنویسید."
 
-#: main.c:882
+#: main.c:950
 msgid "Congratulations!"
 msgstr "شادباش می گوییم!"
 
-#: main.c:882
+#: main.c:950
 msgid "Reboot"
 msgstr "ریبوت"
 
-#: main.c:893
+#: main.c:961
 msgid "Setup has failed. Press Ok to reboot."
 msgstr "برپا سازی شکست خورد. برای راه اندازی دوباره بلی را فشار دهید."
+
+#~ msgid "ReiserFS Filesystem"
+#~ msgstr "فایل سیستم RaiserFS"

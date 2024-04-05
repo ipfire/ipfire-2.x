@@ -1,161 +1,190 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR The IPFire Project (www.ipfire.org)
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-05 01:29+0000\n"
+"POT-Creation-Date: 2024-04-05 12:15+0000\n"
 "PO-Revision-Date: 2017-09-21 12:48+0000\n"
 "Last-Translator: Blago Culjak <blago.culjak@hotmail.com>\n"
-"Language-Team: Croatian (http://www.transifex.com/mstremer/ipfire/language/hr/)\n"
+"Language-Team: Croatian (http://www.transifex.com/mstremer/ipfire/language/"
+"hr/)\n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: hr\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
+#: main.c:80 main.c:181 main.c:436 main.c:714 main.c:741 main.c:961
 msgid "OK"
 msgstr "OK"
 
-#: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
-#: main.c:702
+#: main.c:81 main.c:493 main.c:520 main.c:549 main.c:656 main.c:666 main.c:714
+#: main.c:741
 msgid "Cancel"
 msgstr "Otkazati"
 
-#: main.c:176
+#: main.c:178
 msgid "I accept this license"
 msgstr "Prihvaćam ovu licencu"
 
-#: main.c:384
+#: main.c:415
 msgid "Warning: Unattended installation will start in 10 seconds..."
 msgstr "Upozoranje: Nenadgledana instalacija će započeti za 10 sekundi..."
 
-#: main.c:403
+#: main.c:435
 msgid "Language selection"
 msgstr "Odabir jezika"
 
-#: main.c:403
+#: main.c:435
 msgid "Select the language you wish to use for the installation."
 msgstr "Odaberite jezik koji želite koristiti za instalaciju."
 
-#: main.c:418
+#: main.c:450
 msgid "Unattended mode"
 msgstr "Nenadgledana instalacija"
 
-#: main.c:420
+#: main.c:452
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
 msgstr "<Tab>/<Alt-Tab> Između odabira | <Space> Izaberi | <F12> Idući ekran"
 
-#: main.c:426
+#: main.c:459
 #, c-format
 msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "Dobrodošli u %s instalacijski programa..\n\nOdabirom Otkazati na bilo kojem od sljedećih ekranima će se ponovno pokrenuti računalo."
+msgstr ""
+"Dobrodošli u %s instalacijski programa..\n"
+"\n"
+"Odabirom Otkazati na bilo kojem od sljedećih ekranima će se ponovno "
+"pokrenuti računalo."
 
-#: main.c:428
+#: main.c:461
 msgid "Start installation"
 msgstr "Pokrenite instalaciju"
 
-#: main.c:449
+#: main.c:482
 #, c-format
 msgid "The installer will now try downloading the installation image."
 msgstr "Instalacija će pokušati preuzeti instalacijsku sliku."
 
-#: main.c:452
+#: main.c:485
 #, c-format
 msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr "Izvorišni pogon nije pronađen.\n\nMožete pokušati preuzeti instalacijsku sliku."
+msgstr ""
+"Izvorišni pogon nije pronađen.\n"
+"\n"
+"Možete pokušati preuzeti instalacijsku sliku."
 
-#: main.c:456
+#: main.c:489
 msgid ""
-"Please make sure to connect your machine to a network and the installer will"
-" try connect to acquire an IP address."
-msgstr "Provjerite da li ste priključeni na mrežu, instalacija će pokušati dobiti IP adresu."
+"Please make sure to connect your machine to a network and the installer will "
+"try connect to acquire an IP address."
+msgstr ""
+"Provjerite da li ste priključeni na mrežu, instalacija će pokušati dobiti IP "
+"adresu."
 
-#: main.c:460
+#: main.c:493
 msgid "Download installation image"
 msgstr "Preuzimanje instalacijske slike"
 
-#: main.c:473
+#: main.c:506
 msgid "Trying to start networking (DHCP)..."
 msgstr "Pokušaj starta mreže (DHCP)..."
 
-#: main.c:484
+#: main.c:517
 msgid ""
-"Networking could not be started but is required to go on with the installation.\n"
+"Networking could not be started but is required to go on with the "
+"installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr "Mreža nije mogla biti pokrenuta a obvezna je za nastavak instalacije. \n\nPriključite se na mrežu s omogućenim DHCPom i pokušajte ponovno."
+msgstr ""
+"Mreža nije mogla biti pokrenuta a obvezna je za nastavak instalacije. \n"
+"\n"
+"Priključite se na mrežu s omogućenim DHCPom i pokušajte ponovno."
 
-#: main.c:487 main.c:516
+#: main.c:520 main.c:549
 msgid "Retry"
 msgstr "Ponovno"
 
-#: main.c:501
+#: main.c:534
 msgid "Downloading installation image..."
 msgstr "Preuzimanje instalacijske slike"
 
-#: main.c:510
+#: main.c:543
 #, c-format
 msgid "BLAKE2 checksum mismatch"
 msgstr "BLAKE2 checksum se ne podudara"
 
-#: main.c:513
+#: main.c:546
 #, c-format
 msgid ""
 "The installation image could not be downloaded.\n"
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr "Instalacijska slika nije preuzeta.\n  Razlog: %s\n\n%s"
+msgstr ""
+"Instalacijska slika nije preuzeta.\n"
+"  Razlog: %s\n"
+"\n"
+"%s"
 
-#: main.c:528
+#: main.c:564
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr "Nemogu monitari %s na %s:\n  %s\n"
+msgstr ""
+"Nemogu monitari %s na %s:\n"
+"  %s\n"
 
-#: main.c:543
+#: main.c:579
 msgid "License Agreement"
 msgstr "Ugovor o licenci"
 
-#: main.c:544
+#: main.c:580
 msgid "License not accepted!"
 msgstr "Licenca nije prihvaćena!"
 
-#: main.c:566
+#: main.c:602
 msgid "No hard disk found."
 msgstr "Tvrdi disk nije pronađen."
 
-#: main.c:587
+#: main.c:623
 msgid "Disk Selection"
 msgstr "Izbor diska"
 
-#: main.c:588
+#: main.c:624
 msgid ""
-"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"Select the disk(s) you want to install IPFire on. First those will be "
+"partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr "Odaberite disk(ove) na koje želite instalirati IPFire. Prvo će biti podijeljeni, a zatim particije će se datotečni sustav staviti na njih.\n\nSVI PODACI NA DISKU ĆE BITI UNIŠTENI!"
+msgstr ""
+"Odaberite disk(ove) na koje želite instalirati IPFire. Prvo će biti "
+"podijeljeni, a zatim particije će se datotečni sustav staviti na njih.\n"
+"\n"
+"SVI PODACI NA DISKU ĆE BITI UNIŠTENI!"
 
-#: main.c:599
+#: main.c:635
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr "Disk nije izabran. \n\nOdaberite jedan ili više diskova na koje želite instalirati na IPFire."
+msgstr ""
+"Disk nije izabran. \n"
+"\n"
+"Odaberite jedan ili više diskova na koje želite instalirati na IPFire."
 
-#: main.c:617
+#: main.c:653
 #, c-format
 msgid ""
 "The installation program will now prepare the chosen harddisk:\n"
@@ -163,167 +192,226 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Instalacijski program će sada pripremiti odabrani tvrdi disk:\n\n  %s\n\nSlažete li da nastavimo?"
+msgstr ""
+"Instalacijski program će sada pripremiti odabrani tvrdi disk:\n"
+"\n"
+"  %s\n"
+"\n"
+"Slažete li da nastavimo?"
 
-#: main.c:619
+#: main.c:655
 msgid "Disk Setup"
 msgstr "Postavke diska"
 
-#: main.c:620 main.c:630
+#: main.c:656 main.c:666
 msgid "Delete all data"
 msgstr "Izbriši sve podatke"
 
-#: main.c:627
+#: main.c:663
 #, c-format
 msgid ""
-"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"The installation program will now set up a RAID configuration on the "
+"selected harddisks:\n"
 "\n"
 "  %s\n"
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Instalacijski program će se sada postaviti RAID konfiguraciju na odabranim tvrdim diskovima:\n\n  %s\n  %s\n\nSlažete li da nastavimo?"
+msgstr ""
+"Instalacijski program će se sada postaviti RAID konfiguraciju na odabranim "
+"tvrdim diskovima:\n"
+"\n"
+"  %s\n"
+"  %s\n"
+"\n"
+"Slažete li da nastavimo?"
 
-#: main.c:629
+#: main.c:665
 msgid "RAID Setup"
 msgstr "Postavljanje RAIDa"
 
-#: main.c:640
+#: main.c:676
 msgid "Your disk configuration is currently not supported."
 msgstr "Vaša diskovna konfiguracija nije podržana."
 
-#: main.c:655
+#: main.c:696
+msgid "ext4 Filesystem"
+msgstr "ext4 datotečni sustav"
+
+#: main.c:697
+msgid "ext4 Filesystem without journal"
+msgstr "ext4 datotečni sustav bez journal-a"
+
+#: main.c:698
+msgid "XFS Filesystem"
+msgstr "XFS datotečni sustav"
+
+#: main.c:699
+msgid "BTRFS Filesystem (EXPERIMENTAL)"
+msgstr ""
+
+#: main.c:713
+msgid "Filesystem Selection"
+msgstr "Izabir datotečnog sustava"
+
+#: main.c:713
+msgid "Please choose your filesystem:"
+msgstr "Molimo odaberite svoj datotečni sustav:"
+
+#: main.c:726
 msgid "Your harddisk is too small."
 msgstr "Vaš tvrdi disk je premali."
 
-#: main.c:671
+#: main.c:742
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
 msgstr "Vaš tvrdi disk je dosta mali, ali možete nastaviti bez swap particije."
 
-#: main.c:684
-msgid "ext4 Filesystem"
-msgstr "ext4 datotečni sustav"
-
-#: main.c:685
-msgid "ext4 Filesystem without journal"
-msgstr "ext4 datotečni sustav bez journal-a"
-
-#: main.c:686
-msgid "XFS Filesystem"
-msgstr "XFS datotečni sustav"
-
-#: main.c:687
-msgid "ReiserFS Filesystem"
-msgstr "ReiserFS datotečni sustav"
-
-#: main.c:701
-msgid "Filesystem Selection"
-msgstr "Izabir datotečnog sustava"
-
-#: main.c:701
-msgid "Please choose your filesystem:"
-msgstr "Molimo odaberite svoj datotečni sustav:"
-
-#: main.c:712
+#: main.c:751
 msgid "Building RAID..."
 msgstr "Izgradnja RAIDa..."
 
-#: main.c:716
+#: main.c:755
 msgid "Unable to build the RAID."
 msgstr "Nije moguće izgraditi RAID."
 
-#: main.c:728
+#: main.c:767
 msgid "Partitioning disk..."
 msgstr "Particioniranje diska ..."
 
-#: main.c:732
+#: main.c:771
 msgid "Unable to partition the disk."
 msgstr "Nije moguće particionirati disk."
 
-#: main.c:739
+#: main.c:778
 msgid "Creating filesystems..."
 msgstr "Izrada datotečnog sustava ..."
 
-#: main.c:743
+#: main.c:782
 msgid "Unable to create filesystems."
 msgstr "Nije moguće stvoriti datotečni sustav."
 
-#: main.c:749
+#: main.c:788
 msgid "Unable to mount filesystems."
 msgstr "Nije moguće montirati datotečni sustav."
 
-#: main.c:760
+#: main.c:799
 msgid "Installing the system..."
 msgstr "Instaliranje sustava..."
 
-#: main.c:761
+#: main.c:800
 msgid "Unable to install the system."
 msgstr "Nije moguće instalirati sustav."
 
-#: main.c:777
+#: main.c:816
 msgid "Installing the language cache..."
 msgstr "Instaliranje cache-a jezika..."
 
-#: main.c:778
+#: main.c:817
 msgid "Unable to install the language cache."
 msgstr "Nije moguće instalirati cache jezika."
 
-#: main.c:783
+#: main.c:823
+msgid "Trigger udev to redetect partitions..."
+msgstr ""
+
+#: main.c:824
+msgid "Error triggering udev to redetect partitions."
+msgstr ""
+
+#: main.c:829
 msgid "Installing the bootloader..."
 msgstr "Instaliranje bootloadera..."
 
-#: main.c:790
+#: main.c:836 main.c:852
 msgid "Unable to open /etc/default/grub for writing."
 msgstr "Ne mogu otvoriti /etc/default/grub grub za pisanje."
 
-#: main.c:812
+#: main.c:862
 msgid "Unable to install the bootloader."
 msgstr "Nije moguće instalirati bootloader."
 
-#: main.c:826
+#: main.c:879
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr "Pričuvna kopija je pronađena na instalacijskoj slici.\n\nDa li želite povratiti kopiju?"
+msgstr ""
+"Pričuvna kopija je pronađena na instalacijskoj slici.\n"
+"\n"
+"Da li želite povratiti kopiju?"
 
-#: main.c:827
+#: main.c:880
 msgid "Yes"
 msgstr "Da"
 
-#: main.c:827
+#: main.c:880
 msgid "No"
 msgstr "Ne"
 
-#: main.c:834
+#: main.c:887
 msgid "An error occured when the backup file was restored."
 msgstr "Greška pri povratu pričuvne kopije."
 
-#: main.c:869
+#: main.c:900
 msgid "Running post-install script..."
 msgstr "Izvodim post-instalacijske skripte."
 
-#: main.c:870
+#: main.c:901
 msgid "Post-install script failed."
 msgstr "Post-instalacijske skripte nisu uspješno izvršene."
 
-#: main.c:877
+#: main.c:907
+#, fuzzy
+msgid "Umounting filesystems..."
+msgstr "Izrada datotečnog sustava ..."
+
+#: main.c:913
+#, fuzzy, c-format
+msgid ""
+"Could not umount all filesystems successfully:\n"
+"\n"
+"  %s"
+msgstr ""
+"Nemogu monitari %s na %s:\n"
+"  %s\n"
+
+#: main.c:941
+msgid ""
+"Unattended installation has finished. The system will be shutting down in a "
+"moment..."
+msgstr ""
+
+#: main.c:945
 #, c-format
 msgid ""
 "%s was successfully installed!\n"
 "\n"
-"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s uspješno je instaliran!\n\nMolimo uklonite sve instalacijske medije iz tog sustava i pritisnite gumb ponovno podizanje sustava. Nakon što je sustav ponovno podigne, od vas će biti zatraženo postavljanje mreže i lozinke sustava. Nakon toga, trebali usmjerite svoj web preglednik nahttps://%s:444  (ili koje god ste nazvali vaš %s) za postavke preko weba."
+"Please remove any installation mediums from this system and hit the reboot "
+"button. Once the system has restarted you will be asked to setup networking "
+"and system passwords. After that, you should point your web browser at "
+"https://%s:444 (or what ever you name your %s) for the web configuration "
+"console."
+msgstr ""
+"%s uspješno je instaliran!\n"
+"\n"
+"Molimo uklonite sve instalacijske medije iz tog sustava i pritisnite gumb "
+"ponovno podizanje sustava. Nakon što je sustav ponovno podigne, od vas će "
+"biti zatraženo postavljanje mreže i lozinke sustava. Nakon toga, trebali "
+"usmjerite svoj web preglednik nahttps://%s:444  (ili koje god ste nazvali "
+"vaš %s) za postavke preko weba."
 
-#: main.c:882
+#: main.c:950
 msgid "Congratulations!"
 msgstr "Čestitamo!"
 
-#: main.c:882
+#: main.c:950
 msgid "Reboot"
 msgstr "Ponovno pokretanje"
 
-#: main.c:893
+#: main.c:961
 msgid "Setup has failed. Press Ok to reboot."
 msgstr "Postavljanje nije uspjelo. Pritisnite OK za ponovno podizanje sustava."
+
+#~ msgid "ReiserFS Filesystem"
+#~ msgstr "ReiserFS datotečni sustav"

@@ -1,162 +1,195 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR The IPFire Project (www.ipfire.org)
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # ellviss <kpe1501@gmail.com>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-05 01:29+0000\n"
+"POT-Creation-Date: 2024-04-05 12:15+0000\n"
 "PO-Revision-Date: 2017-09-20 08:56+0000\n"
 "Last-Translator: ellviss <kpe1501@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/mstremer/ipfire/language/ru/)\n"
+"Language-Team: Russian (http://www.transifex.com/mstremer/ipfire/language/"
+"ru/)\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
+#: main.c:80 main.c:181 main.c:436 main.c:714 main.c:741 main.c:961
 msgid "OK"
 msgstr "ОК"
 
-#: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
-#: main.c:702
+#: main.c:81 main.c:493 main.c:520 main.c:549 main.c:656 main.c:666 main.c:714
+#: main.c:741
 msgid "Cancel"
 msgstr "Отмена"
 
-#: main.c:176
+#: main.c:178
 msgid "I accept this license"
 msgstr "Я Согласен с этой лицензией"
 
-#: main.c:384
+#: main.c:415
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr "Внимание : запуск автоматической установки начнётся через 10 секунд ..."
+msgstr ""
+"Внимание : запуск автоматической установки начнётся через 10 секунд ..."
 
-#: main.c:403
+#: main.c:435
 msgid "Language selection"
 msgstr "Выберите язык"
 
-#: main.c:403
+#: main.c:435
 msgid "Select the language you wish to use for the installation."
 msgstr "Выберете язык для инсталяции"
 
-#: main.c:418
+#: main.c:450
 msgid "Unattended mode"
 msgstr "Автоматический режим"
 
-#: main.c:420
+#: main.c:452
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr "<Tab>/<Alt-Tab> переход между элементами   |  <Space> выбор <F12> следующий  экран"
+msgstr ""
+"<Tab>/<Alt-Tab> переход между элементами   |  <Space> выбор <F12> следующий  "
+"экран"
 
-#: main.c:426
+#: main.c:459
 #, c-format
 msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "Добро пожаловать в установку  %s .\n\nНажатие Отмены на любом из следующих экранах приведёт к перезагрузке."
+msgstr ""
+"Добро пожаловать в установку  %s .\n"
+"\n"
+"Нажатие Отмены на любом из следующих экранах приведёт к перезагрузке."
 
-#: main.c:428
+#: main.c:461
 msgid "Start installation"
 msgstr "Начать установку"
 
-#: main.c:449
+#: main.c:482
 #, c-format
 msgid "The installer will now try downloading the installation image."
 msgstr "Установщик пробует скачать установочный образ"
 
-#: main.c:452
+#: main.c:485
 #, c-format
 msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr "Не найден источник\n\nВы можете скачать необходимый загрузочный образ"
+msgstr ""
+"Не найден источник\n"
+"\n"
+"Вы можете скачать необходимый загрузочный образ"
 
-#: main.c:456
+#: main.c:489
 msgid ""
-"Please make sure to connect your machine to a network and the installer will"
-" try connect to acquire an IP address."
-msgstr "Убедитесь что компьютер подсоединён к сети и установщик может подключиться к запращиваемому ip адресу"
+"Please make sure to connect your machine to a network and the installer will "
+"try connect to acquire an IP address."
+msgstr ""
+"Убедитесь что компьютер подсоединён к сети и установщик может подключиться к "
+"запращиваемому ip адресу"
 
-#: main.c:460
+#: main.c:493
 msgid "Download installation image"
 msgstr "Скачать образ установки"
 
-#: main.c:473
+#: main.c:506
 msgid "Trying to start networking (DHCP)..."
 msgstr "Проверка запуска (DHCP)..."
 
-#: main.c:484
+#: main.c:517
 msgid ""
-"Networking could not be started but is required to go on with the installation.\n"
+"Networking could not be started but is required to go on with the "
+"installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr "Сеть не была включена, но она необходима для установки\n\nПожалуйста, подключите компьютер к сети с DHCP сервером и повторите попытку."
+msgstr ""
+"Сеть не была включена, но она необходима для установки\n"
+"\n"
+"Пожалуйста, подключите компьютер к сети с DHCP сервером и повторите попытку."
 
-#: main.c:487 main.c:516
+#: main.c:520 main.c:549
 msgid "Retry"
 msgstr "Повтор"
 
-#: main.c:501
+#: main.c:534
 msgid "Downloading installation image..."
 msgstr "Скачивание образа установки..."
 
-#: main.c:510
+#: main.c:543
 #, c-format
 msgid "BLAKE2 checksum mismatch"
 msgstr "BLAKE2 хеш не совпал"
 
-#: main.c:513
+#: main.c:546
 #, c-format
 msgid ""
 "The installation image could not be downloaded.\n"
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr "Не удаётся скачать установочный образ.\nПричина : %s\n\n%s"
+msgstr ""
+"Не удаётся скачать установочный образ.\n"
+"Причина : %s\n"
+"\n"
+"%s"
 
-#: main.c:528
+#: main.c:564
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr "Не удалось подключить %s к %s:\n\n%s\n"
+msgstr ""
+"Не удалось подключить %s к %s:\n"
+"\n"
+"%s\n"
 
-#: main.c:543
+#: main.c:579
 msgid "License Agreement"
 msgstr "Лицензионное соглашение"
 
-#: main.c:544
+#: main.c:580
 msgid "License not accepted!"
 msgstr "Лицензия не принята"
 
-#: main.c:566
+#: main.c:602
 msgid "No hard disk found."
 msgstr "Не найдены жесткие диски"
 
-#: main.c:587
+#: main.c:623
 msgid "Disk Selection"
 msgstr "Выберете диск"
 
-#: main.c:588
+#: main.c:624
 msgid ""
-"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"Select the disk(s) you want to install IPFire on. First those will be "
+"partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr "Выберете диск(и) , на который(е) вы хотите установить IPFIRE. Сначала будет проведена разметка разделов, а потом будет установлена файловая система.\n\nВсе данные на диске будут уничтожены."
+msgstr ""
+"Выберете диск(и) , на который(е) вы хотите установить IPFIRE. Сначала будет "
+"проведена разметка разделов, а потом будет установлена файловая система.\n"
+"\n"
+"Все данные на диске будут уничтожены."
 
-#: main.c:599
+#: main.c:635
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr "Не выбран диск.\n\nПожалуйста, выберете диск на который вы хотите поставить IPFIRE"
+msgstr ""
+"Не выбран диск.\n"
+"\n"
+"Пожалуйста, выберете диск на который вы хотите поставить IPFIRE"
 
-#: main.c:617
+#: main.c:653
 #, c-format
 msgid ""
 "The installation program will now prepare the chosen harddisk:\n"
@@ -164,167 +197,225 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Установочная программа настроит выбранный диск :\n\n%s\n\nВы согласны продолжить?"
+msgstr ""
+"Установочная программа настроит выбранный диск :\n"
+"\n"
+"%s\n"
+"\n"
+"Вы согласны продолжить?"
 
-#: main.c:619
+#: main.c:655
 msgid "Disk Setup"
 msgstr "Настройка диска"
 
-#: main.c:620 main.c:630
+#: main.c:656 main.c:666
 msgid "Delete all data"
 msgstr "Удалить все данные"
 
-#: main.c:627
+#: main.c:663
 #, c-format
 msgid ""
-"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"The installation program will now set up a RAID configuration on the "
+"selected harddisks:\n"
 "\n"
 "  %s\n"
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Программа установки сейчас настроит RAID на выбранных дисках:\n\n%s\n%s\n\nВы согласны продолжить ?"
+msgstr ""
+"Программа установки сейчас настроит RAID на выбранных дисках:\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"Вы согласны продолжить ?"
 
-#: main.c:629
+#: main.c:665
 msgid "RAID Setup"
 msgstr "Настройка RAID"
 
-#: main.c:640
+#: main.c:676
 msgid "Your disk configuration is currently not supported."
 msgstr "Конфигурация ваших дисков не поддерживается"
 
-#: main.c:655
+#: main.c:696
+msgid "ext4 Filesystem"
+msgstr "раздел ext4"
+
+#: main.c:697
+msgid "ext4 Filesystem without journal"
+msgstr "журналируемый раздел ext4"
+
+#: main.c:698
+msgid "XFS Filesystem"
+msgstr "раздел XFS"
+
+#: main.c:699
+msgid "BTRFS Filesystem (EXPERIMENTAL)"
+msgstr ""
+
+#: main.c:713
+msgid "Filesystem Selection"
+msgstr "Выбор файловой системы"
+
+#: main.c:713
+msgid "Please choose your filesystem:"
+msgstr "Пожалуйста, выберете тип файловой системы:"
+
+#: main.c:726
 msgid "Your harddisk is too small."
 msgstr "Ваш диск слишком мал"
 
-#: main.c:671
+#: main.c:742
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
 msgstr "Ваш диск слишком мал, но вы можете продолжить без файла подкачки"
 
-#: main.c:684
-msgid "ext4 Filesystem"
-msgstr "раздел ext4"
-
-#: main.c:685
-msgid "ext4 Filesystem without journal"
-msgstr "журналируемый раздел ext4"
-
-#: main.c:686
-msgid "XFS Filesystem"
-msgstr "раздел XFS"
-
-#: main.c:687
-msgid "ReiserFS Filesystem"
-msgstr "раздел ReiserFS"
-
-#: main.c:701
-msgid "Filesystem Selection"
-msgstr "Выбор файловой системы"
-
-#: main.c:701
-msgid "Please choose your filesystem:"
-msgstr "Пожалуйста, выберете тип файловой системы:"
-
-#: main.c:712
+#: main.c:751
 msgid "Building RAID..."
 msgstr "Создание RAID...."
 
-#: main.c:716
+#: main.c:755
 msgid "Unable to build the RAID."
 msgstr "Не возмозжно создать RAID"
 
-#: main.c:728
+#: main.c:767
 msgid "Partitioning disk..."
 msgstr "Разбивка диска..."
 
-#: main.c:732
+#: main.c:771
 msgid "Unable to partition the disk."
 msgstr "Невозможно разбить диск"
 
-#: main.c:739
+#: main.c:778
 msgid "Creating filesystems..."
 msgstr "Создание файловой системы..."
 
-#: main.c:743
+#: main.c:782
 msgid "Unable to create filesystems."
 msgstr "Не возможно создать раздел"
 
-#: main.c:749
+#: main.c:788
 msgid "Unable to mount filesystems."
 msgstr "Невозможно присоединить  раздел"
 
-#: main.c:760
+#: main.c:799
 msgid "Installing the system..."
 msgstr "Установка системы ...."
 
-#: main.c:761
+#: main.c:800
 msgid "Unable to install the system."
 msgstr "Невозможно установить систему"
 
-#: main.c:777
+#: main.c:816
 msgid "Installing the language cache..."
 msgstr "Установка кеша языка...."
 
-#: main.c:778
+#: main.c:817
 msgid "Unable to install the language cache."
 msgstr "Невозможно установить  кеш языка"
 
-#: main.c:783
+#: main.c:823
+msgid "Trigger udev to redetect partitions..."
+msgstr ""
+
+#: main.c:824
+msgid "Error triggering udev to redetect partitions."
+msgstr ""
+
+#: main.c:829
 msgid "Installing the bootloader..."
 msgstr "Установка загрузчика....."
 
-#: main.c:790
+#: main.c:836 main.c:852
 msgid "Unable to open /etc/default/grub for writing."
 msgstr "Невозможно открыть /etc/default/grub на запись"
 
-#: main.c:812
+#: main.c:862
 msgid "Unable to install the bootloader."
 msgstr "Невозможно установить загрузчик"
 
-#: main.c:826
+#: main.c:879
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr "Файл восстановления был найдет на установочном носителе\n\nвы хотите восстановить ?"
+msgstr ""
+"Файл восстановления был найдет на установочном носителе\n"
+"\n"
+"вы хотите восстановить ?"
 
-#: main.c:827
+#: main.c:880
 msgid "Yes"
 msgstr "Да"
 
-#: main.c:827
+#: main.c:880
 msgid "No"
 msgstr "Нет"
 
-#: main.c:834
+#: main.c:887
 msgid "An error occured when the backup file was restored."
 msgstr "Произошла ошибка при восстановлении из файла."
 
-#: main.c:869
+#: main.c:900
 msgid "Running post-install script..."
 msgstr "Выполняются пост-установочные скрипты..."
 
-#: main.c:870
+#: main.c:901
 msgid "Post-install script failed."
 msgstr "Пост-установочный скрипт не сработал"
 
-#: main.c:877
+#: main.c:907
+#, fuzzy
+msgid "Umounting filesystems..."
+msgstr "Создание файловой системы..."
+
+#: main.c:913
+#, fuzzy, c-format
+msgid ""
+"Could not umount all filesystems successfully:\n"
+"\n"
+"  %s"
+msgstr ""
+"Не удалось подключить %s к %s:\n"
+"\n"
+"%s\n"
+
+#: main.c:941
+msgid ""
+"Unattended installation has finished. The system will be shutting down in a "
+"moment..."
+msgstr ""
+
+#: main.c:945
 #, c-format
 msgid ""
 "%s was successfully installed!\n"
 "\n"
-"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s успешно установлено!\n\nПожалуйста извлеките все установочные носители из системы и нажмите кнопку перезагрузки. После перезапуска система попросит установить системный и сетевой пароли. После этого  вы можете зайти через браузер на https://%s:444 ( где  %s - ваш адрес ) для конфигурирования системы через web"
+"Please remove any installation mediums from this system and hit the reboot "
+"button. Once the system has restarted you will be asked to setup networking "
+"and system passwords. After that, you should point your web browser at "
+"https://%s:444 (or what ever you name your %s) for the web configuration "
+"console."
+msgstr ""
+"%s успешно установлено!\n"
+"\n"
+"Пожалуйста извлеките все установочные носители из системы и нажмите кнопку "
+"перезагрузки. После перезапуска система попросит установить системный и "
+"сетевой пароли. После этого  вы можете зайти через браузер на https://%s:444 "
+"( где  %s - ваш адрес ) для конфигурирования системы через web"
 
-#: main.c:882
+#: main.c:950
 msgid "Congratulations!"
 msgstr "Поздравляем!"
 
-#: main.c:882
+#: main.c:950
 msgid "Reboot"
 msgstr "Перезагрузка"
 
-#: main.c:893
+#: main.c:961
 msgid "Setup has failed. Press Ok to reboot."
 msgstr "Установка не удалась. Нажмите ОК для перезапуска"
+
+#~ msgid "ReiserFS Filesystem"
+#~ msgstr "раздел ReiserFS"
