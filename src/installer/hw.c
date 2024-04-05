@@ -54,6 +54,48 @@ static int system_chroot(const char* output, const char* path, const char* cmd) 
 	return mysystem(output, chroot_cmd);
 }
 
+static int hw_mkdir(const char *dir) {
+	char tmp[STRING_SIZE];
+	char *p = NULL;
+	size_t len;
+	int r;
+
+	snprintf(tmp, sizeof(tmp),"%s",dir);
+	len = strlen(tmp);
+
+	if (tmp[len - 1] == '/') {
+		tmp[len - 1] = 0;
+	}
+
+	for (p = tmp + 1; *p; p++) {
+		if (*p == '/') {
+			*p = 0;
+
+			// Create target if it does not exist
+			if (access(tmp, X_OK) != 0) {
+				r = mkdir(tmp, S_IRWXU|S_IRWXG|S_IRWXO);
+
+				if (r) {
+					return r;
+				}
+			}
+
+			*p = '/';
+		}
+	}
+
+	// Create target if it does not exist
+	if (access(tmp, X_OK) != 0) {
+		r = mkdir(tmp, S_IRWXU|S_IRWXG|S_IRWXO);
+
+		if (r) {
+			return r;
+		}
+	}
+
+	return 0;
+}
+
 struct hw* hw_init() {
 	struct hw* hw = calloc(1, sizeof(*hw));
 	assert(hw);
@@ -959,7 +1001,7 @@ static int hw_mount_btrfs_subvolumes(const char* source) {
 			return r;
 
 		// Create the directory.
-		r = hw_mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO);
+		r = hw_mkdir(path);
 
 		// Abort if the directory could not be created.
 		if(r != 0 && errno != EEXIST)
@@ -1413,48 +1455,6 @@ int hw_restore_backup(const char* output, const char* backup_path, const char* d
 
 	if (rc)
 		return -1;
-
-	return 0;
-}
-
-int hw_mkdir(const char *dir) {
-	char tmp[STRING_SIZE];
-	char *p = NULL;
-	size_t len;
-	int r;
-
-	snprintf(tmp, sizeof(tmp),"%s",dir);
-	len = strlen(tmp);
-
-	if (tmp[len - 1] == '/') {
-		tmp[len - 1] = 0;
-	}
-
-	for (p = tmp + 1; *p; p++) {
-		if (*p == '/') {
-			*p = 0;
-
-			// Create target if it does not exist
-			if (access(tmp, X_OK) != 0) {
-				r = mkdir(tmp, S_IRWXU|S_IRWXG|S_IRWXO);
-
-				if (r) {
-					return r;
-				}
-			}
-
-			*p = '/';
-		}
-	}
-
-	// Create target if it does not exist
-	if (access(tmp, X_OK) != 0) {
-		r = mkdir(tmp, S_IRWXU|S_IRWXG|S_IRWXO);
-
-		if (r) {
-			return r;
-		}
-	}
 
 	return 0;
 }
