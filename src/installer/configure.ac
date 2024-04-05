@@ -36,7 +36,6 @@ LT_INIT([disable-static])
 AC_PROG_SED
 
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CC_C_O
 
 CC_CHECK_FLAGS_APPEND([with_cflags], [CFLAGS], [\
