@@ -1010,7 +1010,7 @@ static int hw_mount_btrfs_subvolumes(const char* source) {
 		fprintf(flog, "Mounting subvolume %s to %s\n", subvolume->name, subvolume->mount_path);
 
 		// Try to mount the subvolume.
-		r = mount(source, path, "btrfs", NULL, options);
+		r = mount(source, path, "btrfs", 0, options);
 		if (r)
 			return r;
 	}
