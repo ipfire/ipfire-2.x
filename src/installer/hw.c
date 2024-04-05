@@ -811,6 +811,65 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 	return r;
 }
 
+static int hw_create_btrfs_subvolume(const char* output, const char* subvolume) {
+	char command [STRING_SIZE];
+	int r;
+
+	// Abort if the command could not be assigned.
+	r = snprintf(command, sizeof(command), "/usr/bin/btrfs subvolume create  %s/%s", DESTINATION_MOUNT_PATH, subvolume);
+	if (r < 0)
+		return r;
+
+	// Create the subvolume
+	r = mysystem(output, command);
+	if (r)
+		return r;
+
+	return 0;
+}
+
+static int hw_create_btrfs_layout(const char* path, const char* output) {
+	const struct btrfs_subvolumes* subvolume = NULL;
+	char cmd[STRING_SIZE];
+	char volume[STRING_SIZE];
+	int r;
+
+	r = snprintf(cmd, sizeof(cmd), "/usr/bin/mkfs.btrfs -f %s", path);
+	if (r < 0)
+		return r;
+
+	// Create the main BTRFS file system.
+	r = mysystem(output, cmd);
+	if (r)
+		return r;
+
+	// We need to mount the FS in order to create any subvolumes.
+	r = hw_mount(path, DESTINATION_MOUNT_PATH, "btrfs", 0);
+	if (r)
+		return r;
+
+	// Loop through the list of subvolumes to create.
+	for ( subvolume = btrfs_subvolumes; subvolume->name; subvolume++ ) {
+		r = snprintf(volume, sizeof(volume), "%s", subvolume->name);
+
+		// Abort if snprintf fails.
+		if (r < 0)
+			return r;
+
+		// Call function to create the subvolume
+		r = hw_create_btrfs_subvolume(output, volume);
+		if (r)
+			return r;
+	}
+
+	// Umount the main BTRFS after subvolume creation.
+	r = hw_umount(DESTINATION_MOUNT_PATH, 0);
+	if (r)
+		return r;
+
+	return 0;
+}
+
 static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	char cmd[STRING_SIZE] = "\0";
 	int r;
@@ -881,54 +940,38 @@ int hw_create_filesystems(struct hw_destination* dest, const char* output) {
 	return 0;
 }
 
-int hw_create_btrfs_layout(const char* path, const char* output) {
+static int hw_mount_btrfs_subvolumes(const char* source) {
 	const struct btrfs_subvolumes* subvolume = NULL;
-	char cmd[STRING_SIZE];
-	char volume[STRING_SIZE];
+	char path[STRING_SIZE];
+	char options[STRING_SIZE];
 	int r;
 
-	r = snprintf(cmd, sizeof(cmd), "/usr/bin/mkfs.btrfs -f %s", path);
-	if (r < 0) {
-		return r;
-	}
-
-	// Create the main BTRFS file system.
-	r = mysystem(output, cmd);
-
-	if (r) {
-		return r;
-	}
-
-
-	// We need to mount the FS in order to create any subvolumes.
-	r = hw_mount(path, DESTINATION_MOUNT_PATH, "btrfs", 0);
-
-	if (r) {
-		return r;
-	}
-
-	// Loop through the list of subvolumes to create.
-	for ( subvolume = btrfs_subvolumes; subvolume->name; subvolume++ ) {
-		r = snprintf(volume, sizeof(volume), "%s", subvolume->name);
-
-		// Abort if snprintf fails.
-		if (r < 0) {
+	// Loop through the list of known subvolumes.
+	for (subvolume = btrfs_subvolumes; subvolume->name; subvolume++) {
+		// Assign subvolume path.
+		r = snprintf(path, sizeof(path), "%s%s", DESTINATION_MOUNT_PATH, subvolume->mount_path);
+		if (r < 0)
 			return r;
-		}
 
-		// Call function to create the subvolume
-		r = hw_create_btrfs_subvolume(output, volume);
-
-		if (r) {
+		// Assign subvolume name.
+		r = snprintf(options, sizeof(options), "subvol=%s,%s", subvolume->name, BTRFS_MOUNT_OPTIONS);
+		if (r < 0)
 			return r;
-		}
-	}
 
-	// Umount the main BTRFS after subvolume creation.
-	r = hw_umount(DESTINATION_MOUNT_PATH, 0);
+		// Create the directory.
+		r = hw_mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO);
 
-	if (r) {
-		return r;
+		// Abort if the directory could not be created.
+		if(r != 0 && errno != EEXIST)
+			return r;
+
+		// Print log message
+		fprintf(flog, "Mounting subvolume %s to %s\n", subvolume->name, subvolume->mount_path);
+
+		// Try to mount the subvolume.
+		r = mount(source, path, "btrfs", NULL, options);
+		if (r)
+			return r;
 	}
 
 	return 0;
@@ -966,12 +1009,10 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	// root
 	if (dest->filesystem == HW_FS_BTRFS) {
 		r = hw_mount_btrfs_subvolumes(dest->part_root);
-
 		if (r)
 			return r;
 	} else {
 		r = hw_mount(dest->part_root, prefix, filesystem, 0);
-
 		if (r)
 			return r;
 	}
@@ -1038,46 +1079,65 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	return 0;
 }
 
-int hw_mount_btrfs_subvolumes(const char* source) {
+static int hw_umount_btrfs_layout() {
 	const struct btrfs_subvolumes* subvolume = NULL;
 	char path[STRING_SIZE];
-	char options[STRING_SIZE];
+	int counter = 0;
+	int retry = 1;
 	int r;
 
-	// Loop through the list of known subvolumes.
-	for ( subvolume = btrfs_subvolumes; subvolume->name; subvolume++ ) {
-		// Assign subvolume path.
-		r = snprintf(path, sizeof(path), "%s%s", DESTINATION_MOUNT_PATH, subvolume->mount_path);
+	do {
+		// Reset the retry marker
+		retry = 0;
 
-		if (r < 0) {
-			return r;
+		// Loop through the list of subvolumes
+		for (subvolume = btrfs_subvolumes; subvolume->name; subvolume++) {
+			// Abort if the subvolume path could not be assigned.
+			r = snprintf(path, sizeof(path), "%s%s", DESTINATION_MOUNT_PATH, subvolume->mount_path);
+			if (r < 0)
+				return r;
+
+			// Try to umount the subvolume.
+			r = umount2(path, 0);
+
+			// Handle return codes.
+			if (r) {
+				switch(errno) {
+					case EBUSY:
+						// Set marker to retry the umount.
+						retry = 1;
+
+						// Ignore if the subvolume could not be unmounted yet,
+						// because it is still used.
+						continue;
+
+					case EINVAL:
+						// Ignore if the subvolume already has been unmounted
+						continue;
+					case ENOENT:
+						// Ignore if the directory does not longer exist.
+						continue;
+					default:
+						fprintf(flog, "Could not umount %s from %s - Error: %d\n", subvolume->name, path, r);
+						return r;
+				}
+			}
+
+			// Print log message
+			fprintf(flog, "Umounted %s from %s\n", subvolume->name, path);
 		}
 
-		// Assign subvolume name.
-		r = snprintf(options, sizeof(options), "subvol=%s,%s", subvolume->name, BTRFS_MOUNT_OPTIONS);
-		if (r < 0) {
-			return r;
-		}
+		// Abort loop if all mountpoins got umounted
+		if (retry == 0)
+			return 0;
 
-		// Create the directory.
-		r = hw_mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO);
+		// Abort after five failed umount attempts
+		if (counter == 5)
+			return -1;
 
-		// Abort if the directory could not be created.
-		if(r != 0 && errno != EEXIST)
-			return r;
-
-		// Print log message
-		fprintf(flog, "Mounting subvolume %s to %s\n", subvolume->name, subvolume->mount_path);
-
-		// Try to mount the subvolume.
-		r = mount(source, path, "btrfs", NULL, options);
-
-		if (r) {
-			return r;
-		}
-	}
-	
-	return 0;
+		// Increment counter.
+		counter++;
+	} while (1);
 }
 
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
@@ -1134,71 +1194,6 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 		return -1;
 
 	return 0;
-}
-
-int hw_umount_btrfs_layout() {
-	const struct btrfs_subvolumes* subvolume = NULL;
-	char path[STRING_SIZE];
-	int counter = 0;
-	int retry = 1;
-	int r;
-
-	do {
-		// Reset the retry marker
-		retry = 0;
-
-		// Loop through the list of subvolumes
-		for (subvolume = btrfs_subvolumes; subvolume->name; subvolume++) {
-			// Abort if the subvolume path could not be assigned.
-			r = snprintf(path, sizeof(path), "%s%s", DESTINATION_MOUNT_PATH, subvolume->mount_path);
-
-			if (r < 0) {
-				return r;
-			}
-
-			// Try to umount the subvolume.
-			r = umount2(path, 0);
-
-			// Handle return codes.
-			if (r) {
-				switch(errno) {
-					case EBUSY:
-						// Set marker to retry the umount.
-						retry = 1;
-
-						// Ignore if the subvolume could not be unmounted yet,
-						// because it is still used.
-						continue;
-
-					case EINVAL:
-						// Ignore if the subvolume already has been unmounted
-						continue;
-					case ENOENT:
-						// Ignore if the directory does not longer exist.
-						continue;
-					default:
-						fprintf(flog, "Could not umount %s from %s - Error: %d\n", subvolume->name, path, r);
-						return r;
-				}
-			}
-
-			// Print log message
-			fprintf(flog, "Umounted %s from %s\n", subvolume->name, path);
-		}
-
-		// Abort loop if all mountpoins got umounted
-		if (retry == 0) {
-			return 0;
-		}
-
-		// Abort after five failed umount attempts
-		if (counter == 5) {
-			return -1;
-		}
-
-		// Increment counter.
-		counter++;
-	} while (1);
 }
 
 int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* output) {
@@ -1459,27 +1454,6 @@ int hw_mkdir(const char *dir) {
 		if (r) {
 			return r;
 		}
-	}
-
-	return 0;
-}
-
-
-int hw_create_btrfs_subvolume(const char* output, const char* subvolume) {
-	char command [STRING_SIZE];
-	int r;
-
-	// Abort if the command could not be assigned.
-	r = snprintf(command, sizeof(command), "/usr/bin/btrfs subvolume create  %s/%s", DESTINATION_MOUNT_PATH, subvolume);
-	if (r < 0) {
-		return r;
-	}
-
-	// Create the subvolume
-	r = mysystem(output, command);
-
-	if (r) {
-		return r;
 	}
 
 	return 0;
