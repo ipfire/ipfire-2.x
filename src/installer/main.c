@@ -368,6 +368,8 @@ int main(int argc, char *argv[]) {
 	char discl_msg[40000] =	"Disclaimer\n";
 
 	char* sourcedrive = NULL;
+	struct hw_destination* destination = NULL;
+	struct hw_disk** selected_disks = NULL;
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	int choice;
@@ -589,8 +591,6 @@ int main(int argc, char *argv[]) {
 
 	// Scan for disks to install on.
 	struct hw_disk** disks = hw_find_disks(hw, sourcedrive);
-
-	struct hw_disk** selected_disks = NULL;
 	unsigned int num_selected_disks = 0;
 
 	// Check how many disks have been found and what
@@ -720,8 +720,7 @@ int main(int argc, char *argv[]) {
 		filesystem = filesystems[fs_choice].fstype;
 	}
 
-	struct hw_destination* destination = hw_make_destination(hw, part_type,
-		selected_disks, config.disable_swap, filesystem);
+	destination = hw_make_destination(hw, part_type, selected_disks, config.disable_swap, filesystem);
 
 	if (!destination) {
 		errorbox(_("Your harddisk is too small."));
