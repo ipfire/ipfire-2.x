@@ -889,7 +889,7 @@ legacy:
 # extra option: auto - which means drop-flow or drop-packet (as explained above)
 # in IPS mode, and ignore in IDS mode. Exception policy values are: drop-packet,
 # drop-flow, reject, bypass, pass-packet, pass-flow, ignore (disable).
-exception-policy: auto
+exception-policy: pass-packet
 
 # When run with the option --engine-analysis, the engine will read each of
 # the parameters below, and print reports for each of the enabled sections
