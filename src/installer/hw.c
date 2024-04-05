@@ -131,8 +131,6 @@ static int strstartswith(const char* a, const char* b) {
 	return (strncmp(a, b, strlen(b)) == 0);
 }
 
-static char loop_device[STRING_SIZE];
-
 static int setup_loop_device(const char* source, const char* device) {
 	int file_fd = open(source, O_RDWR);
 	if (file_fd < 0)
@@ -1184,7 +1182,6 @@ static int hw_umount_btrfs_layout() {
 
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	int r;
-	char target[STRING_SIZE];
 
 	// Write all buffers to disk before umounting
 	hw_sync();
