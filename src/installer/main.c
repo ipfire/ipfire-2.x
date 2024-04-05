@@ -310,7 +310,8 @@ static void parse_command_line(FILE* flog, struct config* c) {
 
 		char* token = strtok(cmdline, " ");
 		while (token) {
-			strncpy(buffer, token, sizeof(buffer));
+			snprintf(buffer, sizeof(buffer), "%s", token);
+
 			char* val = buffer;
 			char* key = strsep(&val, "=");
 
@@ -336,7 +337,7 @@ static void parse_command_line(FILE* flog, struct config* c) {
 
 			// download url
 			else if (strcmp(key, "installer.download-url") == 0) {
-				strncpy(c->download_url, val, sizeof(c->download_url));
+				snprintf(c->download_url, sizeof(c->download_url), "%s", val);
 				c->perform_download = 1;
 
 				// Require networking for the download
@@ -344,7 +345,7 @@ static void parse_command_line(FILE* flog, struct config* c) {
 
 			// postinstall script
 			} else if (strcmp(key, "installer.postinstall") == 0) {
-				strncpy(c->postinstall, val, sizeof(c->postinstall));
+				snprintf(c->postinstall, sizeof(c->postinstall), "%s", val);
 
 				// Require networking for the download
 				c->require_networking = 1;

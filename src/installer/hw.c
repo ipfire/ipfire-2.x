@@ -324,6 +324,7 @@ static unsigned long long hw_block_device_get_size(const char* dev) {
 struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** disks = ret;
+	char size_str[32];
 
 	// Determine the disk device of source if it is a partition
 	const char* sourcedisk = NULL;
@@ -388,7 +389,7 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 
 		disk->ref = 1;
 
-		strncpy(disk->path, dev_path, sizeof(disk->path));
+		snprintf(disk->path, sizeof(disk->path), "%s", dev_path);
 		const char* p = disk->path + 5;
 
 		disk->size = size;
@@ -401,7 +402,7 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 			vendor = udev_device_get_sysattr_value(dev, "manufacturer");
 
 		if (vendor)
-			strncpy(disk->vendor, vendor, sizeof(disk->vendor));
+			snprintf(disk->vendor, sizeof(disk->vendor), "%s", vendor);
 		else
 			*disk->vendor = '\0';
 
@@ -413,12 +414,11 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 			model = udev_device_get_sysattr_value(dev, "product");
 
 		if (model)
-			strncpy(disk->model, model, sizeof(disk->model));
+			snprintf(disk->model, sizeof(disk->model), "%s", model);
 		else
 			*disk->model = '\0';
 
 		// Format description
-		char size_str[STRING_SIZE];
 		snprintf(size_str, sizeof(size_str), "%4.1fGB", (double)disk->size / pow(1024, 3));
 
 		if (*disk->vendor && *disk->model) {
