@@ -285,7 +285,7 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 	struct hw_disk** disks = ret;
 
 	// Determine the disk device of source if it is a partition
-	char* sourcedisk = NULL;
+	const char* sourcedisk = NULL;
 	char syssource[PATH_MAX];
 	(void)snprintf(syssource, sizeof(syssource) - 1, "/sys/class/block/%s", sourcedrive + 5);
 	struct udev_device* s_dev = udev_device_new_from_syspath(hw->udev, syssource);
@@ -424,7 +424,7 @@ void hw_free_disks(struct hw_disk** disks) {
 	free(disks);
 }
 
-unsigned int hw_count_disks(const struct hw_disk** disks) {
+unsigned int hw_count_disks(struct hw_disk** disks) {
 	unsigned int ret = 0;
 
 	while (*disks++)
@@ -437,7 +437,7 @@ struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** selected_disks = ret;
 
-	unsigned int num_disks = hw_count_disks((const struct hw_disk**)disks);
+	unsigned int num_disks = hw_count_disks(disks);
 
 	for (unsigned int i = 0; i < num_disks; i++) {
 		if (!selection || selection[i]) {
@@ -454,7 +454,7 @@ struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection) {
 	return ret;
 }
 
-struct hw_disk** hw_select_first_disk(const struct hw_disk** disks) {
+struct hw_disk** hw_select_first_disk(struct hw_disk** disks) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** selected_disks = ret;
 

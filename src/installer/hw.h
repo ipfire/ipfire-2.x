@@ -136,9 +136,9 @@ char* hw_find_source_medium(struct hw* hw);
 
 struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive);
 void hw_free_disks(struct hw_disk** disks);
-unsigned int hw_count_disks(const struct hw_disk** disks);
+unsigned int hw_count_disks(struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);
-struct hw_disk** hw_select_first_disk(const struct hw_disk** disks);
+struct hw_disk** hw_select_first_disk(struct hw_disk** disks);
 
 struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct hw_disk** disks,
 	int disable_swap, int filesystem);

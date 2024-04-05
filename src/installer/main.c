@@ -192,11 +192,11 @@ static int newtLicenseBox(const char* title, const char* text, int width, int he
 	return ret;
 }
 
-int write_lang_configs(char* lang) {
+int write_lang_configs(const char* lang) {
 	struct keyvalue *kv = initkeyvalues();
 
 	/* default stuff for main/settings. */
-	replacekeyvalue(kv, "LANGUAGE", lang);
+	replacekeyvalue(kv, "LANGUAGE", (char*)lang);
 	replacekeyvalue(kv, "HOSTNAME", DISTRO_SNAME);
 	replacekeyvalue(kv, "THEME", "ipfire");
 	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "/main/settings");
@@ -279,7 +279,7 @@ static struct config {
 	int disable_swap;
 	char download_url[STRING_SIZE];
 	char postinstall[STRING_SIZE];
-	char* language;
+	const char* language;
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
@@ -606,7 +606,7 @@ int main(int argc, char *argv[]) {
 		// or if we are running in unattended mode, we will select
 		// the first disk and go with that one
 		} else if ((num_disks == 1) || (config.unattended && num_disks >= 1)) {
-			selected_disks = hw_select_first_disk((const struct hw_disk**)disks);
+			selected_disks = hw_select_first_disk(disks);
 
 		// more than one usable disk has been found and
 		// the user needs to choose what to do with them
