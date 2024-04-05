@@ -377,7 +377,7 @@ int main(int argc, char *argv[]) {
 	FILE *copying;
 
 	setlocale(LC_ALL, "");
-	sethostname(DISTRO_SNAME, 10);
+	sethostname(DISTRO_SNAME, strlen(DISTRO_SNAME));
 
 	/* Log file/terminal stuff. */
 	if (argc >= 2) {
