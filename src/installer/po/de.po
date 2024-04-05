@@ -258,7 +258,7 @@ msgstr "XFS-Dateisystem"
 
 #: main.c:699
 msgid "BTRFS Filesystem (EXPERIMENTAL)"
-msgstr ""
+msgstr "BTRFS-Dateisystem (EXPERIMENTELL)"
 
 #: main.c:713
 msgid "Filesystem Selection"
