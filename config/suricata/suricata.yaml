@@ -768,16 +768,16 @@ security:
   limit-noproc: true
   # Use landlock security module under Linux
   landlock:
-    enabled: no
+    enabled: yes
     directories:
-      #write:
-      #  - @e_rundir@
+      write:
+        - /run
       # /usr and /etc folders are added to read list to allow
       # file magic to be used.
       read:
-        - /usr/
-        - /etc/
-        - @e_sysconfdir@
+        - /usr/share/misc/magic.mgc
+        - /var/ipfire/suricata/
+        - /var/lib/suricata/rules/
 
   lua:
     # Allow Lua rules. Disabled by default.
