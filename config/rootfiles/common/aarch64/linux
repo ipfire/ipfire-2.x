@@ -7332,6 +7332,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM_PMUV3
 #lib/modules/KVER-ipfire/build/include/config/ARM_PMU_ACPI
 #lib/modules/KVER-ipfire/build/include/config/ARM_PSCI_FW
+#lib/modules/KVER-ipfire/build/include/config/ARM_RASPBERRYPI_CPUFREQ
 #lib/modules/KVER-ipfire/build/include/config/ARM_RK3399_DMC_DEVFREQ
 #lib/modules/KVER-ipfire/build/include/config/ARM_SCMI_CPUFREQ
 #lib/modules/KVER-ipfire/build/include/config/ARM_SCMI_HAVE_MSG
@@ -7696,6 +7697,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CLK_LS1028A_PLLDIG
 #lib/modules/KVER-ipfire/build/include/config/CLK_PX30
 #lib/modules/KVER-ipfire/build/include/config/CLK_QORIQ
+#lib/modules/KVER-ipfire/build/include/config/CLK_RASPBERRYPI
 #lib/modules/KVER-ipfire/build/include/config/CLK_RK3308
 #lib/modules/KVER-ipfire/build/include/config/CLK_RK3328
 #lib/modules/KVER-ipfire/build/include/config/CLK_RK3368
@@ -8507,7 +8509,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_USER_HELPER
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
 #lib/modules/KVER-ipfire/build/include/config/GARP
-#lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
+#lib/modules/KVER-ipfire/build/include/config/GCC10_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC_ASM_GOTO_OUTPUT_WORKAROUND
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS
