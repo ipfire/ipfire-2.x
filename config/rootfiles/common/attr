@@ -1,6 +1,7 @@
 usr/bin/attr
 usr/bin/getfattr
 usr/bin/setfattr
+#usr/etc
 #usr/etc/xattr.conf
 #usr/include/attr
 #usr/include/attr/attributes.h
