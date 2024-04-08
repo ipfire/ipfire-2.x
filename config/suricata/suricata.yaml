@@ -776,8 +776,9 @@ security:
       # file magic to be used.
       read:
         - /usr/share/misc/magic.mgc
-        - /var/ipfire/suricata/
-        - /var/lib/suricata/rules/
+        - /usr/share/suricata
+        - /var/ipfire/suricata
+        - /var/lib/suricata
 
   lua:
     # Allow Lua rules. Disabled by default.
