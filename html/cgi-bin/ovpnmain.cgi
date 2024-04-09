@@ -948,6 +948,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     #DAN this value has to leave.
 #new settings for daemon
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
+    $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
     $vpnsettings{'LOG_VERB'} = $cgiparams{'LOG_VERB'};
     $vpnsettings{'KEEPALIVE_1'} = $cgiparams{'KEEPALIVE_1'};
     $vpnsettings{'KEEPALIVE_2'} = $cgiparams{'KEEPALIVE_2'};
@@ -981,6 +982,12 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 			goto ADV_ERROR;
 		}
 	}
+
+	# Check MTU
+    if (($cgiparams{'DMTU'} eq "") || (($cgiparams{'DMTU'}) < 1280 )) {
+        $errormessage = $Lang::tr{'invalid mtu input'};
+        goto ADV_ERROR;
+    }
 
     if ($cgiparams{'FRAGMENT'} eq '') {
     	delete $vpnsettings{'FRAGMENT'};
@@ -1356,10 +1363,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
         $errormessage = $Lang::tr{'invalid input'};
         goto SETTINGS_ERROR;
     }
-    if ((length($cgiparams{'DMTU'})==0) || (($cgiparams{'DMTU'}) < 1000 )) {
-        $errormessage = $Lang::tr{'invalid mtu input'};
-        goto SETTINGS_ERROR;
-    }
 
     unless (&General::validport($cgiparams{'DDEST_PORT'})) {
 	$errormessage = $Lang::tr{'invalid port'};
@@ -1382,7 +1385,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
-    $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
 
 #new settings for daemon
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
@@ -2726,6 +2728,9 @@ ADV_ERROR:
 	if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA512';
 	}
+	if ($cgiparams{'DMTU'} eq '') {
+		$cgiparams{'DMTU'} =  '1400';
+	}
     if ($cgiparams{'MAX_CLIENTS'} eq '') {
 		$cgiparams{'MAX_CLIENTS'} =  '100';
     }
@@ -2961,6 +2966,13 @@ END
 				<option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
 				<option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option>
 			</select>
+		</td>
+	</tr>
+
+	<tr>
+		<td class='base'>$Lang::tr{'mtu'}</td>
+		<td>
+			<input type='number' name='DMTU' value='$cgiparams{'DMTU'}' min="1280" max="9000" />
 		</td>
 	</tr>
 
@@ -5175,9 +5187,6 @@ END
     if ($cgiparams{'DDEST_PORT'} eq '') {
 		$cgiparams{'DDEST_PORT'} =  '1194';
     }
-    if ($cgiparams{'DMTU'} eq '') {
-		$cgiparams{'DMTU'} =  '1400';
-    }
     if ($cgiparams{'MSSFIX'} eq '') {
 		$cgiparams{'MSSFIX'} = 'off';
     }
@@ -5248,8 +5257,6 @@ END
         <td></td>
         <td class='boldbase'>$Lang::tr{'destination port'}:</td>
         <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
-    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
-        <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}' size='5' /></td>
     </tr>
 
 	<tr><td colspan='4'><br></td></tr>
