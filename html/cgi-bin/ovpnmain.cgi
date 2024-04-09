@@ -312,11 +312,7 @@ sub writeserverconf {
     print CONF "group nobody\n";
     print CONF "persist-key\n";
     print CONF "persist-tun\n";
-	if ($sovpnsettings{LOG_VERB} ne '') {
-		print CONF "verb $sovpnsettings{LOG_VERB}\n";
-	} else {
-		print CONF "verb 3\n";
-	}
+	print CONF "verb 3\n";
 
     print CONF "# Log clients connecting/disconnecting\n";
     print CONF "client-connect \"/usr/sbin/openvpn-metrics client-connect\"\n";
@@ -939,7 +935,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
-    $vpnsettings{'LOG_VERB'} = $cgiparams{'LOG_VERB'};
     $vpnsettings{'KEEPALIVE_1'} = $cgiparams{'KEEPALIVE_1'};
     $vpnsettings{'KEEPALIVE_2'} = $cgiparams{'KEEPALIVE_2'};
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
@@ -2743,9 +2738,6 @@ ADV_ERROR:
     if ($cgiparams{'KEEPALIVE_2'} eq '') {
 		$cgiparams{'KEEPALIVE_2'} =  '60';
     }
-    if ($cgiparams{'LOG_VERB'} eq '') {
-		$cgiparams{'LOG_VERB'} =  '3';
-    }
     if ($cgiparams{'TLSAUTH'} eq '') {
 		$cgiparams{'TLSAUTH'} = 'off';
     }
@@ -2766,19 +2758,6 @@ ADV_ERROR:
     $checked{'MSSFIX'}{'off'} = '';
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
-    $selected{'LOG_VERB'}{'0'} = '';
-    $selected{'LOG_VERB'}{'1'} = '';
-    $selected{'LOG_VERB'}{'2'} = '';
-    $selected{'LOG_VERB'}{'3'} = '';
-    $selected{'LOG_VERB'}{'4'} = '';
-    $selected{'LOG_VERB'}{'5'} = '';
-    $selected{'LOG_VERB'}{'6'} = '';
-    $selected{'LOG_VERB'}{'7'} = '';
-    $selected{'LOG_VERB'}{'8'} = '';
-    $selected{'LOG_VERB'}{'9'} = '';
-    $selected{'LOG_VERB'}{'10'} = '';
-    $selected{'LOG_VERB'}{'11'} = '';
-    $selected{'LOG_VERB'}{$cgiparams{'LOG_VERB'}} = 'SELECTED';
 
 	# Split data ciphers
 	my @data_ciphers = split(/\|/, $cgiparams{'DATACIPHERS'});
@@ -3025,34 +3004,6 @@ END
 		<td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
 	</tr>
 </table>
-
-<hr size='1'>
-<table width='100%'>
-    <tr>
-	<td class='base'><b>$Lang::tr{'log-options'}</b></td>
-    </tr>
-    <tr>
-	<td width='20%'></td> <td width='30%'> </td><td width='25%'> </td><td width='25%'></td>
-    </tr>
-
-    <tr><td class='base'>VERB</td>
-        <td><select name='LOG_VERB'>
-			<option value='0'  $selected{'LOG_VERB'}{'0'}>0</option>
-			<option value='1'  $selected{'LOG_VERB'}{'1'}>1</option>
-			<option value='2'  $selected{'LOG_VERB'}{'2'}>2</option>
-			<option value='3'  $selected{'LOG_VERB'}{'3'}>3</option>
-			<option value='4'  $selected{'LOG_VERB'}{'4'}>4</option>
-			<option value='5'  $selected{'LOG_VERB'}{'5'}>5</option>
-			<option value='6'  $selected{'LOG_VERB'}{'6'}>6</option>
-			<option value='7'  $selected{'LOG_VERB'}{'7'}>7</option>
-			<option value='8'  $selected{'LOG_VERB'}{'8'}>8</option>
-			<option value='9'  $selected{'LOG_VERB'}{'9'}>9</option>
-			<option value='10' $selected{'LOG_VERB'}{'10'}>10</option>
-			<option value='11' $selected{'LOG_VERB'}{'11'}>11</option>
-	</td></select>
-    </table>
-
-<hr size='1'>
 END
 
 if ( -e "/var/run/openvpn.pid"){
