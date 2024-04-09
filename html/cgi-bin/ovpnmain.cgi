@@ -240,9 +240,6 @@ sub writeserverconf {
 		}
 	}
 
-	if ($sovpnsettings{CLIENT2CLIENT} eq 'on') {
-	print CONF "client-to-client\n";
-    }
     if ($sovpnsettings{MSSFIX} eq 'on') {
 		print CONF "mssfix\n";
     } else {
@@ -937,7 +934,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
-    $vpnsettings{'CLIENT2CLIENT'} = $cgiparams{'CLIENT2CLIENT'};
     $vpnsettings{'ADDITIONAL_CONFIGS'} = $cgiparams{'ADDITIONAL_CONFIGS'};
     $vpnsettings{'DHCP_DOMAIN'} = $cgiparams{'DHCP_DOMAIN'};
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
@@ -2722,9 +2718,6 @@ ADV_ERROR:
     $selected{'DPROTOCOL'}{'tcp'} = '';
     $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
 
-    $checked{'CLIENT2CLIENT'}{'off'} = '';
-    $checked{'CLIENT2CLIENT'}{'on'} = '';
-    $checked{'CLIENT2CLIENT'}{$cgiparams{'CLIENT2CLIENT'}} = 'CHECKED';
     $checked{'REDIRECT_GW_DEF1'}{'off'} = '';
     $checked{'REDIRECT_GW_DEF1'}{'on'} = '';
     $checked{'REDIRECT_GW_DEF1'}{$cgiparams{'REDIRECT_GW_DEF1'}} = 'CHECKED';
@@ -2939,11 +2932,6 @@ END
 		<td>
 			<input type='number' name='DMTU' value='$cgiparams{'DMTU'}' min="1280" max="9000" />
 		</td>
-	</tr>
-
-	<tr>
-		<td class='base'>Client-To-Client</td>
-		<td><input type='checkbox' name='CLIENT2CLIENT' $checked{'CLIENT2CLIENT'}{'on'} /></td>
 	</tr>
 
 	<tr>
