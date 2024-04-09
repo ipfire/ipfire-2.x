@@ -928,17 +928,6 @@ sub writecollectdconf {
 }
 
 ###
-### OpenVPN Server Control
-###
-
-if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}) {
-	&General::system("/usr/local/bin/openvpnctrl", "rw", "start");
-
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}) {
-	&General::system("/usr/local/bin/openvpnctrl", "rw", "stop");
-}
-
-###
 ### Save Advanced options
 ###
 
@@ -1387,9 +1376,19 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
 
-#new settings for daemon
+	# Store our configuration
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &writeserverconf();#hier ok
+
+	# Write the OpenVPN server configuration
+    &writeserverconf();
+
+	# Start/Stop the server
+	if ($vpnsettings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/openvpnctrl", "rw", "restart");
+	} else {
+		&General::system("/usr/local/bin/openvpnctrl", "rw", "stop");
+	}
+
 SETTINGS_ERROR:
 ###
 ### Reset all step 2
@@ -5272,7 +5271,6 @@ END
 						<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 						<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />
 						<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />
-						<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' />
 					</td>
 				</tr>
 			</table>
