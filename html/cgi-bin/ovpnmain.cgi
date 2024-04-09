@@ -98,9 +98,6 @@ my $col="";
 # Set default CGI parameters
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
-$cgiparams{'NAT'} = 'off';
-$cgiparams{'COMPRESSION'} = 'off';
-$cgiparams{'ONLY_PROPOSED'} = 'off';
 $cgiparams{'ACTION'} = '';
 $cgiparams{'CA_NAME'} = '';
 $cgiparams{'DHCP_DOMAIN'} = '';
