@@ -396,13 +396,10 @@ table.form tr.action td {
 	text-align: right;
 }
 
-<<<<<<< HEAD
 table.form tr.action td form {
 	display: inline;
 }
 
-=======
->>>>>>> f3e0bbd58 (ovpnmain.cgi: Redesign the roadwarrior section)
 .tbl {
 	width: 100%;
 }
@@ -443,10 +440,6 @@ table.form tr.action td form {
 	background-color: var(--color-yellow);
 }
 
-=======
->>>>>>> 7b19c1312 (web: Create a function to show the service status)
-=======
->>>>>>> 17ed2e345 (CSS: Automatically stripe all tables)
 .tbl th:first-child {
 	border-left: 1px solid #363636;
 	border-top: 1px solid #363636;
@@ -583,10 +576,6 @@ table.form tr.action td form {
 	color: var(--color-black-invert);
 }
 
-=======
->>>>>>> 7b19c1312 (web: Create a function to show the service status)
-=======
->>>>>>> 1829cd5c9 (vulnerabilities.cgi: Use CSS to colour the table)
 table.fw-nat tbody tr td {
 	height: 2.25em;
 }
