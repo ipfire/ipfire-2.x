@@ -5234,34 +5234,51 @@ END
 	});
 
 	print <<END;
-    <table width='100%' border='0'>
-    <form method='post'>
-    <tr><td class='boldbase'>$Lang::tr{'enabled'}</td>
-    <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
+	    <form method='POST'>
+		    <table class="form">
+				<tr>
+					<td class='boldbase'>
+						$Lang::tr{'enabled'}
+					</td>
+					<td>
+						<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
+					</td>
+				</tr>
 
-	<tr><td colspan='4'><br></td></tr>
-	<tr>
-		<td class='base'><b>$Lang::tr{'net config'}:</b></td>
-	</tr>
-    <tr><td colspan='1'><br></td></tr>
+				<tr>
+					<td colspan='2'></td>
+				</tr>
 
-    <tr><td class='base' nowrap='nowrap' colspan='2'>$Lang::tr{'local vpn hostname/ip'}:<br /><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
-	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
+				<tr>
+					<td>
+						$Lang::tr{'local vpn hostname/ip'}
+					</td>
+					<td>
+						<input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'ovpn subnet'}
+					</td>
+					<td>
+						<input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' />
+					</td>
+				</tr>
+
+				<tr class="action">
+					<td colspan="2">
+						<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+						<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />
+						<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />
+						<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' />
+					</td>
+				</tr>
+			</table>
+		</form>
 END
-;
 
-	print "<tr><td align='right' colspan='4'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />";
-	print "<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />";
-	print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />";
-	if (( -e "${General::swroot}/ovpn/ca/cacert.pem" &&
-	     -e "${General::swroot}/ovpn/certs/servercert.pem" &&
-	     -e "${General::swroot}/ovpn/certs/serverkey.pem") &&
-	    ($cgiparams{'ENABLED'} eq 'on')) {
-	    print "<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' /></td></tr>";
-	} else {
-	    print "<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' disabled='disabled' /></td></tr>";
-	}
-    print "</form></table>";
     &Header::closebox();
 
     if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
