@@ -1542,7 +1542,6 @@ buildipfire() {
   lfsmake2 lynis
   lfsmake2 sshfs
   lfsmake2 taglib
-  lfsmake2 sslh
   lfsmake2 perl-gettext
   lfsmake2 perl-Sort-Naturally
   lfsmake2 vdradmin
