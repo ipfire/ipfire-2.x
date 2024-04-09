@@ -80,9 +80,6 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
 	font-size: 20px;
-	font-weight: normal;
-	letter-spacing: -1px;
-	text-align: left;
 }
 
 br.clear {
