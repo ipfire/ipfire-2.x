@@ -457,6 +457,7 @@ WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: local master
+WARNING: translation string unused: local vpn hostname/ip
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
@@ -597,6 +598,7 @@ WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn on blue
 WARNING: translation string unused: ovpn on orange
 WARNING: translation string unused: ovpn on red
+WARNING: translation string unused: ovpn server status
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -744,6 +746,8 @@ WARNING: translation string unused: ssport forwarding
 WARNING: translation string unused: ssproxy graphs
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
+WARNING: translation string unused: start ovpn server
+WARNING: translation string unused: stop ovpn server
 WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
@@ -1305,8 +1309,10 @@ WARNING: untranslated string: ovpn add conf = Additional configuration
 WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn crypt options = Cryptographic options
+WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
+WARNING: untranslated string: ovpn fqdn = FQDN
 WARNING: untranslated string: ovpn ha = Hash algorithm
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server

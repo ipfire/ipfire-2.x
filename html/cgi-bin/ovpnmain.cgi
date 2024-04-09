@@ -5250,7 +5250,7 @@ END
 
 				<tr>
 					<td>
-						$Lang::tr{'local vpn hostname/ip'}
+						$Lang::tr{'ovpn fqdn'}
 					</td>
 					<td>
 						<input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' />
@@ -5259,7 +5259,7 @@ END
 
 				<tr>
 					<td>
-						$Lang::tr{'ovpn subnet'}
+						$Lang::tr{'ovpn dynamic client subnet'}
 					</td>
 					<td>
 						<input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' />

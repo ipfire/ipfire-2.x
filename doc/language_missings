@@ -89,8 +89,10 @@
 < oops something went wrong
 < optional
 < ovpn ciphers
+< ovpn dynamic client subnet
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
@@ -151,8 +153,10 @@
 < mdstat
 < online
 < ovpn ciphers
+< ovpn dynamic client subnet
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn no cipher selected
 < ovpn roadwarrior settings
 < ovpn unsupported cipher selected
@@ -207,8 +211,10 @@
 < online
 < oops something went wrong
 < ovpn ciphers
+< ovpn dynamic client subnet
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
@@ -677,9 +683,11 @@
 < ovpn add conf
 < ovpn ciphers
 < ovpn connection name
+< ovpn dynamic client subnet
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
@@ -1328,10 +1336,12 @@
 < ovpn ciphers
 < ovpn connection name
 < ovpn crypt options
+< ovpn dynamic client subnet
 < ovpn engines
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn no cipher selected
@@ -2297,12 +2307,14 @@
 < ovpn ciphers
 < ovpn connection name
 < ovpn crypt options
+< ovpn dynamic client subnet
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn mgmt in root range
@@ -3405,10 +3417,12 @@
 < ovpn ciphers
 < ovpn connection name
 < ovpn crypt options
+< ovpn dynamic client subnet
 < ovpn engines
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn mgmt in root range
@@ -4014,9 +4028,11 @@
 < otp qrcode
 < ovpn ciphers
 < ovpn connection name
+< ovpn dynamic client subnet
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
 < ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
