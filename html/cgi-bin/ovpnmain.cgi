@@ -252,9 +252,9 @@ sub writeserverconf {
 		print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
     }
 
-    if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {
-	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
-    }
+	# Regularly send keep-alive packets
+	print CONF "keepalive 10 60\n";
+
     print CONF "status-version 1\n";
     print CONF "status /var/run/ovpnserver.log 30\n";
 
@@ -935,8 +935,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
-    $vpnsettings{'KEEPALIVE_1'} = $cgiparams{'KEEPALIVE_1'};
-    $vpnsettings{'KEEPALIVE_2'} = $cgiparams{'KEEPALIVE_2'};
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
     $vpnsettings{'CLIENT2CLIENT'} = $cgiparams{'CLIENT2CLIENT'};
@@ -1065,22 +1063,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     }
     if ((length($cgiparams{'MAX_CLIENTS'}) == 0) || (($cgiparams{'MAX_CLIENTS'}) < 1 ) || (($cgiparams{'MAX_CLIENTS'}) > 1024 )) {
         $errormessage = $Lang::tr{'invalid input for max clients'};
-        goto ADV_ERROR;
-    }
-    if ($cgiparams{'KEEPALIVE_1'} ne '') {
-	if ($cgiparams{'KEEPALIVE_1'} !~ /^[0-9]+$/) {
-    	    $errormessage = $Lang::tr{'invalid input for keepalive 1'};
-        goto ADV_ERROR;
-	}
-    }
-    if ($cgiparams{'KEEPALIVE_2'} ne ''){
-	if ($cgiparams{'KEEPALIVE_2'} !~ /^[0-9]+$/) {
-    	    $errormessage = $Lang::tr{'invalid input for keepalive 2'};
-        goto ADV_ERROR;
-	}
-    }
-    if ($cgiparams{'KEEPALIVE_2'} < ($cgiparams{'KEEPALIVE_1'} * 2)){
-        $errormessage = $Lang::tr{'invalid input for keepalive 1:2'};
         goto ADV_ERROR;
     }
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
@@ -2732,12 +2714,6 @@ ADV_ERROR:
     if ($cgiparams{'MAX_CLIENTS'} eq '') {
 		$cgiparams{'MAX_CLIENTS'} =  '100';
     }
-    if ($cgiparams{'KEEPALIVE_1'} eq '') {
-		$cgiparams{'KEEPALIVE_1'} =  '10';
-    }
-    if ($cgiparams{'KEEPALIVE_2'} eq '') {
-		$cgiparams{'KEEPALIVE_2'} =  '60';
-    }
     if ($cgiparams{'TLSAUTH'} eq '') {
 		$cgiparams{'TLSAUTH'} = 'off';
     }
@@ -2996,12 +2972,6 @@ END
 	<tr>
 		<td class='base'>Max-Clients</td>
 		<td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='10' /></td>
-	</tr>
-	<tr>
-		<td class='base'>Keepalive <br />
-		(ping/ping-restart)</td>
-		<td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='10' /></td>
-		<td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
 	</tr>
 </table>
 END
