@@ -948,6 +948,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     #DAN this value has to leave.
 #new settings for daemon
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
+    $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
     $vpnsettings{'LOG_VERB'} = $cgiparams{'LOG_VERB'};
     $vpnsettings{'KEEPALIVE_1'} = $cgiparams{'KEEPALIVE_1'};
@@ -982,6 +983,12 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 			goto ADV_ERROR;
 		}
 	}
+
+	# Check port
+    unless (&General::validport($cgiparams{'DDEST_PORT'})) {
+		$errormessage = $Lang::tr{'invalid port'};
+		goto ADV_ERROR;
+    }
 
 	# Check MTU
     if (($cgiparams{'DMTU'} eq "") || (($cgiparams{'DMTU'}) < 1280 )) {
@@ -1364,11 +1371,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
         goto SETTINGS_ERROR;
     }
 
-    unless (&General::validport($cgiparams{'DDEST_PORT'})) {
-	$errormessage = $Lang::tr{'invalid port'};
-	goto SETTINGS_ERROR;
-    }
-
 	# Create ta.key for tls-auth if not presant
 	if ($cgiparams{'TLSAUTH'} eq 'on') {
 		if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
@@ -1384,7 +1386,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
-    $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
 
 #new settings for daemon
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
@@ -2728,6 +2729,9 @@ ADV_ERROR:
 	if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA512';
 	}
+    if ($cgiparams{'DDEST_PORT'} eq '') {
+		$cgiparams{'DDEST_PORT'} =  '1194';
+    }
 	if ($cgiparams{'DMTU'} eq '') {
 		$cgiparams{'DMTU'} =  '1400';
 	}
@@ -2966,6 +2970,13 @@ END
 				<option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
 				<option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option>
 			</select>
+		</td>
+	</tr>
+
+	<tr>
+		<td class='base'>$Lang::tr{'destination port'}</td>
+		<td>
+			<input type='number' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' />
 		</td>
 	</tr>
 
@@ -5184,9 +5195,6 @@ END
     }
 
 #default setzen
-    if ($cgiparams{'DDEST_PORT'} eq '') {
-		$cgiparams{'DDEST_PORT'} =  '1194';
-    }
     if ($cgiparams{'MSSFIX'} eq '') {
 		$cgiparams{'MSSFIX'} = 'off';
     }
@@ -5253,13 +5261,6 @@ END
 
     <tr><td class='base' nowrap='nowrap' colspan='2'>$Lang::tr{'local vpn hostname/ip'}:<br /><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
 	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
-    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
-        <td></td>
-        <td class='boldbase'>$Lang::tr{'destination port'}:</td>
-        <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
-    </tr>
-
-	<tr><td colspan='4'><br></td></tr>
 END
 ;
 
