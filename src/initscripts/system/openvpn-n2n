@@ -251,6 +251,9 @@ start() {
 		return 1
 	fi
 
+	# Load the tun module
+	modprobe tun
+
 	boot_mesg "Starting OpenVPN N2N connection '${name}'..."
 
 	PIDFILE="/var/run/${name}n2n.pid" \
