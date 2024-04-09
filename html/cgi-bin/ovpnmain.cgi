@@ -5223,20 +5223,6 @@ END
 		exit 0;
 	}
 
-    my $srunning = "no";
-    if ( -e "/var/run/openvpn.pid"){
-	$srunning ="yes";
-    }
-
-
-	# Show the service status
-	&Header::ServiceStatus({
-		$Lang::tr{'ovpn roadwarrior server'} => {
-			"process" => "openvpn",
-			"pidfile" => "/var/run/openvpn.pid",
-		}
-	});
-
     &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn roadwarrior settings'});
 
 	# Show the service status
