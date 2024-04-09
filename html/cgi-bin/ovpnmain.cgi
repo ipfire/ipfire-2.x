@@ -947,6 +947,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     #DAN do we really need (to to check) this value? Besides if we listen on blue and orange too,
     #DAN this value has to leave.
 #new settings for daemon
+    $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'LOG_VERB'} = $cgiparams{'LOG_VERB'};
     $vpnsettings{'KEEPALIVE_1'} = $cgiparams{'KEEPALIVE_1'};
     $vpnsettings{'KEEPALIVE_2'} = $cgiparams{'KEEPALIVE_2'};
@@ -1380,7 +1381,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
-    $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
 
@@ -2741,6 +2741,11 @@ ADV_ERROR:
     if ($cgiparams{'TLSAUTH'} eq '') {
 		$cgiparams{'TLSAUTH'} = 'off';
     }
+
+    $selected{'DPROTOCOL'}{'udp'} = '';
+    $selected{'DPROTOCOL'}{'tcp'} = '';
+    $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
+
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';
     $checked{'CLIENT2CLIENT'}{$cgiparams{'CLIENT2CLIENT'}} = 'CHECKED';
@@ -2947,6 +2952,16 @@ END
 
 	<tr>
 		<td width='20%'></td> <td width='15%'> </td><td width='35%'> </td><td width='20%'></td><td width='35%'></td>
+	</tr>
+
+	<tr>
+		<td class='base'>$Lang::tr{'protocol'}</td>
+		<td>
+			<select name='DPROTOCOL'>
+				<option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
+				<option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option>
+			</select>
+		</td>
 	</tr>
 
 	<tr>
@@ -5174,10 +5189,6 @@ END
     $checked{'ENABLED'}{'on'} = '';
     $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
-    $selected{'DPROTOCOL'}{'udp'} = '';
-    $selected{'DPROTOCOL'}{'tcp'} = '';
-    $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
-
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
@@ -5234,8 +5245,7 @@ END
     <tr><td class='base' nowrap='nowrap' colspan='2'>$Lang::tr{'local vpn hostname/ip'}:<br /><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
 	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
-        <td><select name='DPROTOCOL'><option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
-               			    <option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option></select></td>
+        <td></td>
         <td class='boldbase'>$Lang::tr{'destination port'}:</td>
         <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
