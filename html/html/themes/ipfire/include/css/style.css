@@ -390,6 +390,12 @@ table.form tr.header td {
 	margin-top: 1rem;
 }
 
+table.form tr.header td {
+	font-weight: bold;
+
+	margin-top: 1rem;
+}
+
 table.form tr.action td {
 	padding-top: 1rem;
 

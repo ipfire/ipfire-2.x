@@ -249,6 +249,7 @@ WARNING: translation string unused: dhcp fixed lease help1
 WARNING: translation string unused: dhcp mode
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dhcp-options
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
@@ -465,6 +466,9 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for keepalive 1
+WARNING: translation string unused: invalid input for keepalive 1:2
+WARNING: translation string unused: invalid input for keepalive 2
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
 WARNING: translation string unused: invalid port list
@@ -512,6 +516,7 @@ WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log view
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: log-options
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
@@ -547,6 +552,7 @@ WARNING: translation string unused: meaning
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
+WARNING: translation string unused: misc-options
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modem on com1
@@ -632,6 +638,7 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
+WARNING: translation string unused: ovpn add conf
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
@@ -650,6 +657,7 @@ WARNING: translation string unused: ovpn on blue
 WARNING: translation string unused: ovpn on orange
 WARNING: translation string unused: ovpn on red
 WARNING: translation string unused: ovpn reneg sec
+WARNING: translation string unused: ovpn routes push options
 WARNING: translation string unused: ovpn server status
 WARNING: translation string unused: ovpn warning rfc3280
 WARNING: translation string unused: ovpn_fastio
@@ -755,6 +763,7 @@ WARNING: translation string unused: selecttraffic
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
 WARNING: translation string unused: server reserved
+WARNING: translation string unused: server restart
 WARNING: translation string unused: server string
 WARNING: translation string unused: service added
 WARNING: translation string unused: service removed
@@ -1045,12 +1054,19 @@ WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: online = Online
 WARNING: untranslated string: ovpn ciphers = Ciphers
+WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
+WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
 WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn fqdn = FQDN
+WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
+WARNING: untranslated string: ovpn protocol settings = Protocol Settings
+WARNING: untranslated string: ovpn push default route = Push Default Route
 WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
+WARNING: untranslated string: ovpn routing settings = Routing Settings
+WARNING: untranslated string: ovpn transport protocol = Transport Protocol
 WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: quality of service = Quality of Service

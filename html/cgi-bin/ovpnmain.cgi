@@ -2725,16 +2725,54 @@ ADV_ERROR:
     &Header::opensection();
 
     print <<END;
-	    <form method='post' enctype='multipart/form-data'>
-			<table width='100%' border=0>
+	    <form method='POST' enctype='multipart/form-data'>
+			<h6>$Lang::tr{'ovpn protocol settings'}</h6>
+
+			<table class="form">
 				<tr>
-					<td colspan='2'>
-						<b>$Lang::tr{'ovpn crypt options'}</b>
+					<td>$Lang::tr{'ovpn transport protocol'}</td>
+					<td>
+						<select name='DPROTOCOL'>
+							<option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
+							<option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option>
+						</select>
 					</td>
 				</tr>
 
 				<tr>
-					<td width="25%">
+					<td>$Lang::tr{'destination port'}</td>
+					<td>
+						<input type='number' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' />
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'mtu'}</td>
+					<td>
+						<input type='number' name='DMTU' value='$cgiparams{'DMTU'}' min="1280" max="9000" />
+					</td>
+				</tr>
+
+				<tr>
+					<td>mssfix</td>
+					<td>
+						<input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} />
+					</td>
+				</tr>
+
+				<tr>
+					<td>fragment</td>
+					<td>
+						<input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' />
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'ovpn crypto settings'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>
 						$Lang::tr{'ovpn ciphers'}
 					</td>
 
@@ -2809,16 +2847,18 @@ END
 						</select>
 					</td>
 				</tr>
+
 				<tr>
 					<td></td>
 					<td>
 						$Lang::tr{'ovpn fallback cipher help'}
 					</td>
 				</tr>
+			</table>
 
-				<tr>
-					<td colspan='2'><b>$Lang::tr{'dhcp-options'}</b></td>
-				</tr>
+			<h6>$Lang::tr{'ovpn dhcp settings'}</h6>
+
+			<table class="form">
 				<tr>
 					<td>Domain</td>
 					<td>
@@ -2837,9 +2877,18 @@ END
 						<input type='TEXT' name='DHCP_WINS' value='$cgiparams{'DHCP_WINS'}' size='30' />
 					</td>
 				</tr>
+			</table>
+
+			<h6>$Lang::tr{'ovpn routing settings'}</h6>
+
+			<table class="form">
 				<tr>
-					<td colspan='2'><b>$Lang::tr{'ovpn routes push options'}</b></td>
+					<td>$Lang::tr{'ovpn push default route'}</td>
+					<td>
+						<input type='checkbox' name='REDIRECT_GW_DEF1' $checked{'REDIRECT_GW_DEF1'}{'on'} />
+					</td>
 				</tr>
+
 				<tr>
 					<td>$Lang::tr{'ovpn routes push'}</td>
 					<td>
@@ -2848,101 +2897,28 @@ END
 				</tr>
 			</table>
 
-<hr size='1'>
+			<h6>$Lang::tr{'ovpn misc settings'}</h6>
 
-<table width='100%'>
-	<tr>
-		<td class='base'><b>$Lang::tr{'misc-options'}</b></td>
-	</tr>
+			<table class="form">
+				<tr>
+					<td>Max-Clients</td>
+					<td>
+						<input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' />
+					</td>
+				</tr>
 
-	<tr>
-		<td width='20%'></td> <td width='15%'> </td><td width='35%'> </td><td width='20%'></td><td width='35%'></td>
-	</tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'protocol'}</td>
-		<td>
-			<select name='DPROTOCOL'>
-				<option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
-				<option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option>
-			</select>
-		</td>
-	</tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'destination port'}</td>
-		<td>
-			<input type='number' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' />
-		</td>
-	</tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'mtu'}</td>
-		<td>
-			<input type='number' name='DMTU' value='$cgiparams{'DMTU'}' min="1280" max="9000" />
-		</td>
-	</tr>
-
-	<tr>
-		<td class='base'>Redirect-Gateway def1</td>
-		<td><input type='checkbox' name='REDIRECT_GW_DEF1' $checked{'REDIRECT_GW_DEF1'}{'on'} /></td>
-	</tr>
-
-	<tr>
-		<td class='base'>mssfix</td>
-		<td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
-		<td>$Lang::tr{'openvpn default'}: off</td>
-	</tr>
-
-	<tr>
-		<td class='base'>fragment <br></td>
-		<td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
-	</tr>
-
-
-	<tr>
-		<td class='base'>Max-Clients</td>
-		<td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='10' /></td>
-	</tr>
-</table>
+				<tr class="action">
+					<td colspan="2">
+						<input type='submit' name='ACTION' value='$Lang::tr{'save-adv-options'}' />
+						<input type='submit' name='ACTION' value='$Lang::tr{'cancel-adv-options'}' />
+					</td>
+				</tr>
+			</table>
 END
 
-if ( -e "/var/run/openvpn.pid"){
-print"	<br><b><font color='#990000'>$Lang::tr{'attention'}:</b></font><br>
-		$Lang::tr{'server restart'}<br><br>
-		<hr>";
-	print<<END;
-<table width='100%'>
-<tr>
-    <td>&nbsp;</td>
-    <td allign='center'><input type='submit' name='ACTION' value='$Lang::tr{'save-adv-options'}' disabled='disabled' /></td>
-    <td allign='center'><input type='submit' name='ACTION' value='$Lang::tr{'cancel-adv-options'}' /></td>
-    <td>&nbsp;</td>
-</tr>
-</table>
-</form>
-END
-;
-
-
-}else{
-
-	print<<END;
-<table width='100%'>
-<tr>
-    <td>&nbsp;</td>
-    <td allign='center'><input type='submit' name='ACTION' value='$Lang::tr{'save-adv-options'}' /></td>
-    <td allign='center'><input type='submit' name='ACTION' value='$Lang::tr{'cancel-adv-options'}' /></td>
-    <td>&nbsp;</td>
-</tr>
-</table>
-</form>
-END
-;
-}
-    &Header::closebox();
-#    print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
+    &Header::closesection();
     &Header::closebigbox();
+
     &Header::closepage();
     exit(0);
 

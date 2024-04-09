@@ -89,13 +89,20 @@
 < oops something went wrong
 < optional
 < ovpn ciphers
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
+< ovpn routing settings
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < quality of service
 < quick control
@@ -153,12 +160,19 @@
 < mdstat
 < online
 < ovpn ciphers
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior settings
+< ovpn routing settings
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < quality of service
 < rss
@@ -211,13 +225,20 @@
 < online
 < oops something went wrong
 < ovpn ciphers
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
+< ovpn routing settings
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < password has quotation mark
 < processors
@@ -683,16 +704,23 @@
 < ovpn add conf
 < ovpn ciphers
 < ovpn connection name
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
+< ovpn routing settings
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
@@ -1335,7 +1363,8 @@
 < ovpn add conf
 < ovpn ciphers
 < ovpn connection name
-< ovpn crypt options
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn engines
 < ovpn error md5
@@ -1344,12 +1373,17 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn reneg sec
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
+< ovpn routing settings
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
@@ -2306,7 +2340,8 @@
 < ovpn add conf
 < ovpn ciphers
 < ovpn connection name
-< ovpn crypt options
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn engines
 < ovpn errmsg green already pushed
@@ -2318,6 +2353,7 @@
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn mgmt in root range
+< ovpn misc settings
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
 < ovpn mtu-disc maybe
@@ -2328,13 +2364,16 @@
 < ovpn no cipher selected
 < ovpn no connections
 < ovpn port in root range
+< ovpn protocol settings
+< ovpn push default route
 < ovpn reneg sec
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
 < ovpn routes push
-< ovpn routes push options
+< ovpn routing settings
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
@@ -3416,7 +3455,8 @@
 < ovpn add conf
 < ovpn ciphers
 < ovpn connection name
-< ovpn crypt options
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn engines
 < ovpn error md5
@@ -3426,6 +3466,7 @@
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn mgmt in root range
+< ovpn misc settings
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
 < ovpn mtu-disc maybe
@@ -3436,11 +3477,15 @@
 < ovpn no cipher selected
 < ovpn no connections
 < ovpn port in root range
+< ovpn protocol settings
+< ovpn push default route
 < ovpn reneg sec
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
+< ovpn routing settings
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
@@ -4028,16 +4073,23 @@
 < otp qrcode
 < ovpn ciphers
 < ovpn connection name
+< ovpn crypto settings
+< ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior server
 < ovpn roadwarrior settings
+< ovpn routing settings
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy

@@ -204,6 +204,7 @@ WARNING: translation string unused: dhcp fixed lease help1
 WARNING: translation string unused: dhcp mode
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dhcp-options
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
@@ -361,6 +362,9 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for keepalive 1
+WARNING: translation string unused: invalid input for keepalive 1:2
+WARNING: translation string unused: invalid input for keepalive 2
 WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
@@ -397,6 +401,7 @@ WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log view
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: log-options
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
@@ -431,6 +436,7 @@ WARNING: translation string unused: meaning
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
+WARNING: translation string unused: misc-options
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modem on com1
@@ -516,6 +522,7 @@ WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn on blue
 WARNING: translation string unused: ovpn on orange
 WARNING: translation string unused: ovpn on red
+WARNING: translation string unused: ovpn routes push options
 WARNING: translation string unused: ovpn server status
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
@@ -1459,23 +1466,29 @@ WARNING: untranslated string: outgoing compression in bytes per second = Outgoin
 WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Access
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: outgoing traffic in bytes per second = Outgoing Traffic
-WARNING: untranslated string: ovpn add conf = Additional configuration
 WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn connection name = Connection Name
-WARNING: untranslated string: ovpn crypt options = Cryptographic options
+WARNING: untranslated string: ovpn crypt options = unknown string
+WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
+WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
 WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn fqdn = FQDN
 WARNING: untranslated string: ovpn ha = Hash algorithm
 WARNING: untranslated string: ovpn mgmt in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
 WARNING: untranslated string: ovpn no connections = No active OpenVPN connections
 WARNING: untranslated string: ovpn port in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn protocol settings = Protocol Settings
+WARNING: untranslated string: ovpn push default route = Push Default Route
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
+WARNING: untranslated string: ovpn routing settings = Routing Settings
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
+WARNING: untranslated string: ovpn transport protocol = Transport Protocol
 WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pak update = Update
 WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
@@ -1534,7 +1547,6 @@ WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: search = Search
 WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
-WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
 WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
 WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
