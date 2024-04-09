@@ -1027,8 +1027,17 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
         $errormessage = $Lang::tr{'invalid input for max clients'};
         goto ADV_ERROR;
     }
-    &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &writeserverconf();#hier ok
+
+	# Store our configuration
+	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+
+	# Write the server configuration
+	&writeserverconf();
+
+	# Reload the server if it is enabled
+	if ($vpnsettings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/openvpnctrl", "rw", "reload");
+	}
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && $cgiparams{'SIDE'} eq 'server')
