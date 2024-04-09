@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 	font-size: 20px;
 }
 
-select, textarea {
+select, textarea, input[type=text], input[type=number] {
 	width: 100%;
 }
 
