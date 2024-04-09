@@ -95,7 +95,6 @@ $(TARGET) :
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc0.d/K01imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc0.d/K01motion
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc0.d/K01vdradmin
-	ln -sf ../init.d/sslh			/etc/rc.d/rc0.d/K02sslh
 	ln -sf ../init.d/fcron			/etc/rc.d/rc0.d/K08fcron
 	ln -sf ../init.d/apache			/etc/rc.d/rc0.d/K28apache
 	ln -sf ../init.d/sshd			/etc/rc.d/rc0.d/K30sshd
@@ -132,7 +131,6 @@ $(TARGET) :
 	ln -sf ../init.d/apache			/etc/rc.d/rc3.d/S32apache
 	ln -sf ../init.d/fcron			/etc/rc.d/rc3.d/S40fcron
 	ln -sf ../../sysconfig/rc.local		/etc/rc.d/rc3.d/S98rc.local
-	ln -sf ../init.d/sslh			/etc/rc.d/rc3.d/S98sslh
 	ln -sf ../init.d/grub-btrfsd		/etc/rc.d/rc3.d/S99grub-btrfsd
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc3.d/S99imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc3.d/S99motion
@@ -142,7 +140,6 @@ $(TARGET) :
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc6.d/K01imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc6.d/K01motion
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc6.d/K01vdradmin
-	ln -sf ../init.d/sslh			/etc/rc.d/rc6.d/K02sslh
 	ln -sf ../init.d/fcron			/etc/rc.d/rc6.d/K08fcron
 	ln -sf ../init.d/apache			/etc/rc.d/rc6.d/K28apache
 	ln -sf ../init.d/sshd			/etc/rc.d/rc6.d/K30sshd
