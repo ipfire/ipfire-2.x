@@ -5791,7 +5791,7 @@ END
 END
 	;
 
-    if ( $srunning eq "yes" ) {
+    if ($vpnsettings{'ENABLED'} eq "yes") {
 		print "<div align='center'><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'remove x509'}' disabled='disabled' /></div></form>\n";
     } else {
 		print "<div align='center'><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'remove x509'}' /></div></form>\n";
