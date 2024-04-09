@@ -94,8 +94,6 @@ my $configgrp="${General::swroot}/fwhosts/customgroups";
 my $customnet="${General::swroot}/fwhosts/customnetworks";
 my $name;
 my $col="";
-my $local_serverconf = "${General::swroot}/ovpn/scripts/server.conf.local";
-my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
 
 # Set default CGI parameters
 $cgiparams{'ENABLED'} = 'off';
@@ -122,17 +120,6 @@ $cgiparams{'TLSAUTH'} = '';
 unless (-e $routes_push_file) {
 	open(RPF, ">$routes_push_file");
 	close(RPF);
-}
-
-# Create additional files it not already existing
-unless (-e "$local_serverconf") {
-	open(LSC, ">$local_serverconf");
-       close (LSC);
-}
-
-unless (-e "$local_clientconf") {
-       open(LCC, ">$local_clientconf");
-       close (LCC);
 }
 
 ###
@@ -319,23 +306,6 @@ sub writeserverconf {
     print CONF "# Enable Management Socket\n";
     print CONF "management /var/run/openvpn.sock unix\n";
     print CONF "management-client-auth\n";
-
-    # Print server.conf.local if entries exist to server.conf
-    if ( !-z $local_serverconf  && $sovpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
-       open (LSC, "$local_serverconf");
-               print CONF "\n#---------------------------\n";
-               print CONF "# Start of custom directives\n";
-               print CONF "# from server.conf.local\n";
-               print CONF "#---------------------------\n\n";
-       while (<LSC>) {
-               print CONF $_;
-       }
-               print CONF "\n#-----------------------------\n";
-               print CONF "# End of custom directives\n";
-               print CONF "#-----------------------------\n";
-       close (LSC);
-    }
-    print CONF "\n";
 
     close(CONF);
 
@@ -934,7 +904,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
-    $vpnsettings{'ADDITIONAL_CONFIGS'} = $cgiparams{'ADDITIONAL_CONFIGS'};
     $vpnsettings{'DHCP_DOMAIN'} = $cgiparams{'DHCP_DOMAIN'};
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
@@ -2459,23 +2428,6 @@ else
 	}
     }
 
-    # Print client.conf.local if entries exist to client.ovpn
-    if (!-z $local_clientconf && $vpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
-       open (LCC, "$local_clientconf");
-               print CLIENTCONF "\n#---------------------------\n";
-               print CLIENTCONF "# Start of custom directives\n";
-               print CLIENTCONF "# from client.conf.local\n";
-               print CLIENTCONF "#---------------------------\n\n";
-       while (<LCC>) {
-               print CLIENTCONF $_;
-       }
-               print CLIENTCONF "\n#---------------------------\n";
-               print CLIENTCONF "# End of custom directives\n";
-               print CLIENTCONF "#---------------------------\n\n";
-       close (LCC);
-    }
-    close(CLIENTCONF);
-
     $zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
     my $status = $zip->writeToFileNamed($zippathname);
 
@@ -2721,9 +2673,6 @@ ADV_ERROR:
     $checked{'REDIRECT_GW_DEF1'}{'off'} = '';
     $checked{'REDIRECT_GW_DEF1'}{'on'} = '';
     $checked{'REDIRECT_GW_DEF1'}{$cgiparams{'REDIRECT_GW_DEF1'}} = 'CHECKED';
-    $checked{'ADDITIONAL_CONFIGS'}{'off'} = '';
-    $checked{'ADDITIONAL_CONFIGS'}{'on'} = '';
-    $checked{'ADDITIONAL_CONFIGS'}{$cgiparams{'ADDITIONAL_CONFIGS'}} = 'CHECKED';
     $checked{'MSSFIX'}{'off'} = '';
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
@@ -2937,12 +2886,6 @@ END
 	<tr>
 		<td class='base'>Redirect-Gateway def1</td>
 		<td><input type='checkbox' name='REDIRECT_GW_DEF1' $checked{'REDIRECT_GW_DEF1'}{'on'} /></td>
-	</tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'ovpn add conf'}</td>
-		<td><input type='checkbox' name='ADDITIONAL_CONFIGS' $checked{'ADDITIONAL_CONFIGS'}{'on'} /></td>
-		<td>$Lang::tr{'openvpn default'}: off</td>
 	</tr>
 
 	<tr>
