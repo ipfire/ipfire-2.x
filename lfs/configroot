@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -133,6 +133,8 @@ $(TARGET) :
 	echo  "DROPWIRELESSFORWARD=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPSPOOFEDMARTIAN=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPHOSTILE=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "LOGDROPHOSTILEIN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "LOGDROPHOSTILEOUT=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "LOGDROPCTINVALID=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
