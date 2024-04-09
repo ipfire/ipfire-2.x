@@ -5195,15 +5195,9 @@ END
 		exit 0;
 	}
 
-    my $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'stopped'}</font></b></td></tr></table>";
     my $srunning = "no";
-    my $activeonrun = "";
     if ( -e "/var/run/openvpn.pid"){
-	$sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'running'}</font></b></td></tr></table>";
 	$srunning ="yes";
-	$activeonrun = "";
-    } else {
-	$activeonrun = "disabled='disabled'";
     }
 
 
@@ -5228,8 +5222,6 @@ END
 	print <<END;
     <table width='100%' border='0'>
     <form method='post'>
-    <tr><td class='boldbase'>$Lang::tr{'ovpn server status'}</td>
-    <td align='left'>$sactive</td>
     <tr><td class='boldbase'>$Lang::tr{'enabled'}</td>
     <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 
@@ -5254,12 +5246,6 @@ END
 END
 ;
 
-    if ( $srunning eq "yes" ) {
-	print "<tr><td align='right' colspan='4'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' disabled='disabled' />";
-	print "<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />";
-	print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />";
-	print "<input type='submit' name='ACTION' value='$Lang::tr{'stop ovpn server'}' /></td></tr>";
-    } else{
 	print "<tr><td align='right' colspan='4'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />";
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />";
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />";
@@ -5271,7 +5257,6 @@ END
 	} else {
 	    print "<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' disabled='disabled' /></td></tr>";
 	}
-    }
     print "</form></table>";
     &Header::closebox();
 
@@ -5565,7 +5550,7 @@ END
     <form method='post'>
     <tr><td align='right'>
 		<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
-		<input type='submit' name='ACTION' value='$Lang::tr{'ovpn con stat'}' $activeonrun /></td>
+		<input type='submit' name='ACTION' value='$Lang::tr{'ovpn con stat'}' /></td>
 	</tr>
     </form>
     </table>
