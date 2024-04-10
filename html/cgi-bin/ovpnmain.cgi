@@ -2203,320 +2203,433 @@ END
 ### Download OpenVPN client package
 ###
 
-
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'dl client arch'}) {
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-    my $file = '';
-    my $clientovpn = '';
-    my @fileholder;
-    my $tempdir = tempdir( CLEANUP => 1 );
-    my $zippath = "$tempdir/";
+	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	my $file = '';
+	my $clientovpn = '';
+	my @fileholder;
+	my $tempdir = tempdir( CLEANUP => 1 );
+	my $zippath = "$tempdir/";
 
-if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
+	# N2N
+	if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
+		my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-Client.zip";
+		my $zippathname = "$zippath$zipname";
+		$clientovpn = "$confighash{$cgiparams{'KEY'}}[1].conf";
+		my @ovsubnettemp =  split(/\./,$confighash{$cgiparams{'KEY'}}[27]);
+		my $ovsubnet =  "$ovsubnettemp[0].$ovsubnettemp[1].$ovsubnettemp[2]";
+		my $tunmtu = '';
+		my @remsubnet = split(/\//,$confighash{$cgiparams{'KEY'}}[8]);
+		my $n2nfragment = '';
 
-        my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-Client.zip";
-        my $zippathname = "$zippath$zipname";
-        $clientovpn = "$confighash{$cgiparams{'KEY'}}[1].conf";
-        my @ovsubnettemp =  split(/\./,$confighash{$cgiparams{'KEY'}}[27]);
-        my $ovsubnet =  "$ovsubnettemp[0].$ovsubnettemp[1].$ovsubnettemp[2]";
-        my $tunmtu = '';
-        my @remsubnet = split(/\//,$confighash{$cgiparams{'KEY'}}[8]);
-        my $n2nfragment = '';
+		open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
+		flock CLIENTCONF, 2;
 
-    open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
-    flock CLIENTCONF, 2;
+		my $zip = Archive::Zip->new();
+		print CLIENTCONF "# IPFire n2n Open VPN Client Config by ummeegge und m.a.d\n";
+		print CLIENTCONF "# \n";
+		print CLIENTCONF "# User Security\n";
+		print CLIENTCONF "user nobody\n";
+		print CLIENTCONF "group nobody\n";
+		print CLIENTCONF "persist-tun\n";
+		print CLIENTCONF "persist-key\n";
+		print CLIENTCONF "script-security 2\n";
+		print CLIENTCONF "# IP/DNS for remote Server Gateway\n";
+		print CLIENTCONF "remote $vpnsettings{'VPN_IP'}\n";
+		print CLIENTCONF "float\n";
+		print CLIENTCONF "# IP adresses of the VPN Subnet\n";
+		print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n";
+		print CLIENTCONF "# Server Gateway Network\n";
+		print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n";
+		print CLIENTCONF "# tun Device\n";
+		print CLIENTCONF "dev tun\n";
+		print CLIENTCONF "#Logfile for statistics\n";
+		print CLIENTCONF "status-version 1\n";
+		print CLIENTCONF "status /var/run/openvpn/$cgiparams{'NAME'}-n2n 10\n";
+		print CLIENTCONF "# Port and Protokoll\n";
+		print CLIENTCONF "port $confighash{$cgiparams{'KEY'}}[29]\n";
 
-    my $zip = Archive::Zip->new();
-   print CLIENTCONF "# IPFire n2n Open VPN Client Config by ummeegge und m.a.d\n";
-   print CLIENTCONF "# \n";
-   print CLIENTCONF "# User Security\n";
-   print CLIENTCONF "user nobody\n";
-   print CLIENTCONF "group nobody\n";
-   print CLIENTCONF "persist-tun\n";
-   print CLIENTCONF "persist-key\n";
-   print CLIENTCONF "script-security 2\n";
-   print CLIENTCONF "# IP/DNS for remote Server Gateway\n";
-   print CLIENTCONF "remote $vpnsettings{'VPN_IP'}\n";
-   print CLIENTCONF "float\n";
-   print CLIENTCONF "# IP adresses of the VPN Subnet\n";
-   print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n";
-   print CLIENTCONF "# Server Gateway Network\n";
-   print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n";
-   print CLIENTCONF "# tun Device\n";
-   print CLIENTCONF "dev tun\n";
-   print CLIENTCONF "#Logfile for statistics\n";
-   print CLIENTCONF "status-version 1\n";
-   print CLIENTCONF "status /var/run/openvpn/$cgiparams{'NAME'}-n2n 10\n";
-   print CLIENTCONF "# Port and Protokoll\n";
-   print CLIENTCONF "port $confighash{$cgiparams{'KEY'}}[29]\n";
+		if ($confighash{$cgiparams{'KEY'}}[28] eq 'tcp') {
+			print CLIENTCONF "proto tcp4-client\n";
+			print CLIENTCONF "# Packet size\n";
+			if ($confighash{$cgiparams{'KEY'}}[31] eq '') {
+				$tunmtu = '1400';
+			} else {
+				$tunmtu = $confighash{$cgiparams{'KEY'}}[31];
+			}
+			print CLIENTCONF "tun-mtu $tunmtu\n";
+		}
 
-   if ($confighash{$cgiparams{'KEY'}}[28] eq 'tcp') {
-   print CLIENTCONF "proto tcp4-client\n";
-   print CLIENTCONF "# Packet size\n";
-   if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1400'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
-   print CLIENTCONF "tun-mtu $tunmtu\n";
-   }
+		if ($confighash{$cgiparams{'KEY'}}[28] eq 'udp') {
+			print CLIENTCONF "proto udp4\n";
+			print CLIENTCONF "# Paketsize\n";
+			if ($confighash{$cgiparams{'KEY'}}[31] eq '') {
+				$tunmtu = '1500';
+			} else {
+				$tunmtu = $confighash{$cgiparams{'KEY'}}[31];
+			}
+			print CLIENTCONF "tun-mtu $tunmtu\n";
+			if ($confighash{$cgiparams{'KEY'}}[24] ne '') {
+				print CLIENTCONF "fragment $confighash{$cgiparams{'KEY'}}[24]\n";
+			}
+			if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {
+				print CLIENTCONF "mssfix\n";
+			} else {
+				print CLIENTCONF "mssfix 0\n";
+			}
+		}
 
-   if ($confighash{$cgiparams{'KEY'}}[28] eq 'udp') {
-   print CLIENTCONF "proto udp4\n";
-   print CLIENTCONF "# Paketsize\n";
-   if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1500'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
-   print CLIENTCONF "tun-mtu $tunmtu\n";
-   if ($confighash{$cgiparams{'KEY'}}[24] ne '') {print CLIENTCONF "fragment $confighash{$cgiparams{'KEY'}}[24]\n";}
-   if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";} else { print CLIENTCONF "mssfix 0\n"; }
-   }
-   # Check host certificate if X509 is RFC3280 compliant.
-   # If not, old --ns-cert-type directive will be used.
-   # If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-   my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-   if (! grep(/TLS Web Server Authentication/, @hostcert)) {
-               print CLIENTCONF "ns-cert-type server\n";
-   } else {
-               print CLIENTCONF "remote-cert-tls server\n";
-   }
-   print CLIENTCONF "# Auth. Client\n";
-   print CLIENTCONF "tls-client\n";
-   print CLIENTCONF "# Cipher\n";
-   print CLIENTCONF "cipher $confighash{$cgiparams{'KEY'}}[40]\n";
-    if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") {
-	 print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12\r\n";
-     $zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
-   }
+		# Check host certificate if X509 is RFC3280 compliant.
+		# If not, old --ns-cert-type directive will be used.
+		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
+		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
+			print CLIENTCONF "ns-cert-type server\n";
+		} else {
+			print CLIENTCONF "remote-cert-tls server\n";
+		}
+		print CLIENTCONF "# Auth. Client\n";
+		print CLIENTCONF "tls-client\n";
+		print CLIENTCONF "# Cipher\n";
+		print CLIENTCONF "cipher $confighash{$cgiparams{'KEY'}}[40]\n";
 
-   # If GCM cipher is used, do not use --auth
-   if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
-       ($confighash{$cgiparams{'KEY'}}[40] eq 'AES-192-GCM') ||
-       ($confighash{$cgiparams{'KEY'}}[40] eq 'AES-128-GCM')) {
-        print CLIENTCONF unless "# HMAC algorithm\n";
-        print CLIENTCONF unless "auth $confighash{$cgiparams{'KEY'}}[39]\n";
-   } else {
-        print CLIENTCONF "# HMAC algorithm\n";
-        print CLIENTCONF "auth $confighash{$cgiparams{'KEY'}}[39]\n";
-   }
+		if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") {
+			print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12\r\n";
+			$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
+		}
 
-   if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
-   print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\n";
-     }
-   print CLIENTCONF "# Debug Level\n";
-   print CLIENTCONF "verb 3\n";
-   print CLIENTCONF "# Tunnel check\n";
-   print CLIENTCONF "keepalive 10 60\n";
-   print CLIENTCONF "# Start as daemon\n";
-   print CLIENTCONF "daemon $confighash{$cgiparams{'KEY'}}[1]n2n\n";
-   print CLIENTCONF "writepid /var/run/$confighash{$cgiparams{'KEY'}}[1]n2n.pid\n";
-   print CLIENTCONF "# Activate Management Interface and Port\n";
-   if ($confighash{$cgiparams{'KEY'}}[22] eq '') {print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[29]\n"}
-    else {print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[22]\n"};
-   print CLIENTCONF "# remsub $confighash{$cgiparams{'KEY'}}[11]\n";
-  if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-    	print CLIENTCONF "providers legacy default\n";
-  }
+		# If GCM cipher is used, do not use --auth
+		if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
+			($confighash{$cgiparams{'KEY'}}[40] eq 'AES-192-GCM') ||
+			($confighash{$cgiparams{'KEY'}}[40] eq 'AES-128-GCM')) {
+			print CLIENTCONF unless "# HMAC algorithm\n";
+			print CLIENTCONF unless "auth $confighash{$cgiparams{'KEY'}}[39]\n";
+		} else {
+			print CLIENTCONF "# HMAC algorithm\n";
+			print CLIENTCONF "auth $confighash{$cgiparams{'KEY'}}[39]\n";
+		}
 
-
-
-    close(CLIENTCONF);
-
-    $zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
-    my $status = $zip->writeToFileNamed($zippathname);
-
-    open(DLFILE, "<$zippathname") or die "Unable to open $zippathname: $!";
-    @fileholder = <DLFILE>;
-    print "Content-Type:application/x-download\n";
-    print "Content-Disposition:attachment;filename=$zipname\n\n";
-    print @fileholder;
-    exit (0);
-}
-else
-{
-        my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.zip";
-        my $zippathname = "$zippath$zipname";
-        $clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
-
-    open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
-    flock CLIENTCONF, 2;
-
-    my $zip = Archive::Zip->new();
-
-    print CLIENTCONF "#OpenVPN Client conf\r\n";
-    print CLIENTCONF "tls-client\r\n";
-    print CLIENTCONF "client\r\n";
-    print CLIENTCONF "nobind\r\n";
-    print CLIENTCONF "dev tun\r\n";
-    print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
-    print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n";
-
-	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
-
-    my $file_crt = new File::Temp( UNLINK => 1 );
-    my $file_key = new File::Temp( UNLINK => 1 );
-    my $include_certs = 0;
-
-    if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") {
-	if ($cgiparams{'MODE'} eq 'insecure') {
-		$include_certs = 1;
-
-		# Add the CA
-		print CLIENTCONF ";ca cacert.pem\r\n";
-		$zip->addFile("${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
-
-		# Extract the certificate
-		# This system call is safe, because all arguments are passed as an array.
+		if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
+			print CLIENTCONF "# Enable Compression\n";
+			print CLIENTCONF "comp-lzo\n";
+		}
+		print CLIENTCONF "# Debug Level\n";
+		print CLIENTCONF "verb 3\n";
+		print CLIENTCONF "# Tunnel check\n";
+		print CLIENTCONF "keepalive 10 60\n";
+		print CLIENTCONF "# Start as daemon\n";
+		print CLIENTCONF "daemon $confighash{$cgiparams{'KEY'}}[1]n2n\n";
+		print CLIENTCONF "writepid /var/run/$confighash{$cgiparams{'KEY'}}[1]n2n.pid\n";
+		print CLIENTCONF "# Activate Management Interface and Port\n";
+		if ($confighash{$cgiparams{'KEY'}}[22] eq '') {
+			print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[29]\n"
+		} else {
+			print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[22]\n"
+		};
+		print CLIENTCONF "# remsub $confighash{$cgiparams{'KEY'}}[11]\n";
 		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-			system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-				'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
-			if ($?) {
-				die "openssl error: $?";
+			print CLIENTCONF "providers legacy default\n";
+		}
+	    close(CLIENTCONF);
+
+		$zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
+		my $status = $zip->writeToFileNamed($zippathname);
+
+		open(DLFILE, "<$zippathname") or die "Unable to open $zippathname: $!";
+		@fileholder = <DLFILE>;
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$zipname\n\n";
+		print @fileholder;
+		exit (0);
+
+	# RW
+	} else {
+		my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.zip";
+		my $zippathname = "$zippath$zipname";
+		$clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
+
+		open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
+		flock CLIENTCONF, 2;
+
+		my $zip = Archive::Zip->new();
+
+		print CLIENTCONF "#OpenVPN Client conf\r\n";
+		print CLIENTCONF "tls-client\r\n";
+		print CLIENTCONF "client\r\n";
+		print CLIENTCONF "nobind\r\n";
+		print CLIENTCONF "dev tun\r\n";
+		print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
+		print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n";
+
+		print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
+
+		my $file_crt = new File::Temp( UNLINK => 1 );
+		my $file_key = new File::Temp( UNLINK => 1 );
+		my $include_certs = 0;
+
+		if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") {
+			if ($cgiparams{'MODE'} eq 'insecure') {
+				$include_certs = 1;
+
+				# Add the CA
+				print CLIENTCONF ";ca cacert.pem\r\n";
+				$zip->addFile("${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
+
+				# Extract the certificate
+				# This system call is safe, because all arguments are passed as an array.
+				if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+					system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+						'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
+					if ($?) {
+						die "openssl error: $?";
+					}
+				} else {
+					system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+						'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
+					if ($?) {
+						die "openssl error: $?";
+					}
+				}
+
+				$zip->addFile("$file_crt", "$confighash{$cgiparams{'KEY'}}[1].pem") or die;
+				print CLIENTCONF ";cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
+
+				# Extract the key
+				# This system call is safe, because all arguments are passed as an array.
+				if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+					system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+						'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
+					if ($?) {
+						die "openssl error: $?";
+					}
+				} else {
+					system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+						'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
+					if ($?) {
+						die "openssl error: $?";
+					}
+				}
+
+				$zip->addFile("$file_key", "$confighash{$cgiparams{'KEY'}}[1].key") or die;
+				print CLIENTCONF ";key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
+			} else {
+				print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
+				$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
 			}
 		} else {
-			system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-				'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
-			if ($?) {
-				die "openssl error: $?";
-			}
+			print CLIENTCONF "ca cacert.pem\r\n";
+			print CLIENTCONF "cert $confighash{$cgiparams{'KEY'}}[1]cert.pem\r\n";
+			print CLIENTCONF "key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
+			$zip->addFile( "${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
+			$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";
 		}
 
-		$zip->addFile("$file_crt", "$confighash{$cgiparams{'KEY'}}[1].pem") or die;
-		print CLIENTCONF ";cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
+		# We no longer send any cryptographic configuration since 2.6.
+		# That way, we will be able to push this from the server.
+		# Therefore we always mandate NCP for new clients.
 
-		# Extract the key
-		# This system call is safe, because all arguments are passed as an array.
-		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-			system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-				'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
-			if ($?) {
-				die "openssl error: $?";
+		print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
+
+		if ($vpnsettings{'TLSAUTH'} eq 'on') {
+			if ($cgiparams{'MODE'} eq 'insecure') {
+				print CLIENTCONF ";";
 			}
+			print CLIENTCONF "tls-auth ta.key\r\n";
+			$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
+		}
+
+		print CLIENTCONF "verb 3\r\n";
+
+		# Check host certificate if X509 is RFC3280 compliant.
+		# If not, old --ns-cert-type directive will be used.
+		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
+		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
+			print CLIENTCONF "ns-cert-type server\r\n";
 		} else {
-			system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-				'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
-			if ($?) {
-				die "openssl error: $?";
+			print CLIENTCONF "remote-cert-tls server\r\n";
+		}
+		print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
+
+		if ($vpnsettings{MSSFIX} eq 'on') {
+			print CLIENTCONF "mssfix\r\n";
+	    } else {
+			print CLIENTCONF "mssfix 0\r\n";
+	    }
+	    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
+			print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
+	    }
+
+		# Disable storing any credentials in memory
+		print CLIENTCONF "auth-nocache\r\n";
+
+		# Set a fake user name for authentication
+		print CLIENTCONF "auth-token-user USER\r\n";
+		print CLIENTCONF "auth-token TOTP\r\n";
+
+		# If the server is asking for TOTP this needs to happen interactively
+		print CLIENTCONF "auth-retry interact\r\n";
+
+		# Add provider line if certificate is legacy type
+		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+			print CLIENTCONF "providers legacy default\r\n";
+		}
+
+		if ($include_certs) {
+			print CLIENTCONF "\r\n";
+
+			# CA
+			open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
+			print CLIENTCONF "<ca>\r\n";
+			while (<FILE>) {
+				chomp($_);
+				print CLIENTCONF "$_\r\n";
+			}
+			print CLIENTCONF "</ca>\r\n\r\n";
+			close(FILE);
+
+			# Cert
+			open(FILE, "<$file_crt");
+			print CLIENTCONF "<cert>\r\n";
+			while (<FILE>) {
+				chomp($_);
+				print CLIENTCONF "$_\r\n";
+			}
+			print CLIENTCONF "</cert>\r\n\r\n";
+			close(FILE);
+
+			# Key
+			open(FILE, "<$file_key");
+			print CLIENTCONF "<key>\r\n";
+			while (<FILE>) {
+				chomp($_);
+				print CLIENTCONF "$_\r\n";
+			}
+			print CLIENTCONF "</key>\r\n\r\n";
+			close(FILE);
+
+			# TLS auth
+			if ($vpnsettings{'TLSAUTH'} eq 'on') {
+				open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
+				print CLIENTCONF "<tls-auth>\r\n";
+				while (<FILE>) {
+					chomp($_);
+					print CLIENTCONF "$_\r\n";
+				}
+				print CLIENTCONF "</tls-auth>\r\n\r\n";
+				close(FILE);
 			}
 		}
 
-		$zip->addFile("$file_key", "$confighash{$cgiparams{'KEY'}}[1].key") or die;
-		print CLIENTCONF ";key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
-	} else {
-		print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
-		$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
-	}
-    } else {
-	print CLIENTCONF "ca cacert.pem\r\n";
-	print CLIENTCONF "cert $confighash{$cgiparams{'KEY'}}[1]cert.pem\r\n";
-	print CLIENTCONF "key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
-	$zip->addFile( "${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
-	$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";
-    }
+		$zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
+		my $status = $zip->writeToFileNamed($zippathname);
 
-	# We no longer send any cryptographic configuration since 2.6.
-	# That way, we will be able to push this from the server.
-	# Therefore we always mandate NCP for new clients.
+		# We no longer send any cryptographic configuration since 2.6.
+		# That way, we will be able to push this from the server.
+		# Therefore we always mandate NCP for new clients.
 
-	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
+		print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
 
-    if ($vpnsettings{'TLSAUTH'} eq 'on') {
-	if ($cgiparams{'MODE'} eq 'insecure') {
-		print CLIENTCONF ";";
-	}
-	print CLIENTCONF "tls-auth ta.key\r\n";
-	$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
-    }
-    print CLIENTCONF "verb 3\r\n";
-	# Check host certificate if X509 is RFC3280 compliant.
-	# If not, old --ns-cert-type directive will be used.
-	# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-	my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-	if (! grep(/TLS Web Server Authentication/, @hostcert)) {
-		print CLIENTCONF "ns-cert-type server\r\n";
-	} else {
-		print CLIENTCONF "remote-cert-tls server\r\n";
-	}
-    print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
-    if ($vpnsettings{MSSFIX} eq 'on') {
-	print CLIENTCONF "mssfix\r\n";
-    } else {
-	print CLIENTCONF "mssfix 0\r\n";
-    }
-    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
-	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
-    }
-
-    # Disable storing any credentials in memory
-    print CLIENTCONF "auth-nocache\r\n";
-
-    # Set a fake user name for authentication
-    print CLIENTCONF "auth-user-pass\r\n";
-    print CLIENTCONF "auth-token-user USER\r\n";
-    print CLIENTCONF "auth-token TOTP\r\n";
-
-    # If the server is asking for TOTP this needs to happen interactively
-    print CLIENTCONF "auth-retry interact\r\n";
-
-    # Add provider line if certificate is legacy type
-    if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-	print CLIENTCONF "providers legacy default\r\n";
-    }
-
-    if ($include_certs) {
-	print CLIENTCONF "\r\n";
-
-	# CA
-	open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-	print CLIENTCONF "<ca>\r\n";
-	while (<FILE>) {
-		chomp($_);
-		print CLIENTCONF "$_\r\n";
-	}
-	print CLIENTCONF "</ca>\r\n\r\n";
-	close(FILE);
-
-	# Cert
-	open(FILE, "<$file_crt");
-	print CLIENTCONF "<cert>\r\n";
-	while (<FILE>) {
-		chomp($_);
-		print CLIENTCONF "$_\r\n";
-	}
-	print CLIENTCONF "</cert>\r\n\r\n";
-	close(FILE);
-
-	# Key
-	open(FILE, "<$file_key");
-	print CLIENTCONF "<key>\r\n";
-	while (<FILE>) {
-		chomp($_);
-		print CLIENTCONF "$_\r\n";
-	}
-	print CLIENTCONF "</key>\r\n\r\n";
-	close(FILE);
-
-	# TLS auth
-	if ($vpnsettings{'TLSAUTH'} eq 'on') {
-		open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
-		print CLIENTCONF "<tls-auth>\r\n";
-		while (<FILE>) {
-			chomp($_);
-			print CLIENTCONF "$_\r\n";
+		if ($vpnsettings{'TLSAUTH'} eq 'on') {
+			if ($cgiparams{'MODE'} eq 'insecure') {
+				print CLIENTCONF ";";
+			}
+			print CLIENTCONF "tls-auth ta.key\r\n";
+			$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
 		}
-		print CLIENTCONF "</tls-auth>\r\n\r\n";
-		close(FILE);
-	}
-    }
+		print CLIENTCONF "verb 3\r\n";
+		# Check host certificate if X509 is RFC3280 compliant.
+		# If not, old --ns-cert-type directive will be used.
+		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
+		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
+			print CLIENTCONF "ns-cert-type server\r\n";
+		} else {
+			print CLIENTCONF "remote-cert-tls server\r\n";
+		}
+		print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
+		if ($vpnsettings{MSSFIX} eq 'on') {
+			print CLIENTCONF "mssfix\r\n";
+		} else {
+			print CLIENTCONF "mssfix 0\r\n";
+		}
+		if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
+			print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
+		}
 
-    $zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
-    my $status = $zip->writeToFileNamed($zippathname);
+		# Disable storing any credentials in memory
+		print CLIENTCONF "auth-nocache\r\n";
 
-    open(DLFILE, "<$zippathname") or die "Unable to open $zippathname: $!";
-    @fileholder = <DLFILE>;
-    print "Content-Type:application/x-download\n";
-    print "Content-Disposition:attachment;filename=$zipname\n\n";
-    print @fileholder;
-    exit (0);
+		# Set a fake user name for authentication
+		print CLIENTCONF "auth-user-pass\r\n";
+		print CLIENTCONF "auth-token-user USER\r\n";
+		print CLIENTCONF "auth-token TOTP\r\n";
+
+		# If the server is asking for TOTP this needs to happen interactively
+		print CLIENTCONF "auth-retry interact\r\n";
+
+		# Add provider line if certificate is legacy type
+		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+			print CLIENTCONF "providers legacy default\r\n";
+		}
+
+		if ($include_certs) {
+			print CLIENTCONF "\r\n";
+
+			# CA
+			open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
+			print CLIENTCONF "<ca>\r\n";
+			while (<FILE>) {
+				chomp($_);
+				print CLIENTCONF "$_\r\n";
+			}
+			print CLIENTCONF "</ca>\r\n\r\n";
+			close(FILE);
+
+			# Cert
+			open(FILE, "<$file_crt");
+			print CLIENTCONF "<cert>\r\n";
+			while (<FILE>) {
+				chomp($_);
+				print CLIENTCONF "$_\r\n";
+			}
+			print CLIENTCONF "</cert>\r\n\r\n";
+			close(FILE);
+
+			# Key
+			open(FILE, "<$file_key");
+			print CLIENTCONF "<key>\r\n";
+			while (<FILE>) {
+				chomp($_);
+				print CLIENTCONF "$_\r\n";
+			}
+			print CLIENTCONF "</key>\r\n\r\n";
+			close(FILE);
+
+			# TLS auth
+			if ($vpnsettings{'TLSAUTH'} eq 'on') {
+				open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
+				print CLIENTCONF "<tls-auth>\r\n";
+				while (<FILE>) {
+					chomp($_);
+					print CLIENTCONF "$_\r\n";
+				}
+				print CLIENTCONF "</tls-auth>\r\n\r\n";
+				close(FILE);
+			}
+		}
+
+		$zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
+		my $status = $zip->writeToFileNamed($zippathname);
+
+		open(DLFILE, "<$zippathname") or die "Unable to open $zippathname: $!";
+		@fileholder = <DLFILE>;
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$zipname\n\n";
+		print @fileholder;
+		exit (0);
    }
-
-
 
 ###
 ### Remove connection
