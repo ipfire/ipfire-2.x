@@ -64,6 +64,10 @@ my @LEGACY_CIPHERS = (
 	"SEED-CBC",
 );
 
+my @LEGACY_AUTHS = (
+	"whirlpool",
+);
+
 my $DEFAULT_CIPHERS = "AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305";
 
 # Translations for the cipher selection
@@ -140,6 +144,16 @@ sub is_legacy_cipher($) {
 
 	foreach my $c (@LEGACY_CIPHERS) {
 		return 1 if ($cipher eq $c);
+	}
+
+	return 0;
+}
+
+sub is_legacy_auth($) {
+	my $auth = shift;
+
+	foreach my $a (@LEGACY_AUTHS) {
+		return 1 if ($auth eq $a);
 	}
 
 	return 0;
@@ -276,6 +290,11 @@ sub writeserverconf {
 	}
 
 	print CONF "auth $sovpnsettings{'DAUTH'}\n";
+
+	if (&is_legacy_auth($sovpnsettings{'DAUTH'})) {
+		$requires_legacy_provider++;
+	}
+
     # Set TLSv2 as minimum
     print CONF "tls-version-min 1.2\n";
 
