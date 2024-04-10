@@ -2049,6 +2049,7 @@
 'ovpn engines' => 'Crypto engine',
 'ovpn errmsg green already pushed' => 'Route for green network is always set',
 'ovpn errmsg invalid ip or mask' => 'Invalid network-address or subnetmask',
+'ovpn errmsg invalid route' => 'Invalid route',
 'ovpn error md5' => 'You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>',
 'ovpn fallback cipher' => 'Fallback Cipher',
 'ovpn fallback cipher help' => 'This cipher is being used by clients that do not support cipher negotiation.',

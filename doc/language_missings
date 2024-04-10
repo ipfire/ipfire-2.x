@@ -92,6 +92,7 @@
 < ovpn crypto settings
 < ovpn dhcp settings
 < ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
@@ -163,6 +164,7 @@
 < ovpn crypto settings
 < ovpn dhcp settings
 < ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
@@ -228,6 +230,7 @@
 < ovpn crypto settings
 < ovpn dhcp settings
 < ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
@@ -707,6 +710,7 @@
 < ovpn crypto settings
 < ovpn dhcp settings
 < ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
@@ -1367,6 +1371,7 @@
 < ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn engines
+< ovpn errmsg invalid route
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
@@ -2346,6 +2351,7 @@
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn errmsg invalid route
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
@@ -3459,6 +3465,7 @@
 < ovpn dhcp settings
 < ovpn dynamic client subnet
 < ovpn engines
+< ovpn errmsg invalid route
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
@@ -4076,6 +4083,7 @@
 < ovpn crypto settings
 < ovpn dhcp settings
 < ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help

@@ -641,6 +641,8 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn errmsg green already pushed
+WARNING: translation string unused: ovpn errmsg invalid ip or mask
 WARNING: translation string unused: ovpn error md5
 WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn log
@@ -1061,6 +1063,7 @@ WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
 WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
 WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
+WARNING: untranslated string: ovpn errmsg invalid route = Invalid route
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn fqdn = FQDN

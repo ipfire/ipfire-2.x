@@ -893,9 +893,7 @@ sub writecollectdconf {
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    #DAN do we really need (to to check) this value? Besides if we listen on blue and orange too,
-    #DAN this value has to leave.
-#new settings for daemon
+
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
@@ -909,7 +907,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
     $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
-    my @temp=();
 
 	# We must have at least one cipher selected
 	if ($cgiparams{'DATACIPHERS'} eq '') {
@@ -975,54 +972,37 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 		goto ADV_ERROR;
     	}
     }
+
+	# Validate pushed routes
     if ($cgiparams{'ROUTES_PUSH'} ne ''){
-	@temp = split(/\n/,$cgiparams{'ROUTES_PUSH'});
-    	undef $vpnsettings{'ROUTES_PUSH'};
+		my @temp = split(/\n/, $cgiparams{'ROUTES_PUSH'});
 
-   	foreach my $tmpip (@temp)
-	{
-		s/^\s+//g; s/\s+$//g;
+		# Reset stored routes
+		$vpnsettings{'ROUTES_PUSH'} = "";
 
-		if ($tmpip)
-		{
-			$tmpip=~s/\s*$//g;
-			unless (&General::validipandmask($tmpip)) {
-				$errormessage = "$tmpip ".$Lang::tr{'ovpn errmsg invalid ip or mask'};
+		foreach my $route (@temp) {
+			chomp($route);
+
+			# Remove any excess whitespace
+			$route =~ s/^\s+//g;
+			$route =~ s/\s+$//g;
+
+			# Skip empty lines
+			next if ($route eq "");
+
+			unless (&Network::check_subnet($route)) {
+				$errormessage = "$Lang::tr{'ovpn errmsg invalid route'}: $route";
 				goto ADV_ERROR;
 			}
-			my ($ip, $cidr) = split("\/",&General::ipcidr2msk($tmpip));
 
-			if ($ip eq $Network::ethernet{'GREEN_NETADDRESS'} && $cidr eq $Network::ethernet{'GREEN_NETMASK'}) {
-				$errormessage = $Lang::tr{'ovpn errmsg green already pushed'};
-				goto ADV_ERROR;
-			}
-
-			my %ccdroutehash=();
-			&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
-			foreach my $key (keys %ccdroutehash) {
-				foreach my $i (1 .. $#{$ccdroutehash{$key}}) {
-					if ( $ip."/".$cidr eq $ccdroutehash{$key}[$i] ){
-						$errormessage="Route $ip\/$cidr ".$Lang::tr{'ccd err inuse'}." $ccdroutehash{$key}[0]" ;
-						goto ADV_ERROR;
-					}
-					my ($ip2,$cidr2) = split(/\//,$ccdroutehash{$key}[$i]);
-					if (&General::IpInSubnet ($ip,$ip2,$cidr2)){
-						$errormessage="Route $ip\/$cidr ".$Lang::tr{'ccd err inuse'}." $ccdroutehash{$key}[0]" ;
-						goto ADV_ERROR;
-					}
-				}
-			}
-
-			$vpnsettings{'ROUTES_PUSH'} .= $tmpip."\n";
+			$vpnsettings{'ROUTES_PUSH'} .= $route . "\n";
 		}
-	}
-    &write_routepushfile;
-	undef $vpnsettings{'ROUTES_PUSH'};
+
+	    &write_routepushfile();
+
+		undef $vpnsettings{'ROUTES_PUSH'};
     }
-	else {
-	undef $vpnsettings{'ROUTES_PUSH'};
-	&write_routepushfile;
-    }
+
     if ((length($cgiparams{'MAX_CLIENTS'}) == 0) || (($cgiparams{'MAX_CLIENTS'}) < 1 ) || (($cgiparams{'MAX_CLIENTS'}) > 1024 )) {
         $errormessage = $Lang::tr{'invalid input for max clients'};
         goto ADV_ERROR;
