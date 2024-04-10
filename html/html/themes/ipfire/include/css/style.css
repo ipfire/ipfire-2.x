@@ -194,6 +194,15 @@ section.is-box {
 	border: 1px solid var(--color-grey);
 }
 
+section.is-error {
+	color: var(--color-red);
+	border: 1px solid var(--color-red);
+}
+
+section.is-error ul {
+	margin-bottom: 0 !important;
+}
+
 section .title {
 	margin-bottom: 1rem;
 	border-bottom: 1px solid var(--color-grey);

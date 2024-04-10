@@ -971,6 +971,7 @@ WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: load average = Load Average
+WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: processors = Processors

@@ -78,6 +78,7 @@
 < no entries
 < notes
 < okay
+< oops something went wrong
 < optional
 < ovpn roadwarrior server
 < quick control
@@ -137,6 +138,7 @@
 < load average
 < log drop hostile in
 < log drop hostile out
+< oops something went wrong
 < openvpn cert expires soon
 < openvpn cert has expired
 < ovpn roadwarrior server
@@ -168,6 +170,7 @@
 < ids provider eol
 < ids unsupported provider
 < load average
+< oops something went wrong
 < ovpn roadwarrior server
 < processors
 < reg_file_data_sampling
@@ -531,6 +534,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -1084,6 +1088,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -1943,6 +1948,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -2953,6 +2959,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -3484,6 +3491,7 @@
 < not affected
 < not validating
 < okay
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired

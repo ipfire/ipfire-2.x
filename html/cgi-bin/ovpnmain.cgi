@@ -1931,12 +1931,10 @@ END
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
-	if ($errormessage) {
-	    &Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	    print "<class name='base'>$errormessage";
-	    print "&nbsp;</class>";
-	    &Header::closebox();
-	}
+
+	# Show any errors
+	&Header::errorbox($errormessage);
+
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'generate root/host certificates'}:");
 	print <<END;
 	<form method='post' enctype='multipart/form-data'>
@@ -2699,13 +2697,12 @@ ADV_ERROR:
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
-    if ($errormessage) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	print "<class name='base'>$errormessage\n";
-	print "&nbsp;</class>\n";
-	&Header::closebox();
-    }
-    &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
+
+	# Show any errors
+	&Header::errorbox($errormessage);
+
+    &Header::opensection();
+
     print <<END;
     <form method='post' enctype='multipart/form-data'>
 <table width='100%' border=0>
@@ -5205,12 +5202,8 @@ END
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
 
-    if ($errormessage) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	print "<class name='base'>$errormessage\n";
-	print "&nbsp;</class>\n";
-	&Header::closebox();
-    }
+	# Show any errors and warnings
+	&Header::errorbox($errormessage);
 
 	if ($cryptoerror) {
 		&Header::openbox('100%', 'LEFT', $Lang::tr{'crypto error'});

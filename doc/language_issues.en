@@ -1407,6 +1407,7 @@ WARNING: untranslated string: online help en = Online help (in english)
 WARNING: untranslated string: only digits allowed in holdoff field = Only digits allowed in holdoff field
 WARNING: untranslated string: only digits allowed in max retries field = Only digits allowed in max retries field.
 WARNING: untranslated string: only digits allowed in the idle timeout = Only digits allowed in the idle timeout.
+WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: open connections = Open Connections
 WARNING: untranslated string: openssl produced an error = OpenSSL produced an error
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon

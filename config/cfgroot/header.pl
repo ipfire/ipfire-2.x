@@ -368,7 +368,9 @@ sub openbox {
 
 	my $title = shift;
 
-	print "<section class=\"section is-box\">\n";
+	my @classes = ("section", "is-box", @_);
+
+	print "<section class=\"@classes\">\n";
 
 	# Show the title
 	if ($title) {
@@ -381,6 +383,26 @@ sub openbox {
 # print box closing html layout
 sub closebox {
 	print "</section>";
+}
+
+sub errorbox($) {
+	my @errors = grep { $_ ne "" } @_;
+
+	# Do nothing if there are no errors
+	return unless (@errors);
+
+	# Open a new box
+	&openbox('100%', 'left', $Lang::tr{'oops something went wrong'}, "is-error");
+
+	# Print all error messages
+	print "<ul>\n";
+	foreach my $error (@errors) {
+		print "<li>$error</li>\n";
+	}
+	print "</ul>\n";
+
+	# Close the box again
+	&closebox();
 }
 
 sub graph($) {

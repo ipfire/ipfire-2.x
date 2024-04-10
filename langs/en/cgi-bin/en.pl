@@ -1953,6 +1953,7 @@
 'only digits allowed in max retries field' => 'Only digits allowed in max retries field.',
 'only digits allowed in the idle timeout' => 'Only digits allowed in the idle timeout.',
 'only red' => 'Only RED',
+'oops something went wrong' => 'Oops, something went wrong...',
 'open connections' => 'Open Connections',
 'open to all' => 'Override external access to ALL',
 'openssl produced an error' => 'OpenSSL produced an error',

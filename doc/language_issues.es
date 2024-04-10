@@ -1023,6 +1023,7 @@ WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
 WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon
 WARNING: untranslated string: openvpn cert has expired = Expired
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
