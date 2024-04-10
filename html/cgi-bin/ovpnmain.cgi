@@ -3297,22 +3297,6 @@ END
 	$errormessage = $Lang::tr{'invalid key'};
     }
 
-###
-### Restart connection
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'restart'}) {
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-
-    if ($confighash{$cgiparams{'KEY'}}) {
-#	if ($vpnsettings{'ENABLED'} eq 'on' ||
-#	    $vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#	    system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
-#	}
-    } else {
-	$errormessage = $Lang::tr{'invalid key'};
-    }
-
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
 	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
 	&Header::showhttpheaders();
