@@ -937,6 +937,60 @@ sub writecollectdconf {
 	&General::system("/usr/local/bin/collectdctrl", "restart");
 }
 
+sub openvpn_status($) {
+	my $port = shift;
+
+	# Create a new Telnet session
+	my $telnet = new Net::Telnet(
+		Port    => $port,
+		Timeout => 1,
+		Errmode => "return",
+	);
+
+	# Connect
+	$telnet->open("127.0.0.1");
+
+	# Send a command
+	my @output = $telnet->cmd(
+		String => "state",
+		Prompt => "/(END.*\n|ERROR:.*\n)/"
+	);
+
+	my ($time, $status) = split(/\,/, $output[1]);
+
+	###
+	#CONNECTING    -- OpenVPN's initial state.
+	#WAIT          -- (Client only) Waiting for initial response from server.
+	#AUTH          -- (Client only) Authenticating with server.
+	#GET_CONFIG    -- (Client only) Downloading configuration options from server.
+	#ASSIGN_IP     -- Assigning IP address to virtual network interface.
+	#ADD_ROUTES    -- Adding routes to system.
+	#CONNECTED     -- Initialization Sequence Completed.
+	#RECONNECTING  -- A restart has occurred.
+	#EXITING       -- A graceful exit is in progress.
+	####
+
+	if ($status eq "CONNECTING") {
+		return "DISCONNECTED";
+	} elsif ($status eq "WAIT") {
+		return "DISCONNECTED";
+	} elsif ($status eq "AUTH") {
+		return "DISCONNECTED";
+	} elsif ($status eq "GET_CONFIG") {
+		return "DISCONNECTED";
+	} elsif ($status eq "ASSIGN_IP") {
+		return "DISCONNECTED";
+	} elsif ($status eq "ADD_ROUTES") {
+		return "DISCONNECTED";
+	} elsif ($status eq "RECONNECTING") {
+		return "CONNECTED";
+	} elsif ($status eq "EXITING") {
+		return "DISCONNECTED";
+	}
+
+	return $status;
+}
+
 ###
 ### Save Advanced options
 ###
@@ -5143,304 +5197,280 @@ END
 
     &Header::closebox();
 
-    if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
-###
-#<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b><br /><img src='/images/null.gif' width='125' height='1' border='0' alt='L2089' /></td>
-###
-
     &Header::openbox('100%', 'LEFT', $Lang::tr{'connection status and controlc' });
-	;
-	my $id = 0;
+	print <<END;
+		<table class='tbl'>
+			<tr>
+				<th width='15%'>
+					$Lang::tr{'name'}
+				</th>
+				<th width='10%'>
+					$Lang::tr{'type'}
+				</th>
+				<th>
+					$Lang::tr{'remark'}
+				</th>
+				<th width='10%'>
+					$Lang::tr{'status'}
+				</th>
+				<th width='5%' colspan='8'>
+					$Lang::tr{'action'}
+				</th>
+			</tr>
+END
+
 	my $gif;
-	my $col1="";
-	my $lastnet;
-	foreach my $key (sort { ncmp ($confighash{$a}[32],$confighash{$b}[32]) } sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
-		if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'net' ){$confighash{$key}[32]=$Lang::tr{'fwhost OpenVPN N-2-N'};}
-		if ($confighash{$key}[32] eq "dynamic"){$confighash{$key}[32]=$Lang::tr{'ccd dynrange'};}
-		if($id == 0){
-			print"<b>$confighash{$key}[32]</b>";
-			print <<END;
-	<table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
-<tr>
-	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
-	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
-	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
-	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th width='5%' class='boldbase' colspan='8' align='center'><b>$Lang::tr{'action'}</b></th>
-</tr>
-END
-		}
-		if ($id > 0 && $lastnet ne $confighash{$key}[32]){
-			print "</table><br>";
-			print"<b>$confighash{$key}[32]</b>";
-			print <<END;
-	<table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
-<tr>
-	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
-	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
-	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
-	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th width='5%' class='boldbase' colspan='8' align='center'><b>$Lang::tr{'action'}</b></th>
-</tr>
-END
-		}
-	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
-	# Create some simple booleans to check the status
-	my $hasExpired;
-	my $expiresSoon;
+	foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+		my $status = $confighash{$key}[0];
+		my $name   = $confighash{$key}[1];
+		my $type   = $confighash{$key}[3];
 
-	# Fetch information about the certificate for non-N2N connections only
-	if ($confighash{$key}[3] ne 'net') {
-		my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text",
-			"-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
+		# Create some simple booleans to check the status
+		my $hasExpired = 0;
+		my $expiresSoon = 0;
 
-		my $expiryDate = 0;
+		# Fetch information about the certificate for non-N2N connections only
+		if ($confighash{$key}[3] ne 'net') {
+			my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text",
+				"-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
 
-		# Parse the certificate information
-		foreach my $line (@cavalid) {
-			if ($line =~ /Not After : (.*)[\n]/) {
-				$expiryDate = &Date::Parse::str2time($1);
-				last;
-			}
-		}
+			my $expiryDate = 0;
 
-		# Calculate the remaining time
-		my $remainingTime = $expiryDate - time();
-
-		# Determine whether the certificate has already expired, or will so soon
-		$hasExpired = ($remainingTime <= 0);
-		$expiresSoon = ($remainingTime <= 30 * 24 * 3600);
-
-	} else {
-		# Populate booleans with dummy values for N2N connections (#13066)
-		$hasExpired = 0;
-		$expiresSoon = 0;
-	}
-
-	print "<tr>";
-
-	if ($hasExpired || $expiresSoon) {
-		$col="bgcolor='$Header::color{'color14'}'";
-	} elsif ($id % 2) {
-		$col="bgcolor='$Header::color{'color20'}'";
-	} else {
-		$col="bgcolor='$Header::color{'color22'}'";
-	}
-	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]";
-	if ($hasExpired) {
-		print " ($Lang::tr{'openvpn cert has expired'})";
-	} elsif ($expiresSoon) {
-		print " ($Lang::tr{'openvpn cert expires soon'})";
-	}
-	print "</td>";
-	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
-	print "<td align='center' $col>$confighash{$key}[25]</td>";
-	$col1="class='status is-disconnected'";
-	my $active = "$Lang::tr{'capsclosed'}";
-
-	if ($confighash{$key}[0] eq 'off') {
-		$col1="class='status is-disabled'";
-		$active = "$Lang::tr{'capsclosed'}";
-	} else {
-       if ($confighash{$key}[3] eq 'net') {
-
-        if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
-          my @output = "";
-          my @tustate = "";
-          my $tport = $confighash{$key}[22];
-          my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport);
-          if ($tport ne '') {
-          $tnet->open('127.0.0.1');
-          @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
-          @tustate = split(/\,/, $output[1]);
-###
-#CONNECTING    -- OpenVPN's initial state.
-#WAIT          -- (Client only) Waiting for initial response from server.
-#AUTH          -- (Client only) Authenticating with server.
-#GET_CONFIG    -- (Client only) Downloading configuration options from server.
-#ASSIGN_IP     -- Assigning IP address to virtual network interface.
-#ADD_ROUTES    -- Adding routes to system.
-#CONNECTED     -- Initialization Sequence Completed.
-#RECONNECTING  -- A restart has occurred.
-#EXITING       -- A graceful exit is in progress.
-####
-
-		if (($tustate[1] eq 'CONNECTED') || ($tustate[1] eq 'WAIT')) {
-			$col1="class='status is-connected'";
-			$active = "$Lang::tr{'capsopen'}";
-		}else {
-			$col1="class='status is-disconnected'";
-			$active = "$tustate[1]";
-		}
-           }
-           }
-        }else {
-
-				my $cn;
-				my @match = ();
-		foreach my $line (@status) {
-			chomp($line);
-			if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
-				@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
-				if ($match[1] ne "Common Name") {
-					$cn = $match[1];
-				}
-				if ($cn eq "$confighash{$key}[2]") {
-					$col1="class='status is-connected'";
-					$active = "$Lang::tr{'capsopen'}";
+			# Parse the certificate information
+			foreach my $line (@cavalid) {
+				if ($line =~ /Not After : (.*)[\n]/) {
+					$expiryDate = &Date::Parse::str2time($1);
+					last;
 				}
 			}
+
+			# Calculate the remaining time
+			my $remainingTime = $expiryDate - time();
+
+			# Determine whether the certificate has already expired, or will so soon
+			$hasExpired = ($remainingTime <= 0);
+			$expiresSoon = ($remainingTime <= 30 * 24 * 3600);
 		}
-	}
-}
 
+		my @classes = ();
 
-       if ($confighash{$key}[41] eq "pass") {
-               print <<END;
-                       <td align='center' $col1>$active</td>
+		# Highlight the row if the certificate has expired/will expire soon
+		if ($hasExpired || $expiresSoon) {
+			push(@classes, "is-warning");
+		}
 
-                       <form method='post' name='frm${key}a'><td align='center' $col>
-                           <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn_encrypted.png'
-                                       alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
-                           <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
-                           <input type='hidden' name='MODE' value='secure' />
-                           <input type='hidden' name='KEY' value='$key' />
-                       </td></form>
+		# Start a new row
+		print "<tr class='@classes'>";
+
+		# Show the name of the connection
+		print "	<th scope='row'>$name";
+		if ($hasExpired) {
+			print " ($Lang::tr{'openvpn cert has expired'})";
+		} elsif ($expiresSoon) {
+			print " ($Lang::tr{'openvpn cert expires soon'})";
+		}
+		print "</th>";
+
+		# Show type
+		print "<td class='text-center'>$Lang::tr{$type}</td>";
+
+		# Show remarks
+		print "<td>$confighash{$key}[25]</td>";
+
+		my $connstatus = "DISCONNECTED";
+
+		# Disabled Connections
+		if ($status eq "off") {
+			$connstatus = "DISABLED";
+
+		# N2N Connections
+		} elsif ($type eq "net") {
+			if (-e "/var/run/${name}n2n.pid") {
+				my $port = $confighash{$key}[22];
+
+				if ($port ne "") {
+					$connstatus = &openvpn_status($confighash{$key}[22]);
+				}
+			}
+
+		# RW Connections
+	    } elsif ($type eq "host") {
+			my $cn;
+
+			foreach my $line (@status) {
+				chomp($line);
+
+				if ($line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
+					my @match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
+
+					if ($match[1] ne "Common Name") {
+						$cn = $match[1];
+					}
+
+					if ($cn eq "$confighash{$key}[2]") {
+						$connstatus = "CONNECTED";
+					}
+				}
+			}
+	    }
+
+		if ($connstatus eq "DISABLED") {
+			print "<td class='status is-disabled'>$Lang::tr{'capsclosed'}</td>";
+		} elsif ($connstatus eq "CONNECTED") {
+			print "<td class='status is-connected'>$Lang::tr{'capsopen'}</td>";
+		} elsif ($connstatus eq "DISCONNECTED") {
+			print "<td class='status is-disconnected'>$Lang::tr{'capsclosed'}</td>";
+		} else {
+			print "<td class='status is-unknown'>$connstatus</td>";
+		}
+
+		# Download Configuration
+		if ($confighash{$key}[41] eq "pass") {
+			print <<END;
+				<td class="text-center">
+					<form method='post' name='frm${key}a'>
+						<input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn_encrypted.png'
+							alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
+						<input type='hidden' name='MODE' value='secure' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
 END
 
-       ; } elsif ($confighash{$key}[41] eq "no-pass") {
+		} elsif ($confighash{$key}[41] eq "no-pass") {
+			print <<END;
+				<td class="text-center">
+					<form method='post' name='frm${key}a'>
+						<input type='image'  name='$Lang::tr{'dl client arch insecure'}' src='/images/openvpn.png'
+							alt='$Lang::tr{'dl client arch insecure'}' title='$Lang::tr{'dl client arch insecure'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
+						<input type='hidden' name='MODE' value='insecure' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+END
+
+		} else {
+			print "<td></td>";
+		}
+
+		# Show Certificate
+		if ($confighash{$key}[4] eq 'cert') {
+			print <<END;
+				<td class="text-center">
+					<form method='post' name='frm${key}b'>
+						<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif'
+							alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+END
+
+		} else {
+			print "<td></td>";
+		}
+
+		# Show OTP QR code
+		if ($confighash{$key}[43] eq 'on') {
+			print <<END;
+				<td class="text-center">
+					<form method='post' name='frm${key}o'>
+						<input type='image' name='$Lang::tr{'show otp qrcode'}' src='/images/qr-code.png'
+								alt='$Lang::tr{'show otp qrcode'}' title='$Lang::tr{'show otp qrcode'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'show otp qrcode'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+END
+		} else {
+			print "<td></td>";
+		}
+
+		# Download Certificate
+		if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") {
+			print <<END;
+				<td class="text-center">
+					<form method='post' name='frm${key}c'>
+						<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/media-floppy.png'
+							alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+END
+
+		} elsif ($confighash{$key}[4] eq 'cert') {
+			print <<END;
+				<td class="text-center">
+					<form method='post' name='frm${key}c'>
+						<input type='image' name='$Lang::tr{'download certificate'}' src='/images/media-floppy.png'
+							alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+END
+		} else {
+			print "<td></td>";
+		}
+
+		if ($status eq 'on') {
+			$gif = 'on.gif';
+		} else {
+			$gif = 'off.gif';
+		}
+
 		print <<END;
-                       <td align='center' $col1>$active</td>
+			<td class="text-center">
+				<form method='post' name='frm${key}d'>
+					<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
+						alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+					<input type='hidden' name='KEY' value='$key' />
+				</form>
+			</td>
 
-                       <form method='post' name='frm${key}a'><td align='center' $col>
-				<input type='image'  name='$Lang::tr{'dl client arch insecure'}' src='/images/openvpn.png'
-					alt='$Lang::tr{'dl client arch insecure'}' title='$Lang::tr{'dl client arch insecure'}' border='0' />
-				<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
-				<input type='hidden' name='MODE' value='insecure' />
-				<input type='hidden' name='KEY' value='$key' />
-			</td></form>
+			<td class="text-center">
+				<form method='post' name='frm${key}e'>
+					<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+					<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif'
+						alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+					<input type='hidden' name='KEY' value='$key' />
+				</form>
+			</td>
+
+			<td class="text-center">
+				<form method='post' name='frm${key}f'>
+					<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
+					<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif'
+						alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
+					<input type='hidden' name='KEY' value='$key' />
+				</form>
+			</td>
+		</tr>
 END
-	; } else {
-		print "<td $col>&nbsp;</td>";
+
 	}
+	print"</table>";
 
-	if ($confighash{$key}[4] eq 'cert') {
-	    print <<END;
-	    <form method='post' name='frm${key}b'><td align='center' $col>
-		<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' border='0' />
-		<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
-		<input type='hidden' name='KEY' value='$key' />
-	    </td></form>
-END
-	; } else {
-	    print "<td>&nbsp;</td>";
-	}
-
-   if ($confighash{$key}[43] eq 'on') {
-      print <<END;
-<form method='post' name='frm${key}o'><td align='center' $col>
-<input type='image' name='$Lang::tr{'show otp qrcode'}' src='/images/qr-code.png' alt='$Lang::tr{'show otp qrcode'}' title='$Lang::tr{'show otp qrcode'}' border='0' />
-<input type='hidden' name='ACTION' value='$Lang::tr{'show otp qrcode'}' />
-<input type='hidden' name='KEY' value='$key' />
-</td></form>
-END
-; } else {
-      print "<td $col>&nbsp;</td>";
-   }
-
-	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") {
-	    print <<END;
-	    <form method='post' name='frm${key}c'><td align='center' $col>
-		<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/media-floppy.png' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
-		<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
-		<input type='hidden' name='KEY' value='$key' />
-	    </td></form>
-END
-	; } elsif ($confighash{$key}[4] eq 'cert') {
-	    print <<END;
-	    <form method='post' name='frm${key}c'><td align='center' $col>
-		<input type='image' name='$Lang::tr{'download certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
-		<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
-		<input type='hidden' name='KEY' value='$key' />
-	    </td></form>
-END
-	; } else {
-	    print "<td>&nbsp;</td>";
-	}
-	print <<END
-	<form method='post' name='frm${key}d'><td align='center' $col>
-	    <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' border='0' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
-	    <input type='hidden' name='KEY' value='$key' />
-	</td></form>
-
-	<form method='post' name='frm${key}e'><td align='center' $col>
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
-	    <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'/>
-	    <input type='hidden' name='KEY' value='$key' />
-	</td></form>
-	<form method='post' name='frm${key}f'><td align='center' $col>
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
-	    <input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0' />
-	    <input type='hidden' name='KEY' value='$key' />
-	</td></form>
-	</tr>
-END
-	;
-	$id++;
-	$lastnet = $confighash{$key}[32];
-    }
-    print"</table>";
-    ;
-
-    # If the config file contains entries, print Key to action icons
-    if ( $id ) {
+	# Show controls
     print <<END;
-       <table width='85%' border='0'>
-       <tr>
-		<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
-              <td>&nbsp; &nbsp; <img src='/images/openvpn.png' alt='?RELOAD'/></td>
-              <td class='base'>$Lang::tr{'dl client arch insecure'}</td>
-              <td>&nbsp; &nbsp; <img src='/images/openvpn_encrypted.png' alt='?RELOAD'/></td>
-              <td class='base'>$Lang::tr{'dl client arch'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/info.gif' alt='$Lang::tr{'show certificate'}' /></td>
-		<td class='base'>$Lang::tr{'show certificate'}</td>
-              <td>&nbsp; &nbsp; <img src='/images/qr-code.png' alt='$Lang::tr{'show otp qrcode'}'/></td>
-              <td class='base'>$Lang::tr{'show otp qrcode'}</td>
-       </tr>
-       <tr>
-              <td>&nbsp; </td>
-              <td>&nbsp; &nbsp; <img src='/images/media-floppy.png' alt='?FLOPPY' /></td>
-              <td class='base'>$Lang::tr{'download certificate'}</td>
-              <td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
-              <td class='base'>$Lang::tr{'click to enable'}</td>
-              <td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
-              <td class='base'>$Lang::tr{'click to disable'}</td>
-
-		<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
-		<td class='base'>$Lang::tr{'edit'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
-		<td class='base'>$Lang::tr{'remove'}</td>
-       </tr>
-       </table><br>
+		<table class="form">
+			<tr class="action">
+				<td>
+					<form method='post'>
+						<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
+						<input type='submit' name='ACTION' value='$Lang::tr{'ovpn con stat'}' />
+					</form>
+				</td>
+			</tr>
+		</table>
 END
-    ;
-    }
 
-    print <<END;
-    <table width='100%'>
-    <form method='post'>
-    <tr><td align='right'>
-		<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
-		<input type='submit' name='ACTION' value='$Lang::tr{'ovpn con stat'}' /></td>
-	</tr>
-    </form>
-    </table>
-END
-    ;
 	&Header::closebox();
-	}
 
     # CA/key listing
     &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}");

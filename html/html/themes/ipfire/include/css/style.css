@@ -410,6 +410,11 @@ table.form tr.action td form {
 	width: 100%;
 }
 
+.tbl tr.is-warning td {
+	color: var(--color-yellow-invert) !important;
+	background-color: var(--color-yellow) !important;
+}
+
 .tbl th {
 	color: #ffffff;
 	border-top: 1px solid #363636;
@@ -417,6 +422,9 @@ table.form tr.action td form {
 	background: #363636;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
+
+	text-align: center;
+	font-weight: bold;
 }
 
 .tbl th[scope=row] {
@@ -507,10 +515,13 @@ table.form tr.action td form {
 .tbl .status.is-stopped, .tbl .status.is-disconnected {
 	background-color: var(--color-red);
 	color: var(--color-red-invert);
+<<<<<<< HEAD
 }
 
 .tbl .status.is-fixed {
 	width: 33%;
+=======
+>>>>>>> 630a49b8d (ovpnmain.cgi: Refactor the connection listing)
 }
 
 .tbl .status.is-connecting {
@@ -523,7 +534,7 @@ table.form tr.action td form {
 	color: var(--color-red-invert);
 }
 
-.tbl .status.is-disabled, .tbl .status.is-mitigation {
+.tbl .status.is-mitigation, .tbl .status.is-disabled {
 	background-color: var(--color-blue);
 	color: var(--color-blue-invert);
 }
