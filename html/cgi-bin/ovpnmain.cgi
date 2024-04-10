@@ -392,8 +392,7 @@ sub delccdnet($) {
 	# Check if the subnet is in use
 	foreach my $key (keys %conns) {
 		if ($conns{$key}[32] eq $name) {
-			$errormessage = $Lang::tr{'ccd err hostinnet'};
-			return 1;
+			return $Lang::tr{'ccd err hostinnet'};
 		}
 	}
 
@@ -412,8 +411,6 @@ sub delccdnet($) {
 
 	# Update the server configuration to remove routes
 	&writeserverconf();
-
-	return 0;
 }
 
 # Returns the network with the matching name
@@ -442,8 +439,7 @@ sub addccdnet($$) {
 
 	# Check if the name is valid
 	unless (&validccdname($name)) {
-		$errormessage = $Lang::tr{'ccd err invalidname'};
-		return;
+		return $Lang::tr{'ccd err invalidname'};
 	}
 
 	# Fetch the network address & prefix
@@ -452,13 +448,11 @@ sub addccdnet($$) {
 
 	# If we could not decode the subnet, it must be invalid
 	if (!defined $address || !defined $prefix) {
-		$errormessage = $Lang::tr{'ccd err invalidnet'};
-		return;
+		return $Lang::tr{'ccd err invalidnet'};
 
 	# If the network is smaller than /30, there is no point in using it
 	} elsif ($prefix > 30) {
-		$errormessage = $Lang::tr{'ccd err invalidnet'};
-		return;
+		return $Lang::tr{'ccd err invalidnet'};
 	}
 
 	# Read the configuration
@@ -479,16 +473,12 @@ sub addccdnet($$) {
 }
 
 sub modccdnet($$) {
+	my $subnet  = shift;
 	my $newname = shift;
-	my $oldname = shift;
+	my $oldname;
 
 	my %ccdconfhash=();
 	my %conns=();
-
-	# Do nothing if nothing has changed
-	if ($newname eq $oldname) {
-		return;
-	}
 
 	# Check if the new name is valid
 	unless (&validccdname($newname)) {
@@ -502,14 +492,14 @@ sub modccdnet($$) {
 	# Check if the name already exists
 	foreach my $key (keys %ccdconfhash) {
 		if ($ccdconfhash{$key}[0] eq $newname) {
-			$errormessage = $Lang::tr{'ccd err netadrexist'};
-			return;
+			return $Lang::tr{'ccd err netadrexist'};
 		}
 	}
 
 	# Update!
 	foreach my $key (keys %ccdconfhash) {
-		if ($ccdconfhash{$key}[0] eq $oldname) {
+		if ($ccdconfhash{$key}[1] eq $subnet) {
+			$oldname = $ccdconfhash{$key}[0];
 			$ccdconfhash{$key}[0] = $newname;
 			last;
 		}
@@ -3016,123 +3006,157 @@ END
 # Add, delete or edit CCD net
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'ccd net'} ||
-		$cgiparams{'ACTION'} eq $Lang::tr{'ccd add'} ||
-		$cgiparams{'ACTION'} eq "kill" ||
-		$cgiparams{'ACTION'} eq "edit" ||
-		$cgiparams{'ACTION'} eq 'editsave'){
+		$cgiparams{'ACTION'} eq "ccd-add" ||
+		$cgiparams{'ACTION'} eq "ccd-delete" ||
+		$cgiparams{'ACTION'} eq "ccd-edit" ||
+		$cgiparams{'ACTION'} eq 'ccd-edit-save'){
 	&Header::showhttpheaders();
+
 	&Header::openpage($Lang::tr{'ccd net'}, 1, '');
+
 	&Header::openbigbox('100%', 'LEFT', '', '');
 
-	if ($cgiparams{'ACTION'} eq "kill"){
-		&delccdnet($cgiparams{'net'});
+	# Delete?
+	if ($cgiparams{'ACTION'} eq "ccd-delete") {
+		$errormessage = &delccdnet($cgiparams{'name'});
+
+	# Save after edit?
+	} elsif ($cgiparams{'ACTION'} eq 'ccd-edit-save') {
+		$errormessage = &modccdnet($cgiparams{'subnet'}, $cgiparams{'name'});
+
+		# Clear inputs
+		if ($errormessage eq "") {
+			$cgiparams{"name"} = "";
+			$cgiparams{"subnet"} = "";
+		}
+
+	# Add?
+	} elsif ($cgiparams{'ACTION'} eq "ccd-add") {
+		$errormessage = &addccdnet($cgiparams{'name'}, $cgiparams{'subnet'});
+
+		# Clear inputs
+		if ($errormessage eq "") {
+			$cgiparams{"name"} = "";
+			$cgiparams{"subnet"} = "";
+		}
 	}
 
-	if ($cgiparams{'ACTION'} eq 'editsave'){
-		my ($a,$b) =split (/\|/,$cgiparams{'ccdname'});
-		if ( $a ne $b){ &modccdnet($a,$b);}
-		$cgiparams{'ccdname'}='';
-		$cgiparams{'ccdsubnet'}='';
-	}
+	&Header::errorbox($errormessage);
 
-	if ($cgiparams{'ACTION'} eq $Lang::tr{'ccd add'}) {
-		&addccdnet($cgiparams{'ccdname'},$cgiparams{'ccdsubnet'});
-	}
-	if ($errormessage) {
-	    &Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	    print "<class name='base'>$errormessage";
-	    print "&nbsp;</class>";
-	    &Header::closebox();
-	}
-if ($cgiparams{'ACTION'} eq "edit"){
-
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'ccd modify'});
-
-	print <<END;
-    <table width='100%' border='0'>
-    <tr><form method='post'>
-	<td width='10%' nowrap='nowrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
-	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly='readonly' /></td></tr>
-	<tr><td colspan='4' align='right'><hr><input type='submit' value='$Lang::tr{'save'}' /><input type='hidden' name='ACTION' value='editsave'/>
-	<input type='hidden' name='ccdname' value='$cgiparams{'ccdname'}'/><input type='submit' value='$Lang::tr{'cancel'}' />
-	</td></tr>
-	</table></form>
-END
-;
-	&Header::closebox();
-
-	&Header::openbox('100%', 'LEFT',$Lang::tr{'ccd net'} );
-	print <<END;
-    <table width='100%' border='0'  cellpadding='0' cellspacing='1'>
-    <tr>
-	<td class='boldbase' align='center'><b>$Lang::tr{'ccd name'}</td><td class='boldbase' align='center'><b>$Lang::tr{'network'}</td><td class='boldbase' width='15%' align='center'><b>$Lang::tr{'ccd used'}</td><td width='3%'></td><td width='3%'></td></tr>
-END
-;
-}
-else{
-	if (! -e "/var/run/openvpn.pid"){
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'ccd add'});
-	print <<END;
-	    <table width='100%' border='0'>
-	    <tr><form method='post'>
-		<td colspan='4'>$Lang::tr{'ccd hint'}<br><br></td></tr>
-		<tr>
-		<td width='10%' nowrap='nwrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
-		<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' /></td></tr>
-		<tr><td colspan=4><hr /></td></tr><tr>
-		<td colspan='4' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'ccd add'}' /><input type='submit' value='$Lang::tr{'add'}' /><input type='hidden' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}'/></td></tr>
-		</table></form>
-END
-
-	&Header::closebox();
-}
-	&Header::openbox('100%', 'LEFT',$Lang::tr{'ccd net'} );
-	if ( -e "/var/run/openvpn.pid"){
-		print "<b>$Lang::tr{'attention'}:</b><br>";
-		print "$Lang::tr{'ccd noaddnet'}<br><hr>";
-	}
-
-    print <<END;
-    <table width='100%' cellpadding='0' cellspacing='1'>
-    <tr>
-	<td class='boldbase' align='center' nowrap='nowrap' width='20%'><b>$Lang::tr{'ccd name'}</td><td class='boldbase' align='center' width='8%'><b>$Lang::tr{'network'}</td><td class='boldbase' width='8%' align='center' nowrap='nowrap'><b>$Lang::tr{'ccd used'}</td><td width='1%' align='center'></td><td width='1%' align='center'></td></tr>
-END
-;
-}
-	my %ccdconfhash=();
+	my %ccdconfhash = ();
 	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
-	my @ccdconf=();
-	my $count=0;
-	foreach my $key (sort { uc($ccdconfhash{$a}[0]) cmp uc($ccdconfhash{$b}[0]) } keys %ccdconfhash) {
-		@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
-		$count++;
-		my $ccdhosts = scalar &get_addresses_in_use($ccdconf[1]);
-		if ($count % 2){ print" <tr bgcolor='$Header::color{'color22'}'>";}
-		else{            print" <tr bgcolor='$Header::color{'color20'}'>";}
-		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
-        print <<END;
-		<form method='post' />
-		<input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
-		<input type='hidden' name='ACTION' value='edit'/>
-		<input type='hidden' name='ccdname' value='$ccdconf[0]' />
-		<input type='hidden' name='ccdsubnet' value='$ccdconf[1]' />
-		</form></td>
-		<form method='post' />
-		<td><input type='hidden' name='ACTION' value='kill'/>
-		<input type='hidden' name='number' value='$count' />
-		<input type='hidden' name='net' value='$ccdconf[0]' />
-		<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' /></form></td></tr>
+
+	&Header::opensection();
+	print <<END;
+		<table class="tbl">
+			<tr>
+				<th>
+					$Lang::tr{'ccd name'}
+				</th>
+
+				<th>
+					$Lang::tr{'network'}
+				</th>
+
+				<th>
+					$Lang::tr{'ccd used'}
+				</th>
+
+				<th colspan="2"></th>
+			</tr>
 END
-;
+
+	foreach my $key (sort { uc($ccdconfhash{$a}[0]) cmp uc($ccdconfhash{$b}[0]) } keys %ccdconfhash) {
+		my $name   = $ccdconfhash{$key}[0];
+		my $subnet = $ccdconfhash{$key}[1];
+
+		my $ccdhosts = scalar &get_addresses_in_use($subnet);
+		my $maxhosts = &ccdmaxclients($subnet);
+
+		print <<END;
+			<tr>
+				<th scope="row">
+					$name
+				</th>
+
+				<td class="text-center">
+					$subnet
+				</td>
+
+				<td class="text-center">
+					${ccdhosts}/${maxhosts}
+				</td>
+
+				<td class="text-center">
+					<form method='post' />
+						<input type='image' src='/images/edit.gif' align='middle'
+							alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+						<input type='hidden' name='ACTION' value='ccd-edit'/>
+						<input type='hidden' name='name' value='$name' />
+						<input type='hidden' name='subnet' value='$subnet' />
+					</form>
+				</td>
+
+				<td class="text-center">
+					<form method='post' />
+						<input type='hidden' name='ACTION' value='ccd-delete'/>
+						<input type='hidden' name='name' value='$name' />
+						<input type='image' src='/images/delete.gif' align='middle'
+							alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
+					</form>
+				</td>
+			</tr>
+END
 	}
-	print "</table></form>";
+	print "</table>";
+	&Header::closesection();
+
+	&Header::openbox('100%', 'LEFT',
+		($cgiparams{'ACTION'} eq "ccd-edit") ? $Lang::tr{'ccd modify'} : $Lang::tr{'ccd add'});
+
+	# The subnet cannot be edited
+	my $readonly = ($cgiparams{'ACTION'} eq "ccd-edit") ? "readonly" : "";
+	my $action   = ($cgiparams{'ACTION'} eq "ccd-edit") ? "ccd-edit-save" : "ccd-add";
+
+	print <<END;
+		<form method='post'>
+			<table class="form">
+				<tr>
+					<td>$Lang::tr{'ccd name'}</td>
+					<td>
+						<input type='TEXT' name='name' value='$cgiparams{'name'}' />
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'ccd subnet'}</td>
+					<td>
+						<input type='TEXT' name='subnet' value='$cgiparams{'subnet'}'
+							$readonly />
+					</td>
+				</tr>
+
+				<tr class="action">
+					<td colspan="2">
+						<input type='hidden' name='ACTION' value='$action' />
+						<input type='submit' value='$Lang::tr{'save'}' />
+					</td>
+				</tr>
+			</table>
+		</form>
+END
 	&Header::closebox();
-	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
+
+	print <<END;
+		<div class="text-center">
+			<a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a>
+		</div>
+END
+
 	&Header::closebigbox();
 	&Header::closepage();
-	exit(0);
 
-#END CCD
+	exit(0);
 
 ###
 ### Openvpn Connections Statistics
