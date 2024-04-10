@@ -56,6 +56,14 @@ my @SUPPORTED_CIPHERS = (
 	"CHACHA20-POLY1305",
 );
 
+my @LEGACY_CIPHERS = (
+	"BF-CBC",
+	"CAST5-CBC",
+	"DES-CBC",
+	"DESX-CBC",
+	"SEED-CBC",
+);
+
 my $DEFAULT_CIPHERS = "AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305";
 
 # Translations for the cipher selection
@@ -127,6 +135,16 @@ sub iscertlegacy
 	return 0;
 }
 
+sub is_legacy_cipher($) {
+	my $cipher = shift;
+
+	foreach my $c (@LEGACY_CIPHERS) {
+		return 1 if ($cipher eq $c);
+	}
+
+	return 0;
+}
+
 sub cleanssldatabase() {
 	if (open(FILE, ">${General::swroot}/ovpn/certs/serial")) {
 		print FILE "01";
@@ -161,6 +179,9 @@ sub deletebackupcert
 
 sub writeserverconf {
     my %sovpnsettings = ();
+
+	# Do we require the OpenSSL Legacy Provider?
+	my $requires_legacy_provider = 0;
 
     &General::readhash("${General::swroot}/ovpn/settings", \%sovpnsettings);
     &read_routepushfile(\%sovpnsettings);
@@ -247,6 +268,10 @@ sub writeserverconf {
 
 	# Enable fallback cipher?
 	if ($sovpnsettings{'DCIPHER'} ne '') {
+		if (&is_legacy_cipher($sovpnsettings{'DCIPHER'})) {
+			$requires_legacy_provider++;
+		}
+
 	    print CONF "data-ciphers-fallback $sovpnsettings{'DCIPHER'}\n";
 	}
 
@@ -302,6 +327,11 @@ sub writeserverconf {
     print CONF "# Enable Management Socket\n";
     print CONF "management /var/run/openvpn.sock unix\n";
     print CONF "management-client-auth\n";
+
+	# Enable the legacy provider
+	if ($requires_legacy_provider > 0) {
+		print CONF "providers legacy default\n";
+	}
 
     close(CONF);
 
