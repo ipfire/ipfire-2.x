@@ -232,10 +232,24 @@ sub genmenu {
   }
 }
 
-sub showhttpheaders
-{
-	print "Cache-control: private\n";
-	print "Content-type: text/html; charset=UTF-8\n\n";
+sub showhttpheaders($) {
+	my $overwrites = shift;
+
+	my %headers = (
+		"Content-Type"  => "text/html; charset=UTF-8",
+		"Cache-Control" => "private",
+
+		# Overwrite anything passed
+		%$overwrites,
+	);
+
+	# Print all headers
+	foreach my $header (keys %headers) {
+		print "$header: $headers{$header}\n";
+	}
+
+	# End headers
+	print "\n";
 }
 
 sub is_menu_visible($) {
