@@ -113,12 +113,6 @@ $cgiparams{'TLSAUTH'} = '';
 # Load CGI parameters
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
-# Add CCD files if not already present
-unless (-e $routes_push_file) {
-	open(RPF, ">$routes_push_file");
-	close(RPF);
-}
-
 ###
 ### Useful functions
 ###
@@ -167,9 +161,9 @@ sub deletebackupcert
 
 sub writeserverconf {
     my %sovpnsettings = ();
-    my @temp = ();
+
     &General::readhash("${General::swroot}/ovpn/settings", \%sovpnsettings);
-    &read_routepushfile;
+    &read_routepushfile(\%sovpnsettings);
 
     open(CONF,    ">${General::swroot}/ovpn/server.conf") or die "Unable to open ${General::swroot}/ovpn/server.conf: $!";
     flock CONF, 2;
@@ -199,12 +193,17 @@ sub writeserverconf {
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
     print CONF "tun-mtu $sovpnsettings{'DMTU'}\n";
 
+	# Write custom routes
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
-		@temp = split(/\n/,$vpnsettings{'ROUTES_PUSH'});
-		foreach (@temp)
-		{
-			@tempovpnsubnet = split("\/",&General::ipcidr2msk($_));
-			print CONF "push \"route " . $tempovpnsubnet[0]. " " .  $tempovpnsubnet[1] . "\"\n";
+		my @routes = split(/\|/, $vpnsettings{'ROUTES_PUSH'});
+
+		foreach my $route (@routes) {
+			my $netaddr = &Network::get_netaddress($route);
+			my $netmask = &Network::get_netmask($route);
+
+			if (defined($netaddr) && defined($netmask)) {
+				print CONF "push \"route ${netaddr} ${netmask}\"\n";
+			}
 		}
 	}
 
@@ -771,6 +770,7 @@ NEXT:
 	print "</select>";
 }
 
+# XXX THIS WILL NO LONGER WORK
 sub check_routes_push
 {
 			my $val=$_[0];
@@ -841,25 +841,26 @@ sub check_ccdconf
 
 # -------------------------------------------------------------------
 
-sub write_routepushfile
-{
-	open(FILE, ">$routes_push_file");
-	flock(FILE, 2);
-	if ($vpnsettings{'ROUTES_PUSH'} ne '') {
-		print FILE $vpnsettings{'ROUTES_PUSH'};
-	}
-	close(FILE);
-}
+sub read_routepushfile($) {
+	my $hash = shift;
 
-sub read_routepushfile
-{
-	if (-e "$routes_push_file") {
+	# Don't read the legacy file if we already have a value
+	if ($hash->{'ROUTES_PUSH'} ne "") {
+		unlink($routes_push_file);
+
+	# This is some legacy code that reads the routes file if it is still present
+	} elsif (-e "$routes_push_file") {
+		delete $hash->{'ROUTES_PUSH'};
+
+		my @routes = ();
+
 		open(FILE,"$routes_push_file");
-		delete $vpnsettings{'ROUTES_PUSH'};
-		while (<FILE>) { $vpnsettings{'ROUTES_PUSH'} .= $_ };
+		while (<FILE>) {
+			push(@routes, $_);
+		}
 		close(FILE);
-		$cgiparams{'ROUTES_PUSH'} = $vpnsettings{'ROUTES_PUSH'};
 
+		$hash->{'ROUTES_PUSH'} = join("|", @routes);
 	}
 }
 
@@ -977,8 +978,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     if ($cgiparams{'ROUTES_PUSH'} ne ''){
 		my @temp = split(/\n/, $cgiparams{'ROUTES_PUSH'});
 
-		# Reset stored routes
-		$vpnsettings{'ROUTES_PUSH'} = "";
+		my @routes = ();
 
 		foreach my $route (@temp) {
 			chomp($route);
@@ -995,12 +995,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 				goto ADV_ERROR;
 			}
 
-			$vpnsettings{'ROUTES_PUSH'} .= $route . "\n";
+			push(@routes, $route);
 		}
 
-	    &write_routepushfile();
-
-		undef $vpnsettings{'ROUTES_PUSH'};
+		$vpnsettings{'ROUTES_PUSH'} = join("|", @routes);
     }
 
     if ((length($cgiparams{'MAX_CLIENTS'}) == 0) || (($cgiparams{'MAX_CLIENTS'}) < 1 ) || (($cgiparams{'MAX_CLIENTS'}) > 1024 )) {
@@ -2630,7 +2628,7 @@ END
     %confighash = ();
     my $disabled;
     &General::readhash("${General::swroot}/ovpn/settings", \%cgiparams);
-    read_routepushfile;
+    &read_routepushfile(\%cgiparams);
 
 ADV_ERROR:
 	if ($cgiparams{'DATACIPHERS'} eq '') {
@@ -2671,6 +2669,9 @@ ADV_ERROR:
 	foreach my $cipher (@SUPPORTED_CIPHERS) {
 		$selected{'DATACIPHERS'}{$cipher} = grep(/^$cipher$/, @data_ciphers) ? "selected" : "";
 	}
+
+	# Routes
+	$cgiparams{'ROUTES_PUSH'} =~ s/\|/\n/g;
 
     $selected{'DCIPHER'}{'AES-256-GCM'} = '';
     $selected{'DCIPHER'}{'AES-192-GCM'} = '';
