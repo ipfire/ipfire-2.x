@@ -1118,7 +1118,7 @@ stream:
   #memcap-policy: ignore
   checksum-validation: yes      # reject incorrect csums
   midstream: true
-  midstream-policy: pass-packet
+  midstream-policy: pass-flow
   inline: auto                  # auto will use inline mode in IPS mode, yes or no set it statically
   bypass: yes                   # Bypass packets when stream.reassembly.depth is reached.
   reassembly:
