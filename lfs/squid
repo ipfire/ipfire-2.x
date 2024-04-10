@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.8
+VER        = 6.9
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 771de358d395a6b4bb5d94b02325755d1ba891c24f2cc1bdc80d91a73467a475c2cb7f0e1c24aed2f714c0de38858a24ac3864a5b772b6828beeb014da827d9d
+$(DL_FILE)_BLAKE2 = cac10d3a16fe31a9becfcd0fc278413d53c52285cdca9ece897ca4e3a0e50806e186960091f9050243180996382c6b5209360d9fff249d26b20d1e529285a038
 
 install : $(TARGET)
 
