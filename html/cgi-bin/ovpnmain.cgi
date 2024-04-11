@@ -2405,34 +2405,32 @@ END
 			print "providers legacy default\n";
 		}
 
-		print "\n";
-
 		# CA
 		open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-		print "<ca>\n";
+		print "\n<ca>\n";
 		while (<FILE>) {
 			chomp($_);
 			print "$_\n";
 		}
-		print "</ca>\n\n";
+		print "</ca>\n";
 		close(FILE);
 
 		# PKCS12
 		open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
-		print "<pkcs12>\n";
+		print "\n<pkcs12>\n";
 		print &MIME::Base64::encode_base64(do { local $/; <FILE> });
-		print "</pkcs12>\n\n";
+		print "</pkcs12>\n";
 		close(FILE);
 
 		# TLS auth
 		if ($vpnsettings{'TLSAUTH'} eq 'on') {
 			open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
-			print "<tls-auth>\n";
+			print "\n<tls-auth>\n";
 			while (<FILE>) {
 				chomp($_);
 				print "$_\n";
 			}
-			print "</tls-auth>\n\n";
+			print "</tls-auth>\n";
 			close(FILE);
 		}
 	}
