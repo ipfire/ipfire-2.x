@@ -10995,6 +10995,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP_ENABLE
 #lib/modules/KVER-ipfire/build/include/config/SPARSE_IRQ
+#lib/modules/KVER-ipfire/build/include/config/SPECTRE_BHI_AUTO
 #lib/modules/KVER-ipfire/build/include/config/SPECULATION_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/SPLIT_PTLOCK_CPUS
 #lib/modules/KVER-ipfire/build/include/config/SPMI
@@ -18938,6 +18939,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/mod/modpost.c
 #lib/modules/KVER-ipfire/build/scripts/mod/modpost.h
 #lib/modules/KVER-ipfire/build/scripts/mod/sumversion.c
+#lib/modules/KVER-ipfire/build/scripts/mod/symsearch.c
 #lib/modules/KVER-ipfire/build/scripts/module.lds
 #lib/modules/KVER-ipfire/build/scripts/module.lds.S
 #lib/modules/KVER-ipfire/build/scripts/modules-check.sh

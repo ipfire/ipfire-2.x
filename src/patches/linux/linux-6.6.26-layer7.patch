@@ -1,8 +1,8 @@
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 97bfef071255..b41174c29ca0 100644
+index 9e61f6df6bc5..f781cbe021f9 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -890,6 +890,9 @@ struct sk_buff {
+@@ -885,6 +885,9 @@ struct sk_buff {
  
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	unsigned long		 _nfct;
@@ -103,7 +103,7 @@ index d4958e7e7631..eea1eb1206fa 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
 diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 9f6f2e643575..ea2fb2889155 100644
+index e4ae2a08da6a..f694cb91f176 100644
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
 @@ -592,6 +592,11 @@ void nf_ct_destroy(struct nf_conntrack *nfct)

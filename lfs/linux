@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.6.25
+VER         = 6.6.26
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -72,7 +72,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d744ef7ea55202d5cb9adad2d7b22bc8be81bb4b5a03fe52e063192557eadf28d5e62612b6a517ec3180441d8fcec3582a53383df644c32bb45f3e969298af56
+$(DL_FILE)_BLAKE2 = 633ef0a386e6877811466c9ac937440709ec878b6ed4d26df874d524d9d6e3d92e0d73a6916bade1fffe297345e72253274fd57ccbab5addd461e10569bc702d
 
 install : $(TARGET)
 
@@ -109,7 +109,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.26-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
