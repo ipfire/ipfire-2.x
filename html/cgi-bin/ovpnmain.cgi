@@ -2345,6 +2345,8 @@ END
 
 	# RW
 	} else {
+		my $name = $confighash{$cgiparams{'KEY'}}[1];
+
 		my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.zip";
 		my $zippathname = "$zippath$zipname";
 		$clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
@@ -2371,48 +2373,6 @@ END
 		if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") {
 			if ($cgiparams{'MODE'} eq 'insecure') {
 				$include_certs = 1;
-
-				# Add the CA
-				print CLIENTCONF ";ca cacert.pem\r\n";
-				$zip->addFile("${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
-
-				# Extract the certificate
-				# This system call is safe, because all arguments are passed as an array.
-				if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-					system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-						'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
-					if ($?) {
-						die "openssl error: $?";
-					}
-				} else {
-					system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-						'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
-					if ($?) {
-						die "openssl error: $?";
-					}
-				}
-
-				$zip->addFile("$file_crt", "$confighash{$cgiparams{'KEY'}}[1].pem") or die;
-				print CLIENTCONF ";cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
-
-				# Extract the key
-				# This system call is safe, because all arguments are passed as an array.
-				if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-					system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-						'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
-					if ($?) {
-						die "openssl error: $?";
-					}
-				} else {
-					system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-						'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
-					if ($?) {
-						die "openssl error: $?";
-					}
-				}
-
-				$zip->addFile("$file_key", "$confighash{$cgiparams{'KEY'}}[1].key") or die;
-				print CLIENTCONF ";key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
 			} else {
 				print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
 				$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
@@ -2489,24 +2449,11 @@ END
 			print CLIENTCONF "</ca>\r\n\r\n";
 			close(FILE);
 
-			# Cert
-			open(FILE, "<$file_crt");
-			print CLIENTCONF "<cert>\r\n";
-			while (<FILE>) {
-				chomp($_);
-				print CLIENTCONF "$_\r\n";
-			}
-			print CLIENTCONF "</cert>\r\n\r\n";
-			close(FILE);
-
-			# Key
-			open(FILE, "<$file_key");
-			print CLIENTCONF "<key>\r\n";
-			while (<FILE>) {
-				chomp($_);
-				print CLIENTCONF "$_\r\n";
-			}
-			print CLIENTCONF "</key>\r\n\r\n";
+			# PKCS12
+			open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
+			print CLIENTCONF "<pkcs12>\r\n";
+			print CLIENTCONF &MIME::Base64::encode_base64(do { local $/; <FILE> });
+			print CLIENTCONF "</pkcs12>\r\n\r\n";
 			close(FILE);
 
 			# TLS auth
@@ -2521,6 +2468,8 @@ END
 				close(FILE);
 			}
 		}
+
+		close(CLIENTCONF);
 
 		$zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
 		my $status = $zip->writeToFileNamed($zippathname);
