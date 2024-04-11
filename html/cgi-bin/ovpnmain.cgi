@@ -2377,12 +2377,8 @@ END
 		# Configure the MTU of the tunnel interface
 		print "tun-mtu $vpnsettings{'DMTU'}\n";
 
-		# Check host certificate if X509 is RFC3280 compliant.
-		# If not, old --ns-cert-type directive will be used.
-		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-		unless (&is_cert_rfc3280_compliant("${General::swroot}/ovpn/certs/servercert.pem")) {
-			print "ns-cert-type server\n";
-		} else {
+		# Ask the client to verify the server certificate
+		if (&is_cert_rfc3280_compliant("${General::swroot}/ovpn/certs/servercert.pem")) {
 			print "remote-cert-tls server\n";
 		}
 		print "verify-x509-name $vpnsettings{'ROOTCERT_HOSTNAME'} name\n";
