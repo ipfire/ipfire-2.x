@@ -4505,6 +4505,8 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'ENABLED'}{'on'} = '';
     $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
+	$checked{'OTP_STATE'}{$cgiparams{'OTP_STATE'}} = 'CHECKED';
+
     $checked{'EDIT_ADVANCED'}{'off'} = '';
     $checked{'EDIT_ADVANCED'}{'on'} = '';
     $checked{'EDIT_ADVANCED'}{$cgiparams{'EDIT_ADVANCED'}} = 'CHECKED';
@@ -4569,12 +4571,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', $errormessage);
-	if ($errormessage) {
-	    &Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	    print "<class name='base'>$errormessage";
-	    print "&nbsp;</class>";
-	    &Header::closebox();
-	}
+
+	# Show any errors
+	&Header::errorbox($errormessage);
 
 	if ($warnmessage) {
 	    &Header::openbox('100%', 'LEFT', "$Lang::tr{'warning messages'}:");
@@ -4592,34 +4591,22 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	}
 
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'connection'}:");
-	print "<table width='100%'  border='0'>\n";
 
-	print "<tr><td width='14%' class='boldbase'>$Lang::tr{'name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>";
+	my $readonly = ($cgiparams{'KEY'}) ? "readonly" : "";
 
-	if ($cgiparams{'TYPE'} eq 'host') {
-	    if ($cgiparams{'KEY'}) {
-		print "<td width='35%' class='base'><input type='hidden' name='NAME' value='$cgiparams{'NAME'}' />$cgiparams{'NAME'}</td>";
-	    } else {
-		print "<td width='35%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' maxlength='20' size='30' /></td>";
-	    }
-#	    print "<tr><td>$Lang::tr{'interface'}</td>";
-#	    print "<td><select name='INTERFACE'>";
-#	    print "<option value='RED' $selected{'INTERFACE'}{'RED'}>RED</option>";
-#		if ($Network::ethernet{'BLUE_DEV'} ne '') {
-#			print "<option value='BLUE' $selected{'INTERFACE'}{'BLUE'}>BLUE</option>";
-#		}
-#		print "<option value='GREEN' $selected{'INTERFACE'}{'GREEN'}>GREEN</option>";
-#		print "<option value='ORANGE' $selected{'INTERFACE'}{'ORANGE'}>ORANGE</option>";
-#		print "</select></td></tr>";
-#		print <<END;
-	} else {
-	    print "<input type='hidden' name='INTERFACE' value='red' />";
-	    if ($cgiparams{'KEY'}) {
-		print "<td width='25%' class='base' nowrap='nowrap'><input type='hidden' name='NAME' value='$cgiparams{'NAME'}' />$cgiparams{'NAME'}</td>";
-	    } else {
-		print "<td width='25%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' maxlength='20' /></td>";
-	    }
+	print <<END;
+		<table class="form">
+			<tr>
+				<td>
+					$Lang::tr{'name'}
+				</td>
+				<td>
+					<input type="text" name="NAME" value="$cgiparams{'NAME'}" $readonly/>
+				</td>
+			</tr>
+END
 
+	if ($cgiparams{'TYPE'} eq 'net') {
 		# If GCM ciphers are in usage, HMAC menu is disabled
 		my $hmacdisabled;
 		if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
@@ -4730,7 +4717,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 END
 ;
-	}
 
 #### JAVA SCRIPT ####
 # Validate N2N cipher. If GCM will be used, HMAC menu will be disabled onchange
@@ -4746,15 +4732,49 @@ print<<END;
 		}
 	</script>
 END
+	}
 
-	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}</td>";
-	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr></table>";
+	# Remark
+	print <<END;
+		<tr>
+			<td>
+				$Lang::tr{'remark title'}
+			</td>
+			<td>
+				<input type="text" name="REMARK" value="$cgiparams{'REMARK'}" />
+			</td>
+		</tr>
+END
 
+	# Enabled?
 	if ($cgiparams{'TYPE'} eq 'host') {
-      print "<tr><td>$Lang::tr{'enabled'} <input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>";
+		print <<END;
+			<tr>
+				<td>
+					$Lang::tr{'enabled'}
+				</td>
+				<td>
+					<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
+				</td>
+			</tr>
+END
     }
 
-		print"</tr></table><br><br>";
+	# OTP?
+	if ($cgiparams{'TYPE'} eq 'host') {
+		print <<END;
+			<tr>
+				<td>
+					$Lang::tr{'enable otp'}
+				</td>
+				<td>
+					<input type='checkbox' name='OTP_STATE' $checked{'OTP_STATE'}{'on'} />
+				</td>
+			</tr>
+END
+	}
+
+	print "</table>";
 
 if ($cgiparams{'TYPE'} eq 'host') {
 	    print "<table border='0' width='100%' cellspacing='1' cellpadding='0'><tr><td colspan='3'><hr><br><b>$Lang::tr{'ccd choose net'}</td></tr><tr><td height='20' colspan='3'></td></tr>";
@@ -4773,7 +4793,6 @@ if ($cgiparams{'TYPE'} eq 'host') {
 	    print"</td></tr></table><br><br>";
 		my $name=$cgiparams{'CHECK1'};
 		$checked{'RG'}{$cgiparams{'RG'}} = 'CHECKED';
-		$checked{'OTP_STATE'}{$cgiparams{'OTP_STATE'}} = 'CHECKED';
 
 	if (! -z "${General::swroot}/ovpn/ccd.conf"){
 		print"<table border='0' width='100%' cellspacing='1' cellpadding='0'><tr><td width='1%'></td><td width='30%' class='boldbase' align='center'><b>$Lang::tr{'ccd name'}</td><td width='15%' class='boldbase' align='center'><b>$Lang::tr{'network'}</td><td class='boldbase' align='center' width='18%'><b>$Lang::tr{'ccd clientip'}</td></tr>";
@@ -4892,7 +4911,6 @@ if ($cgiparams{'TYPE'} eq 'host') {
 
 	print <<END;
 	<table border='0' width='100%'>
-	<tr><td width='20%'>$Lang::tr{'enable otp'}:</td><td colspan='3'><input type='checkbox' name='OTP_STATE' $checked{'OTP_STATE'}{'on'} /></td></tr>
 	<tr><td width='20%'>Redirect Gateway:</td><td colspan='3'><input type='checkbox' name='RG' $checked{'RG'}{'on'} /></td></tr>
 	<tr><td colspan='4'><b><br>$Lang::tr{'ccd routes'}</b></td></tr>
 	<tr><td colspan='4'>&nbsp</td></tr>
