@@ -2352,87 +2352,87 @@ END
 			"Content-Disposition" => "attachment; filename=${name}.ovpn",
 		});
 
-		print "#OpenVPN Client conf\r\n";
-		print "tls-client\r\n";
-		print "client\r\n";
-		print "nobind\r\n";
-		print "dev tun\r\n";
-		print "proto $vpnsettings{'DPROTOCOL'}\r\n";
-		print "tun-mtu $vpnsettings{'DMTU'}\r\n";
+		print "#OpenVPN Client conf\n";
+		print "tls-client\n";
+		print "client\n";
+		print "nobind\n";
+		print "dev tun\n";
+		print "proto $vpnsettings{'DPROTOCOL'}\n";
+		print "tun-mtu $vpnsettings{'DMTU'}\n";
 
-		print "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
+		print "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\n";
 
 		# We no longer send any cryptographic configuration since 2.6.
 		# That way, we will be able to push this from the server.
 		# Therefore we always mandate NCP for new clients.
 
-		print "auth $vpnsettings{'DAUTH'}\r\n";
+		print "auth $vpnsettings{'DAUTH'}\n";
 
-		print "verb 3\r\n";
+		print "verb 3\n";
 
 		# Check host certificate if X509 is RFC3280 compliant.
 		# If not, old --ns-cert-type directive will be used.
 		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
 		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
 		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
-			print "ns-cert-type server\r\n";
+			print "ns-cert-type server\n";
 		} else {
-			print "remote-cert-tls server\r\n";
+			print "remote-cert-tls server\n";
 		}
-		print "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
+		print "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\n";
 
 		if ($vpnsettings{MSSFIX} eq 'on') {
-			print "mssfix\r\n";
+			print "mssfix\n";
 	    } else {
-			print "mssfix 0\r\n";
+			print "mssfix 0\n";
 	    }
 	    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
-			print "fragment $vpnsettings{'FRAGMENT'}\r\n";
+			print "fragment $vpnsettings{'FRAGMENT'}\n";
 	    }
 
 		# Disable storing any credentials in memory
-		print "auth-nocache\r\n";
+		print "auth-nocache\n";
 
 		# Set a fake user name for authentication
-		print "auth-token-user USER\r\n";
-		print "auth-token TOTP\r\n";
+		print "auth-token-user USER\n";
+		print "auth-token TOTP\n";
 
 		# If the server is asking for TOTP this needs to happen interactively
-		print "auth-retry interact\r\n";
+		print "auth-retry interact\n";
 
 		# Add provider line if certificate is legacy type
 		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-			print "providers legacy default\r\n";
+			print "providers legacy default\n";
 		}
 
-		print "\r\n";
+		print "\n";
 
 		# CA
 		open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-		print "<ca>\r\n";
+		print "<ca>\n";
 		while (<FILE>) {
 			chomp($_);
-			print "$_\r\n";
+			print "$_\n";
 		}
-		print "</ca>\r\n\r\n";
+		print "</ca>\n\n";
 		close(FILE);
 
 		# PKCS12
 		open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
-		print "<pkcs12>\r\n";
+		print "<pkcs12>\n";
 		print &MIME::Base64::encode_base64(do { local $/; <FILE> });
-		print "</pkcs12>\r\n\r\n";
+		print "</pkcs12>\n\n";
 		close(FILE);
 
 		# TLS auth
 		if ($vpnsettings{'TLSAUTH'} eq 'on') {
 			open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
-			print "<tls-auth>\r\n";
+			print "<tls-auth>\n";
 			while (<FILE>) {
 				chomp($_);
-				print "$_\r\n";
+				print "$_\n";
 			}
-			print "</tls-auth>\r\n\r\n";
+			print "</tls-auth>\n\n";
 			close(FILE);
 		}
 	}
