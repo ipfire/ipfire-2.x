@@ -139,6 +139,14 @@ sub iscertlegacy
 	return 0;
 }
 
+sub is_cert_rfc3280_compliant($) {
+	my $path = shift;
+
+	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", $path);
+
+	return grep(/TLS Web Server Authentication/, @output);
+}
+
 sub is_legacy_cipher($) {
 	my $cipher = shift;
 
@@ -2352,43 +2360,49 @@ END
 			"Content-Disposition" => "attachment; filename=${name}.ovpn",
 		});
 
-		print "#OpenVPN Client conf\n";
-		print "tls-client\n";
+		print "########################################################################\n";
+		print "# IPFire OpenVPN Client Configuration for \"${name}\"\n";
+		print "########################################################################\n";
+
+		# This is a client
 		print "client\n";
-		print "nobind\n";
+
+		# This is a layer 3 VPN
 		print "dev tun\n";
+
+		# Point the client to this server
+		print "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\n";
 		print "proto $vpnsettings{'DPROTOCOL'}\n";
+
+		# Configure the MTU of the tunnel interface
 		print "tun-mtu $vpnsettings{'DMTU'}\n";
 
-		print "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\n";
+		# Check host certificate if X509 is RFC3280 compliant.
+		# If not, old --ns-cert-type directive will be used.
+		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
+		unless (&is_cert_rfc3280_compliant("${General::swroot}/ovpn/certs/servercert.pem")) {
+			print "ns-cert-type server\n";
+		} else {
+			print "remote-cert-tls server\n";
+		}
+		print "verify-x509-name $vpnsettings{'ROOTCERT_HOSTNAME'} name\n";
+
+		if ($vpnsettings{'MSSFIX'} eq 'on') {
+			print "mssfix\n";
+	    } else {
+			print "mssfix 0\n";
+	    }
+	    if ($vpnsettings{'FRAGMENT'} ne '' && $vpnsettings{'DPROTOCOL'} ne 'tcp' ) {
+			print "fragment $vpnsettings{'FRAGMENT'}\n";
+	    }
 
 		# We no longer send any cryptographic configuration since 2.6.
 		# That way, we will be able to push this from the server.
 		# Therefore we always mandate NCP for new clients.
 
-		print "auth $vpnsettings{'DAUTH'}\n";
-
-		print "verb 3\n";
-
-		# Check host certificate if X509 is RFC3280 compliant.
-		# If not, old --ns-cert-type directive will be used.
-		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
-			print "ns-cert-type server\n";
-		} else {
-			print "remote-cert-tls server\n";
+		if ($vpnsettings{'DAUTH'} ne "") {
+			print "auth $vpnsettings{'DAUTH'}\n";
 		}
-		print "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\n";
-
-		if ($vpnsettings{MSSFIX} eq 'on') {
-			print "mssfix\n";
-	    } else {
-			print "mssfix 0\n";
-	    }
-	    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
-			print "fragment $vpnsettings{'FRAGMENT'}\n";
-	    }
 
 		# Disable storing any credentials in memory
 		print "auth-nocache\n";
