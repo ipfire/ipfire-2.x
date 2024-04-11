@@ -4566,7 +4566,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'TLSAUTH'}{'on'} = '';
     $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
 
-    if (1) {
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', $errormessage);
@@ -4788,7 +4787,6 @@ if ($cgiparams{'TYPE'} eq 'host') {
 		}
 		print "</table><br><br><hr><br><br>";
 	}
-}
 
 	&Header::closebox();
 	if ($cgiparams{'KEY'} && $cgiparams{'AUTH'} eq 'psk') {
