@@ -29,14 +29,14 @@ function init_table() {
 		return
 	fi
 
-	ip rule add table static
+	ip rule add table static >/dev/null 2>&1
 }
 
 function create_all_routes() {
 	local file=${1}
 	shift
 
-	# Remote all routes.
+	# Remove all routes.
 	ip route flush table static >/dev/null 2>&1
 
 	local status
@@ -54,7 +54,7 @@ function create_all_routes() {
 			continue
 		fi
 
-		ip route add ${network} via ${gateway} table static proto static
+		ip route add ${network} via ${gateway} table static proto static >/dev/null 2>&1
 	done < ${file}
 }
 
