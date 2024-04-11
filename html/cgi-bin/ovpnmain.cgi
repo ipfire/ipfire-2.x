@@ -3093,111 +3093,137 @@ END
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn con stat'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
-    &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn con stat'});
 
-#
-#	<td><b>$Lang::tr{'protocol'}</b></td>
-# protocol temp removed
-    print <<END;
-    <table width='100%' cellpadding='2' cellspacing='0' class='tbl'>
-    <tr>
-	<th><b>$Lang::tr{'common name'}</b></th>
-	<th><b>$Lang::tr{'real address'}</b></th>
-	<th><b>$Lang::tr{'country'}</b></th>
-	<th><b>$Lang::tr{'virtual address'}</b></th>
-	<th><b>$Lang::tr{'loged in at'}</b></th>
-	<th><b>$Lang::tr{'bytes sent'}</b></th>
-	<th><b>$Lang::tr{'bytes received'}</b></th>
-	<th><b>$Lang::tr{'last activity'}</b></th>
-    </tr>
+	&Header::opensection();
+
+	print <<END;
+		<table class='tbl'>
+			<tr>
+				<th>$Lang::tr{'common name'}</th>
+				<th>$Lang::tr{'real address'}</th>
+				<th>$Lang::tr{'country'}</th>
+				<th>$Lang::tr{'virtual address'}</th>
+				<th>$Lang::tr{'loged in at'}</th>
+				<th>$Lang::tr{'bytes sent'}</th>
+				<th>$Lang::tr{'bytes received'}</th>
+				<th>$Lang::tr{'last activity'}</th>
+			</tr>
 END
-;
+
 	my $filename = "/var/run/ovpnserver.log";
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
-	my @users =();
+
+	my @users = ();
 	my $status;
 	my $uid = 0;
-	my $cn;
 	my @match = ();
-	my $proto = "udp";
-	my $address;
 	my %userlookup = ();
-	foreach my $line (@current)
-	{
+
+	foreach my $line (@current) {
 	    chomp($line);
-	    if ( $line =~ /^Updated,(.+)/){
-		@match = split( /^Updated,(.+)/, $line);
-		$status = $match[1];
-	    }
-#gian
-	    if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
-		@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
-		if ($match[1] ne "Common Name") {
-	    	    $cn = $match[1];
-		    $userlookup{$match[2]} = $uid;
-		    $users[$uid]{'CommonName'} = $match[1];
-		    $users[$uid]{'RealAddress'} = $match[2];
-		    $users[$uid]{'BytesReceived'} = &General::formatBytes($match[3]);
-		    $users[$uid]{'BytesSent'} = &General::formatBytes($match[4]);
-		    $users[$uid]{'Since'} = $match[5];
-		    $users[$uid]{'Proto'} = $proto;
 
-		    # get country code for "RealAddress"...
-		    my $ccode = &Location::Functions::lookup_country_code((split ':', $users[$uid]{'RealAddress'})[0]);
-		    my $flag_icon = &Location::Functions::get_flag_icon($ccode);
-		    $users[$uid]{'Country'} = "<a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a>";
-		    $uid++;
+	    if ($line =~ /^Updated,(.+)/) {
+			@match = split(/^Updated,(.+)/, $line);
+			$status = $match[1];
+
+		} elsif ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
+			@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
+
+			# Skip the header
+			next if ($match[1] eq "Common Name");
+
+			$userlookup{$match[2]} = $uid;
+			$users[$uid]{'CommonName'} = $match[1];
+			$users[$uid]{'RealAddress'} = $match[2];
+			$users[$uid]{'BytesReceived'} = &General::formatBytes($match[3]);
+			$users[$uid]{'BytesSent'} = &General::formatBytes($match[4]);
+			$users[$uid]{'Since'} = $match[5];
+
+			my $address = (split ':', $users[$uid]{'RealAddress'})[0];
+			$users[$uid]{'Country'} = &Location::Functions::lookup_country_code($address);
+			$uid++;
+
+		} elsif ($line =~ /^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/) {
+			@match = split(m/^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/, $line);
+
+			# Skip the header
+			next if ($match[1] eq "Virtual Address");
+
+			my $address = $match[3];
+			#find the uid in the lookup table
+			$uid = $userlookup{$address};
+			$users[$uid]{'VirtualAddress'} = $match[1];
+			$users[$uid]{'LastRef'} = $match[4];
 		}
-	    }
-	    if ( $line =~ /^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/) {
-		@match = split(m/^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/, $line);
-		if ($match[1] ne "Virtual Address") {
-		    $address = $match[3];
-		    #find the uid in the lookup table
-		    $uid = $userlookup{$address};
-		    $users[$uid]{'VirtualAddress'} = $match[1];
-		    $users[$uid]{'LastRef'} = $match[4];
-		}
-	    }
-	}
-	my $user2 = @users;
-	if ($user2 >= 1){
-		for (my $idx = 1; $idx <= $user2; $idx++){
-						if ($idx % 2) {
-							print "<tr>";
-							$col="bgcolor='$Header::color{'color22'}'";
-						} else {
-							print "<tr>";
-							$col="bgcolor='$Header::color{'color20'}'";
-						}
-						print "<td align='left' $col>$users[$idx-1]{'CommonName'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'RealAddress'}</td>";
-						print "<td align='center' $col>$users[$idx-1]{'Country'}</td>";
-						print "<td align='center' $col>$users[$idx-1]{'VirtualAddress'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'Since'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'BytesSent'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'BytesReceived'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'LastRef'}</td>";
-			}
 	}
 
-	print "</table>";
-	print <<END;
-	<table width='100%' border='0' cellpadding='2' cellspacing='0'>
-	<tr><td></td></tr>
-	<tr><td></td></tr>
-	<tr><td></td></tr>
-	<tr><td></td></tr>
-	<tr><td align='center' >$Lang::tr{'the statistics were last updated at'} <b>$status</b></td></tr>
+	foreach my $id (keys @users) {
+		my $user = $users[$id];
+
+		my $flag_icon = &Location::Functions::get_flag_icon($user->{"Country"});
+
+		print <<END;
+			<tr>
+				<th scope="row">
+					$user->{"CommonName"}
+				</th>
+
+				<td class="text-center">
+					$user->{"RealAddress"}
+				</td>
+
+				<td class="text-center">
+					<a href="country.cgi#$user->{"Country"}">
+						<img src="$flag_icon" border='0' align='absmiddle'
+							alt='$user->{"Country"}' title='$user->{"Country"}' />
+					</a>
+				</td>
+
+				<td class="text-center">
+					$user->{"VirtualAddress"}
+				</td>
+
+				<td class="text-center">
+					$user->{"Since"}
+				</td>
+
+				<td class="text-right">
+					$user->{"BytesSent"}
+				</td>
+
+				<td class="text-right">
+					$user->{"BytesReceived"}
+				</td>
+
+				<td class="text-right">
+					$user->{"LastRef"}
+				</td>
+			</tr>
+END
+	}
+
+print <<END;
 	</table>
+
+	<p class="text-center">
+		$Lang::tr{'the statistics were last updated at'} <b>$status</b>
+	</p>
 END
 ;
-	&Header::closebox();
-	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
+
+	&Header::closesection();
+
+	print <<END;
+		<p class="text-center">
+			<a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a>
+		</p>
+END
+
 	&Header::closebigbox();
 	&Header::closepage();
+
 	exit(0);
 
 ###
