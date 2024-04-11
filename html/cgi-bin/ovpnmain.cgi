@@ -2341,216 +2341,103 @@ END
 		print "Content-Type:application/x-download\n";
 		print "Content-Disposition:attachment;filename=$zipname\n\n";
 		print @fileholder;
-		exit (0);
 
 	# RW
 	} else {
 		my $name = $confighash{$cgiparams{'KEY'}}[1];
 
-		my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.zip";
-		my $zippathname = "$zippath$zipname";
-		$clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
+		# Send HTTP Headers
+		&Header::showhttpheaders({
+			"Content-Type" => "application/x-openvpn-profile",
+			"Content-Disposition" => "attachment; filename=${name}.ovpn",
+		});
 
-		open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
-		flock CLIENTCONF, 2;
+		print "#OpenVPN Client conf\r\n";
+		print "tls-client\r\n";
+		print "client\r\n";
+		print "nobind\r\n";
+		print "dev tun\r\n";
+		print "proto $vpnsettings{'DPROTOCOL'}\r\n";
+		print "tun-mtu $vpnsettings{'DMTU'}\r\n";
 
-		my $zip = Archive::Zip->new();
-
-		print CLIENTCONF "#OpenVPN Client conf\r\n";
-		print CLIENTCONF "tls-client\r\n";
-		print CLIENTCONF "client\r\n";
-		print CLIENTCONF "nobind\r\n";
-		print CLIENTCONF "dev tun\r\n";
-		print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
-		print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n";
-
-		print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
+		print "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
 
 		# We no longer send any cryptographic configuration since 2.6.
 		# That way, we will be able to push this from the server.
 		# Therefore we always mandate NCP for new clients.
 
-		print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
+		print "auth $vpnsettings{'DAUTH'}\r\n";
 
-		print CLIENTCONF "verb 3\r\n";
+		print "verb 3\r\n";
 
 		# Check host certificate if X509 is RFC3280 compliant.
 		# If not, old --ns-cert-type directive will be used.
 		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
 		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
 		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
-			print CLIENTCONF "ns-cert-type server\r\n";
+			print "ns-cert-type server\r\n";
 		} else {
-			print CLIENTCONF "remote-cert-tls server\r\n";
+			print "remote-cert-tls server\r\n";
 		}
-		print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
+		print "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
 
 		if ($vpnsettings{MSSFIX} eq 'on') {
-			print CLIENTCONF "mssfix\r\n";
+			print "mssfix\r\n";
 	    } else {
-			print CLIENTCONF "mssfix 0\r\n";
+			print "mssfix 0\r\n";
 	    }
 	    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
-			print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
+			print "fragment $vpnsettings{'FRAGMENT'}\r\n";
 	    }
 
 		# Disable storing any credentials in memory
-		print CLIENTCONF "auth-nocache\r\n";
+		print "auth-nocache\r\n";
 
 		# Set a fake user name for authentication
-		print CLIENTCONF "auth-token-user USER\r\n";
-		print CLIENTCONF "auth-token TOTP\r\n";
+		print "auth-token-user USER\r\n";
+		print "auth-token TOTP\r\n";
 
 		# If the server is asking for TOTP this needs to happen interactively
-		print CLIENTCONF "auth-retry interact\r\n";
+		print "auth-retry interact\r\n";
 
 		# Add provider line if certificate is legacy type
 		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-			print CLIENTCONF "providers legacy default\r\n";
+			print "providers legacy default\r\n";
 		}
 
-		print CLIENTCONF "\r\n";
+		print "\r\n";
 
 		# CA
 		open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-		print CLIENTCONF "<ca>\r\n";
+		print "<ca>\r\n";
 		while (<FILE>) {
 			chomp($_);
-			print CLIENTCONF "$_\r\n";
+			print "$_\r\n";
 		}
-		print CLIENTCONF "</ca>\r\n\r\n";
+		print "</ca>\r\n\r\n";
 		close(FILE);
 
 		# PKCS12
 		open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
-		print CLIENTCONF "<pkcs12>\r\n";
-		print CLIENTCONF &MIME::Base64::encode_base64(do { local $/; <FILE> });
-		print CLIENTCONF "</pkcs12>\r\n\r\n";
+		print "<pkcs12>\r\n";
+		print &MIME::Base64::encode_base64(do { local $/; <FILE> });
+		print "</pkcs12>\r\n\r\n";
 		close(FILE);
 
 		# TLS auth
 		if ($vpnsettings{'TLSAUTH'} eq 'on') {
 			open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
-			print CLIENTCONF "<tls-auth>\r\n";
+			print "<tls-auth>\r\n";
 			while (<FILE>) {
 				chomp($_);
-				print CLIENTCONF "$_\r\n";
+				print "$_\r\n";
 			}
-			print CLIENTCONF "</tls-auth>\r\n\r\n";
+			print "</tls-auth>\r\n\r\n";
 			close(FILE);
 		}
+	}
 
-		close(CLIENTCONF);
-
-		$zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
-		my $status = $zip->writeToFileNamed($zippathname);
-
-		# We no longer send any cryptographic configuration since 2.6.
-		# That way, we will be able to push this from the server.
-		# Therefore we always mandate NCP for new clients.
-
-		print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
-
-		if ($vpnsettings{'TLSAUTH'} eq 'on') {
-			if ($cgiparams{'MODE'} eq 'insecure') {
-				print CLIENTCONF ";";
-			}
-			print CLIENTCONF "tls-auth ta.key\r\n";
-			$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
-		}
-		print CLIENTCONF "verb 3\r\n";
-		# Check host certificate if X509 is RFC3280 compliant.
-		# If not, old --ns-cert-type directive will be used.
-		# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-		my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-		if (! grep(/TLS Web Server Authentication/, @hostcert)) {
-			print CLIENTCONF "ns-cert-type server\r\n";
-		} else {
-			print CLIENTCONF "remote-cert-tls server\r\n";
-		}
-		print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
-		if ($vpnsettings{MSSFIX} eq 'on') {
-			print CLIENTCONF "mssfix\r\n";
-		} else {
-			print CLIENTCONF "mssfix 0\r\n";
-		}
-		if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
-			print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
-		}
-
-		# Disable storing any credentials in memory
-		print CLIENTCONF "auth-nocache\r\n";
-
-		# Set a fake user name for authentication
-		print CLIENTCONF "auth-user-pass\r\n";
-		print CLIENTCONF "auth-token-user USER\r\n";
-		print CLIENTCONF "auth-token TOTP\r\n";
-
-		# If the server is asking for TOTP this needs to happen interactively
-		print CLIENTCONF "auth-retry interact\r\n";
-
-		# Add provider line if certificate is legacy type
-		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
-			print CLIENTCONF "providers legacy default\r\n";
-		}
-
-		if ($include_certs) {
-			print CLIENTCONF "\r\n";
-
-			# CA
-			open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-			print CLIENTCONF "<ca>\r\n";
-			while (<FILE>) {
-				chomp($_);
-				print CLIENTCONF "$_\r\n";
-			}
-			print CLIENTCONF "</ca>\r\n\r\n";
-			close(FILE);
-
-			# Cert
-			open(FILE, "<$file_crt");
-			print CLIENTCONF "<cert>\r\n";
-			while (<FILE>) {
-				chomp($_);
-				print CLIENTCONF "$_\r\n";
-			}
-			print CLIENTCONF "</cert>\r\n\r\n";
-			close(FILE);
-
-			# Key
-			open(FILE, "<$file_key");
-			print CLIENTCONF "<key>\r\n";
-			while (<FILE>) {
-				chomp($_);
-				print CLIENTCONF "$_\r\n";
-			}
-			print CLIENTCONF "</key>\r\n\r\n";
-			close(FILE);
-
-			# TLS auth
-			if ($vpnsettings{'TLSAUTH'} eq 'on') {
-				open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
-				print CLIENTCONF "<tls-auth>\r\n";
-				while (<FILE>) {
-					chomp($_);
-					print CLIENTCONF "$_\r\n";
-				}
-				print CLIENTCONF "</tls-auth>\r\n\r\n";
-				close(FILE);
-			}
-		}
-
-		$zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
-		my $status = $zip->writeToFileNamed($zippathname);
-
-		open(DLFILE, "<$zippathname") or die "Unable to open $zippathname: $!";
-		@fileholder = <DLFILE>;
-		print "Content-Type:application/x-download\n";
-		print "Content-Disposition:attachment;filename=$zipname\n\n";
-		print @fileholder;
-		exit (0);
-   }
-
+	exit (0);
 ###
 ### Remove connection
 ###
