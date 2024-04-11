@@ -2366,38 +2366,11 @@ END
 
 		print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
 
-		my $file_crt = new File::Temp( UNLINK => 1 );
-		my $file_key = new File::Temp( UNLINK => 1 );
-		my $include_certs = 0;
-
-		if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") {
-			if ($cgiparams{'MODE'} eq 'insecure') {
-				$include_certs = 1;
-			} else {
-				print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
-				$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
-			}
-		} else {
-			print CLIENTCONF "ca cacert.pem\r\n";
-			print CLIENTCONF "cert $confighash{$cgiparams{'KEY'}}[1]cert.pem\r\n";
-			print CLIENTCONF "key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
-			$zip->addFile( "${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
-			$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";
-		}
-
 		# We no longer send any cryptographic configuration since 2.6.
 		# That way, we will be able to push this from the server.
 		# Therefore we always mandate NCP for new clients.
 
 		print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
-
-		if ($vpnsettings{'TLSAUTH'} eq 'on') {
-			if ($cgiparams{'MODE'} eq 'insecure') {
-				print CLIENTCONF ";";
-			}
-			print CLIENTCONF "tls-auth ta.key\r\n";
-			$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
-		}
 
 		print CLIENTCONF "verb 3\r\n";
 
@@ -2436,37 +2409,35 @@ END
 			print CLIENTCONF "providers legacy default\r\n";
 		}
 
-		if ($include_certs) {
-			print CLIENTCONF "\r\n";
+		print CLIENTCONF "\r\n";
 
-			# CA
-			open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-			print CLIENTCONF "<ca>\r\n";
+		# CA
+		open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
+		print CLIENTCONF "<ca>\r\n";
+		while (<FILE>) {
+			chomp($_);
+			print CLIENTCONF "$_\r\n";
+		}
+		print CLIENTCONF "</ca>\r\n\r\n";
+		close(FILE);
+
+		# PKCS12
+		open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
+		print CLIENTCONF "<pkcs12>\r\n";
+		print CLIENTCONF &MIME::Base64::encode_base64(do { local $/; <FILE> });
+		print CLIENTCONF "</pkcs12>\r\n\r\n";
+		close(FILE);
+
+		# TLS auth
+		if ($vpnsettings{'TLSAUTH'} eq 'on') {
+			open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
+			print CLIENTCONF "<tls-auth>\r\n";
 			while (<FILE>) {
 				chomp($_);
 				print CLIENTCONF "$_\r\n";
 			}
-			print CLIENTCONF "</ca>\r\n\r\n";
+			print CLIENTCONF "</tls-auth>\r\n\r\n";
 			close(FILE);
-
-			# PKCS12
-			open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
-			print CLIENTCONF "<pkcs12>\r\n";
-			print CLIENTCONF &MIME::Base64::encode_base64(do { local $/; <FILE> });
-			print CLIENTCONF "</pkcs12>\r\n\r\n";
-			close(FILE);
-
-			# TLS auth
-			if ($vpnsettings{'TLSAUTH'} eq 'on') {
-				open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
-				print CLIENTCONF "<tls-auth>\r\n";
-				while (<FILE>) {
-					chomp($_);
-					print CLIENTCONF "$_\r\n";
-				}
-				print CLIENTCONF "</tls-auth>\r\n\r\n";
-				close(FILE);
-			}
 		}
 
 		close(CLIENTCONF);
@@ -5396,35 +5367,16 @@ END
 		}
 
 		# Download Configuration
-		if ($confighash{$key}[41] eq "pass") {
-			print <<END;
-				<td class="text-center">
-					<form method='post' name='frm${key}a'>
-						<input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn_encrypted.png'
-							alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' />
-						<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
-						<input type='hidden' name='MODE' value='secure' />
-						<input type='hidden' name='KEY' value='$key' />
-					</form>
-				</td>
+		print <<END;
+			<td class="text-center">
+				<form method='post' name='frm${key}a'>
+					<input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn.png'
+						alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
+					<input type='hidden' name='KEY' value='$key' />
+				</form>
+			</td>
 END
-
-		} elsif ($confighash{$key}[41] eq "no-pass") {
-			print <<END;
-				<td class="text-center">
-					<form method='post' name='frm${key}a'>
-						<input type='image'  name='$Lang::tr{'dl client arch insecure'}' src='/images/openvpn.png'
-							alt='$Lang::tr{'dl client arch insecure'}' title='$Lang::tr{'dl client arch insecure'}' />
-						<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
-						<input type='hidden' name='MODE' value='insecure' />
-						<input type='hidden' name='KEY' value='$key' />
-					</form>
-				</td>
-END
-
-		} else {
-			print "<td></td>";
-		}
 
 		# Show Certificate
 		if ($confighash{$key}[4] eq 'cert') {
