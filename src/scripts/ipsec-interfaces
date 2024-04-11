@@ -107,15 +107,15 @@ main() {
 	local interfaces=()
 
 	# Flush IPsec routes
-	ip route flush table "${ROUTE_TABLE}"
+	ip route flush table "${ROUTE_TABLE}" >/dev/null 2>&1
 
 	# Remove lookups
-	ip rule del lookup "${ROUTE_TABLE}"
+	ip rule del lookup "${ROUTE_TABLE}" >/dev/null 2>&1
 
 	# We are done when IPsec is not enabled
 	if [ "${ENABLED}" = "on" ]; then
 		# Enable route table lookup
-		ip rule add lookup "${ROUTE_TABLE}" prio "${ROUTE_TABLE_PRIO}"
+		ip rule add lookup "${ROUTE_TABLE}" prio "${ROUTE_TABLE_PRIO}" >/dev/null 2>&1
 
 		while IFS="," read -r "${VARS[@]}"; do
 			# Check if the connection is enabled
@@ -158,7 +158,7 @@ main() {
 
 						log "Creating route to ${rightsubnet} (via ${address} and ${RED_INTF})"
 						ip route add table "${ROUTE_TABLE}" "${rightsubnet}" proto static \
-							dev "${RED_INTF}" src "${address}"
+							dev "${RED_INTF}" src "${address}" >/dev/null 2>&1
 					done
 
 					# No interface processing required
