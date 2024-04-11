@@ -129,10 +129,10 @@ case "${1}" in
 			touch /var/ipfire/red/active
 
 			# Create route to default gateway
-			ip route add ${GATEWAY} dev ${DEVICE}
+			ip route add ${GATEWAY} dev ${DEVICE} >/dev/null 2>&1
 
 			boot_mesg "Setting up default gateway ${GATEWAY}..."
-			ip route add default via ${GATEWAY} dev ${DEVICE}
+			ip route add default via ${GATEWAY} dev ${DEVICE} >/dev/null 2>&1
 			evaluate_retval
 
 			if [ -d "/sys/class/net/${DEVICE}" ]; then
