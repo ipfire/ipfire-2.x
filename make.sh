@@ -1507,6 +1507,7 @@ build_system() {
 	lfsmake2 libnetfilter_cttimeout
 	lfsmake2 iptables
 	lfsmake2 iproute2
+	lfsmake2 wireguard-tools
 	lfsmake2 screen
 	lfsmake2 elfutils
 	lfsmake2 libconfig
