@@ -127,6 +127,7 @@ WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: artist
 WARNING: translation string unused: attemps
+WARNING: translation string unused: attention
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
@@ -172,7 +173,9 @@ WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
 WARNING: translation string unused: ccd err name
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd hint
 WARNING: translation string unused: ccd iroutehint
+WARNING: translation string unused: ccd noaddnet
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
@@ -251,6 +254,7 @@ WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
+WARNING: translation string unused: dl client arch insecure
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
@@ -374,6 +378,7 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
+WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network

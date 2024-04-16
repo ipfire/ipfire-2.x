@@ -105,6 +105,7 @@ WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: artist
 WARNING: translation string unused: attemps
+WARNING: translation string unused: attention
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
@@ -150,7 +151,9 @@ WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
 WARNING: translation string unused: ccd err name
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd hint
 WARNING: translation string unused: ccd iroutehint
+WARNING: translation string unused: ccd noaddnet
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
@@ -349,6 +352,7 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
+WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network
@@ -1027,7 +1031,6 @@ WARNING: untranslated string: dhcp make fixed lease = Add to fix leases
 WARNING: untranslated string: dhcp valid range required when deny known clients checked = Valid range required when "Deny known clients:" is checked
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
-WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search

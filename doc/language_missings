@@ -448,7 +448,6 @@
 < disable
 < Disabled
 < disconnected
-< dl client arch insecure
 < dns check servers
 < dns configuration
 < dns could not add server
@@ -1814,7 +1813,6 @@
 < disable
 < Disabled
 < disconnected
-< dl client arch insecure
 < dnat address
 < dns check servers
 < dns configuration
@@ -2924,7 +2922,6 @@
 < Disabled
 < disconnected
 < disk access
-< dl client arch insecure
 < dnat address
 < dns check servers
 < dns configuration
