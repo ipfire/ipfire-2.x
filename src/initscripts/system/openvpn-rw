@@ -22,7 +22,7 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-PIDFILE="/var/run/openvpn.pid"
+PIDFILE="/var/run/openvpn-rw.pid"
 
 # Load configuration
 eval $(/usr/local/bin/readhash /var/ipfire/ovpn/settings)

@@ -85,6 +85,7 @@ my %CIPHERS = (
 # Use the precomputed DH paramter from RFC7919
 my $DHPARAM = "/etc/ssl/ffdhe4096.pem";
 
+my $RW_PID    = "/var/run/openvpn-rw.pid";
 my $RW_STATUS = "/var/run/openvpn-rw.log";
 
 ###
@@ -215,7 +216,7 @@ sub writeserverconf {
     print CONF "#OpenVPN Server conf\n";
     print CONF "\n";
     print CONF "daemon openvpnserver\n";
-    print CONF "writepid /var/run/openvpn.pid\n";
+    print CONF "writepid $RW_PID\n";
     print CONF "#DAN prepare OpenVPN for listening on blue and orange\n";
     print CONF ";local $sovpnsettings{'VPN_IP'}\n";
     print CONF "dev tun\n";
