@@ -1,0 +1,137 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2024 Michael Tremer <michael.tremer@ipfire.org>               #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+INTF="wg0"
+
+eval $(/usr/local/bin/readhash /var/ipfire/wireguard/settings)
+
+generate_config() {
+	echo "[Interface]"
+	echo "PrivateKey = ${PRIVATE_KEY}"
+
+	# Optionally set the port
+	if [ -n "${PORT}" ]; then
+		echo "ListenPort = ${PORT}"
+	fi
+
+	local IFS=','
+
+	local id
+	local enabled
+	local type
+	local name
+	local pubkey
+	local endpoint
+	local port
+	local routes
+	local _rest
+
+	local route
+
+	# Flush all previously set routes
+	ip route flush dev "${INTF}"
+
+	while read -r id enabled type name pubkey endpoint port routes _rest; do
+		# Skip peers that are not enabled
+		[ "${enabled}" = "on" ] || continue
+
+		echo "[Peer]"
+		echo "PublicKey = ${pubkey}"
+
+		# Set endpoint
+		if [ -n "${endpoint}" ]; then
+			echo "Endpoint = ${endpoint}${port:+:}${port}"
+		fi
+
+		# Set routes
+		if [ -n "${routes}" ]; then
+			echo "AllowedIPs = ${routes//|/, }"
+
+			# Apply the routes
+			if [ "${type}" = "net" ]; then
+				for route in ${routes//|/,}; do
+					ip route add "${route}" dev "${INTF}"
+				done
+			fi
+		fi
+	done < /var/ipfire/wireguard/peers
+}
+
+wg_start() {
+	# Create the interface if it does not exist
+	if [ ! -d "/sys/class/net/${INTF}" ]; then
+		ip link add "${INTF}" type wireguard || return $?
+	fi
+
+	# Set up the interface
+	ip link set "${INTF}" up
+
+	# Set the MTU
+	if [ -n "${MTU}" ]; then
+		ip link set "${INTF}" mtu "${MTU}" || return $?
+	fi
+
+	# Load the configuration into the kernel
+	wg syncconf "${INTF}" <(generate_config) || return $?
+
+	return 0
+}
+
+wg_stop() {
+	if [ -d "/sys/class/net/${INTF}" ]; then
+		ip link del "${INTF}" || return $?
+	fi
+}
+
+case "${1}" in
+	start)
+		if [ "${ENABLED}" != "on" ]; then
+			exit 0
+		fi
+
+		boot_mesg "Starting WireGuard VPN..."
+		wg_start; evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping WireGuard VPN..."
+		wg_stop; evaluate_retval
+		;;
+
+	reload)
+		boot_mesg "Reloading WireGuard VPN..."
+		wg_start; evaluate_retval
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart}"
+		exit 1
+		;;
+esac
