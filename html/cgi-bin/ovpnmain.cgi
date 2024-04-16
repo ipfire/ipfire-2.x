@@ -68,8 +68,6 @@ my @LEGACY_AUTHS = (
 	"whirlpool",
 );
 
-my $DEFAULT_CIPHERS = "AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305";
-
 # Translations for the cipher selection
 my %CIPHERS = (
 	# AES
@@ -94,7 +92,6 @@ my $RW_STATUS = "/var/run/openvpn-rw.log";
 my %ccdconfhash=();
 my %ccdroutehash=();
 my %ccdroute2hash=();
-my %cgiparams=();
 my %vpnsettings=();
 my %checked=();
 my %confighash=();
@@ -114,20 +111,29 @@ my $col="";
 &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
 &read_routepushfile(\%vpnsettings);
 
+# Configure any defaults
+&General::set_defaults(\%vpnsettings, {
+	# The RW Server is disabled by default
+	"ENABLED"      => "off",
+	"VPN_IP"       => "$mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}",
+	"DOVPN_SUBNET" => sprintf("10.%d.%d.0/24", rand(256), rand(256)),
+
+	# Cryptographic Settings
+	"DATACIPHERS"  => "AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305",
+	"DAUTH"        => "SHA512",
+	"DCIPHER"      => "", # no fallback cipher
+
+	# Advanced Settings
+	"DPROTOCOL"    => "udp",
+	"DDEST_PORT"   => 1194,
+	"DMTU"         => 1500,
+	"MAX_CLIENTS"  => 100,
+	"MSSFIX"       => "off",
+	"TLSAUTH"      => "on",
+});
+
 # Set default CGI parameters
-$cgiparams{'ENABLED'} = 'off';
-$cgiparams{'EDIT_ADVANCED'} = 'off';
-$cgiparams{'ACTION'} = '';
-$cgiparams{'CA_NAME'} = '';
-$cgiparams{'DHCP_DOMAIN'} = '';
-$cgiparams{'DHCP_DNS'} = '';
-$cgiparams{'DHCP_WINS'} = '';
-$cgiparams{'ROUTES_PUSH'} = '';
-$cgiparams{'MSSFIX'} = '';
-$cgiparams{'number'} = '';
-$cgiparams{'DCIPHER'} = '';
-$cgiparams{'DAUTH'} = '';
-$cgiparams{'TLSAUTH'} = '';
+my %cgiparams = %{ \%vpnsettings };
 
 # Load CGI parameters
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
@@ -2641,33 +2647,7 @@ END
 ###
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'advanced server'}) {
-    %cgiparams = ();
-    %cahash = ();
-    %confighash = ();
-    my $disabled;
-    &General::readhash("${General::swroot}/ovpn/settings", \%cgiparams);
-    &read_routepushfile(\%cgiparams);
-
 ADV_ERROR:
-	if ($cgiparams{'DATACIPHERS'} eq '') {
-		$cgiparams{'DATACIPHERS'} = $DEFAULT_CIPHERS;
-	}
-	if ($cgiparams{'DAUTH'} eq '') {
-		$cgiparams{'DAUTH'} = 'SHA512';
-	}
-    if ($cgiparams{'DDEST_PORT'} eq '') {
-		$cgiparams{'DDEST_PORT'} =  '1194';
-    }
-	if ($cgiparams{'DMTU'} eq '') {
-		$cgiparams{'DMTU'} =  '1400';
-	}
-    if ($cgiparams{'MAX_CLIENTS'} eq '') {
-		$cgiparams{'MAX_CLIENTS'} =  '100';
-    }
-    if ($cgiparams{'TLSAUTH'} eq '') {
-		$cgiparams{'TLSAUTH'} = 'off';
-    }
-
     $selected{'DPROTOCOL'}{'udp'} = '';
     $selected{'DPROTOCOL'}{'tcp'} = '';
     $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
@@ -4543,11 +4523,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $selected{'DCIPHER'}{'CAST5-CBC'} = '';
     $selected{'DCIPHER'}{'BF-CBC'} = '';
     $selected{'DCIPHER'}{'DES-CBC'} = '';
-    # If no cipher has been chossen yet, select
-    # the old default (AES-256-CBC) for compatiblity reasons.
-    if ($cgiparams{'DCIPHER'} eq '') {
-	$cgiparams{'DCIPHER'} = 'AES-256-CBC';
-    }
     $selected{'DCIPHER'}{$cgiparams{'DCIPHER'}} = 'SELECTED';
     $selected{'DAUTH'}{'whirlpool'} = '';
     $selected{'DAUTH'}{'SHA512'} = '';
@@ -5053,14 +5028,8 @@ END
     VPNCONF_END:
 }
 
-#    SETTINGS_ERROR:
-###
-### Default status page
-###
-    %cgiparams = ();
     %cahash = ();
     %confighash = ();
-    &General::readhash("${General::swroot}/ovpn/settings", \%cgiparams);
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
@@ -5068,26 +5037,6 @@ END
     my @status = <FILE>;
     close(FILE);
 
-    if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
-		if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {
-		    my $ipaddr = <IPADDR>;
-		    close IPADDR;
-		    chomp ($ipaddr);
-		    $cgiparams{'VPN_IP'} = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
-		    if ($cgiparams{'VPN_IP'} eq '') {
-				$cgiparams{'VPN_IP'} = $ipaddr;
-		    }
-		}
-    }
-
-#default setzen
-    if ($cgiparams{'MSSFIX'} eq '') {
-		$cgiparams{'MSSFIX'} = 'off';
-    }
-
-    if ($cgiparams{'DOVPN_SUBNET'} eq '') {
-		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
-    }
     $checked{'ENABLED'}{'off'} = '';
     $checked{'ENABLED'}{'on'} = '';
     $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
