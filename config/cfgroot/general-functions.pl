@@ -202,6 +202,17 @@ sub get_aliases
 	}
 }
 
+sub set_defaults($$) {
+	my $hash = shift;
+	my $defaults = shift;
+
+	foreach my $key (keys %$defaults) {
+		unless (defined($hash->{$key})) {
+			$hash->{$key} = $defaults->{$key};
+		}
+	}
+}
+
 sub readhash
 {
 	my $filename = $_[0];
