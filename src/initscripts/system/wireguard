@@ -78,7 +78,19 @@ generate_config() {
 	done < /var/ipfire/wireguard/peers
 }
 
+reload_firewall() {
+	# Flush all previous rules
+	iptables -F WGINPUT
+
+	if [ "${ENABLED}" = "on" ]; then
+		iptables -A WGINPUT -p udp --dport "${PORT}" -j ACCEPT
+	fi
+}
+
 wg_start() {
+	# Reload the firewall
+	reload_firewall
+
 	# Create the interface if it does not exist
 	if [ ! -d "/sys/class/net/${INTF}" ]; then
 		ip link add "${INTF}" type wireguard || return $?
@@ -99,6 +111,9 @@ wg_start() {
 }
 
 wg_stop() {
+	# Reload the firewall
+	ENABLED=off reload_firewall
+
 	if [ -d "/sys/class/net/${INTF}" ]; then
 		ip link del "${INTF}" || return $?
 	fi

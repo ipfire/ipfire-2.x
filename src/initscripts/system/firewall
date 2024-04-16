@@ -319,6 +319,10 @@ iptables_init() {
 	iptables -N WIRELESSFORWARD
 	iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
 
+	# WireGuard
+	iptables -N WGINPUT
+	iptables -A INPUT -j WGINPUT
+
 	# OpenVPN
 	iptables -N OVPNINPUT
 	iptables -A INPUT -j OVPNINPUT
