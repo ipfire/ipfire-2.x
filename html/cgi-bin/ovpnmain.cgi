@@ -203,13 +203,13 @@ sub deletebackupcert
 }
 
 sub writeserverconf {
-    my %sovpnsettings = ();
+    my %vpnsettings = ();
 
 	# Do we require the OpenSSL Legacy Provider?
 	my $requires_legacy_provider = 0;
 
-    &General::readhash("${General::swroot}/ovpn/settings", \%sovpnsettings);
-    &read_routepushfile(\%sovpnsettings);
+    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
+    &read_routepushfile(\%vpnsettings);
 
     open(CONF,    ">${General::swroot}/ovpn/server.conf") or die "Unable to open ${General::swroot}/ovpn/server.conf: $!";
     flock CONF, 2;
@@ -218,10 +218,10 @@ sub writeserverconf {
     print CONF "daemon openvpnserver\n";
     print CONF "writepid $RW_PID\n";
     print CONF "#DAN prepare OpenVPN for listening on blue and orange\n";
-    print CONF ";local $sovpnsettings{'VPN_IP'}\n";
+    print CONF ";local $vpnsettings{'VPN_IP'}\n";
     print CONF "dev tun\n";
-    print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
-    print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
+    print CONF "proto $vpnsettings{'DPROTOCOL'}\n";
+    print CONF "port $vpnsettings{'DDEST_PORT'}\n";
     print CONF "script-security 3\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
     print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
@@ -235,9 +235,9 @@ sub writeserverconf {
 	print CONF "# Topology\n";
 	print CONF "topology subnet\n\n";
 
-    my @tempovpnsubnet = split("\/",$sovpnsettings{'DOVPN_SUBNET'});
+    my @tempovpnsubnet = split("\/",$vpnsettings{'DOVPN_SUBNET'});
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
-    print CONF "tun-mtu $sovpnsettings{'DMTU'}\n";
+    print CONF "tun-mtu $vpnsettings{'DMTU'}\n";
 
 	# Write custom routes
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
@@ -269,13 +269,13 @@ sub writeserverconf {
 		}
 	}
 
-    if ($sovpnsettings{MSSFIX} eq 'on') {
+    if ($vpnsettings{MSSFIX} eq 'on') {
 		print CONF "mssfix\n";
     } else {
 		print CONF "mssfix 0\n";
     }
-    if ($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
-		print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
+    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{'DPROTOCOL'} ne 'tcp') {
+		print CONF "fragment $vpnsettings{'FRAGMENT'}\n";
     }
 
 	# Regularly send keep-alive packets
@@ -285,31 +285,31 @@ sub writeserverconf {
     print CONF "status $RW_STATUS 30\n";
 
 	# Cryptography
-	if ($sovpnsettings{'DATACIPHERS'} eq '') {
+	if ($vpnsettings{'DATACIPHERS'} eq '') {
 		print CONF "ncp-disable\n";
 	} else {
-		print CONF "data-ciphers " . $sovpnsettings{'DATACIPHERS'} =~ s/\|/:/gr . "\n";
+		print CONF "data-ciphers " . $vpnsettings{'DATACIPHERS'} =~ s/\|/:/gr . "\n";
 	}
 
 	# Enable fallback cipher?
-	if ($sovpnsettings{'DCIPHER'} ne '') {
-		if (&is_legacy_cipher($sovpnsettings{'DCIPHER'})) {
+	if ($vpnsettings{'DCIPHER'} ne '') {
+		if (&is_legacy_cipher($vpnsettings{'DCIPHER'})) {
 			$requires_legacy_provider++;
 		}
 
-	    print CONF "data-ciphers-fallback $sovpnsettings{'DCIPHER'}\n";
+	    print CONF "data-ciphers-fallback $vpnsettings{'DCIPHER'}\n";
 	}
 
-	print CONF "auth $sovpnsettings{'DAUTH'}\n";
+	print CONF "auth $vpnsettings{'DAUTH'}\n";
 
-	if (&is_legacy_auth($sovpnsettings{'DAUTH'})) {
+	if (&is_legacy_auth($vpnsettings{'DAUTH'})) {
 		$requires_legacy_provider++;
 	}
 
     # Set TLSv2 as minimum
     print CONF "tls-version-min 1.2\n";
 
-    if ($sovpnsettings{'TLSAUTH'} eq 'on') {
+    if ($vpnsettings{'TLSAUTH'} eq 'on') {
 	print CONF "tls-auth ${General::swroot}/ovpn/certs/ta.key\n";
     }
 
@@ -318,26 +318,26 @@ sub writeserverconf {
 	# compression for everybody else.
 	print CONF "compress migrate\n";
 
-    if ($sovpnsettings{REDIRECT_GW_DEF1} eq 'on') {
+    if ($vpnsettings{REDIRECT_GW_DEF1} eq 'on') {
         print CONF "push \"redirect-gateway def1\"\n";
     }
-    if ($sovpnsettings{DHCP_DOMAIN} ne '') {
-        print CONF "push \"dhcp-option DOMAIN $sovpnsettings{DHCP_DOMAIN}\"\n";
+    if ($vpnsettings{DHCP_DOMAIN} ne '') {
+        print CONF "push \"dhcp-option DOMAIN $vpnsettings{DHCP_DOMAIN}\"\n";
     }
 
-    if ($sovpnsettings{DHCP_DNS} ne '') {
-        print CONF "push \"dhcp-option DNS $sovpnsettings{DHCP_DNS}\"\n";
+    if ($vpnsettings{DHCP_DNS} ne '') {
+        print CONF "push \"dhcp-option DNS $vpnsettings{DHCP_DNS}\"\n";
     }
 
-    if ($sovpnsettings{DHCP_WINS} ne '') {
-        print CONF "push \"dhcp-option WINS $sovpnsettings{DHCP_WINS}\"\n";
+    if ($vpnsettings{DHCP_WINS} ne '') {
+        print CONF "push \"dhcp-option WINS $vpnsettings{DHCP_WINS}\"\n";
     }
 
-    if ($sovpnsettings{MAX_CLIENTS} eq '') {
+    if ($vpnsettings{MAX_CLIENTS} eq '') {
 	print CONF "max-clients 100\n";
     }
-    if ($sovpnsettings{MAX_CLIENTS} ne '') {
-	print CONF "max-clients $sovpnsettings{MAX_CLIENTS}\n";
+    if ($vpnsettings{MAX_CLIENTS} ne '') {
+	print CONF "max-clients $vpnsettings{MAX_CLIENTS}\n";
     }
     print CONF "tls-verify /usr/lib/openvpn/verify\n";
     print CONF "crl-verify /var/ipfire/ovpn/crls/cacrl.pem\n";
