@@ -10110,7 +10110,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NXP_C45_TJA11XX_PHY
 #lib/modules/KVER-ipfire/build/include/config/NXP_CBTX_PHY
 #lib/modules/KVER-ipfire/build/include/config/NXP_TJA11XX_PHY
-#lib/modules/KVER-ipfire/build/include/config/N_GSM
 #lib/modules/KVER-ipfire/build/include/config/N_HDLC
 #lib/modules/KVER-ipfire/build/include/config/OBJAGG
 #lib/modules/KVER-ipfire/build/include/config/OCTEONTX2_AF
@@ -18926,6 +18925,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/mod/modpost.c
 #lib/modules/KVER-ipfire/build/scripts/mod/modpost.h
 #lib/modules/KVER-ipfire/build/scripts/mod/sumversion.c
+#lib/modules/KVER-ipfire/build/scripts/mod/symsearch.c
 #lib/modules/KVER-ipfire/build/scripts/module.lds
 #lib/modules/KVER-ipfire/build/scripts/module.lds.S
 #lib/modules/KVER-ipfire/build/scripts/modules-check.sh
@@ -22235,7 +22235,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/imx_thermal.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/qoriq_thermal.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty
-#lib/modules/KVER-ipfire/kernel/drivers/tty/n_gsm.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_hdlc.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial/8250

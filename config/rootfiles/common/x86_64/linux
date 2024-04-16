@@ -9891,7 +9891,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NXP_C45_TJA11XX_PHY
 #lib/modules/KVER-ipfire/build/include/config/NXP_CBTX_PHY
 #lib/modules/KVER-ipfire/build/include/config/NXP_TJA11XX_PHY
-#lib/modules/KVER-ipfire/build/include/config/N_GSM
 #lib/modules/KVER-ipfire/build/include/config/N_HDLC
 #lib/modules/KVER-ipfire/build/include/config/OBJAGG
 #lib/modules/KVER-ipfire/build/include/config/OBJTOOL
@@ -22620,7 +22619,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/intel/intel_tcc_cooling.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/intel/x86_pkg_temp_thermal.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty
-#lib/modules/KVER-ipfire/kernel/drivers/tty/n_gsm.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_hdlc.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/nozomi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial
