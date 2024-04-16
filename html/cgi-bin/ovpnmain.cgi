@@ -85,6 +85,8 @@ my %CIPHERS = (
 # Use the precomputed DH paramter from RFC7919
 my $DHPARAM = "/etc/ssl/ffdhe4096.pem";
 
+my $RW_STATUS = "/var/run/openvpn-rw.log";
+
 ###
 ### Initialize variables
 ###
@@ -279,7 +281,7 @@ sub writeserverconf {
 	print CONF "keepalive 10 60\n";
 
     print CONF "status-version 1\n";
-    print CONF "status /var/run/ovpnserver.log 30\n";
+    print CONF "status $RW_STATUS 30\n";
 
 	# Cryptography
 	if ($sovpnsettings{'DATACIPHERS'} eq '') {
@@ -922,7 +924,7 @@ sub writecollectdconf {
 	print COLLECTDVPN "Loadplugin openvpn\n";
 	print COLLECTDVPN "\n";
 	print COLLECTDVPN "<Plugin openvpn>\n";
-	print COLLECTDVPN "Statusfile \"/var/run/ovpnserver.log\"\n";
+	print COLLECTDVPN "Statusfile \"${RW_STATUS}\"\n";
 
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
 	foreach my $key (keys %ccdhash) {
@@ -3113,8 +3115,7 @@ END
 			</tr>
 END
 
-	my $filename = "/var/run/ovpnserver.log";
-	open(FILE, $filename) or die 'Unable to open config file.';
+	open(FILE, $RW_STATUS) or die 'Unable to open $RW_STATUS.';
 	my @current = <FILE>;
 	close(FILE);
 
@@ -5076,7 +5077,7 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    open(FILE, "/var/run/ovpnserver.log");
+    open(FILE, $RW_STATUS);
     my @status = <FILE>;
     close(FILE);
 
