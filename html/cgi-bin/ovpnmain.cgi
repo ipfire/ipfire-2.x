@@ -110,6 +110,10 @@ my $customnet="${General::swroot}/fwhosts/customnetworks";
 my $name;
 my $col="";
 
+# Load the configuration (once)
+&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
+&read_routepushfile(\%vpnsettings);
+
 # Set default CGI parameters
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
@@ -203,13 +207,8 @@ sub deletebackupcert
 }
 
 sub writeserverconf {
-    my %vpnsettings = ();
-
 	# Do we require the OpenSSL Legacy Provider?
 	my $requires_legacy_provider = 0;
-
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &read_routepushfile(\%vpnsettings);
 
     open(CONF,    ">${General::swroot}/ovpn/server.conf") or die "Unable to open ${General::swroot}/ovpn/server.conf: $!";
     flock CONF, 2;
@@ -1000,8 +999,6 @@ sub openvpn_status($) {
 ###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
@@ -1333,7 +1330,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
 ###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     #DAN do we really need (to to check) this value? Besides if we listen on blue and orange too,
     #DAN this value has to leave.
     if ($cgiparams{'ENABLED'} eq 'on'){
@@ -1782,7 +1778,6 @@ END
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate root/host certificates'} ||
 	 $cgiparams{'ACTION'} eq $Lang::tr{'upload p12 file'}) {
 
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 	$errormessage = $Lang::tr{'valid root certificate already exists'};
 	$cgiparams{'ACTION'} = '';
@@ -2180,8 +2175,6 @@ END
 ###
 
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
-
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
     my $n2nactive = '';
     my @ps = &General::system_output("/bin/ps", "ax");
@@ -2218,7 +2211,6 @@ END
 ###
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'dl client arch'}) {
-	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 	my $file = '';
 	my $clientovpn = '';
@@ -2458,7 +2450,6 @@ END
 
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) {
-	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 	if ($confighash{$cgiparams{'KEY'}}) {
@@ -3254,8 +3245,6 @@ END
 ###
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
-
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
     if ($confighash{$cgiparams{'KEY'}}) {
@@ -3281,7 +3270,6 @@ END
     }
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
-	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
@@ -3659,8 +3647,6 @@ if ($confighash{$cgiparams{'KEY'}}) {
 } elsif (($cgiparams{'ACTION'} eq $Lang::tr{'add'}) ||
 	 ($cgiparams{'ACTION'} eq $Lang::tr{'edit'}) ||
 	 ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'ADVANCED'} eq '')) {
-
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
