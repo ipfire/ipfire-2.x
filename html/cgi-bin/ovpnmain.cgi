@@ -1119,9 +1119,9 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 	# Write the server configuration
 	&writeserverconf();
 
-	# Reload the server if it is enabled
+	# Restart the server if it is enabled
 	if ($vpnsettings{'ENABLED'} eq "on") {
-		&General::system("/usr/local/bin/openvpnctrl", "rw", "reload");
+		&General::system("/usr/local/bin/openvpnctrl", "rw", "restart");
 	}
 }
 

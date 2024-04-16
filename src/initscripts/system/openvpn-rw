@@ -63,11 +63,6 @@ case "${1}" in
 		iptables -F OVPNINPUTRW
 		;;
 
-	reload)
-		boot_mesg "Reloading OpenVPN Roadwarrior Server..."
-		reloadproc /usr/sbin/openvpn
-		;;
-
 	restart)
 		${0} stop
 		sleep 1
