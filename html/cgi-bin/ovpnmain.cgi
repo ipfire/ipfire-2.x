@@ -360,6 +360,9 @@ sub writeserverconf {
 		print CONF "providers legacy default\n";
 	}
 
+	# Send clients a message when the server is being shut down
+	print CONF "explicit-exit-notify\n";
+
     close(CONF);
 
 	# Rewrite all CCD configurations
