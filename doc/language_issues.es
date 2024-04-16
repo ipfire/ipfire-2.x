@@ -1077,6 +1077,7 @@ WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Serv
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: password has quotation mark = Password contains an illegal double quotation mark.
 WARNING: untranslated string: processors = Processors
+WARNING: untranslated string: public key = unknown string
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.

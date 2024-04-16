@@ -1012,6 +1012,7 @@ WARNING: untranslated string: oops something went wrong = Oops, something went w
 WARNING: untranslated string: optional = Optional
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
+WARNING: untranslated string: public key = unknown string
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.

@@ -1310,6 +1310,7 @@ WARNING: untranslated string: pptp route = PPTP Route
 WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: ptr = PTR
+WARNING: untranslated string: public key = unknown string
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received

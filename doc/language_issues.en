@@ -1533,6 +1533,7 @@ WARNING: untranslated string: proxy reports today = Today
 WARNING: untranslated string: proxy reports weekly = Weekly reports
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: ptr lookup failed = Reverse lookup failed
+WARNING: untranslated string: public key = unknown string
 WARNING: untranslated string: pulse = Pulse
 WARNING: untranslated string: pulse dial = Pulse dial:
 WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!

@@ -1479,6 +1479,7 @@ WARNING: untranslated string: proxy reports monthly = Monthly reports
 WARNING: untranslated string: proxy reports today = Today
 WARNING: untranslated string: proxy reports weekly = Weekly reports
 WARNING: untranslated string: ptr = PTR
+WARNING: untranslated string: public key = unknown string
 WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: reboot fsck = Reboot & run &lsquo;fsck&rsquo;
