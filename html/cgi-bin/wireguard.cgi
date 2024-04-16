@@ -34,6 +34,10 @@ my @errormessages = ();
 my %settings = ();
 &General::readhash("/var/ipfire/wireguard/settings", \%settings);
 
+# Read all peers
+my %peers = ();
+&General::readhasharray("/var/ipfire/wireguard/peers", \%peers);
+
 # Set any defaults
 &General::set_defaults(\%settings, {
 	"ENABLED" => "off",
@@ -126,7 +130,103 @@ MAIN:
 			</table>
 		</form>
 END
+	&Header::closebox();
 
+	# Show a list with all peers
+	&Header::openbox('100%', 'LEFT', $Lang::tr{'peers'});
+
+	print <<END;
+		<table class='tbl'>
+			<tr>
+				<th width='15%'>
+					$Lang::tr{'name'}
+				</th>
+
+				<th>
+					$Lang::tr{'remark'}
+				</th>
+
+				<th width='10%'>
+					$Lang::tr{'status'}
+				</th>
+
+				<th width='10%' colspan='3'>
+					$Lang::tr{'action'}
+				</th>
+			</tr>
+END
+
+	# Iterate through all peers...
+	foreach my $key (sort { $peers{$a}[2] cmp $peers{$b}[2] } keys %peers) {
+		my $enabled  = $peers{$key}[0];
+		my $type     = $peers{$key}[1];
+		my $name     = $peers{$key}[2];
+		my $pubkey   = $peers{$key}[3];
+		my $endpoint = $peers{$key}[4];
+		my $port     = $peers{$key}[5];
+		my $routes   = $peers{$key}[6];
+		my $remarks  = $peers{$key}[7];
+
+		my $gif = ($enabled eq "on") ? "on.gif" : "off.gif";
+
+		print <<END;
+			<tr>
+				<th scope="row">
+					$name
+				</th>
+
+				<td>
+					$remarks
+				</td>
+
+				<td>
+					TBD
+				</td>
+
+				<td class="text-center">
+					<form method='post'>
+						<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
+							alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+
+				<td class="text-center">
+					<form method='post'>
+						<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+						<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif'
+							alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+
+				<td class="text-center">
+					<form method='post'>
+						<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
+						<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif'
+							alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
+						<input type='hidden' name='KEY' value='$key' />
+					</form>
+				</td>
+			</tr>
+END
+	}
+
+	print"</table>";
+
+	# Show controls
+    print <<END;
+		<table class="form">
+			<tr class="action">
+				<td>
+					<form method='post'>
+						<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
+					</form>
+				</td>
+			</tr>
+		</table>
+END
 	&Header::closebox();
 	&Header::closepage();
 
