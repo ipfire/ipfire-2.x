@@ -135,7 +135,7 @@ END
 	&Header::closebox();
 
 	# Show a list with all peers
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'peers'});
+	&Header::opensection();
 
 	# Fetch the dump
 	my %dump = &dump($INTF);
@@ -278,7 +278,7 @@ END
 			</tr>
 		</table>
 END
-	&Header::closebox();
+	&Header::closesection();
 	&Header::closepage();
 
 # This function generates a set of keys for this host if none exist
