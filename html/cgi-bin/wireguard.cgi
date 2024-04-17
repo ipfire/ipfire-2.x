@@ -188,6 +188,7 @@ END
 		# WireGuard performs a handshake very two minutes, so we should be considered online then
 		my $is_connected = (time - $status->{"latest-handshake"}) <= 120;
 
+		# We are connected!
 		if ($is_connected) {
 			push(@status, "is-connected");
 
@@ -209,6 +210,10 @@ END
 EOF
 				}
 			}
+
+		# We are not connected...
+		} else {
+			push(@status, "is-disconnected");
 		}
 
 		print <<END;
