@@ -28,6 +28,7 @@ use CGI::Carp 'fatalsToBrowser';
 require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/header.pl";
 
+my $INTF = "wg0";
 my @errormessages = ();
 
 # Read the global configuration
@@ -135,6 +136,9 @@ END
 	# Show a list with all peers
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'peers'});
 
+	# Fetch the dump
+	my %dump = &dump($INTF);
+
 	print <<END;
 		<table class='tbl'>
 			<tr>
@@ -167,7 +171,22 @@ END
 		my $routes   = $peers{$key}[6];
 		my $remarks  = $peers{$key}[7];
 
+		my $connected = $Lang::tr{'capsclosed'};
+
 		my $gif = ($enabled eq "on") ? "on.gif" : "off.gif";
+		my @status = ("status");
+
+		# Fetch the status of the peer (if possible)
+		my $status = $dump{$pubkey} || ();
+
+		# WireGuard performs a handshake very two minutes, so we should be considered online then
+		my $is_connected = ($status && ($status->{"latest-handshake"} - time <= 120));
+
+		if ($is_connected) {
+			push(@status, "is-connected");
+
+			$connected = $Lang::tr{'capsopen'};
+		}
 
 		print <<END;
 			<tr>
@@ -179,8 +198,8 @@ END
 					$remarks
 				</td>
 
-				<td>
-					TBD
+				<td class="@status">
+					$connected
 				</td>
 
 				<td class="text-center">
@@ -292,4 +311,39 @@ sub derive_public_key($) {
 
 	# Return on undefined on error
 	return undef;
+}
+
+sub dump($) {
+	my $intf = shift;
+
+	my %dump = ();
+	my $lineno = 0;
+
+	# Fetch the dump
+	#my @output = &General::system_output("wg", "show", $intf, "dump");
+	my @output = &General::system_output("cat", "/tmp/wg.dump");
+
+	foreach my $line (@output) {
+		# Increment the line numbers
+		$lineno++;
+
+		# Skip the first line
+		next if ($lineno <= 1);
+
+		# Split the line into its fields
+		my @fields = split(/\t/, $line);
+
+		# Create a new hash indexed by the public key
+		$dump{$fields[0]} = {
+			"psk"                  => $fields[1],
+			"endpoint"             => $fields[2],
+			"allowed-ips"          => $fields[3],
+			"latest-handshake"     => $fields[4],
+			"transfer-rx"          => $fields[5],
+			"transfer-tx"          => $fields[6],
+			"persistent-keepalive" => $fields[7],
+		};
+	}
+
+	return %dump;
 }
