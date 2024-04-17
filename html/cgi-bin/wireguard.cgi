@@ -147,12 +147,12 @@ END
 					$Lang::tr{'name'}
 				</th>
 
-				<th>
-					$Lang::tr{'remark'}
+				<th width='20%' colspan='2'>
+					$Lang::tr{'status'}
 				</th>
 
-				<th width='10%' colspan='2'>
-					$Lang::tr{'status'}
+				<th>
+					$Lang::tr{'remark'}
 				</th>
 
 				<th width='10%' colspan='3'>
@@ -222,16 +222,16 @@ EOF
 					$name
 				</th>
 
-				<td>
-					$remarks
-				</td>
-
 				<td class="@status">
 					$connected
 				</td>
 
 				<td class="@status">
 					$location
+				</td>
+
+				<td>
+					$remarks
 				</td>
 
 				<td class="text-center">
