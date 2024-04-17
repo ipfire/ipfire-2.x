@@ -79,6 +79,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	} else {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
 	}
+
+} elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
+	# Ask the user what type they want
+	goto ADD;
 }
 
 # The main page starts here
@@ -280,6 +284,54 @@ END
 END
 	&Header::closesection();
 	&Header::closepage();
+
+	exit(0);
+
+ADD:
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Show any error messages
+	&Header::errorbox(@errormessages);
+
+	# Open a new box
+	&Header::openbox('100%', '', $Lang::tr{'connection type'});
+
+	print <<END;
+		<form method="POST" ENCTYPE="multipart/form-data">
+			<ul>
+				<li>
+					<label>
+						<input type='radio' name='TYPE' value='host' checked />
+						$Lang::tr{'host to net vpn'}
+					</label>
+				</li>
+
+				<li>
+					<label>
+						<input type='radio' name='TYPE' value='net' />
+						$Lang::tr{'net to net vpn'}
+					</label>
+				</li>
+			</ul>
+
+			<table class="form">
+				<tr class="action">
+					<td>
+						<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
+					</td>
+				</tr>
+			</table>
+	    </form>
+END
+
+	&Header::closebox();
+	&Header::closepage();
+
+	exit(0);
 
 # This function generates a set of keys for this host if none exist
 sub generate_keys($) {
