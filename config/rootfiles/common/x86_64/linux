@@ -9205,6 +9205,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/MISC_RTSX_PCI
 #lib/modules/KVER-ipfire/build/include/config/MISC_RTSX_USB
 #lib/modules/KVER-ipfire/build/include/config/MITIGATION_RFDS
+#lib/modules/KVER-ipfire/build/include/config/MITIGATION_SPECTRE_BHI
 #lib/modules/KVER-ipfire/build/include/config/MLX4_CORE
 #lib/modules/KVER-ipfire/build/include/config/MLX4_CORE_GEN2
 #lib/modules/KVER-ipfire/build/include/config/MLX4_EN
@@ -10994,7 +10995,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP_ENABLE
 #lib/modules/KVER-ipfire/build/include/config/SPARSE_IRQ
-#lib/modules/KVER-ipfire/build/include/config/SPECTRE_BHI_AUTO
 #lib/modules/KVER-ipfire/build/include/config/SPECULATION_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/SPLIT_PTLOCK_CPUS
 #lib/modules/KVER-ipfire/build/include/config/SPMI
