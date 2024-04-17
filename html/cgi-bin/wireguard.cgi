@@ -180,7 +180,7 @@ END
 		my $status = $dump{$pubkey} || ();
 
 		# WireGuard performs a handshake very two minutes, so we should be considered online then
-		my $is_connected = ($status && ($status->{"latest-handshake"} - time <= 120));
+		my $is_connected = (time - $status->{"latest-handshake"}) <= 120;
 
 		if ($is_connected) {
 			push(@status, "is-connected");
