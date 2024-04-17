@@ -27,6 +27,7 @@ use CGI::Carp 'fatalsToBrowser';
 
 require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/location-functions.pl";
 
 my $INTF = "wg0";
 my @errormessages = ();
@@ -150,7 +151,7 @@ END
 					$Lang::tr{'remark'}
 				</th>
 
-				<th width='10%'>
+				<th width='10%' colspan='2'>
 					$Lang::tr{'status'}
 				</th>
 
@@ -172,12 +173,17 @@ END
 		my $remarks  = $peers{$key}[7];
 
 		my $connected = $Lang::tr{'capsclosed'};
+		my $country   = "ZZ";
+		my $location  = "";
 
 		my $gif = ($enabled eq "on") ? "on.gif" : "off.gif";
 		my @status = ("status");
 
 		# Fetch the status of the peer (if possible)
 		my $status = $dump{$pubkey} || ();
+
+		# Fetch the actual endpoint
+		my ($actual_endpoint, $actual_port) = split(/:/, $status->{"endpoint"}, 2);
 
 		# WireGuard performs a handshake very two minutes, so we should be considered online then
 		my $is_connected = (time - $status->{"latest-handshake"}) <= 120;
@@ -186,6 +192,23 @@ END
 			push(@status, "is-connected");
 
 			$connected = $Lang::tr{'capsopen'};
+
+			# If we have an endpoint lets lookup the country
+			if ($actual_endpoint) {
+				$country = &Location::Functions::lookup_country_code($actual_endpoint);
+
+				# If we found a country, let's show it
+				if ($country) {
+					my $icon = &Location::Functions::get_flag_icon($country);
+
+					$location = <<EOF;
+						<a href="country.cgi#$country">
+							<img src="$icon" border='0' align='absmiddle'
+								alt='$country' title='$actual_endpoint:$actual_port - $country' />
+						</a>
+EOF
+				}
+			}
 		}
 
 		print <<END;
@@ -200,6 +223,10 @@ END
 
 				<td class="@status">
 					$connected
+				</td>
+
+				<td class="@status">
+					$location
 				</td>
 
 				<td class="text-center">
