@@ -74,9 +74,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Start if enabled
 	if ($settings{'ENABLED'} eq "on") {
-		&General::system("/usr/local/bin/wireguardctl", "start");
+		&General::system("/usr/local/bin/wireguardctrl", "start");
 	} else {
-		&General::system("/usr/local/bin/wireguardctl", "stop");
+		&General::system("/usr/local/bin/wireguardctrl", "stop");
 	}
 }
 
@@ -320,8 +320,7 @@ sub dump($) {
 	my $lineno = 0;
 
 	# Fetch the dump
-	#my @output = &General::system_output("wg", "show", $intf, "dump");
-	my @output = &General::system_output("cat", "/tmp/wg.dump");
+	my @output = &General::system_output("/usr/local/bin/wireguardctrl", "dump", $intf);
 
 	foreach my $line (@output) {
 		# Increment the line numbers
