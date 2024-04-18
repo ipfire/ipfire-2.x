@@ -156,7 +156,6 @@ iptables_init() {
 
 	iptables -N CTOUTPUT
 	iptables -A CTOUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
-	iptables -A CTOUTPUT -m conntrack --ctstate INVALID -j CTINVALID
 	iptables -A CTOUTPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
 	# Restore any connection marks
