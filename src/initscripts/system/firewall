@@ -46,6 +46,20 @@ IPS_BYPASS_MASK="0x40000000"
 
 IPSET_DB_DIR="/var/lib/location/ipset"
 
+SYNPROXY_OPTIONS=(
+	# Allow clients to use Selective ACKs
+	"--sack-perm"
+
+	# Allow TCP Timestamps
+	#"--timestamp"
+
+	# Window Scaling
+	"--wscale" "9"
+
+	# Maximum Segment Size
+	"--mss" "1460"
+)
+
 function iptables() {
 	/sbin/iptables --wait "$@"
 }
@@ -151,6 +165,8 @@ iptables_init() {
 
 	iptables -N CTINPUT
 	iptables -A CTINPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+	iptables -A CTINPUT -m conntrack --ctstate INVALID,UNTRACKED \
+		-p tcp -j SYNPROXY "${SYNPROXY_OPTIONS[@]}"
 	iptables -A CTINPUT -m conntrack --ctstate INVALID -j CTINVALID
 	iptables -A CTINPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
