@@ -407,6 +407,10 @@ iptables_init() {
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
 
+	# SYN Flood Protection
+	iptables -t raw -N SYN_FLOOD_PROTECT
+	iptables -t raw -A PREROUTING -p tcp --syn -j SYN_FLOOD_PROTECT
+
 	# Populate IPsec chains
 	/usr/lib/firewall/ipsec-policy
 

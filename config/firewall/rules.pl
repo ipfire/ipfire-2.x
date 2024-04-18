@@ -297,6 +297,9 @@ sub buildrules {
 			$NAT_MODE = uc($$hash{$key}[31]);
 		}
 
+		# Enable SYN flood protection?
+		my $SYN_FLOOD_PROTECTION = 0;
+
 		# Set up time constraints.
 		my @time_options = ();
 		if ($$hash{$key}[18] eq 'ON') {
@@ -368,6 +371,11 @@ sub buildrules {
 				push(@ratelimit_options, ("-m", "limit"));
 				push(@ratelimit_options, ("--limit", $rate_limit));
 			}
+		}
+
+		# DoS Protection
+		if (($elements ge 38) && ($$hash{$key}[37] eq "ON")) {
+			$SYN_FLOOD_PROTECTION = 1;
 		}
 
 		# Check which protocols are used in this rule and so that we can
@@ -607,6 +615,10 @@ sub buildrules {
 						run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
 					run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options -j $target");
+
+					if ($SYN_FLOOD_PROTECTION && ($protocol eq "tcp")) {
+						run("$IPTABLES -t raw -A SYN_FLOOD_PROTECT @options -j CT --notrack");
+					}
 
 					# Handle forwarding rules and add corresponding rules for firewall access.
 					if ($chain eq $CHAIN_FORWARD) {
