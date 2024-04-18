@@ -149,10 +149,15 @@ iptables_init() {
 	fi
 	iptables -A CTINVALID  -j DROP -m comment --comment "DROP_CTINVALID"
 
-	iptables -N CONNTRACK
-	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
-	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j CTINVALID
-	iptables -A CONNTRACK -p icmp -m conntrack --ctstate RELATED -j ACCEPT
+	iptables -N CTINPUT
+	iptables -A CTINPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+	iptables -A CTINPUT -m conntrack --ctstate INVALID -j CTINVALID
+	iptables -A CTINPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
+
+	iptables -N CTOUTPUT
+	iptables -A CTOUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+	iptables -A CTOUTPUT -m conntrack --ctstate INVALID -j CTINVALID
+	iptables -A CTOUTPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
 	# Restore any connection marks
 	iptables -t mangle -A PREROUTING -j CONNMARK --restore-mark
@@ -261,9 +266,9 @@ iptables_init() {
 	done
 
 	# Accept everything connected
-	for i in INPUT FORWARD OUTPUT; do
-		iptables -A ${i} -j CONNTRACK
-	done
+	iptables -A INPUT   -j CTINPUT
+	iptables -A FORWARD -j CTINPUT
+	iptables -A OUTPUT  -j CTOUTPUT
 
 	# Allow DHCP
 	iptables -N DHCPINPUT
