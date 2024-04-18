@@ -56,6 +56,7 @@
 < enable
 < error the to date has to be later than the from date
 < extrahd because it it outside the allowed mount path
+< fwdfw syn flood protection
 < g.dtm
 < g.lite
 < hostile networks in
@@ -120,6 +121,7 @@
 < extrahd no mount point given
 < extrahd not configured
 < extrahd not mounted
+< fwdfw syn flood protection
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
@@ -148,6 +150,7 @@
 < bewan adsl pci st
 < bewan adsl usb
 < extrahd because it it outside the allowed mount path
+< fwdfw syn flood protection
 < g.dtm
 < g.lite
 < hostile networks total
@@ -365,6 +368,7 @@
 < fwdfw maxconcon
 < fwdfw numcon
 < fwdfw ratelimit
+< fwdfw syn flood protection
 < fwhost addlocationgrp
 < fwhost cust location
 < fwhost cust locationgroup
@@ -894,6 +898,7 @@
 < fwdfw maxconcon
 < fwdfw numcon
 < fwdfw ratelimit
+< fwdfw syn flood protection
 < fwhost addlocationgrp
 < fwhost cust location
 < fwhost cust locationgroup
@@ -1613,6 +1618,7 @@
 < fwdfw source
 < fwdfw sourceip
 < fwdfw std network
+< fwdfw syn flood protection
 < fwdfw target
 < fwdfw targetip
 < fwdfw till
@@ -2613,6 +2619,7 @@
 < fwdfw source
 < fwdfw sourceip
 < fwdfw std network
+< fwdfw syn flood protection
 < fwdfw target
 < fwdfw targetip
 < fwdfw till
@@ -3327,6 +3334,7 @@
 < force enable
 < foreshadow
 < fwdfw all subnets
+< fwdfw syn flood protection
 < fw red
 < generate ptr
 < hardware vulnerabilities

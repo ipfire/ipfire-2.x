@@ -1029,6 +1029,7 @@ WARNING: untranslated string: fwdfw limitconcon = Limit concurrent connections p
 WARNING: untranslated string: fwdfw maxconcon = Max. concurrent connections
 WARNING: untranslated string: fwdfw numcon = Number of connections
 WARNING: untranslated string: fwdfw ratelimit = Rate-limit new connections
+WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwhost addlocationgrp = Add new Location group
 WARNING: untranslated string: fwhost cust location = Location Groups
 WARNING: untranslated string: fwhost cust locationgroup = Location Groups

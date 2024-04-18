@@ -1246,6 +1246,7 @@
 'fwdfw source' => 'Source',
 'fwdfw sourceip' => 'Source address (MAC/IP address or network):',
 'fwdfw std network' => 'Standard networks:',
+'fwdfw syn flood protection' => 'Enable SYN Flood Protection (TCP only)',
 'fwdfw target' => 'Destination',
 'fwdfw targetip' => 'Destination address (IP address or network):',
 'fwdfw till' => 'Until:',

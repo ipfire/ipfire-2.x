@@ -977,6 +977,7 @@ WARNING: untranslated string: force enable = Forced
 WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: fw red = Firewall options for RED interface
 WARNING: untranslated string: fwdfw all subnets = All subnets
+WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: generate ptr = Generate PTR

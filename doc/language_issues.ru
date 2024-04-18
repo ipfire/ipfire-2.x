@@ -1090,6 +1090,7 @@ WARNING: untranslated string: fwdfw rulepos = Rule position
 WARNING: untranslated string: fwdfw snat = Source NAT
 WARNING: untranslated string: fwdfw source = Source
 WARNING: untranslated string: fwdfw sourceip = Source address (MAC/IP address or network):
+WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwdfw target = Destination
 WARNING: untranslated string: fwdfw targetip = Destination address (IP address or network):
 WARNING: untranslated string: fwdfw timeframe = Use time constraints

@@ -958,6 +958,7 @@ WARNING: untranslated string: extrahd mounted = Mounted
 WARNING: untranslated string: extrahd no mount point given = No mount point given
 WARNING: untranslated string: extrahd not configured = Not configured
 WARNING: untranslated string: extrahd not mounted = Not mounted
+WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string

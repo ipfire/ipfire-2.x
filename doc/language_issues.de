@@ -894,6 +894,7 @@ WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
+WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
