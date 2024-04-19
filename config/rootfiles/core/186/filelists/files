@@ -1,6 +1,15 @@
+etc/rc.d/helper/aws-setup
+etc/rc.d/helper/azure-setup
+etc/rc.d/helper/exoscale-setup
+etc/rc.d/helper/gcp-setup
+etc/rc.d/helper/oci-setup
+etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/static-routes
+etc/ppp/ip-up
 etc/rc.d/init.d/functions
 etc/rc.d/init.d/grub-btrfsd
 etc/rc.d/rc0.d/K01grub-btrfsd
 etc/rc.d/rc3.d/S99grub-btrfsd
 etc/rc.d/rc6.d/K01grub-btrfsd
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+usr/local/bin/ipsec-interfaces
