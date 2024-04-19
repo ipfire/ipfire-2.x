@@ -193,7 +193,7 @@ restore_backup() {
 
 	# Update OpenVPN CRL
 	/etc/fcron.daily/openvpn-crl-updater
-	
+
 	# Update OpenVPN N2N Client Configs
 	## Add providers legacy default line to n2n client config files
 	# Check if ovpnconfig exists and is not empty
@@ -245,6 +245,17 @@ restore_backup() {
 			-in /etc/httpd/server.csr \
 			-signkey /etc/httpd/server.key \
 			-out /etc/httpd/server.crt &>/dev/null
+	fi
+
+	# Remove any entry for ALIENVAULT or SPAMHAUS_EDROP from the ipblocklist modified file
+	# and the associated ipblocklist files from the /var/lib/ipblocklist directory
+	sed -i '/ALIENVAULT=/d' /var/ipfire/ipblocklist/modified
+	sed -i '/SPAMHAUS_EDROP=/d' /var/ipfire/ipblocklist/modified
+	if [ -e /var/lib/ipblocklist/ALIENVAULT.conf ]; then
+		rm /var/lib/ipblocklist/ALIENVAULT.conf
+	fi
+	if [ -e /var/lib/ipblocklist/SPAMHAUS_EDROP.conf ]; then
+		rm /var/lib/ipblocklist/SPAMHAUS_EDROP.conf
 	fi
 	return 0
 }
