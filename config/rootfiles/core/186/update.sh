@@ -44,6 +44,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/apache stop
 
 KVER="xxxKVERxxx"
 
@@ -116,6 +117,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/rc.d/init.d/apache start
 
 # Build initial ramdisks
 dracut --regenerate-all --force
