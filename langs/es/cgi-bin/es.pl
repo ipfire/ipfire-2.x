@@ -952,7 +952,7 @@
 'drop action1' => 'Comportamiento predeterminado del Cortafuegos (saliente) en modo "Bloqueado"',
 'drop action2' => 'Comportamiento predeterminado del Cortafuegos (de entrada)',
 'drop forward' => 'Registrar paquetes de reenvío descartados',
-'drop hostile' => 'Descartar paquetes desde y hacia redes hostiles (enumeradas en <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)',
+'drop hostile' => 'Descartar paquetes desde y hacia redes hostiles (enumeradas en <a href="https://www.spamhaus.org/blocklists/do-not-route-or-peer/" target="_blank">Spamhaus DROP</a>, etc.)',
 'drop input' => 'Registrar paquetes descartados',
 'drop newnotsyn' => 'Registrar nuevos paquetes not syn descartados',
 'drop outgoing' => 'Registrar paquetes salientes descartados',
