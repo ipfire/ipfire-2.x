@@ -26,6 +26,7 @@ include Config
 
 VER        = 0.9.17
 DB_DATE    = 2024-04-16
+DB_TIME    = 03:45
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +42,7 @@ objects = $(DL_FILE) \
 	location-$(DB_DATE).db.xz
 
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
-location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
+location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE)-$(DB_TIME).db.xz
 
 $(DL_FILE)_BLAKE2 = b0bf860ebaccd3cb49c58c066c430f7a1f936a2029957db9b88e22c04240af0268a8f6388e8ca512102f14033037a2ab8bbb93fe83e525b9859c790c5c382df4
 location-$(DB_DATE).db.xz_BLAKE2 = f60ca7c2e3ac7cb7e6dc94501f0028dfb76f65330ba4f35934addc65bac8af9b3ce0149956aa3ca9211c9843b34d94255328af840d250f1e4612d9af90e7b6e9
