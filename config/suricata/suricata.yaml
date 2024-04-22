@@ -768,7 +768,7 @@ security:
   limit-noproc: true
   # Use landlock security module under Linux
   landlock:
-    enabled: no
+    enabled: yes
     directories:
       write:
         - /run
