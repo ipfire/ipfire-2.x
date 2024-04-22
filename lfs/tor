@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Anonymizing overlay network for TCP (The onion router)
 
-VER        = 0.4.8.10
+VER        = 0.4.8.11
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 84
+PAK_VER    = 85
 
 DEPS       = libseccomp
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ef470664d85e019f6cac2366e934d5dc31b8ae92f121a2b4c8c95f8267abce5ce4413d30a24affa40a069d587212364ae5a7c3cd114488e50a535f01c54c6e77
+$(DL_FILE)_BLAKE2 = b7f5bb855a6f8fe7dfd0e0efe7b48798e9d4642e401641c83554ed0f98fe238a5f303e9466e9e24a7ade63488a745b3c957ed6cc53a2f5e21f5f9c3f78f7fa78
 
 install : $(TARGET)
 
