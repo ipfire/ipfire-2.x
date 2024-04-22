@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 31
+VER        = 32
 
 THISAPP    = kmod-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0dc8572da570315cf0aadd87fa7e83d0f88dea91c8566749e6f3004f9a6df916dce337ca99ea5929d41f45b408c1e3effa50f9d24615d7fa28688150a5ce91cf
+$(DL_FILE)_BLAKE2 = 5b5dac4639406549b23bb1da44bedd86a42885304ef4c7c67344dc8fd70b9e0ca3f83d033c6b80f6e00371d7188e205f4b68fadc56a9ddbf9d6a9d28e9b1e9a4
 
 install : $(TARGET)
 
