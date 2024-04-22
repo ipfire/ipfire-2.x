@@ -7252,7 +7252,7 @@ CONFIG_INTEGRITY=y
 # CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT is not set
 # CONFIG_EVM is not set
 CONFIG_DEFAULT_SECURITY_DAC=y
-CONFIG_LSM="lockdown,yama,loadpin,safesetid,integrity,bpf"
+CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,integrity,bpf"
 
 #
 # Kernel hardening options
