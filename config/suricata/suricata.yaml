@@ -775,7 +775,8 @@ security:
       # /usr and /etc folders are added to read list to allow
       # file magic to be used.
       read:
-        - /usr/share/misc/magic.mgc
+        - /etc/suricata
+        - /usr/share/misc
         - /usr/share/suricata
         - /var/ipfire/suricata
         - /var/lib/suricata
