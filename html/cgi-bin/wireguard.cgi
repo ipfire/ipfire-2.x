@@ -139,7 +139,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Jump to the editor
 	if ($type eq "net") {
-		goto EDITOR;
+		goto EDITNET;
 	}
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-NET") {
@@ -221,7 +221,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# If there are any errors, we go back to the editor
-	goto EDITOR if (scalar @errormessages);
+	goto EDITNET if (scalar @errormessages);
 
 	# Save the connection
 	$peers{$key} = [
@@ -259,7 +259,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
-		goto EDITOR;
+		goto EDITNET;
 
 	# Ask the user what type they want
 	} else {
@@ -520,7 +520,7 @@ END
 
 	exit(0);
 
-EDITOR:
+EDITNET:
 	# Send HTTP Headers
 	&Header::showhttpheaders();
 
