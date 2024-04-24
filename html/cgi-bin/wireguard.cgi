@@ -154,7 +154,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 4 = Endpoint Address
 		$cgiparams{"ENDPOINT_ADDRESS"},
 		# 5 = Endpoint Port
-		$cgiparams{"ENDPORT_PORT"},
+		$cgiparams{"ENDPOINT_PORT"},
 		# 6 = Remote Subnets
 		join("|", @remote_subnets),
 		# 7 = Remark
