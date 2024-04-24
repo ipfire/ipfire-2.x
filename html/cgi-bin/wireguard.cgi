@@ -143,23 +143,23 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Store all values
 	$peers{$key} = [
-		# 1 = Enabled
+		# 0 = Enabled
 		"on",
-		# 2 = Type
+		# 1 = Type
 		"net",
-		# 3 = Name
+		# 2 = Name
 		$cgiparams{"NAME"},
-		# 4 = Pubkey
+		# 3 = Pubkey
 		$cgiparams{"PUBLIC_KEY"},
-		# 5 = Endpoint Address
+		# 4 = Endpoint Address
 		$cgiparams{"ENDPOINT_ADDRESS"},
-		# 6 = Endpoint Port
+		# 5 = Endpoint Port
 		$cgiparams{"ENDPORT_PORT"},
-		# 7 = Remote Subnets
+		# 6 = Remote Subnets
 		join("|", @remote_subnets),
-		# 8 = Remark
+		# 7 = Remark
 		&MIME::Base64::encode_base64($cgiparams{"REMARKS"}),
-		# 9 = Local Subnets
+		# 8 = Local Subnets
 		join("|", @local_subnets),
 	];
 
