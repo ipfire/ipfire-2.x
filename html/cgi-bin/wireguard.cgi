@@ -30,7 +30,8 @@ require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
 
-my $DEFAULT_PORT = 51820;
+my $DEFAULT_PORT		= 51820;
+my $DEFAULT_KEEPALIVE	= 25;
 
 my $INTF = "wg0";
 my @errormessages = ();
@@ -133,6 +134,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"REMARKS"			=> &decode_base64($peers{$key}[7]),
 		"LOCAL_SUBNETS"		=> join(", ", @local_subnets),
 		"PSK"				=> $peers{$key}[9],
+		"KEEPALIVE"			=> $peers{$key}[10],
 	);
 
 	# Jump to the editor
@@ -175,6 +177,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Check the endpoint port
 	unless (&General::validport($cgiparams{'ENDPOINT_PORT'})) {
 		push(@errormessages, $Lang::tr{'wg invalid endpoint port'});
+	}
+
+	# Check keepalive
+	unless (&keepalive_is_valid($cgiparams{'KEEPALIVE'})) {
+		push(@errormessages, $Lang::tr{'wg invalid keepalive interval'});
 	}
 
 	# Check local subnets
@@ -234,6 +241,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&encode_subnets(@local_subnets),
 		# 9 = PSK
 		$cgiparams{"PSK"} || "",
+		# 10 = Keepalive
+		$cgiparams{"KEEPALIVE"} || 0,
 	];
 
 	# Store the configuration
@@ -531,6 +540,7 @@ EDITOR:
 			"LOCAL_SUBNETS" =>
 				$Network::ethernet{"GREEN_NETADDRESS"}
 				. "/" . $Network::ethernet{"GREEN_NETMASK"},
+			"KEEPALIVE"		=> $DEFAULT_KEEPALIVE,
 		});
 	}
 
@@ -602,6 +612,18 @@ EDITOR:
 					<td>
 						<input type="text" name="PSK"
 							value="$cgiparams{'PSK'}" />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'wg keepalive interval'}
+					</td>
+
+					<td>
+						<input type="number" name="KEEPALIVE"
+							value="$cgiparams{'KEEPALIVE'}" required
+							min="0" max="65535" />
 					</td>
 				</tr>
 			</table>
@@ -782,6 +804,19 @@ sub publickey_is_valid($) {
 
 	# All keys must be 32 bytes long
 	return length($key) == 32;
+}
+
+sub keepalive_is_valid($) {
+	my $keepalive = shift;
+
+	# Must be a number
+	return 0 unless ($keepalive =~ m/^[0-9]+$/);
+
+	# Must be between 0 and 65535 (inclusive)
+	return 0 if ($keepalive lt 0);
+	return 0 if ($keepalive gt 65535);
+
+	return 1;
 }
 
 sub encode_remarks($) {

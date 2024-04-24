@@ -119,11 +119,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -202,11 +204,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -263,11 +267,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -778,11 +784,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -1369,11 +1377,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -2376,11 +2386,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -3420,11 +3432,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
@@ -3841,11 +3855,13 @@
 < wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
+< wg invalid keepalive interval
 < wg invalid local subnet
 < wg invalid name
 < wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
+< wg keepalive interval
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets

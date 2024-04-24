@@ -48,6 +48,7 @@ generate_config() {
 	local remarks
 	local local_subnets
 	local psk
+	local keepalive
 	local _rest
 
 	local route
@@ -56,7 +57,7 @@ generate_config() {
 	ip route flush dev "${INTF}"
 
 	while read -r id enabled type name pubkey endpoint port routes \
-			remarks local_subnets psk _rest; do
+			remarks local_subnets psk keepalive _rest; do
 		# Skip peers that are not enabled
 		[ "${enabled}" = "on" ] || continue
 
@@ -83,6 +84,11 @@ generate_config() {
 					ip route add "${route}" dev "${INTF}"
 				done
 			fi
+		fi
+
+		# Set keepalive
+		if [ -n "${keepalive}" ]; then
+			echo "PersistentKeepalive = ${keepalive}"
 		fi
 	done < /var/ipfire/wireguard/peers
 }
