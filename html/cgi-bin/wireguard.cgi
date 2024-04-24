@@ -126,6 +126,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		push(@errormessages, $Lang::tr{'wg invalid name'});
 	}
 
+	# Check if the name is free
+	unless (&name_is_free($cgiparams{"NAME"}, $key)) {
+		push(@errormessages, $Lang::tr{'wg name is already used'});
+	}
+
 	# Check the public key
 	unless (&publickey_is_valid($cgiparams{'PUBLIC_KEY'})) {
 		push(@errormessages, $Lang::tr{'wg invalid public key'});
@@ -702,6 +707,21 @@ sub name_is_valid($) {
 	# Only valid characters are a-z, A-Z, 0-9, space and -
 	if ($name !~ /^[a-zA-Z0-9 -]*$/) {
 		return 0;
+	}
+
+	return 1;
+}
+
+sub name_is_free($) {
+	my $name = shift;
+	my $key  = shift || 0;
+
+	foreach my $i (keys %peers) {
+		# Skip the connection with ID
+		next if ($key eq $i);
+
+		# Return if we found a match
+		return 0 if ($peers{$i}[2] eq $name);
 	}
 
 	return 1;

@@ -123,6 +123,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < winbind daemon
@@ -202,6 +203,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted
@@ -259,6 +261,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted
@@ -770,6 +773,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted
@@ -1357,6 +1361,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted
@@ -2360,6 +2365,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted
@@ -3400,6 +3406,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted
@@ -3817,6 +3824,7 @@
 < wg invalid name
 < wg invalid public key
 < wg invalid remote subnet
+< wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < whitelisted

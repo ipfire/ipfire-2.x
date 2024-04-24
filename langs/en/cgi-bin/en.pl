@@ -3046,6 +3046,7 @@
 'wg invalid name' => 'Invalid name (Only letters, numbers, space and hyphen are allowed)',
 'wg invalid public key' => 'Invalid public key',
 'wg invalid remote subnet' => 'Invalid remote subnet',
+'wg name is already used' => 'The name is already in use',
 'wg no local subnets' => 'No local subnets given',
 'wg no remote subnets' => 'No remote subnets given',
 'whitelisted' => 'Whitelisted',

@@ -1416,6 +1416,7 @@ WARNING: untranslated string: wg invalid local subnet = Invalid local subnet
 WARNING: untranslated string: wg invalid name = Invalid name (Only letters, numbers, space and hyphen are allowed)
 WARNING: untranslated string: wg invalid public key = Invalid public key
 WARNING: untranslated string: wg invalid remote subnet = Invalid remote subnet
+WARNING: untranslated string: wg name is already used = The name is already in use
 WARNING: untranslated string: wg no local subnets = No local subnets given
 WARNING: untranslated string: wg no remote subnets = No remote subnets given
 WARNING: untranslated string: whitelisted = Whitelisted
