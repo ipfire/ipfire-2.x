@@ -281,9 +281,9 @@ MAIN:
 	# Open a box for Global Settings
 	&Header::openbox('100%', '', $Lang::tr{'global settings'});
 
-	my %checked = {
+	my %checked = (
 		"ENABLED" => ($settings{'ENABLED'} eq "on") ? "checked" : "",
-	};
+	);
 
 	print <<END;
 		<form method="POST" action="">
