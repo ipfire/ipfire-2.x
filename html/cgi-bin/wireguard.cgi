@@ -83,7 +83,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
 	}
 
-} elsif ($cgiparams{"ACTION"} eq "CREATE-PEER-NET") {
+} elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-NET") {
 	my @local_subnets = ();
 	my @remote_subnets = ();
 
@@ -452,7 +452,7 @@ EDITOR:
 
 	print <<END;
 		<form method="POST" ENCTYPE="multipart/form-data">
-			<input type="hidden" name="ACTION" value="CREATE-PEER-NET">
+			<input type="hidden" name="ACTION" value="SAVE-PEER-NET">
 
 			<table class="form">
 				<tr>
