@@ -56,6 +56,9 @@
 < done
 < download apple profile
 < enable
+< endpoint
+< endpoint address
+< endpoint port
 < error the to date has to be later than the from date
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
@@ -73,6 +76,7 @@
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < link-layer encapsulation
+< local subnets
 < log drop hostile in
 < log drop hostile out
 < netbios nameserver daemon
@@ -85,13 +89,16 @@
 < pakfire dependencies found
 < pakfire no dependencies found
 < pakfire resolvedeps wait
+< public key
 < quick control
 < random number generator daemon
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remote subnets
 < required
+< routing
 < samba server role member
 < samba server role standalone
 < shaping add options
@@ -108,6 +115,15 @@
 < user management
 < vpn configuration main
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -132,6 +148,9 @@
 < dhcp fixed ip address in dynamic range
 < dns servers
 < downfall gather data sampling
+< endpoint
+< endpoint address
+< endpoint port
 < extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
@@ -149,6 +168,7 @@
 < ips throughput
 < last updated
 < load average
+< local subnets
 < log drop hostile in
 < log drop hostile out
 < oops something went wrong
@@ -157,10 +177,13 @@
 < ovpn roadwarrior server
 < password has quotation mark
 < processors
+< public key
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remote subnets
+< routing
 < scanned
 < service boot setting unavailable
 < spec rstack overflow
@@ -170,6 +193,15 @@
 < transport mode does not support vti
 < warning
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < wireguard
 < wlanap
@@ -187,6 +219,9 @@
 < bypassed
 < ca name must only contain characters or spaces
 < data transfer
+< endpoint
+< endpoint address
+< endpoint port
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
 < g.dtm
@@ -198,11 +233,15 @@
 < ips throughput
 < last updated
 < load average
+< local subnets
 < oops something went wrong
 < ovpn roadwarrior server
 < password has quotation mark
 < processors
+< public key
 < reg_file_data_sampling
+< remote subnets
+< routing
 < scanned
 < system time
 < timeformat
@@ -210,6 +249,15 @@
 < upload fcdsl.o
 < warning
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < wireguard
 < wlanap hide ssid
@@ -401,6 +449,9 @@
 < enable
 < enable otp
 < enable smt
+< endpoint
+< endpoint address
+< endpoint port
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
@@ -540,6 +591,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -610,6 +662,7 @@
 < processors
 < processor vulnerability mitigations
 < ptr
+< public key
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -620,9 +673,11 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -704,6 +759,15 @@
 < warning
 < Weekly
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < whois results from
 < winbind daemon
@@ -951,6 +1015,9 @@
 < enable
 < enable otp
 < enable smt
+< endpoint
+< endpoint address
+< endpoint port
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
@@ -1092,6 +1159,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -1181,6 +1249,7 @@
 < processors
 < processor vulnerability mitigations
 < ptr
+< public key
 < random number generator daemon
 < rdns
 < rebooting ipfire fsck
@@ -1189,9 +1258,11 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -1274,6 +1345,15 @@
 < warning
 < Weekly
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < whois results from
 < winbind daemon
@@ -1606,6 +1686,9 @@
 < enable otp
 < enable smt
 < encryption
+< endpoint
+< endpoint address
+< endpoint port
 < entropy
 < entropy graphs
 < eol architecture warning
@@ -1956,6 +2039,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -2089,6 +2173,7 @@
 < proxy reports today
 < proxy reports weekly
 < ptr
+< public key
 < qos enter bandwidths
 < random number generator daemon
 < rdns
@@ -2101,9 +2186,11 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -2260,6 +2347,15 @@
 < warning
 < Weekly
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < whois results from
 < winbind daemon
@@ -2627,6 +2723,9 @@
 < enable otp
 < enable smt
 < encryption
+< endpoint
+< endpoint address
+< endpoint port
 < entropy
 < entropy graphs
 < eol architecture warning
@@ -2980,6 +3079,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -3111,6 +3211,7 @@
 < proxy reports today
 < proxy reports weekly
 < ptr
+< public key
 < qos enter bandwidths
 < random number generator daemon
 < rdns
@@ -3123,9 +3224,11 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -3283,6 +3386,15 @@
 < week-graph
 < Weekly
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3465,6 +3577,9 @@
 < enable
 < enable otp
 < enable smt
+< endpoint
+< endpoint address
+< endpoint port
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
@@ -3577,6 +3692,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local subnets
 < log drop hostile in
 < log drop hostile out
 < log dropped conntrack invalids
@@ -3616,6 +3732,7 @@
 < processors
 < processor vulnerability mitigations
 < ptr
+< public key
 < random number generator daemon
 < reboot fsck
 < rebooting ipfire fsck
@@ -3625,8 +3742,10 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remote subnets
 < required
 < retbleed
+< routing
 < runmode
 < samba server role member
 < samba server role standalone
@@ -3683,6 +3802,15 @@
 < warning
 < Weekly
 < wg
+< wg create peer
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid local subnet
+< wg invalid name
+< wg invalid public key
+< wg invalid remote subnet
+< wg no local subnets
+< wg no remote subnets
 < whitelisted
 < whois results from
 < winbind daemon

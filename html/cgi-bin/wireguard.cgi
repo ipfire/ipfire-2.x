@@ -24,10 +24,13 @@ use strict;
 # enable only the following on debugging purpose
 use warnings;
 use CGI::Carp 'fatalsToBrowser';
+use MIME::Base64;
 
 require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
+
+my $DEFAULT_PORT = 51820;
 
 my $INTF = "wg0";
 my @errormessages = ();
@@ -43,7 +46,7 @@ my %peers = ();
 # Set any defaults
 &General::set_defaults(\%settings, {
 	"ENABLED" => "off",
-	"PORT"    => 51820,
+	"PORT"    => $DEFAULT_PORT,
 });
 
 # Generate keys
@@ -80,9 +83,102 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
 	}
 
+} elsif ($cgiparams{"ACTION"} eq "CREATE-PEER-NET") {
+	my @local_subnets = ();
+	my @remote_subnets = ();
+
+	# Check if the name is valid
+	unless (&name_is_valid($cgiparams{"NAME"})) {
+		push(@errormessages, $Lang::tr{'wg invalid name'});
+	}
+
+	# Check the public key
+	unless (&publickey_is_valid($cgiparams{'PUBLIC_KEY'})) {
+		push(@errormessages, $Lang::tr{'wg invalid public key'});
+	}
+
+	# Check the endpoint address
+	unless (&Network::check_ip_address($cgiparams{'ENDPOINT_ADDRESS'})) {
+		push(@errormessages, $Lang::tr{'wg invalid endpoint address'});
+	}
+
+	# Check the endpoint port
+	unless (&General::validport($cgiparams{'ENDPOINT_PORT'})) {
+		push(@errormessages, $Lang::tr{'wg invalid endpoint port'});
+	}
+
+	# Check local subnets
+	if (defined $cgiparams{'LOCAL_SUBNETS'}) {
+		@local_subnets = split(/,/, $cgiparams{'LOCAL_SUBNETS'});
+
+		foreach my $subnet (@local_subnets) {
+			unless (&Network::check_subnet($subnet)) {
+				push(@errormessages, $Lang::tr{'wg invalid local subnet'} . ": ${subnet}");
+			}
+		}
+	} else {
+		push(@errormessages, $Lang::tr{'wg no local subnets'});
+	}
+
+	# Check remote subnets
+	if (defined $cgiparams{'REMOTE_SUBNETS'}) {
+		@remote_subnets = split(/,/, $cgiparams{'REMOTE_SUBNETS'});
+
+		foreach my $subnet (@remote_subnets) {
+			unless (&Network::check_subnet($subnet)) {
+				push(@errormessages, $Lang::tr{'wg invalid remote subnet'} . ": ${subnet}");
+			}
+		}
+	} else {
+		push(@errormessages, $Lang::tr{'wg no remote subnets'});
+	}
+
+	# If there are any errors, we go back to the editor
+	goto EDITOR if (scalar @errormessages);
+
+	# Save the connection
+
+	# Allocate a new key
+	my $key = &General::findhasharraykey(\%peers);
+
+	# Store all values
+	$peers{$key} = [
+		# 1 = Enabled
+		"on",
+		# 2 = Type
+		"net",
+		# 3 = Name
+		$cgiparams{"NAME"},
+		# 4 = Pubkey
+		$cgiparams{"PUBLIC_KEY"},
+		# 5 = Endpoint Address
+		$cgiparams{"ENDPOINT_ADDRESS"},
+		# 6 = Endpoint Port
+		$cgiparams{"ENDPORT_PORT"},
+		# 7 = Remote Subnets
+		join("|", @remote_subnets),
+		# 8 = Remark
+		"", # TODO
+		# 9 = Local Subnets
+		join("|", @local_subnets),
+	];
+
+	# Store the configuration
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+
+	# Reload if enabled
+	if ($settings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/wireguardctrl", "reload");
+	}
+
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
+	if ($cgiparams{"TYPE"} eq "net") {
+		goto EDITOR;
+
 	# Ask the user what type they want
-	goto ADD;
+	} else {
+		goto ADD;
+	}
 }
 
 # The main page starts here
@@ -333,6 +429,118 @@ END
 
 	exit(0);
 
+EDITOR:
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Show any error messages
+	&Header::errorbox(@errormessages);
+
+	# Open a new box
+	&Header::openbox('100%', '', $Lang::tr{'wg create peer'});
+
+	# Set defaults
+	&General::set_defaults(\%cgiparams, {
+		"ENDPOINT_PORT" => $DEFAULT_PORT,
+		"LOCAL_SUBNETS" =>
+			$Network::ethernet{"GREEN_NETADDRESS"}
+			. "/" . $Network::ethernet{"GREEN_NETMASK"},
+	});
+
+	print <<END;
+		<form method="POST" ENCTYPE="multipart/form-data">
+			<input type="hidden" name="ACTION" value="CREATE-PEER-NET">
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'name'}
+					</td>
+
+					<td>
+						<input type="text" name="NAME"
+							value="$cgiparams{'NAME'}" required />
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'endpoint'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>$Lang::tr{'public key'}</td>
+					<td>
+						<input type="text" name="PUBLIC_KEY"
+							value="$cgiparams{'PUBLIC_KEY'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'endpoint address'}
+					</td>
+
+					<td>
+						<input type="text" name="ENDPOINT_ADDRESS"
+							value="$cgiparams{'ENDPOINT_ADDRESS'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'endpoint port'}
+					</td>
+
+					<td>
+						<input type="number" name="ENDPOINT_PORT"
+							value="$cgiparams{'ENDPOINT_PORT'}" required
+							min="1" max="65535" placeholder="${DEFAULT_PORT}"/>
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'routing'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'local subnets'}
+					</td>
+
+					<td>
+						<input type="text" name="LOCAL_SUBNETS"
+							value="$cgiparams{'LOCAL_SUBNETS'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'remote subnets'}
+					</td>
+
+					<td>
+						<input type="text" name="REMOTE_SUBNETS"
+							value="$cgiparams{'REMOTE_SUBNETS'}" required />
+					</td>
+				</tr>
+
+				<tr class="action">
+					<td colspan="2">
+						<input type='submit' value='$Lang::tr{'save'}' />
+					</td>
+				</tr>
+			</table>
+	    </form>
+END
+
+	&Header::closebox();
+	&Header::closepage();
+
+	exit(0);
+
 # This function generates a set of keys for this host if none exist
 sub generate_keys($) {
 	my $force = shift || 0;
@@ -429,4 +637,30 @@ sub dump($) {
 	}
 
 	return %dump;
+}
+
+sub name_is_valid($) {
+	my $name = shift;
+
+	# The name must be between 1 and 63 characters
+	if (length ($name) < 1 || length ($name) > 63) {
+		return 0;
+	}
+
+	# Only valid characters are a-z, A-Z, 0-9, space and -
+	if ($name !~ /^[a-zA-Z0-9 -]*$/) {
+		return 0;
+	}
+
+	return 1;
+}
+
+sub publickey_is_valid($) {
+	my $key = shift;
+
+	# Try to decode the key
+	$key = &MIME::Base64::decode_base64($key);
+
+	# All keys must be 32 bytes long
+	return length($key) == 32;
 }
