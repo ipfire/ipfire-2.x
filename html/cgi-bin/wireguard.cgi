@@ -165,7 +165,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# Check PSK
-	if (defined $cgiparams{'PSK'} && !&publickey_is_valid($cgiparams{'PSK'})) {
+	if ($cgiparams{'PSK'} eq '') {
+		# The PSK may be empty
+	} elsif (!&publickey_is_valid($cgiparams{'PSK'})) {
 		push(@errormessages, $Lang::tr{'wg invalid psk'});
 	}
 
