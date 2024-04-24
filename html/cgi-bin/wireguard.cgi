@@ -117,6 +117,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Fetch type
 	my $type = $peers{$key}[1];
 
+	my @remote_subnets = &decode_subnets($peers{$key}[6]);
+	my @local_subnets  = &decode_subnets($peers{$key}[8]);
+
 	# Flush CGI parameters & load configuration
 	%cgiparams = (
 		"KEY"				=> $key,
@@ -126,9 +129,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"PUBLIC_KEY"		=> $peers{$key}[3],
 		"ENDPOINT_ADDRESS"	=> $peers{$key}[4],
 		"ENDPOINT_PORT"		=> $peers{$key}[5],
-		"REMOTE_SUBNETS"	=> $peers{$key}[6],
+		"REMOTE_SUBNETS"	=> join(", ", @remote_subnets),
 		"REMARKS"			=> &decode_base64($peers{$key}[7]),
-		"LOCAL_SUBNETS"		=> $peers{$key}[8],
+		"LOCAL_SUBNETS"		=> join(", ", @local_subnets),
 		"PSK"				=> $peers{$key}[9],
 	);
 
@@ -179,6 +182,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		@local_subnets = split(/,/, $cgiparams{'LOCAL_SUBNETS'});
 
 		foreach my $subnet (@local_subnets) {
+			$subnet =~ s/^\s+//g;
+			$subnet =~ s/\s+$//g;
+
 			unless (&Network::check_subnet($subnet)) {
 				push(@errormessages, $Lang::tr{'wg invalid local subnet'} . ": ${subnet}");
 			}
@@ -192,6 +198,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		@remote_subnets = split(/,/, $cgiparams{'REMOTE_SUBNETS'});
 
 		foreach my $subnet (@remote_subnets) {
+			$subnet =~ s/^\s+//g;
+			$subnet =~ s/\s+$//g;
+
 			unless (&Network::check_subnet($subnet)) {
 				push(@errormessages, $Lang::tr{'wg invalid remote subnet'} . ": ${subnet}");
 			}
@@ -218,11 +227,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 5 = Endpoint Port
 		$cgiparams{"ENDPOINT_PORT"},
 		# 6 = Remote Subnets
-		join("|", @remote_subnets),
+		&encode_subnets(@remote_subnets),
 		# 7 = Remark
 		&encode_remarks($cgiparams{"REMARKS"}),
 		# 8 = Local Subnets
-		join("|", @local_subnets),
+		&encode_subnets(@local_subnets),
 		# 9 = PSK
 		$cgiparams{"PSK"} || "",
 	];
@@ -792,4 +801,20 @@ sub decode_remarks($) {
 
 	# Decode from base64
 	return &MIME::Base64::decode_base64($remarks);
+}
+
+sub encode_subnets($) {
+	my @subnets = @_;
+
+	# Join subnets together separated by |
+	return join("|", @subnets);
+}
+
+sub decode_subnets($) {
+	my $subnets = shift;
+
+	# Split the string
+	my @subnets = split(/\|/, $subnets);
+
+	return @subnets;
 }
