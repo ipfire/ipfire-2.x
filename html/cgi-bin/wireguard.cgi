@@ -105,7 +105,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"ENDPOINT_ADDRESS"	=> $peers{$key}[4],
 		"ENDPOINT_PORT"		=> $peers{$key}[5],
 		"REMOTE_SUBNETS"	=> $peers{$key}[6],
-		"REMARKS"			=> &MIME::Base64::decode_base64($peers{$key}[7]),
+		"REMARKS"			=> &decode_base64($peers{$key}[7]),
 		"LOCAL_SUBNETS"		=> $peers{$key}[8],
 	);
 
@@ -187,7 +187,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 6 = Remote Subnets
 		join("|", @remote_subnets),
 		# 7 = Remark
-		&MIME::Base64::encode_base64($cgiparams{"REMARKS"}),
+		&encode_remarks($cgiparams{"REMARKS"}),
 		# 8 = Local Subnets
 		join("|", @local_subnets),
 	];
@@ -299,7 +299,7 @@ END
 		my $endpoint = $peers{$key}[4];
 		my $port     = $peers{$key}[5];
 		my $routes   = $peers{$key}[6];
-		my $remarks  = $peers{$key}[7];
+		my $remarks  = &decode_remarks($peers{$key}[7]);
 
 		my $connected = $Lang::tr{'capsclosed'};
 		my $country   = "ZZ";
@@ -345,11 +345,8 @@ EOF
 			push(@status, "is-disconnected");
 		}
 
-		# Decode remarks
+		# Escape remarks
 		if ($remarks) {
-			$remarks = &MIME::Base64::decode_base64($remarks);
-
-			# Escape any HTML
 			$remarks = &Header::escape($remarks);
 		}
 
@@ -718,4 +715,23 @@ sub publickey_is_valid($) {
 
 	# All keys must be 32 bytes long
 	return length($key) == 32;
+}
+
+sub encode_remarks($) {
+	my $remarks = shift;
+
+	# Encode to Base64
+	$remarks = &MIME::Base64::encode_base64($remarks);
+
+	# Remove the trailing newline
+	chomp($remarks);
+
+	return $remarks;
+}
+
+sub decode_remarks($) {
+	my $remarks = shift;
+
+	# Decode from base64
+	return &MIME::Base64::decode_base64($remarks);
 }
