@@ -172,7 +172,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# Check the endpoint address
-	unless (&Network::check_ip_address($cgiparams{'ENDPOINT_ADDRESS'})) {
+	if ($cgiparams{'ENDPOINT_ADDRESS'} eq '') {
+		# The endpoint address may be empty
+	} elsif (!&Network::check_ip_address($cgiparams{'ENDPOINT_ADDRESS'})) {
 		push(@errormessages, $Lang::tr{'wg invalid endpoint address'});
 	}
 
@@ -585,7 +587,7 @@ EDITOR:
 
 					<td>
 						<input type="text" name="ENDPOINT_ADDRESS"
-							value="$cgiparams{'ENDPOINT_ADDRESS'}" required />
+							value="$cgiparams{'ENDPOINT_ADDRESS'}" />
 					</td>
 				</tr>
 
