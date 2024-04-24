@@ -116,6 +116,7 @@
 < vpn configuration main
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -194,6 +195,7 @@
 < warning
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -250,6 +252,7 @@
 < warning
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -760,6 +763,7 @@
 < Weekly
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -1346,6 +1350,7 @@
 < Weekly
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -2348,6 +2353,7 @@
 < Weekly
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -3387,6 +3393,7 @@
 < Weekly
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet
@@ -3803,6 +3810,7 @@
 < Weekly
 < wg
 < wg create peer
+< wg edit peer
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid local subnet

@@ -83,9 +83,43 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
 	}
 
+# Edit an existing peer
+} elsif ($cgiparams{"ACTION"} eq $Lang::tr{'edit'}) {
+	my $key = $cgiparams{'KEY'};
+
+	# Fail if the peer does not exist
+	unless (exists $peers{$key}) {
+		goto MAIN;
+	}
+
+	# Fetch type
+	my $type = $peers{$key}[1];
+
+	# Flush CGI parameters & load configuration
+	%cgiparams = (
+		"KEY"				=> $key,
+		"ENABLED"			=> $peers{$key}[0],
+		"TYPE"				=> $peers{$key}[1],
+		"NAME"				=> $peers{$key}[2],
+		"PUBLIC_KEY"		=> $peers{$key}[3],
+		"ENDPOINT_ADDRESS"	=> $peers{$key}[4],
+		"ENDPOINT_PORT"		=> $peers{$key}[5],
+		"REMOTE_SUBNETS"	=> $peers{$key}[6],
+		"REMARKS"			=> &MIME::Base64::decode_base64($peers{$key}[7]),
+		"LOCAL_SUBNETS"		=> $peers{$key}[8],
+	);
+
+	# Jump to the editor
+	if ($type eq "net") {
+		goto EDITOR;
+	}
+
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-NET") {
 	my @local_subnets = ();
 	my @remote_subnets = ();
+
+	# Fetch or allocate a new key
+	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%peers);
 
 	# Check if the name is valid
 	unless (&name_is_valid($cgiparams{"NAME"})) {
@@ -137,11 +171,6 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	goto EDITOR if (scalar @errormessages);
 
 	# Save the connection
-
-	# Allocate a new key
-	my $key = &General::findhasharraykey(\%peers);
-
-	# Store all values
 	$peers{$key} = [
 		# 0 = Enabled
 		"on",
@@ -447,20 +476,27 @@ EDITOR:
 	# Show any error messages
 	&Header::errorbox(@errormessages);
 
+	# Fetch the key
+	my $key = $cgiparams{'KEY'};
+
 	# Open a new box
-	&Header::openbox('100%', '', $Lang::tr{'wg create peer'});
+	&Header::openbox('100%', '',
+		(defined $key) ? $Lang::tr{'wg edit peer'} : $Lang::tr{'wg create peer'});
 
 	# Set defaults
-	&General::set_defaults(\%cgiparams, {
-		"ENDPOINT_PORT" => $DEFAULT_PORT,
-		"LOCAL_SUBNETS" =>
-			$Network::ethernet{"GREEN_NETADDRESS"}
-			. "/" . $Network::ethernet{"GREEN_NETMASK"},
-	});
+	unless (defined $key) {
+		&General::set_defaults(\%cgiparams, {
+			"ENDPOINT_PORT" => $DEFAULT_PORT,
+			"LOCAL_SUBNETS" =>
+				$Network::ethernet{"GREEN_NETADDRESS"}
+				. "/" . $Network::ethernet{"GREEN_NETMASK"},
+		});
+	}
 
 	print <<END;
 		<form method="POST" ENCTYPE="multipart/form-data">
 			<input type="hidden" name="ACTION" value="SAVE-PEER-NET">
+			<input type="hidden" name="KEY" value="$cgiparams{'KEY'}">
 
 			<table class="form">
 				<tr>

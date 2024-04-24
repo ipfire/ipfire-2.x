@@ -3039,6 +3039,7 @@
 'weeks' => 'Weeks',
 'wg' => 'WireGuard',
 'wg create peer' => 'Create A New Peer',
+'wg edit peer' => 'Edit Peer',
 'wg invalid endpoint address' => 'Invalid endpoint address',
 'wg invalid endpoint port' => 'Invalid endpoint port',
 'wg invalid local subnet' => 'Invalid local subnet',
