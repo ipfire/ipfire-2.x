@@ -129,6 +129,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"REMOTE_SUBNETS"	=> $peers{$key}[6],
 		"REMARKS"			=> &decode_base64($peers{$key}[7]),
 		"LOCAL_SUBNETS"		=> $peers{$key}[8],
+		"PSK"				=> $peers{$key}[9],
 	);
 
 	# Jump to the editor
@@ -156,6 +157,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Check the public key
 	unless (&publickey_is_valid($cgiparams{'PUBLIC_KEY'})) {
 		push(@errormessages, $Lang::tr{'wg invalid public key'});
+	}
+
+	# Check PSK
+	if (defined $cgiparams{'PSK'} && !&publickey_is_valid($cgiparams{'PSK'})) {
+		push(@errormessages, $Lang::tr{'wg invalid psk'});
 	}
 
 	# Check the endpoint address
@@ -217,6 +223,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&encode_remarks($cgiparams{"REMARKS"}),
 		# 8 = Local Subnets
 		join("|", @local_subnets),
+		# 9 = PSK
+		$cgiparams{"PSK"} || "",
 	];
 
 	# Store the configuration
@@ -577,6 +585,14 @@ EDITOR:
 						<input type="number" name="ENDPOINT_PORT"
 							value="$cgiparams{'ENDPOINT_PORT'}" required
 							min="1" max="65535" placeholder="${DEFAULT_PORT}"/>
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'wg pre-shared key (optional)'}</td>
+					<td>
+						<input type="text" name="PSK"
+							value="$cgiparams{'PSK'}" />
 					</td>
 				</tr>
 			</table>

@@ -121,12 +121,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -202,12 +204,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < wireguard
 < wlanap
@@ -261,12 +265,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < wireguard
 < wlanap hide ssid
@@ -774,12 +780,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < whois results from
 < winbind daemon
@@ -1363,12 +1371,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < whois results from
 < winbind daemon
@@ -2368,12 +2378,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3410,12 +3422,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3829,12 +3843,14 @@
 < wg invalid endpoint port
 < wg invalid local subnet
 < wg invalid name
+< wg invalid psk
 < wg invalid public key
 < wg invalid remote subnet
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
 < wg peer does not exist
+< wg pre-shared key (optional)
 < whitelisted
 < whois results from
 < winbind daemon

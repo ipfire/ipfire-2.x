@@ -45,6 +45,9 @@ generate_config() {
 	local endpoint
 	local port
 	local routes
+	local remarks
+	local local_subnets
+	local psk
 	local _rest
 
 	local route
@@ -52,12 +55,18 @@ generate_config() {
 	# Flush all previously set routes
 	ip route flush dev "${INTF}"
 
-	while read -r id enabled type name pubkey endpoint port routes _rest; do
+	while read -r id enabled type name pubkey endpoint port routes \
+			remarks local_subnets psk _rest; do
 		# Skip peers that are not enabled
 		[ "${enabled}" = "on" ] || continue
 
 		echo "[Peer]"
 		echo "PublicKey = ${pubkey}"
+
+		# Set PSK (if set)
+		if [ -n "${psk}" ]; then
+			echo "PresharedKey= ${psk}"
+		fi
 
 		# Set endpoint
 		if [ -n "${endpoint}" ]; then
