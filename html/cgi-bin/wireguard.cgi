@@ -567,14 +567,6 @@ EDITOR:
 
 			<table class="form">
 				<tr>
-					<td>$Lang::tr{'public key'}</td>
-					<td>
-						<input type="text" name="PUBLIC_KEY"
-							value="$cgiparams{'PUBLIC_KEY'}" required />
-					</td>
-				</tr>
-
-				<tr>
 					<td>
 						$Lang::tr{'endpoint address'}
 					</td>
@@ -594,6 +586,14 @@ EDITOR:
 						<input type="number" name="ENDPOINT_PORT"
 							value="$cgiparams{'ENDPOINT_PORT'}" required
 							min="1" max="65535" placeholder="${DEFAULT_PORT}"/>
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'public key'}</td>
+					<td>
+						<input type="text" name="PUBLIC_KEY"
+							value="$cgiparams{'PUBLIC_KEY'}" required />
 					</td>
 				</tr>
 
