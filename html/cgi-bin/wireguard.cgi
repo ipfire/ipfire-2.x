@@ -60,7 +60,7 @@ my %cgiparams = ();
 # Save on main page
 if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Store whether enabled or not
-	if ($cgiparams{'ENABLED'} =~ m/^(on|off)$/) {
+	if ($cgiparams{'ENABLED'} =~ m/^(on|off)?$/) {
 		$settings{'ENABLED'} = $cgiparams{'ENABLED'};
 	}
 
