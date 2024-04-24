@@ -158,7 +158,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 7 = Remote Subnets
 		join("|", @remote_subnets),
 		# 8 = Remark
-		"", # TODO
+		&MIME::Base64::encode_base64($cgiparams{"REMARKS"}),
 		# 9 = Local Subnets
 		join("|", @local_subnets),
 	];
@@ -316,6 +316,14 @@ EOF
 			push(@status, "is-disconnected");
 		}
 
+		# Decode remarks
+		if ($remarks) {
+			$remarks = &MIME::Base64::decode_base64($remarks);
+
+			# Escape any HTML
+			$remarks = &Header::escape($remarks);
+		}
+
 		print <<END;
 			<tr>
 				<th scope="row">
@@ -463,6 +471,17 @@ EDITOR:
 					<td>
 						<input type="text" name="NAME"
 							value="$cgiparams{'NAME'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'remarks'}
+					</td>
+
+					<td>
+						<input type="text" name="REMARKS"
+							value="$cgiparams{'REMARKS'}" />
 					</td>
 				</tr>
 			</table>
