@@ -126,6 +126,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -206,6 +207,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < wireguard
 < wlanap
@@ -264,6 +266,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < wireguard
 < wlanap hide ssid
@@ -776,6 +779,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < whois results from
 < winbind daemon
@@ -1364,6 +1368,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < whois results from
 < winbind daemon
@@ -2368,6 +2373,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3409,6 +3415,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3827,6 +3834,7 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer does not exist
 < whitelisted
 < whois results from
 < winbind daemon

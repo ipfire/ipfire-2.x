@@ -1419,6 +1419,7 @@ WARNING: untranslated string: wg invalid remote subnet = Invalid remote subnet
 WARNING: untranslated string: wg name is already used = The name is already in use
 WARNING: untranslated string: wg no local subnets = No local subnets given
 WARNING: untranslated string: wg no remote subnets = No remote subnets given
+WARNING: untranslated string: wg peer does not exist = Peer does not exist
 WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon

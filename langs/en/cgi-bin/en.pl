@@ -3049,6 +3049,7 @@
 'wg name is already used' => 'The name is already in use',
 'wg no local subnets' => 'No local subnets given',
 'wg no remote subnets' => 'No remote subnets given',
+'wg peer does not exist' => 'Peer does not exist',
 'whitelisted' => 'Whitelisted',
 'whois results from' => 'WHOIS results from',
 'wildcards' => 'Wildcards',

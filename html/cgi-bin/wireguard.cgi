@@ -83,12 +83,34 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
 	}
 
+# Delete an existing peer
+} elsif ($cgiparams{"ACTION"} eq $Lang::tr{'remove'}) {
+	my $key = $cgiparams{'KEY'};
+
+	# Fail if the peer does not exist
+	unless (exists $peers{$key}) {
+		push(@errormessages, $Lang::tr{'wg peer does not exist'});
+		goto MAIN;
+	}
+
+	# Delete the peer
+	delete($peers{$key});
+
+	# Store the configuration
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+
+	# Reload if enabled
+	if ($settings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/wireguardctrl", "reload");
+	}
+
 # Edit an existing peer
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'edit'}) {
 	my $key = $cgiparams{'KEY'};
 
 	# Fail if the peer does not exist
 	unless (exists $peers{$key}) {
+		push(@errormessages, $Lang::tr{'wg peer does not exist'});
 		goto MAIN;
 	}
 
