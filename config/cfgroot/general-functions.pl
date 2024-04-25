@@ -25,6 +25,10 @@ $General::noipprefix = 'noipg-';
 
 require "${General::swroot}/network-functions.pl";
 
+# Load the main settings file
+our %mainsettings = ();
+&readhash("${General::swroot}/main/settings", \%mainsettings);
+
 # This function executes a shell command without forking a shell or do any other
 # Perl-voodoo before it. It deprecates the "system" command and is the only way
 # to call shell commands.
