@@ -72,7 +72,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# Check client pool
-	if (&Network::check_subnet($cgiparams{'CLIENT_POOL'})) {
+	if (&pool_is_in_use($settings{'CLIENT_POOL'})) {
+		# Ignore any changes if the pool is in use
+	} elsif (&Network::check_subnet($cgiparams{'CLIENT_POOL'})) {
 		$settings{'CLIENT_POOL'} = $cgiparams{'CLIENT_POOL'};
 	} else {
 		push(@errormessages, $Lang::tr{'wg invalid client pool'});
@@ -385,6 +387,10 @@ MAIN:
 		"ENABLED" => ($settings{'ENABLED'} eq "on") ? "checked" : "",
 	);
 
+	my %readonly = (
+		"CLIENT_POOL" => (&pool_is_in_use($settings{'CLIENT_POOL'}) ? "readonly" : ""),
+	);
+
 	print <<END;
 		<form method="POST" action="">
 			<table class="form">
@@ -413,7 +419,8 @@ MAIN:
 				<tr>
 					<td>$Lang::tr{'wg client pool'}</td>
 					<td>
-						<input type="text" name="CLIENT_POOL" value="$settings{'CLIENT_POOL'}" />
+						<input type="text" name="CLIENT_POOL"
+							value="$settings{'CLIENT_POOL'}" $readonly{'CLIENT_POOL'} />
 					</td>
 				</tr>
 
@@ -1053,4 +1060,21 @@ sub decode_subnets($) {
 	my @subnets = split(/\|/, $subnets);
 
 	return @subnets;
+}
+
+sub pool_is_in_use($) {
+	my $pool = shift;
+
+	foreach my $key (keys %peers) {
+		my $type    = $peers{$key}[1];
+		my $address = $peers{$key}[6];
+
+		# Check if a host is using an IP address from the pool
+		if ($type eq "host" && &Network::ip_address_in_network($address, $pool)) {
+			return 1;
+		}
+	}
+
+	# No match found
+	return 0;
 }
