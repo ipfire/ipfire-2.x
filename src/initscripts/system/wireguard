@@ -56,6 +56,11 @@ generate_config() {
 	# Flush all previously set routes
 	ip route flush dev "${INTF}"
 
+	# Add the client pool
+	if [ -n "${CLIENT_POOL}" ]; then
+		ip route add "${CLIENT_POOL}" dev "${INTF}"
+	fi
+
 	while read -r id enabled type name pubkey endpoint port routes \
 			remarks local_subnets psk keepalive _rest; do
 		# Skip peers that are not enabled
