@@ -97,6 +97,7 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remarks
 < remote subnets
 < required
 < routing
@@ -202,6 +203,7 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remarks
 < remote subnets
 < routing
 < scanned
@@ -279,6 +281,7 @@
 < public key
 < qr code
 < reg_file_data_sampling
+< remarks
 < remote subnets
 < routing
 < scanned
@@ -731,6 +734,7 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
 < remote subnets
 < required
 < required field
@@ -1335,6 +1339,7 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remarks
 < remote subnets
 < required
 < required field
@@ -2282,6 +2287,7 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
 < remote subnets
 < required
 < required field
@@ -3339,6 +3345,7 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
 < remote subnets
 < required
 < required field
@@ -3876,6 +3883,7 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
 < remote subnets
 < required
 < retbleed

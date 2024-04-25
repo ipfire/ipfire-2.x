@@ -2244,6 +2244,7 @@
 'reload' => 'reload',
 'remark' => 'Remark',
 'remark title' => 'Remark:',
+'remarks' => 'Remarks',
 'remote access' => 'Remote access',
 'remote announce' => 'Remote Announce',
 'remote browse sync' => 'Remote Browse Sync',
