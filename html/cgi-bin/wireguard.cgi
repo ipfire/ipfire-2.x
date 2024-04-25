@@ -112,7 +112,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Reload if enabled
 	if ($settings{'ENABLED'} eq "on") {
-		&General::system("/usr/local/bin/wireguardctrl", "reload");
+		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
 # Edit an existing peer
@@ -268,7 +268,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Reload if enabled
 	if ($settings{'ENABLED'} eq "on") {
-		&General::system("/usr/local/bin/wireguardctrl", "reload");
+		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-HOST") {
@@ -377,7 +377,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Reload if enabled
 	if ($settings{'ENABLED'} eq "on") {
-		&General::system("/usr/local/bin/wireguardctrl", "reload");
+		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
 	# Show the client configuration when creating a new peer
