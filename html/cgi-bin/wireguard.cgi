@@ -1170,6 +1170,19 @@ sub pool_is_in_use($) {
 sub generate_client_configuration($) {
 	my $peer = shift;
 
+	my @allowed_ips = ();
+
+	# Convert all subnets into CIDR notation
+	foreach my $subnet ($peer->{'LOCAL_SUBNETS'}) {
+		my $netaddress = &Network::get_netaddress($subnet);
+		my $prefix     = &Network::get_prefix($subnet);
+
+		# Skip invalid subnets
+		next if (!defined $netaddress || !defined $prefix);
+
+		push(@allowed_ips, "${netaddress}/${prefix}");
+	}
+
 	my @conf = (
 		"[Interface]",
 		"PrivateKey = $peer->{'PRIVATE_KEY'}",
@@ -1180,7 +1193,7 @@ sub generate_client_configuration($) {
 		"Endpoint = $General::main{'HOSTNAME'}.$General::main{'DOMAINNAME'}",
 		"PublicKey = $settings{'PUBLIC_KEY'}",
 		"PresharedKey = $peer->{'PSK'}",
-		"AllowedIPs = $peer->{'LOCAL_SUBNETS'}",
+		"AllowedIPs = " . join(", ", @allowed_ips),
 		"PersistentKeepalive = $DEFAULT_KEEPALIVE",
 	);
 
