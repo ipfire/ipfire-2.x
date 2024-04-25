@@ -272,11 +272,15 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-HOST") {
+	my @free_addresses = ();
 	my @local_subnets = ();
 	my $private_key;
 
 	# Fetch or allocate a new key
 	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%peers);
+
+	# Is this a new connection?
+	my $is_new = !exists $peers{$key};
 
 	# Check if the name is valid
 	unless (&name_is_valid($cgiparams{"NAME"})) {
@@ -304,11 +308,19 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		push(@errormessages, $Lang::tr{'wg no local subnets'});
 	}
 
+	# Check if we have address space left in the pool
+	if ($is_new) {
+		# Fetch the next free address
+		@free_addresses = &free_pool_addresses($settings{'CLIENT_POOL'}, 1);
+
+		# Fail if we ran out of addresses
+		if (scalar @free_addresses == 0) {
+			push(@errormessages, $Lang::tr{'wg no more free addresses in pool'});
+		}
+	}
+
 	# If there are any errors, we go back to the editor
 	goto EDITHOST if (scalar @errormessages);
-
-	# Is this a new connection?
-	my $is_new = !exists $peers{$key};
 
 	# Generate things for a new peer
 	if ($is_new) {
@@ -321,10 +333,17 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# Generate a new PSK
 		$cgiparams{"PSK"} = &generate_private_key();
 
+		# Fetch a free address from the pool
+		foreach (@free_addresses) {
+			$cgiparams{'CLIENT_ADDRESS'} = $_;
+			last;
+		}
+
 	# Fetch some configuration parts
 	} else {
-		$cgiparams{"PUBLIC_KEY"} = $peers{$key}[3];
-		$cgiparams{"PSK"}        = $peers{$key}[9];
+		$cgiparams{"PUBLIC_KEY"}     = $peers{$key}[3];
+		$cgiparams{'CLIENT_ADDRESS'} = $peers{$key}[6];
+		$cgiparams{"PSK"}            = $peers{$key}[9];
 	}
 
 	# Save the connection
@@ -342,7 +361,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 5 = Endpoint Port
 		"",
 		# 6 = Remote Subnets
-		"", #&encode_subnets(@remote_subnets),
+		$cgiparams{'CLIENT_ADDRESS'},
 		# 7 = Remark
 		&encode_remarks($cgiparams{"REMARKS"}),
 		# 8 = Local Subnets
@@ -1165,6 +1184,49 @@ sub pool_is_in_use($) {
 
 	# No match found
 	return 0;
+}
+
+# Takes the pool and an optional limit of up to how many addresses to return
+sub free_pool_addresses($$) {
+	my $pool = shift;
+	my $limit = shift || 0;
+
+	my @used_addresses = ();
+	my @free_addresses = ();
+
+	# Collect all used addresses
+	foreach my $key (keys %peers) {
+		my $type    = $peers{$key}[1];
+		my $address = $peers{$key}[6];
+
+		# Only check hosts
+		next if ($type ne "host");
+
+		push(@used_addresses, &Network::ip2bin($address));
+	}
+
+	# Fetch the first address
+	my $address = &Network::get_netaddress($pool);
+
+	# Fetch the last address
+	my $broadcast = &Network::get_broadcast($pool);
+	$broadcast = &Network::ip2bin($broadcast);
+
+	# Walk through all addresses excluding the first and last address.
+	# No technical reason, we just don't want to confuse people.
+	OUTER: for (my $i = &Network::ip2bin($address) + 1; $i < $broadcast; $i++) {
+		# Skip any addresses that already in use
+		foreach my $used_address (@used_addresses) {
+			next OUTER if ($i == $used_address);
+		}
+
+		push(@free_addresses, &Network::bin2ip($i));
+
+		# Check limit
+		last if ($limit > 0 && scalar @free_addresses >= $limit);
+	}
+
+	return @free_addresses;
 }
 
 sub generate_client_configuration($) {

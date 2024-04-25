@@ -3055,6 +3055,7 @@
 'wg keepalive interval' => 'Keepalive Interval',
 'wg name is already used' => 'The name is already in use',
 'wg no local subnets' => 'No local subnets given',
+'wg no more free addresses in pool' => 'No more free addresses in pool',
 'wg no remote subnets' => 'No remote subnets given',
 'wg peer configuration' => 'Peer Configuration',
 'wg peer does not exist' => 'Peer does not exist',
