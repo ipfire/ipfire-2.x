@@ -272,6 +272,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-HOST") {
 	my @local_subnets = ();
+	my $private_key;
 
 	# Fetch or allocate a new key
 	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%peers);
@@ -305,21 +306,24 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# If there are any errors, we go back to the editor
 	goto EDITHOST if (scalar @errormessages);
 
-	# Fetch some configuration parts
-	if (exists $peers{$key}) {
-		$cgiparams{"PUBLIC_KEY"} = $peers{$key}[3];
-		$cgiparams{"PSK"}        = $peers{$key}[9];
+	# Is this a new connection?
+	my $is_new = !exists $peers{$key};
 
-	# Set some things if we are creating a new peer
-	} else {
+	# Generate things for a new peer
+	if ($is_new) {
 		# Generate a new private key
-		my $private_key = &generate_private_key();
+		$private_key = &generate_private_key();
 
 		# Derive the public key
 		$cgiparams{"PUBLIC_KEY"} = &derive_public_key($private_key);
 
 		# Generate a new PSK
 		$cgiparams{"PSK"} = &generate_private_key();
+
+	# Fetch some configuration parts
+	} else {
+		$cgiparams{"PUBLIC_KEY"} = $peers{$key}[3];
+		$cgiparams{"PSK"}        = $peers{$key}[9];
 	}
 
 	# Save the connection
@@ -355,6 +359,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	if ($settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "reload");
 	}
+
+	# Show the client configuration when creating a new peer
+	&show_peer_configuration($key, $private_key) if ($is_new);
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
@@ -867,6 +874,52 @@ END
 
 	exit(0);
 
+sub show_peer_configuration($$) {
+	my $key = shift;
+	my $private_key = shift;
+
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Load the configuration
+	my %peer = (
+		"NAME"				=> $peers{$key}[2],
+		"PUBLIC_KEY"		=> $peers{$key}[3],
+		"CLIENT_ADDRESS"	=> $peers{$key}[6],
+		"LOCAL_SUBNETS"		=> &decode_subnets($peers{$key}[8]),
+		"PSK"				=> $peers{$key}[9],
+
+		# Other stuff
+		"PRIVATE_KEY"		=> $private_key,
+	);
+
+	# Generate the client configuration
+	my $config = &generate_client_configuration(\%peer);
+
+	# Open a new box
+	&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
+
+	print <<END;
+		<h6>$Lang::tr{'wg client configuration file'}</h6>
+
+		<code><pre>$config</textarea></code>
+END
+
+	&Header::closebox();
+
+	# Show a note that this configuration cannot be shown again
+	&Header::errorbox((
+		$Lang::tr{'wg warning configuration only shown once'},
+	));
+
+	&Header::closepage();
+
+	exit(0);
+}
+
 # This function generates a set of keys for this host if none exist
 sub generate_keys($) {
 	my $force = shift || 0;
@@ -1077,4 +1130,24 @@ sub pool_is_in_use($) {
 
 	# No match found
 	return 0;
+}
+
+sub generate_client_configuration($) {
+	my $peer = shift;
+
+	my @conf = (
+		"[Interface]",
+		"PrivateKey = $peer->{'PRIVATE_KEY'}",
+		"Address = $peer->{'CLIENT_ADDRESS'}",
+		"",
+
+		"[Peer]",
+		"Endpoint = $General::main{'HOSTNAME'}.$General::main{'DOMAINNAME'}",
+		"PublicKey = $settings{'PUBLIC_KEY'}",
+		"PresharedKey = $peer->{'PSK'}",
+		"AllowedIPs = $peer->{'LOCAL_SUBNETS'}",
+		"PersistentKeepalive = $DEFAULT_KEEPALIVE",
+	);
+
+	return join("\n", @conf);
 }

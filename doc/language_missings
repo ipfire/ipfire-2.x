@@ -115,6 +115,7 @@
 < user management
 < vpn configuration main
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -131,8 +132,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -202,6 +205,7 @@
 < transport mode does not support vti
 < warning
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -218,8 +222,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < wireguard
 < wlanap
@@ -267,6 +273,7 @@
 < upload fcdsl.o
 < warning
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -283,8 +290,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < wireguard
 < wlanap hide ssid
@@ -786,6 +795,7 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -802,8 +812,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -1381,6 +1393,7 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -1397,8 +1410,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -2392,6 +2407,7 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -2408,8 +2424,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3440,6 +3458,7 @@
 < week-graph
 < Weekly
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -3456,8 +3475,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3865,6 +3886,7 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
 < wg client pool
 < wg create peer
 < wg edit peer
@@ -3881,8 +3903,10 @@
 < wg name is already used
 < wg no local subnets
 < wg no remote subnets
+< wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
