@@ -138,8 +138,12 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	);
 
 	# Jump to the editor
-	if ($type eq "net") {
+	if ($type eq "host") {
+		goto EDITHOST;
+	} elsif ($type eq "net") {
 		goto EDITNET;
+	} else {
+		die "Unsupported type: $type";
 	}
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-NET") {
@@ -257,9 +261,98 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		&General::system("/usr/local/bin/wireguardctrl", "reload");
 	}
 
+} elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-HOST") {
+	my @local_subnets = ();
+
+	# Fetch or allocate a new key
+	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%peers);
+
+	# Check if the name is valid
+	unless (&name_is_valid($cgiparams{"NAME"})) {
+		push(@errormessages, $Lang::tr{'wg invalid name'});
+	}
+
+	# Check if the name is free
+	unless (&name_is_free($cgiparams{"NAME"}, $key)) {
+		push(@errormessages, $Lang::tr{'wg name is already used'});
+	}
+
+	# Check local subnets
+	if (defined $cgiparams{'LOCAL_SUBNETS'}) {
+		@local_subnets = split(/,/, $cgiparams{'LOCAL_SUBNETS'});
+
+		foreach my $subnet (@local_subnets) {
+			$subnet =~ s/^\s+//g;
+			$subnet =~ s/\s+$//g;
+
+			unless (&Network::check_subnet($subnet)) {
+				push(@errormessages, $Lang::tr{'wg invalid local subnet'} . ": ${subnet}");
+			}
+		}
+	} else {
+		push(@errormessages, $Lang::tr{'wg no local subnets'});
+	}
+
+	# If there are any errors, we go back to the editor
+	goto EDITHOST if (scalar @errormessages);
+
+	# Fetch some configuration parts
+	if (exists $peers{$key}) {
+		$cgiparams{"PUBLIC_KEY"} = $peers{$key}[3];
+		$cgiparams{"PSK"}        = $peers{$key}[9];
+
+	# Set some things if we are creating a new peer
+	} else {
+		# Generate a new private key
+		my $private_key = &generate_private_key();
+
+		# Derive the public key
+		$cgiparams{"PUBLIC_KEY"} = &derive_public_key($private_key);
+
+		# Generate a new PSK
+		$cgiparams{"PSK"} = &generate_private_key();
+	}
+
+	# Save the connection
+	$peers{$key} = [
+		# 0 = Enabled
+		"on",
+		# 1 = Type
+		"host",
+		# 2 = Name
+		$cgiparams{"NAME"},
+		# 3 = Pubkey
+		$cgiparams{"PUBLIC_KEY"},
+		# 4 = Endpoint Address
+		"",
+		# 5 = Endpoint Port
+		"",
+		# 6 = Remote Subnets
+		"", #&encode_subnets(@remote_subnets),
+		# 7 = Remark
+		&encode_remarks($cgiparams{"REMARKS"}),
+		# 8 = Local Subnets
+		&encode_subnets(@local_subnets),
+		# 9 = PSK
+		$cgiparams{"PSK"},
+		# 10 = Keepalive
+		0,
+	];
+
+	# Store the configuration
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+
+	# Reload if enabled
+	if ($settings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/wireguardctrl", "reload");
+	}
+
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
 		goto EDITNET;
+
+	} elsif ($cgiparams{"TYPE"} eq "host") {
+		goto EDITHOST;
 
 	# Ask the user what type they want
 	} else {
@@ -664,6 +757,88 @@ EDITNET:
 				</tr>
 			</table>
 	    </form>
+END
+
+	&Header::closebox();
+	&Header::closepage();
+
+	exit(0);
+
+EDITHOST:
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Show any error messages
+	&Header::errorbox(@errormessages);
+
+	# Fetch the key
+	my $key = $cgiparams{'KEY'};
+
+	# Open a new box
+	&Header::openbox('100%', '',
+		(defined $key) ? $Lang::tr{'wg edit peer'} : $Lang::tr{'wg create peer'});
+
+	# Set defaults
+	unless (defined $key) {
+		&General::set_defaults(\%cgiparams, {
+			"LOCAL_SUBNETS" =>
+				$Network::ethernet{"GREEN_NETADDRESS"}
+				. "/" . $Network::ethernet{"GREEN_NETMASK"},
+		});
+	}
+
+	print <<END;
+		<form method="POST" ENCTYPE="multipart/form-data">
+			<input type="hidden" name="ACTION" value="SAVE-PEER-HOST">
+			<input type="hidden" name="KEY" value="$cgiparams{'KEY'}">
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'name'}
+					</td>
+
+					<td>
+						<input type="text" name="NAME"
+							value="$cgiparams{'NAME'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'remarks'}
+					</td>
+
+					<td>
+						<input type="text" name="REMARKS"
+							value="$cgiparams{'REMARKS'}" />
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'routing'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'local subnets'}
+					</td>
+
+					<td>
+						<input type="text" name="LOCAL_SUBNETS"
+							value="$cgiparams{'LOCAL_SUBNETS'}" required />
+					</td>
+				</tr>
+
+				<tr class="action">
+					<td colspan="2">
+						<input type='submit' value='$Lang::tr{'save'}' />
+					</td>
+				</tr>
+			</table>
 END
 
 	&Header::closebox();
