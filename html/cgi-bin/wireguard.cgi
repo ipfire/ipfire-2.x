@@ -1245,6 +1245,13 @@ sub generate_client_configuration($) {
 		push(@allowed_ips, "${netaddress}/${prefix}");
 	}
 
+	# Build the FQDN of the firewall
+	my $fqdn = join(".", (
+		$General::mainsettings{'HOSTNAME'},
+		$General::mainsettings{'DOMAINNAME'},
+	));
+	my $port = $settings{'PORT'};
+
 	my @conf = (
 		"[Interface]",
 		"PrivateKey = $peer->{'PRIVATE_KEY'}",
@@ -1252,7 +1259,7 @@ sub generate_client_configuration($) {
 		"",
 
 		"[Peer]",
-		"Endpoint = $General::main{'HOSTNAME'}.$General::main{'DOMAINNAME'}",
+		"Endpoint = ${fqdn}:${port}",
 		"PublicKey = $settings{'PUBLIC_KEY'}",
 		"PresharedKey = $peer->{'PSK'}",
 		"AllowedIPs = " . join(", ", @allowed_ips),
