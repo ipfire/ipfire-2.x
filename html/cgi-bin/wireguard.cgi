@@ -24,6 +24,7 @@ use strict;
 # enable only the following on debugging purpose
 use warnings;
 use CGI::Carp 'fatalsToBrowser';
+use Imager::QRCode;
 use MIME::Base64;
 
 require "/var/ipfire/general-functions.pl";
@@ -878,6 +879,9 @@ sub show_peer_configuration($$) {
 	my $key = shift;
 	my $private_key = shift;
 
+	# The generated QR code
+	my $qrcode;
+
 	# Send HTTP Headers
 	&Header::showhttpheaders();
 
@@ -899,10 +903,41 @@ sub show_peer_configuration($$) {
 	# Generate the client configuration
 	my $config = &generate_client_configuration(\%peer);
 
+	# Create a QR code generator
+	my $qrgen = Imager::QRCode->new(
+		size          => 6,
+		margin        => 0,
+		version       => 0,
+		level         => 'M',
+		mode          => '8-bit',
+		casesensitive => 1,
+		lightcolor    => Imager::Color->new(255, 255, 255),
+		darkcolor     => Imager::Color->new(0, 0, 0),
+	);
+
+	# Encode the configuration
+	my $img = $qrgen->plot("$config");
+
+	# Encode the image as PNG
+	$img->write(data => \$qrcode, type => "png") or die $img->errstr;
+
+	# Encode the image as bas64
+	$qrcode = &MIME::Base64::encode_base64($qrcode);
+
 	# Open a new box
 	&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
 
 	print <<END;
+		<div class="text-center">
+			<p>
+				<img src="data:image/png;base64,${qrcode}" alt="$Lang::tr{'qr code'}">
+			</p>
+
+			<p>
+				$Lang::tr{'wg scan the qr code'}
+			</p>
+		</div>
+
 		<h6>$Lang::tr{'wg client configuration file'}</h6>
 
 		<code><pre>$config</textarea></code>

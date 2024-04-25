@@ -90,6 +90,7 @@
 < pakfire no dependencies found
 < pakfire resolvedeps wait
 < public key
+< qr code
 < quick control
 < random number generator daemon
 < regenerate host certificate
@@ -135,6 +136,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < winbind daemon
 < wireguard
@@ -190,6 +192,7 @@
 < password has quotation mark
 < processors
 < public key
+< qr code
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
@@ -225,6 +228,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < wireguard
@@ -263,6 +267,7 @@
 < password has quotation mark
 < processors
 < public key
+< qr code
 < reg_file_data_sampling
 < remote subnets
 < routing
@@ -293,6 +298,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < wireguard
@@ -699,6 +705,7 @@
 < processor vulnerability mitigations
 < ptr
 < public key
+< qr code
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -815,6 +822,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -1298,6 +1306,7 @@
 < processor vulnerability mitigations
 < ptr
 < public key
+< qr code
 < random number generator daemon
 < rdns
 < rebooting ipfire fsck
@@ -1413,6 +1422,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -2235,6 +2245,7 @@
 < ptr
 < public key
 < qos enter bandwidths
+< qr code
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -2427,6 +2438,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -3285,6 +3297,7 @@
 < ptr
 < public key
 < qos enter bandwidths
+< qr code
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -3478,6 +3491,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -3817,6 +3831,7 @@
 < processor vulnerability mitigations
 < ptr
 < public key
+< qr code
 < random number generator daemon
 < reboot fsck
 < rebooting ipfire fsck
@@ -3906,6 +3921,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
