@@ -674,7 +674,6 @@ END
 # This function generates a set of keys for this host if none exist
 sub generate_keys($) {
 	my $force = shift || 0;
-	my @output = ();
 
 	# Reset any previous keys if re-generation forced
 	if ($force) {
@@ -688,15 +687,7 @@ sub generate_keys($) {
 	# Generate a new private key
 	unless (defined $settings{'PRIVATE_KEY'}) {
 		# Generate a new private key
-		@output = &General::system_output("wg", "genkey");
-
-		# Store the key
-		foreach (@output) {
-			chomp;
-
-			$settings{"PRIVATE_KEY"} = $_;
-			last;
-		}
+		$settings{"PRIVATE_KEY"} = &generate_private_key();
 
 		# Reset the public key
 		$settings{"PUBLIC_KEY"} = undef;
@@ -712,6 +703,23 @@ sub generate_keys($) {
 	&General::writehash("/var/ipfire/wireguard/settings", \%settings);
 }
 
+# Generates a new private key
+sub generate_private_key() {
+	# Generate a new private key
+	my @output = &General::system_output("wg", "genkey");
+
+	# Store the key
+	foreach (@output) {
+		chomp;
+
+		return $_;
+	}
+
+	# Return undefined on error
+	return undef;
+}
+
+# Takes a private key and derives the public key
 sub derive_public_key($) {
 	my $private_key = shift;
 	my @output = ();
@@ -731,7 +739,7 @@ sub derive_public_key($) {
 		return $_;
 	}
 
-	# Return on undefined on error
+	# Return undefined on error
 	return undef;
 }
 
