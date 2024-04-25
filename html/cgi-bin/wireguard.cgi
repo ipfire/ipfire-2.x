@@ -411,6 +411,26 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	} else {
 		goto ADD;
 	}
+
+# Toggle Enable/Disable
+} elsif ($cgiparams{'ACTION'} eq 'TOGGLE-ENABLE-DISABLE') {
+	my $key = $cgiparams{'KEY'} || 0;
+
+	if (exists $peers{$key}) {
+		if ($peers{$key}[0] eq "on") {
+			$peers{$key}[0] = "off";
+		} else {
+			$peers{$key}[0] = "on";
+		}
+	}
+
+	# Store the configuration
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+
+	# Reload if enabled
+	if ($settings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/wireguardctrl", "start");
+	}
 }
 
 # The main page starts here
@@ -601,7 +621,7 @@ EOF
 					<form method='post'>
 						<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
 							alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
-						<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+						<input type='hidden' name='ACTION' value='TOGGLE-ENABLE-DISABLE' />
 						<input type='hidden' name='KEY' value='$key' />
 					</form>
 				</td>
