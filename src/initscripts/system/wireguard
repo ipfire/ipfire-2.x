@@ -51,7 +51,11 @@ generate_config() {
 	local keepalive
 	local _rest
 
-	local subnet
+	local local_subnet
+	local remote_subnet
+
+	# Flush firewall rules
+	iptables -F WGBLOCK
 
 	# Flush all previously set routes
 	ip route flush dev "${INTF}"
@@ -85,8 +89,8 @@ generate_config() {
 
 			# Apply the routes
 			if [ "${type}" = "net" ]; then
-				for subnet in ${remote_subnets//|/,}; do
-					ip route add "${subnet}" dev "${INTF}"
+				for remote_subnet in ${remote_subnets//|/,}; do
+					ip route add "${remote_subnet}" dev "${INTF}"
 				done
 			fi
 		fi
@@ -95,7 +99,18 @@ generate_config() {
 		if [ -n "${keepalive}" ]; then
 			echo "PersistentKeepalive = ${keepalive}"
 		fi
+
+		# Set blocking rules
+		for local_subnet in ${local_subnets//|/ }; do
+			for remote_subnet in ${remote_subnets//|/ }; do
+				iptables -A WGBLOCK \
+					-s "${remote_subnet}" -d "${local_subnet}" -j RETURN
+			done
+		done
 	done < /var/ipfire/wireguard/peers
+
+	# Block all other traffic
+	iptables -A WGBLOCK -j REJECT --reject-with icmp-admin-prohibited
 }
 
 reload_firewall() {

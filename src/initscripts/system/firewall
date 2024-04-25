@@ -215,6 +215,11 @@ iptables_init() {
 	iptables -A FORWARD -m policy --dir out --pol none -j IPSECBLOCK
 	iptables -A OUTPUT  -m policy --dir out --pol none -j IPSECBLOCK
 
+	# Block unauthorized WireGuard traffic
+	ipatbles -N WGBLOCK
+	iptables -A INPUT   -i wg+ -j WGBLOCK
+	iptables -A FORWARD -i wg+ -j WGBLOCK
+
 	# Block OpenVPN transfer networks
 	iptables -N OVPNBLOCK
 	iptables -A INPUT   -i tun+ -j OVPNBLOCK
