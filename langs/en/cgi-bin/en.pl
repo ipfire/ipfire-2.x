@@ -3043,6 +3043,7 @@
 'wg client pool' => 'Client Pool',
 'wg create peer' => 'Create A New Peer',
 'wg dns' => 'DNS',
+'wg download configuration file' => 'Download the configuration file',
 'wg edit peer' => 'Edit Peer',
 'wg host to net client settings' => 'Host-To-Net Client Settings',
 'wg invalid client dns' => 'Invalid client DNS address',

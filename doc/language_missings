@@ -120,6 +120,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -216,6 +217,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -290,6 +292,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -818,6 +821,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -1422,6 +1426,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -2442,6 +2447,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -3499,6 +3505,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -3933,6 +3940,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration file
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns

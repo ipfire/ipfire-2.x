@@ -974,6 +974,9 @@ sub show_peer_configuration($$) {
 	# Encode the image as bas64
 	$qrcode = &MIME::Base64::encode_base64($qrcode);
 
+	# Encode the configuration as Base64
+	$config = &MIME::Base64::encode_base64($config);
+
 	# Open a new box
 	&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
 
@@ -986,11 +989,13 @@ sub show_peer_configuration($$) {
 			<p>
 				$Lang::tr{'wg scan the qr code'}
 			</p>
+
+			<p>
+				<a href="data:text/plain;base64,${config}" download="$peer{'NAME'}.conf">
+					$Lang::tr{'wg download configuration file'}
+				</a>
+			</p>
 		</div>
-
-		<h6>$Lang::tr{'wg client configuration file'}</h6>
-
-		<code><pre>$config</textarea></code>
 END
 
 	&Header::closebox();
