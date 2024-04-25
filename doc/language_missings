@@ -115,8 +115,10 @@
 < user management
 < vpn configuration main
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -200,8 +202,10 @@
 < transport mode does not support vti
 < warning
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -263,8 +267,10 @@
 < upload fcdsl.o
 < warning
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -780,8 +786,10 @@
 < warning
 < Weekly
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -1373,8 +1381,10 @@
 < warning
 < Weekly
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -2382,8 +2392,10 @@
 < warning
 < Weekly
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -3428,8 +3440,10 @@
 < week-graph
 < Weekly
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval
@@ -3851,8 +3865,10 @@
 < warning
 < Weekly
 < wg
+< wg client pool
 < wg create peer
 < wg edit peer
+< wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
 < wg invalid keepalive interval

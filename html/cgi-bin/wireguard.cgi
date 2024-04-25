@@ -71,8 +71,15 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		push(@errormessages, $Lang::tr{'invalid port'});
 	}
 
+	# Check client pool
+	if (&Network::check_subnet($cgiparams{'CLIENT_POOL'})) {
+		$settings{'CLIENT_POOL'} = $cgiparams{'CLIENT_POOL'};
+	} else {
+		push(@errormessages, $Lang::tr{'wg invalid client pool'});
+	}
+
 	# Don't continue on error
-	goto MAIN if (@errormessages);
+	goto MAIN if (scalar @errormessages);
 
 	# Store the configuration file
 	&General::writehash("/var/ipfire/wireguard/settings", \%settings);
@@ -400,6 +407,13 @@ MAIN:
 					<td>
 						<input type="number" name="PORT" value="$settings{'PORT'}"
 							min="1024" max="65535" />
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'wg client pool'}</td>
+					<td>
+						<input type="text" name="CLIENT_POOL" value="$settings{'CLIENT_POOL'}" />
 					</td>
 				</tr>
 
