@@ -119,7 +119,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -212,7 +215,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -283,7 +289,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -808,7 +817,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -1409,7 +1421,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -2426,7 +2441,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -3480,7 +3498,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port
@@ -3911,7 +3932,10 @@
 < wg client configuration file
 < wg client pool
 < wg create peer
+< wg dns
 < wg edit peer
+< wg host to net client settings
+< wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
 < wg invalid endpoint port

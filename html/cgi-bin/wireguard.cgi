@@ -47,8 +47,9 @@ my %peers = ();
 
 # Set any defaults
 &General::set_defaults(\%settings, {
-	"ENABLED" => "off",
-	"PORT"    => $DEFAULT_PORT,
+	"ENABLED"    => "off",
+	"PORT"       => $DEFAULT_PORT,
+	"CLIENT_DNS" => $Network::ethernet{'GREEN_ADDRESS'},
 });
 
 # Generate keys
@@ -60,6 +61,8 @@ my %cgiparams = ();
 
 # Save on main page
 if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
+	my @client_dns = ();
+
 	# Store whether enabled or not
 	if ($cgiparams{'ENABLED'} =~ m/^(on|off)?$/) {
 		$settings{'ENABLED'} = $cgiparams{'ENABLED'};
@@ -79,6 +82,20 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$settings{'CLIENT_POOL'} = $cgiparams{'CLIENT_POOL'};
 	} else {
 		push(@errormessages, $Lang::tr{'wg invalid client pool'});
+	}
+
+	# Check client DNS
+	if (defined $cgiparams{'CLIENT_DNS'}) {
+		@client_dns = split(/,/, $cgiparams{'CLIENT_DNS'});
+
+		foreach my $dns (@client_dns) {
+			unless (&Network::check_ip_address($dns)) {
+				push(@errormessages, "$Lang::tr{'wg invalid client dns'}: ${dns}");
+			}
+		}
+
+		# Store CLIENT_DNS
+		$settings{'CLIENT_DNS'} = join("|", @client_dns);
 	}
 
 	# Don't continue on error
@@ -418,6 +435,8 @@ MAIN:
 		"CLIENT_POOL" => (&pool_is_in_use($settings{'CLIENT_POOL'}) ? "readonly" : ""),
 	);
 
+	my $client_dns = $settings{'CLIENT_DNS'} =~ s/\|/, /gr;
+
 	print <<END;
 		<form method="POST" action="">
 			<table class="form">
@@ -442,12 +461,24 @@ MAIN:
 							min="1024" max="65535" />
 					</td>
 				</tr>
+			</table>
 
+			<h6>$Lang::tr{'wg host to net client settings'}</h6>
+
+			<table class="form">
 				<tr>
 					<td>$Lang::tr{'wg client pool'}</td>
 					<td>
 						<input type="text" name="CLIENT_POOL"
 							value="$settings{'CLIENT_POOL'}" $readonly{'CLIENT_POOL'} />
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'wg dns'}</td>
+					<td>
+						<input type="text" name="CLIENT_DNS"
+							value="$client_dns" />
 					</td>
 				</tr>
 
@@ -1252,19 +1283,32 @@ sub generate_client_configuration($) {
 	));
 	my $port = $settings{'PORT'};
 
+	# Fetch any DNS servers
+	my @dns = split(/\|/, $settings{'CLIENT_DNS'});
+
 	my @conf = (
 		"[Interface]",
 		"PrivateKey = $peer->{'PRIVATE_KEY'}",
 		"Address = $peer->{'CLIENT_ADDRESS'}",
-		"",
+	);
 
+	# Optionally add DNS servers
+	if (scalar @dns) {
+		push(@conf, "DNS = " . join(", ", @dns));
+	}
+
+	# Finish the [Interface] section
+	push(@conf, "");
+
+	# Add peer configuration
+	push(@conf, (
 		"[Peer]",
 		"Endpoint = ${fqdn}:${port}",
 		"PublicKey = $settings{'PUBLIC_KEY'}",
 		"PresharedKey = $peer->{'PSK'}",
 		"AllowedIPs = " . join(", ", @allowed_ips),
 		"PersistentKeepalive = $DEFAULT_KEEPALIVE",
-	);
+	));
 
 	return join("\n", @conf);
 }
