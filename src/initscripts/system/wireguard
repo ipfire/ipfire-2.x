@@ -44,14 +44,14 @@ generate_config() {
 	local pubkey
 	local endpoint
 	local port
-	local routes
+	local remote_subnets
 	local remarks
 	local local_subnets
 	local psk
 	local keepalive
 	local _rest
 
-	local route
+	local subnet
 
 	# Flush all previously set routes
 	ip route flush dev "${INTF}"
@@ -61,7 +61,7 @@ generate_config() {
 		ip route add "${CLIENT_POOL}" dev "${INTF}"
 	fi
 
-	while read -r id enabled type name pubkey endpoint port routes \
+	while read -r id enabled type name pubkey endpoint port remote_subnets \
 			remarks local_subnets psk keepalive _rest; do
 		# Skip peers that are not enabled
 		[ "${enabled}" = "on" ] || continue
@@ -80,13 +80,13 @@ generate_config() {
 		fi
 
 		# Set routes
-		if [ -n "${routes}" ]; then
-			echo "AllowedIPs = ${routes//|/, }"
+		if [ -n "${remote_subnets}" ]; then
+			echo "AllowedIPs = ${remote_subnets//|/, }"
 
 			# Apply the routes
 			if [ "${type}" = "net" ]; then
-				for route in ${routes//|/,}; do
-					ip route add "${route}" dev "${INTF}"
+				for subnet in ${remote_subnets//|/,}; do
+					ip route add "${subnet}" dev "${INTF}"
 				done
 			fi
 		fi
