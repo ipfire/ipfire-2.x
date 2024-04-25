@@ -433,6 +433,7 @@
 'all services' => 'All Services',
 'all updates installed' => 'All updates installed',
 'allmsg' => 'show all',
+'allowed subnets' => 'Allowed Subnets',
 'alt dialup' => 'Dialup',
 'alt home' => 'Home',
 'alt information' => 'Information',

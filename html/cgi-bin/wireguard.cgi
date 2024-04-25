@@ -923,7 +923,7 @@ EDITHOST:
 			<table class="form">
 				<tr>
 					<td>
-						$Lang::tr{'local subnets'}
+						$Lang::tr{'allowed subnets'}
 					</td>
 
 					<td>

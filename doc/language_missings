@@ -6,6 +6,7 @@
 < access point name is required
 < advproxy update information
 < aliases default interface
+< allowed subnets
 < ansi t1.483
 < backup archive
 < backup clear archive
@@ -161,6 +162,7 @@
 < access point name is invalid
 < access point name is required
 < addon
+< allowed subnets
 < bypassed
 < ca name must only contain characters or spaces
 < cpu frequency
@@ -253,6 +255,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< allowed subnets
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
@@ -356,6 +359,7 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < autonomous system
 < available
@@ -936,6 +940,7 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < atm device
 < autonomous system
@@ -1554,6 +1559,7 @@
 < age sminute
 < age ssecond
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < atm device
 < attention
@@ -2608,6 +2614,7 @@
 < age sminute
 < age ssecond
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < atm device
 < attention
@@ -3647,6 +3654,7 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < autonomous system
 < available

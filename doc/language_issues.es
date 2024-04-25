@@ -1010,6 +1010,7 @@ WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
+WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency

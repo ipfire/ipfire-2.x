@@ -896,6 +896,7 @@ WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Pro
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: age second = second
 WARNING: untranslated string: aliases default interface = - Default Interface -
+WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: attention = ATTENTION
