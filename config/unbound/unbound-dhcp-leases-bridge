@@ -22,6 +22,7 @@
 import argparse
 import datetime
 import daemon
+import filecmp
 import functools
 import ipaddress
 import logging
@@ -516,23 +517,28 @@ class UnboundConfigWriter(object):
 
 	def update_dhcp_leases(self, leases):
 		# Write out all leases
-		self.write_dhcp_leases(leases)
+		if self.write_dhcp_leases(leases):
+			log.debug("Reloading Unbound...")
 
-		log.debug("Reloading Unbound...")
-
-		# Reload the configuration without dropping the cache
-		self._control("reload_keep_cache")
+			# Reload the configuration without dropping the cache
+			self._control("reload_keep_cache")
 
 	def write_dhcp_leases(self, leases):
 		log.debug("Writing DHCP leases...")
 
 		with tempfile.NamedTemporaryFile(mode="w") as f:
-			for l in leases:
+			for l in sorted(leases, key=lambda x: x.ipaddr):
 				for rr in l.rrset:
 					f.write("local-data: \"%s\"\n" % " ".join(rr))
 
 			# Flush the file
 			f.flush()
+
+			# Compare if the new leases file has changed from the previous version
+			if filecmp.cmp(f.name, self.path, shallow=False):
+				log.debug("The generated leases file has not changed")
+
+				return False
 
 			# Make file readable for everyone
 			os.fchmod(f.fileno(), stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
@@ -542,6 +548,8 @@ class UnboundConfigWriter(object):
 
 			# Move the file to its destination
 			os.link(f.name, self.path)
+
+		return True
 
 	def _control(self, *args):
 		command = ["unbound-control"]
