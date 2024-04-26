@@ -535,16 +535,21 @@ class UnboundConfigWriter(object):
 			f.flush()
 
 			# Compare if the new leases file has changed from the previous version
-			if filecmp.cmp(f.name, self.path, shallow=False):
-				log.debug("The generated leases file has not changed")
+			try:
+				if filecmp.cmp(f.name, self.path, shallow=False):
+					log.debug("The generated leases file has not changed")
 
-				return False
+					return False
+
+				# Remove the old file
+				os.unlink(self.path)
+
+			# If the previous file did not exist, just keep falling through
+			except FileNotFoundError:
+				pass
 
 			# Make file readable for everyone
 			os.fchmod(f.fileno(), stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
-
-			# Remove the old file
-			os.unlink(self.path)
 
 			# Move the file to its destination
 			os.link(f.name, self.path)
