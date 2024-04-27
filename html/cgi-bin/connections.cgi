@@ -44,11 +44,6 @@ my @colour=();
 my %netsettings=();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-# Read and sort the connection tracking table
-open(CONNTRACK, "/usr/local/bin/getconntracktable | sort -k 5,5 --numeric-sort --reverse |") or die "Unable to read conntrack table";
-my @conntrack = <CONNTRACK>;
-close(CONNTRACK);
-
 # Collect data for the @network array.
 
 # Add Firewall Localhost 127.0.0.1
@@ -363,7 +358,11 @@ print <<END;
 		</tr>
 END
 
-foreach my $line (@conntrack) {
+# Read and sort the connection tracking table
+open(CONNTRACK, "/usr/local/bin/getconntracktable | sort -k 5,5 --numeric-sort --reverse |")
+	or die "Unable to read conntrack table";
+
+foreach my $line (<CONNTRACK>) {
 	my @conn = split(' ', $line);
 
 	# The first bit is the l3 protocol.
@@ -571,6 +570,8 @@ foreach my $line (@conntrack) {
 	</tr>
 END
 }
+
+close(CONNTRACK);
 
 # Close the main table.
 print "</table>";
