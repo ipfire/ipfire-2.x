@@ -40,6 +40,7 @@ $Header::colourblue = '#333399';
 $Header::colourovpn = '#339999';
 $Header::colourfw = '#000000';
 $Header::colourvpn = '#990099';
+$Header::colourwg = '#ff007f';
 $Header::colourerr = '#FF0000';
 $Header::viewsize = 150;
 $Header::errormessage = '';
