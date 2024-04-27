@@ -221,15 +221,11 @@ print <<END;
 			<th colspan='2'>
 				$Lang::tr{'source ip and port'}
 			</th>
-			<th>
-				$Lang::tr{'country'}
-			</th>
+			<th></th>
 			<th colspan='2'>
 				$Lang::tr{'dest ip and port'}
 			</th>
-			<th>
-				$Lang::tr{'country'}
-			</th>
+			<th></th>
 			<th colspan='2'>
 				$Lang::tr{'data transfer'}
 			</th>
