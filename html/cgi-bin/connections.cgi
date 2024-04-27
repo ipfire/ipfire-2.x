@@ -484,7 +484,7 @@ foreach my $line (<CONNTRACK>) {
 	my $dst_flag_icon = &Location::Functions::get_flag_icon($dstccode);
 
 	# Format TTL
-	$ttl = format_time($ttl);
+	$ttl = &General::format_time($ttl);
 
 	my $sip_extra;
 	if ($sip_ret && $sip ne $sip_ret) {
@@ -581,21 +581,6 @@ print "</table>";
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
-
-sub format_time($) {
-	my $time = shift;
-
-	my $seconds = $time % 60;
-	my $minutes = $time / 60;
-
-	my $hours = 0;
-	if ($minutes >= 60) {
-		$hours = $minutes / 60;
-		$minutes %= 60;
-	}
-
-	return sprintf("%3d:%02d:%02d", $hours, $minutes, $seconds);
-}
 
 sub ipcolour($) {
 	my $id = 0;
