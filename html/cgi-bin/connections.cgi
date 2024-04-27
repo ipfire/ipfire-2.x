@@ -285,7 +285,7 @@ if (-e "${General::swroot}/ovpn/n2nconf") {
 # Show the page.
 &Header::openpage($Lang::tr{'connections'}, 1, '');
 &Header::openbigbox('100%', 'left');
-&Header::openbox('100%', 'left', $Lang::tr{'connection tracking'});
+&Header::opensection();
 
 # Print legend.
 print <<END;
@@ -578,7 +578,7 @@ close(CONNTRACK);
 # Close the main table.
 print "</table>";
 
-&Header::closebox();
+&Header::closesection();
 &Header::closebigbox();
 &Header::closepage();
 
