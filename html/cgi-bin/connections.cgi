@@ -20,141 +20,81 @@
 ###############################################################################
 
 use strict;
-
-use Net::IPv4Addr qw( :all );
 use Switch;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/location-functions.pl";
 
 my $colour_multicast = "#A0A0A0";
 
+my %settings = ();
+&General::readhash("/var/ipfire/ethernet/settings", \%settings);
+
 &Header::showhttpheaders();
 
-my @network=();
-my @masklen=();
-my @colour=();
+# Collect all known networks
+my %networks = (
+	# Localhost
+	"127.0.0.0/8" => ${Header::colourfw},
 
-my %netsettings=();
-&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+	# Multicast
+	"224.0.0.0/3" => $colour_multicast,
 
-# Collect data for the @network array.
+	# GREEN
+	"$settings{'GREEN_ADDRESS'}/32" => ${Header::colourfw},
+	"$settings{'GREEN_NETADDRESS'}/$settings{'GREEN_NETMASK'}" => ${Header::colourgreen},
 
-# Add Firewall Localhost 127.0.0.1
-push(@network, '127.0.0.1');
-push(@masklen, '255.255.255.255');
-push(@colour, ${Header::colourfw});
+	# BLUE
+	"$settings{'BLUE_ADDRESS'}/32" => ${Header::colourfw},
+	"$settings{'BLUE_NETADDRESS'}/$settings{'BLUE_NETMASK'}" => ${Header::colourblue},
 
-if (open(IP, "${General::swroot}/red/local-ipaddress")) {
-	my $redip = <IP>;
-	close(IP);
+	# ORANGE
+	"$settings{'ORANGE_ADDRESS'}/32" => ${Header::colourfw},
+	"$settings{'ORANGE_NETADDRESS'}/$settings{'ORANGE_NETMASK'}" => ${Header::colourorange},
+);
 
-	chomp $redip;
-	push(@network, $redip);
-	push(@masklen, '255.255.255.255');
-	push(@colour, ${Header::colourfw});
+# RED Address
+my $address = &IDS::get_red_address();
+if ($address) {
+	$networks{"${address}/32"} = ${Header::colourfw};
 }
 
-# Add STATIC RED aliases
-if ($netsettings{'RED_DEV'}) {
-	my $aliasfile = "${General::swroot}/ethernet/aliases";
-	open(ALIASES, $aliasfile) or die 'Unable to open aliases file.';
-	my @aliases = <ALIASES>;
-	close(ALIASES);
+# Add all aliases
+my @aliases = &IDS::get_aliases();
+for my $alias (@aliases) {
+	$networks{"${alias}/32"} = ${Header::colourfw};
+}
 
-	# We have a RED eth iface
-	if ($netsettings{'RED_TYPE'} eq 'STATIC') {
-		# We have a STATIC RED eth iface
-		foreach my $line (@aliases) {
-			chomp($line);
-			my @temp = split(/\,/,$line);
-			if ($temp[0]) {
-				push(@network, $temp[0]);
-				push(@masklen, $netsettings{'RED_NETMASK'} );
-				push(@colour, ${Header::colourfw} );
-			}
+my %interfaces = (
+	$settings{'GREEN_DEV'}  => ${Header::colourgreen},
+	$settings{'BLUE_DEV'}   => ${Header::colourblue},
+	$settings{'ORANGE_DEV'} => ${Header::colourorange},
+
+	# IPsec
+	"gre[0-9]+"             => ${Header::colourvpn},
+	"vti[0-9]+"             => ${Header::colourvpn},
+
+	# OpenVPN
+	"tun[0-9]+"             => ${Header::colourovpn},
+);
+
+my @routes = &General::system_output("ip", "route", "show");
+
+# Find all routes
+foreach my $intf (keys %interfaces) {
+	foreach my $route (grep(/dev ${intf}/, @routes)) {
+		if ($route =~ m/^(\d+\.\d+\.\d+\.\d+\/\d+)/) {
+			$networks{$1} = $interfaces{$intf};
 		}
 	}
 }
-
-# Call safe system_output function to get all available routes.
-my @all_routes = &General::system_output("/sbin/route", "-n");
-
-# Add Green Firewall Interface
-push(@network, $netsettings{'GREEN_ADDRESS'});
-push(@masklen, "255.255.255.255" );
-push(@colour, ${Header::colourfw} );
-
-if ($netsettings{'GREEN_DEV'}) {
-	# Add Green Network to Array
-	push(@network, $netsettings{'GREEN_NETADDRESS'});
-	push(@masklen, $netsettings{'GREEN_NETMASK'} );
-	push(@colour, ${Header::colourgreen} );
-
-	# Add Green Routes to Array
-	my @routes = grep (/$netsettings{'GREEN_DEV'}/, @all_routes);
-	foreach my $route (@routes) {
-		chomp($route);
-		my @temp = split(/[\t ]+/, $route);
-		push(@network, $temp[0]);
-		push(@masklen, $temp[2]);
-		push(@colour, ${Header::colourgreen} );
-	}
-}
-
-# Add Blue Firewall Interface
-push(@network, $netsettings{'BLUE_ADDRESS'});
-push(@masklen, "255.255.255.255" );
-push(@colour, ${Header::colourfw} );
-
-# Add Blue Network
-if ($netsettings{'BLUE_DEV'}) {
-	push(@network, $netsettings{'BLUE_NETADDRESS'});
-	push(@masklen, $netsettings{'BLUE_NETMASK'} );
-	push(@colour, ${Header::colourblue} );
-
-	# Add Blue Routes to Array
-	my @routes = grep(/$netsettings{'BLUE_DEV'}/, @all_routes);
-	foreach my $route (@routes) {
-		chomp($route);
-		my @temp = split(/[\t ]+/, $route);
-		push(@network, $temp[0]);
-		push(@masklen, $temp[2]);
-		push(@colour, ${Header::colourblue} );
-	}
-}
-
-# Add Orange Firewall Interface
-push(@network, $netsettings{'ORANGE_ADDRESS'});
-push(@masklen, "255.255.255.255" );
-push(@colour, ${Header::colourfw} );
-
-# Add Orange Network
-if ($netsettings{'ORANGE_DEV'}) {
-	push(@network, $netsettings{'ORANGE_NETADDRESS'});
-	push(@masklen, $netsettings{'ORANGE_NETMASK'} );
-	push(@colour, ${Header::colourorange} );
-	# Add Orange Routes to Array
-	my @routes = grep(/$netsettings{'ORANGE_DEV'}/, @all_routes);
-	foreach my $route (@routes) {
-		chomp($route);
-		my @temp = split(/[\t ]+/, $route);
-		push(@network, $temp[0]);
-		push(@masklen, $temp[2]);
-		push(@colour, ${Header::colourorange} );
-	}
-}
-
-# Highlight multicast connections.
-push(@network, "224.0.0.0");
-push(@masklen, "239.0.0.0");
-push(@colour, $colour_multicast);
 
 # Load the WireGuard client pool
 if (-e "/var/ipfire/wireguard/settings") {
@@ -162,16 +102,7 @@ if (-e "/var/ipfire/wireguard/settings") {
 
 	&General::readhash("/var/ipfire/wireguard/settings", \%wgsettings);
 
-	if (defined $wgsettings{'CLIENT_POOL'}) {
-		my $netaddr = &Network::get_netaddress($wgsettings{'CLIENT_POOL'});
-		my $netmask = &Network::get_netmask($wgsettings{'CLIENT_POOL'});
-
-		if (defined $netaddr && defined $netmask) {
-			push(@network, $netaddr);
-			push(@masklen, $netmask);
-			push(@colour, ${Header::colourwg});
-		}
-	}
+	$networks{$wgsettings{'CLIENT_POOL'}} = ${Header::colourwg};
 }
 
 # Load routed WireGuard networks
@@ -188,12 +119,7 @@ if (-e "/var/ipfire/wireguard/peers") {
 		my @networks = split(/\|/, $networks);
 
 		foreach my $network (@networks) {
-			my $netaddr = &Network::get_netaddress($network);
-			my $netmask = &Network::get_netmask($network);
-
-			push(@network, $netaddr);
-			push(@masklen, $netmask);
-			push(@colour, ${Header::colourwg});
+			$networks[$network] = ${Header::colourwg};
 		}
 	}
 }
@@ -202,43 +128,19 @@ if (-e "/var/ipfire/wireguard/peers") {
 if (-e "${General::swroot}/ovpn/settings") {
 	my %ovpnsettings = ();
 	&General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
-	my @tempovpnsubnet = split("\/",$ovpnsettings{'DOVPN_SUBNET'});
 
-	# add OpenVPN net
-	push(@network, $tempovpnsubnet[0]);
-	push(@masklen, $tempovpnsubnet[1]);
-	push(@colour, ${Header::colourovpn} );
-
-	# add BLUE:port / proto
-	if (($ovpnsettings{'ENABLED_BLUE'} eq 'on') && $netsettings{'BLUE_DEV'}) {
-		push(@network, $netsettings{'BLUE_ADDRESS'} );
-		push(@masklen, '255.255.255.255' );
-		push(@colour, ${Header::colourovpn});
-	}
-
-	# add ORANGE:port / proto
-	if (($ovpnsettings{'ENABLED_ORANGE'} eq 'on') && $netsettings{'ORANGE_DEV'}) {
-		push(@network, $netsettings{'ORANGE_ADDRESS'} );
-		push(@masklen, '255.255.255.255' );
-		push(@colour, ${Header::colourovpn} );
-	}
+	$networks{$ovpnsettings{'DOVPN_SUBNET'}} = ${Header::colourovpn};
 }
 
 # Add OpenVPN net for custom OVPNs
 if (-e "${General::swroot}/ovpn/ccd.conf") {
 	open(OVPNSUB, "${General::swroot}/ovpn/ccd.conf");
-	my @ovpnsub = <OVPNSUB>;
-	close(OVPNSUB);
+	foreach my $line (<OVPNSUB>) {
+		my @ovpn = split(',', $line);
 
-	foreach (@ovpnsub) {
-		my ($network, $mask) = split '/', (split ',', $_)[2];
-
-		$mask = ipv4_cidr2msk($mask) unless &General::validip($mask);
-
-		push(@network, $network);
-		push(@masklen, $mask);
-		push(@colour, ${Header::colourovpn});
+		$networks{$ovpn[3]} = ${Header::colourovpn};
 	}
+	close(OVPNSUB);
 }
 
 open(IPSEC, "${General::swroot}/vpn/config");
@@ -250,36 +152,19 @@ foreach my $line (@ipsec) {
 
 	my @subnets = split(/\|/, $vpn[12]);
 	for my $subnet (@subnets) {
-		my ($network, $mask) = split("/", $subnet);
-
-		if (!&General::validip($mask)) {
-			$mask = ipv4_cidr2msk($mask);
-		}
-
-		push(@network, $network);
-		push(@masklen, $mask);
-		push(@colour, ${Header::colourvpn});
+		$networks{$subnet} = ${Header::colourvpn};
 	}
 }
 
 if (-e "${General::swroot}/ovpn/n2nconf") {
 	open(OVPNN2N, "${General::swroot}/ovpn/ovpnconfig");
-	my @ovpnn2n = <OVPNN2N>;
-	close(OVPNN2N);
-
-	foreach my $line (@ovpnn2n) {
+	foreach my $line (<OVPNN2N>) {
 		my @ovpn = split(',', $line);
 		next if ($ovpn[4] ne 'net');
 
-		my ($network, $mask) = split("/", $ovpn[12]);
-		if (!&General::validip($mask)) {
-			$mask = ipv4_cidr2msk($mask);
-		}
-
-		push(@network, $network);
-		push(@masklen, $mask);
-		push(@colour, ${Header::colourovpn});
+		$networks{$ovpn[12]} = ${Header::colourovpn};
 	}
+	close(OVPNN2N);
 }
 
 # Show the page.
@@ -583,26 +468,23 @@ print "</table>";
 &Header::closepage();
 
 sub ipcolour($) {
-	my $id = 0;
-	my $colour = ${Header::colourred};
-	my ($ip) = $_[0];
-	my $found = 0;
+	my $address = shift;
 
-	if ($ip) {
-		foreach my $line (@network) {
-			if ($network[$id] eq '') {
-				$id++;
-			} else {
-				if (!$found && ipv4_in_network($network[$id], $masklen[$id], $ip) ) {
-					$found = 1;
-					$colour = $colour[$id];
-				}
-				$id++;
+	# Sort all networks so we find the best match
+	my @networks = reverse sort {
+		&Network::get_prefix($a) <=> &Network::get_prefix($b)
+	} keys %networks;
+
+	foreach my $network (@networks) {
+		if (defined $network) {
+			if (&Network::ip_address_in_network($address, $network)) {
+				return $networks{$network};
 			}
 		}
 	}
 
-	return $colour;
+	# If we don't know the network, the address must be from the RED network
+	return ${Header::colourred};
 }
 
 1;
