@@ -745,6 +745,8 @@ WARNING: translation string unused: smbstop
 WARNING: translation string unused: smtphost
 WARNING: translation string unused: smtpport
 WARNING: translation string unused: socket options
+WARNING: translation string unused: sort ascending
+WARNING: translation string unused: sort descending
 WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
@@ -926,6 +928,7 @@ WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: core notice 3 = available.
+WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: error message = unknown string

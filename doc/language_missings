@@ -46,6 +46,7 @@
 < choose media
 < could not connect to www ipfire org
 < cryptographic settings
+< data transfer
 < desired
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
@@ -115,6 +116,7 @@
 < access point name is required
 < addon
 < cpu frequency
+< data transfer
 < dhcp fixed ip address in dynamic range
 < dns servers
 < downfall gather data sampling
@@ -155,6 +157,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< data transfer
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
 < g.dtm
@@ -283,6 +286,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < default IP address
 < desired
 < dh
@@ -812,6 +816,7 @@
 < daemon login script
 < Daily
 < dangerous
+< data transfer
 < default
 < default IP address
 < desired
@@ -1428,6 +1433,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < dead peer detection
 < default
 < default ip
@@ -2429,6 +2435,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < day-graph
 < dead peer detection
 < default
@@ -3308,6 +3315,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < default IP address
 < desired
 < dh

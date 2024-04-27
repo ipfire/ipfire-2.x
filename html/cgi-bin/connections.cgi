@@ -345,9 +345,8 @@ print <<END;
 			<th>
 				$Lang::tr{'country'}
 			</th>
-			<th>
-				$Lang::tr{'download'} /
-				<br>$Lang::tr{'upload'}
+			<th colspan='2'>
+				$Lang::tr{'data transfer'}
 			</th>
 			<th>
 				$Lang::tr{'connection'}<br>$Lang::tr{'status'}
@@ -562,8 +561,11 @@ foreach my $line (<CONNTRACK>) {
 		<td style='text-align:center; background-color:$sip_colour;'>
 			<a href='country.cgi#$dstccode'><img src='$dst_flag_icon' border='0' align='absmiddle' alt='$dstccode' title='$dstccode' /></a>
 		</td>
-		<td style='text-align:center'>
-			$bytes_in / $bytes_out
+		<td class="text-right">
+			&gt; $bytes_in
+		</td>
+		<td class="text-right">
+			&lt; $bytes_out
 		</td>
 		<td style='text-align:center'>$state</td>
 		<td style='text-align:center'>$ttl</td>

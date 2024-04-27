@@ -774,6 +774,8 @@ WARNING: translation string unused: smtpport
 WARNING: translation string unused: snort hits
 WARNING: translation string unused: snort working
 WARNING: translation string unused: socket options
+WARNING: translation string unused: sort ascending
+WARNING: translation string unused: sort descending
 WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
@@ -965,6 +967,7 @@ WARNING: untranslated string: access point name is invalid = Access Point Name i
 WARNING: untranslated string: access point name is required = Access Point Name is required
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
+WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: dns servers = DNS Servers
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling

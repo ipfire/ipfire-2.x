@@ -745,6 +745,7 @@
 'daily firewallhits' => 'daily firewallhits',
 'dangerous' => 'Dangerous',
 'dat without key' => 'An encrypted archive cannot be restored without the key.',
+'data transfer' => 'Data Transfer',
 'date' => 'Date',
 'date not in logs' => 'No (or only partial) logs exist for the day queried',
 'day' => 'Day',

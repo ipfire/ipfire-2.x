@@ -623,6 +623,8 @@ WARNING: translation string unused: smtpport
 WARNING: translation string unused: snort hits
 WARNING: translation string unused: snort working
 WARNING: translation string unused: socket options
+WARNING: translation string unused: sort ascending
+WARNING: translation string unused: sort descending
 WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
@@ -920,6 +922,7 @@ WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
+WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
