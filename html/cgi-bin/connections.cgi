@@ -326,33 +326,33 @@ print <<END;
 	<br>
 END
 
-# Print table header.
+# Print table header
 print <<END;
-	<table style='width:100%'>
+	<table class="tbl">
 		<tr>
-			<th style='text-align:center'>
+			<th>
 				$Lang::tr{'protocol'}
 			</th>
-			<th style='text-align:center' colspan='2'>
+			<th colspan='2'>
 				$Lang::tr{'source ip and port'}
 			</th>
-			<th style='text-align:center'>
+			<th>
 				$Lang::tr{'country'}
 			</th>
-			<th style='text-align:center' colspan='2'>
+			<th colspan='2'>
 				$Lang::tr{'dest ip and port'}
 			</th>
-			<th style='text-align:center'>
+			<th>
 				$Lang::tr{'country'}
 			</th>
-			<th style='text-align:center'>
+			<th>
 				$Lang::tr{'download'} /
 				<br>$Lang::tr{'upload'}
 			</th>
-			<th style='text-align:center'>
+			<th>
 				$Lang::tr{'connection'}<br>$Lang::tr{'status'}
 			</th>
-			<th style='text-align:center'>
+			<th>
 				$Lang::tr{'expires'}<br>($Lang::tr{'hours:minutes:seconds'})
 			</th>
 		</tr>
@@ -501,7 +501,6 @@ foreach my $line (<CONNTRACK>) {
 		$dip_extra .= " <span style='color:#FFFFFF;'>$dip_ret</span>";
 		$dip_extra .= "</a>";
 	}
-
 
 	my $sport_extra;
 	if ($sport ne $sport_ret) {
