@@ -219,6 +219,48 @@ push(@network, "224.0.0.0");
 push(@masklen, "239.0.0.0");
 push(@colour, $colour_multicast);
 
+# Load the WireGuard client pool
+if (-e "/var/ipfire/wireguard/settings") {
+	my %wgsettings = ();
+
+	&General::readhash("/var/ipfire/wireguard/settings", \%wgsettings);
+
+	if (defined $wgsettings{'CLIENT_POOL'}) {
+		my $netaddr = &Network::get_netaddress($wgsettings{'CLIENT_POOL'});
+		my $netmask = &Network::get_netmask($wgsettings{'CLIENT_POOL'});
+
+		if (defined $netaddr && defined $netmask) {
+			push(@network, $netaddr);
+			push(@masklen, $netmask);
+			push(@colour, ${Header::colourwg});
+		}
+	}
+}
+
+# Load routed WireGuard networks
+if (-e "/var/ipfire/wireguard/peers") {
+	my %wgpeers = ();
+
+	# Load all peers
+	&General::readhasharray("/var/ipfire/wireguard/peers", \%wgpeers);
+
+	foreach my $key (keys %wgpeers) {
+		my $networks = $wgpeers{$key}[6];
+
+		# Split the string
+		my @networks = split(/\|/, $networks);
+
+		foreach my $network (@networks) {
+			my $netaddr = &Network::get_netaddress($network);
+			my $netmask = &Network::get_netmask($network);
+
+			push(@network, $netaddr);
+			push(@masklen, $netmask);
+			push(@colour, ${Header::colourwg});
+		}
+	}
+}
+
 # Add OpenVPN net and RED/BLUE/ORANGE entry (when appropriate)
 if (-e "${General::swroot}/ovpn/settings") {
 	my %ovpnsettings = ();
@@ -332,6 +374,9 @@ print <<END;
 			</td>
 			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourvpn};'>
 				<b>$Lang::tr{'vpn'}</b>
+			</td>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourwg};'>
+				<b>$Lang::tr{'wireguard'}</b>
 			</td>
 			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourovpn};'>
 				<b>$Lang::tr{'OpenVPN'}</b>
