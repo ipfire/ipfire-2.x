@@ -474,8 +474,9 @@ foreach my $line (<CONNTRACK>) {
 		$dserv = uc(getservbyport($dport, lc($l4proto)));
 	}
 
-	my $bytes_in = format_bytes($bytes[0]);
-	my $bytes_out = format_bytes($bytes[1]);
+	# Format bytes
+	my $bytes_in  = &General::formatBytes($bytes[0]);
+	my $bytes_out = &General::formatBytes($bytes[1]);
 
 	# enumerate location information
 	my $srcccode = &Location::Functions::lookup_country_code($sip_ret);
@@ -578,21 +579,6 @@ print "</table>";
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
-
-sub format_bytes($) {
-	my $bytes = shift;
-	my @units = ("B", "k", "M", "G", "T");
-
-	foreach my $unit (@units) {
-		if ($bytes < 1024) {
-			return sprintf("%d%s", $bytes, $unit);
-		}
-
-		$bytes /= 1024;
-	}
-
-	return sprintf("%d%s", $bytes, $units[$#units]);
-}
 
 sub format_time($) {
 	my $time = shift;
