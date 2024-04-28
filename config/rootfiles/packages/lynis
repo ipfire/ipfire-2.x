@@ -20,6 +20,7 @@ var/ipfire/lynis/db/languages/fr
 var/ipfire/lynis/db/languages/gr
 var/ipfire/lynis/db/languages/he
 var/ipfire/lynis/db/languages/hu
+var/ipfire/lynis/db/languages/id
 var/ipfire/lynis/db/languages/it
 var/ipfire/lynis/db/languages/ja
 var/ipfire/lynis/db/languages/ko
@@ -117,3 +118,4 @@ var/ipfire/lynis/lynis
 #var/ipfire/lynis/plugins
 #var/ipfire/lynis/plugins/README
 var/ipfire/lynis/plugins/custom_plugin.template
+var/ipfire/lynis/software-eol.db
