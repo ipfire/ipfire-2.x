@@ -141,6 +141,7 @@ fi
 
 # Remove any entry for ALIENVAULT or SPAMHAUS_EDROP from the ipblocklist modified file
 # and the associated ipblocklist files from the /var/lib/ipblocklist directory
+# If SPAMHAUS_EDROP was used and SPAMHAUS_DROP not used then add SPAMHAUS_DROP to settings file
 sed -i '/ALIENVAULT=/d' /var/ipfire/ipblocklist/modified
 sed -i '/SPAMHAUS_EDROP=/d' /var/ipfire/ipblocklist/modified
 if [ -e /var/lib/ipblocklist/ALIENVAULT.conf ]; then
@@ -148,6 +149,9 @@ if [ -e /var/lib/ipblocklist/ALIENVAULT.conf ]; then
 fi
 if [ -e /var/lib/ipblocklist/SPAMHAUS_EDROP.conf ]; then
 	rm /var/lib/ipblocklist/SPAMHAUS_EDROP.conf
+	if [ ! -e /var/lib/ipblocklist/SPAMHAUS_DROP.conf ]; then
+		echo "SPAMHAUS_DROP=on" >> /var/ipfire/ipblocklist/settings
+	fi
 fi
 
 # This update needs a reboot...
