@@ -6926,7 +6926,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/AQUANTIA_PHY
 #lib/modules/KVER-ipfire/build/include/config/AR5523
 #lib/modules/KVER-ipfire/build/include/config/ARCH_CLOCKSOURCE_INIT
-#lib/modules/KVER-ipfire/build/include/config/ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
+#lib/modules/KVER-ipfire/build/include/config/ARCH_CONFIGURES_CPU_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/ARCH_CPUIDLE_HALTPOLL
 #lib/modules/KVER-ipfire/build/include/config/ARCH_DMA_ADDR_T_64BIT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_ENABLE_MEMORY_HOTPLUG
@@ -7232,7 +7232,10 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BOOT_VESA_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/BPF
 #lib/modules/KVER-ipfire/build/include/config/BPF_JIT
+#lib/modules/KVER-ipfire/build/include/config/BPF_JIT_ALWAYS_ON
 #lib/modules/KVER-ipfire/build/include/config/BPF_JIT_DEFAULT_ON
+#lib/modules/KVER-ipfire/build/include/config/BPF_SYSCALL
+#lib/modules/KVER-ipfire/build/include/config/BPF_UNPRIV_DEFAULT_OFF
 #lib/modules/KVER-ipfire/build/include/config/BQL
 #lib/modules/KVER-ipfire/build/include/config/BRANCH_PROFILE_NONE
 #lib/modules/KVER-ipfire/build/include/config/BRCMFMAC
@@ -7412,6 +7415,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE_GOV_MENU
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE_GOV_TEO
 #lib/modules/KVER-ipfire/build/include/config/CPU_ISOLATION
+#lib/modules/KVER-ipfire/build/include/config/CPU_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/CPU_RMAP
 #lib/modules/KVER-ipfire/build/include/config/CPU_SRSO
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_AMD
@@ -9371,6 +9375,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NETDEVICES
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_ADVANCED
+#lib/modules/KVER-ipfire/build/include/config/NETFILTER_BPF_LINK
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_CONNCOUNT
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_EGRESS
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_FAMILY_ARP
@@ -10995,7 +11000,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP_ENABLE
 #lib/modules/KVER-ipfire/build/include/config/SPARSE_IRQ
-#lib/modules/KVER-ipfire/build/include/config/SPECULATION_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/SPLIT_PTLOCK_CPUS
 #lib/modules/KVER-ipfire/build/include/config/SPMI
 #lib/modules/KVER-ipfire/build/include/config/SSB
@@ -11065,6 +11069,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/TASKS_RCU
 #lib/modules/KVER-ipfire/build/include/config/TASKS_RCU_GENERIC
 #lib/modules/KVER-ipfire/build/include/config/TASKS_RUDE_RCU
+#lib/modules/KVER-ipfire/build/include/config/TASKS_TRACE_RCU
 #lib/modules/KVER-ipfire/build/include/config/TASK_DELAY_ACCT
 #lib/modules/KVER-ipfire/build/include/config/TASK_IO_ACCOUNTING
 #lib/modules/KVER-ipfire/build/include/config/TASK_XACCT
@@ -11746,6 +11751,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/X86_VSYSCALL_EMULATION
 #lib/modules/KVER-ipfire/build/include/config/X86_X2APIC
 #lib/modules/KVER-ipfire/build/include/config/XARRAY_MULTI
+#lib/modules/KVER-ipfire/build/include/config/XDP_SOCKETS
+#lib/modules/KVER-ipfire/build/include/config/XDP_SOCKETS_DIAG
 #lib/modules/KVER-ipfire/build/include/config/XEN
 #lib/modules/KVER-ipfire/build/include/config/XENFS
 #lib/modules/KVER-ipfire/build/include/config/XEN_512GB
@@ -23490,6 +23497,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/wireless/lib80211_crypt_ccmp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/wireless/lib80211_crypt_tkip.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/wireless/lib80211_crypt_wep.ko.xz
+#lib/modules/KVER-ipfire/kernel/net/xdp
+#lib/modules/KVER-ipfire/kernel/net/xdp/xsk_diag.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/xfrm
 #lib/modules/KVER-ipfire/kernel/net/xfrm/xfrm_ipcomp.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound
