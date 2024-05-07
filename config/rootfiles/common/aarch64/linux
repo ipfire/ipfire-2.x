@@ -7553,7 +7553,10 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BONDING
 #lib/modules/KVER-ipfire/build/include/config/BPF
 #lib/modules/KVER-ipfire/build/include/config/BPF_JIT
+#lib/modules/KVER-ipfire/build/include/config/BPF_JIT_ALWAYS_ON
 #lib/modules/KVER-ipfire/build/include/config/BPF_JIT_DEFAULT_ON
+#lib/modules/KVER-ipfire/build/include/config/BPF_SYSCALL
+#lib/modules/KVER-ipfire/build/include/config/BPF_UNPRIV_DEFAULT_OFF
 #lib/modules/KVER-ipfire/build/include/config/BQL
 #lib/modules/KVER-ipfire/build/include/config/BRANCH_PROFILE_NONE
 #lib/modules/KVER-ipfire/build/include/config/BRCMFMAC
@@ -7781,6 +7784,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE_GOV_MENU
 #lib/modules/KVER-ipfire/build/include/config/CPU_ISOLATION
 #lib/modules/KVER-ipfire/build/include/config/CPU_LITTLE_ENDIAN
+#lib/modules/KVER-ipfire/build/include/config/CPU_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/CPU_PM
 #lib/modules/KVER-ipfire/build/include/config/CPU_RMAP
 #lib/modules/KVER-ipfire/build/include/config/CPU_THERMAL
@@ -9584,6 +9588,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NETDEVICES
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_ADVANCED
+#lib/modules/KVER-ipfire/build/include/config/NETFILTER_BPF_LINK
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_CONNCOUNT
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_EGRESS
 #lib/modules/KVER-ipfire/build/include/config/NETFILTER_FAMILY_ARP
@@ -11208,6 +11213,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/TASKS_RCU
 #lib/modules/KVER-ipfire/build/include/config/TASKS_RCU_GENERIC
 #lib/modules/KVER-ipfire/build/include/config/TASKS_RUDE_RCU
+#lib/modules/KVER-ipfire/build/include/config/TASKS_TRACE_RCU
 #lib/modules/KVER-ipfire/build/include/config/TASK_DELAY_ACCT
 #lib/modules/KVER-ipfire/build/include/config/TASK_IO_ACCOUNTING
 #lib/modules/KVER-ipfire/build/include/config/TASK_XACCT
@@ -11778,6 +11784,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/WLCORE_SDIO
 #lib/modules/KVER-ipfire/build/include/config/X509_CERTIFICATE_PARSER
 #lib/modules/KVER-ipfire/build/include/config/XARRAY_MULTI
+#lib/modules/KVER-ipfire/build/include/config/XDP_SOCKETS
+#lib/modules/KVER-ipfire/build/include/config/XDP_SOCKETS_DIAG
 #lib/modules/KVER-ipfire/build/include/config/XFRM
 #lib/modules/KVER-ipfire/build/include/config/XFRM_AH
 #lib/modules/KVER-ipfire/build/include/config/XFRM_ALGO
@@ -22989,6 +22997,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/wireless/lib80211_crypt_ccmp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/wireless/lib80211_crypt_tkip.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/wireless/lib80211_crypt_wep.ko.xz
+#lib/modules/KVER-ipfire/kernel/net/xdp
+#lib/modules/KVER-ipfire/kernel/net/xdp/xsk_diag.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/xfrm
 #lib/modules/KVER-ipfire/kernel/net/xfrm/xfrm_ipcomp.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound
