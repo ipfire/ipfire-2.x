@@ -6927,6 +6927,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/AR5523
 #lib/modules/KVER-ipfire/build/include/config/ARCH_CLOCKSOURCE_INIT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_CONFIGURES_CPU_MITIGATIONS
+#lib/modules/KVER-ipfire/build/include/config/ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_CPUIDLE_HALTPOLL
 #lib/modules/KVER-ipfire/build/include/config/ARCH_DMA_ADDR_T_64BIT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_ENABLE_MEMORY_HOTPLUG
