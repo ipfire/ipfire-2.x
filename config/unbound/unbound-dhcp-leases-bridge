@@ -28,6 +28,7 @@ import ipaddress
 import logging
 import logging.handlers
 import os
+import queue
 import re
 import signal
 import socket
@@ -87,6 +88,9 @@ class UnboundDHCPLeasesBridge(object):
 
 		self.socket = None
 
+		# Create a queue for all received events
+		self.queue = queue.Queue()
+
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
 
 		# Load all required data
@@ -120,7 +124,8 @@ class UnboundDHCPLeasesBridge(object):
 				for key in message:
 					log.debug("  %-20s = %s" % (key, message[key]))
 
-				# TODO
+				# Add the message to the queue
+				self.queue.put(message)
 
 				conn.send(b"OK\n")
 
