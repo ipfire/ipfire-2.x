@@ -98,6 +98,12 @@ class UnboundDHCPLeasesBridge(object):
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
 		self.running = False
 
+		# Read all static hosts
+		self.hosts = self.read_static_hosts()
+
+		# Unconditionally update all leases and reload Unbound
+		self.update_dhcp_leases()
+
 	def run(self):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
 		self.running = True
