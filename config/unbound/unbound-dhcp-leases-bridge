@@ -609,6 +609,7 @@ if __name__ == "__main__":
 		stderr=None if args.daemon else sys.stderr,
 		signal_map = {
 			signal.SIGHUP  : bridge.update_dhcp_leases,
+			signal.SIGINT  : bridge.terminate,
 			signal.SIGTERM : bridge.terminate,
 		},
 	) as daemon:
