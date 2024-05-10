@@ -29,7 +29,7 @@ function init_table() {
 		return
 	fi
 
-	ip rule add table static >/dev/null 2>&1
+	ip rule add table static
 }
 
 function create_all_routes() {
@@ -54,7 +54,7 @@ function create_all_routes() {
 			continue
 		fi
 
-		ip route add ${network} via ${gateway} table static proto static >/dev/null 2>&1
+		ip route add ${network} via ${gateway} table static proto static
 	done < ${file}
 }
 
