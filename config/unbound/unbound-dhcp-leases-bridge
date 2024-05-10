@@ -37,7 +37,6 @@ import subprocess
 import sys
 import tempfile
 import threading
-import time
 
 LOCAL_TTL = 60
 
@@ -65,20 +64,6 @@ def setup_logging(daemon=True, loglevel=logging.INFO):
 		handler.setLevel(loglevel)
 
 	return log
-
-def ip_address_to_reverse_pointer(address):
-	parts = address.split(".")
-	parts.reverse()
-
-	return "%s.in-addr.arpa" % ".".join(parts)
-
-def reverse_pointer_to_ip_address(rr):
-	parts = rr.split(".")
-
-	# Only take IP address part
-	parts = reversed(parts[0:4])
-
-	return ".".join(parts)
 
 class UnboundDHCPLeasesBridge(object):
 	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file, hosts_file, socket_path):
