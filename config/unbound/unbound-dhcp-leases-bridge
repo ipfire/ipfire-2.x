@@ -296,9 +296,9 @@ class UnboundDHCPLeasesBridge(object):
 			log.debug("Skipping lease for which a static host exists: %s" % lease)
 			return
 
-		# Don't add inactive or expired leases
-		elif not lease.active or lease.expired:
-			log.debug("Skipping inactive or expired lease: %s" % lease)
+		# Don't add expired leases
+		elif lease.expired:
+			log.debug("Skipping expired lease: %s" % lease)
 			return
 
 		# Remove any previous leases
@@ -437,6 +437,9 @@ class DHCPLeases(object):
 				if not "hardware" in properties:
 					continue
 
+				# Skip inactive leases
+				elif not properties.get("binding", "state active"):
+					continue
 
 				lease = Lease(ipaddr, properties)
 				leases.append(lease)
@@ -555,9 +558,6 @@ class Lease(object):
 			"binding" : "state free",
 		})
 
-	@property
-	def active(self):
-		return self.binding_state == "active"
 	@property
 	def hostname(self):
 		hostname = self._properties.get("client-hostname")
