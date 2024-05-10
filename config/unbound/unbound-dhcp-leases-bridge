@@ -105,12 +105,35 @@ class UnboundDHCPLeasesBridge(object):
 			except OSError as e:
 				break
 
-			# Receive what the client is sending
-			data, ancillary_data, flags, address = conn.recvmsg(4096)
+			try:
+				# Receive what the client is sending
+				data, ancillary_data, flags, address = conn.recvmsg(4096)
 
-			log.error("Received message:\n%s" % data.decode())
+				# Log that we have received some data
+				log.debug("Received message of %s byte(s)" % len(data))
 
-			# TODO
+				# Decode the data
+				message = self._decode_message(data)
+
+				# Log the received message
+				log.debug("Received message:")
+				for key in message:
+					log.debug("  %-20s = %s" % (key, message[key]))
+
+				# TODO
+
+				conn.send(b"OK\n")
+
+			# Send ERROR to the client if something went wrong
+			except Exception as e:
+				log.error("Could not handle message: %s" % e)
+
+				conn.send(b"ERROR\n")
+				continue
+
+			# Close the connection
+			finally:
+				conn.close()
 
 		log.info("Unbound DHCP Leases Bridge terminated")
 
@@ -136,6 +159,34 @@ class UnboundDHCPLeasesBridge(object):
 		s.listen(128)
 
 		return s
+
+	def _decode_message(self, data):
+		message = {}
+
+		for line in data.splitlines():
+			# Skip empty lines
+			if not line:
+				continue
+
+			# Try to decode the line
+			try:
+				line = line.decode()
+			except UnicodeError as e:
+				log.error("Could not decode %r: %s" % (line, e))
+
+				raise e
+
+			# Split the line
+			key, _, value = line.partition("=")
+
+			# Skip the line if it does not have a value
+			if not _:
+				raise ValueError("No value given")
+
+			# Store the attributes
+			message[key] = value
+
+		return message
 
 	def update_dhcp_leases(self):
 		leases = []
