@@ -481,6 +481,9 @@ class FixLeases(object):
 
 class Lease(object):
 	def __init__(self, ipaddr, properties):
+		if not isinstance(ipaddr, ipaddress.IPv4Address):
+			ipaddr = ipaddress.IPv4Address(ipaddr)
+
 		self.ipaddr = ipaddr
 		self._properties = properties
 
@@ -631,10 +634,10 @@ class Lease(object):
 
 		return [
 			# Forward record
-			(self.fqdn, "%s" % LOCAL_TTL, "IN A", self.ipaddr),
+			(self.fqdn, "%s" % LOCAL_TTL, "IN A", "%s" % self.ipaddr),
 
 			# Reverse record
-			(ip_address_to_reverse_pointer(self.ipaddr), "%s" % LOCAL_TTL,
+			(self.ipaddr.reverse_pointer, "%s" % LOCAL_TTL,
 				"IN PTR", self.fqdn),
 		]
 
