@@ -30,6 +30,7 @@ import logging.handlers
 import os
 import re
 import signal
+import socket
 import stat
 import subprocess
 import sys
@@ -80,10 +81,11 @@ def reverse_pointer_to_ip_address(rr):
 	return ".".join(parts)
 
 class UnboundDHCPLeasesBridge(object):
-	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file, hosts_file):
+	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file, hosts_file, socket_path):
 		self.leases_file = dhcp_leases_file
 		self.fix_leases_file = fix_leases_file
 		self.hosts_file = hosts_file
+		self.socket_path = socket_path
 
 		self.watches = {
 			self.leases_file     : inotify.constants.IN_MODIFY,
@@ -91,12 +93,17 @@ class UnboundDHCPLeasesBridge(object):
 			self.hosts_file      : 0,
 		}
 
+		self.socket = None
+
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
 		self.running = False
 
 	def run(self):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
 		self.running = True
+
+		# Open the server socket
+		self.socket = self._open_socket(self.socket_path)
 
 		i = inotify.adapters.Inotify()
 
@@ -112,6 +119,17 @@ class UnboundDHCPLeasesBridge(object):
 
 		while self.running:
 			log.debug("Wakeup of main loop")
+
+			# Accept any incoming connections
+			try:
+				conn, peer = self.socket.accept()
+			except OSError as e:
+				break
+
+			# Receive what the client is sending
+			data, ancillary_data, flags, address = conn.recvmsg(4096)
+
+			log.error("Received message:\n%s" % data.decode())
 
 			# Process the entire inotify queue and identify what we need to do
 			for event in i.event_gen():
@@ -148,6 +166,29 @@ class UnboundDHCPLeasesBridge(object):
 			time.sleep(5)
 
 		log.info("Unbound DHCP Leases Bridge terminated")
+
+	def _open_socket(self, path):
+		# Allocate a new socket
+		s = socket.socket(family=socket.AF_UNIX, type=socket.SOCK_STREAM)
+
+		# Unlink any old sockets
+		try:
+			os.unlink(path)
+		except FileNotFoundError as e:
+			pass
+
+		# Bind the socket
+		try:
+			s.bind(self.socket_path)
+		except OSError as e:
+			log.error("Could not open socket at %s: %s" % (path, e))
+
+			raise SystemExit(1) from e
+
+		# Listen
+		s.listen(128)
+
+		return s
 
 	def update_dhcp_leases(self):
 		leases = []
@@ -219,7 +260,11 @@ class UnboundDHCPLeasesBridge(object):
 
 		return hosts
 
-	def terminate(self):
+	def terminate(self, *args, **kwargs):
+		# Close the socket
+		if self.socket:
+			self.socket.close()
+
 		self.running = False
 
 
@@ -588,6 +633,9 @@ if __name__ == "__main__":
 		metavar="PATH", help="Path to the fix leases file")
 	parser.add_argument("--hosts", default="/var/ipfire/main/hosts",
 		metavar="PATH", help="Path to static hosts file")
+	parser.add_argument("--socket-path", default="/var/run/unbound-dhcp-leases-bridge.sock",
+		metavar="PATH", help="Socket Path",
+	)
 
 	# Parse command line arguments
 	args = parser.parse_args()
@@ -602,7 +650,7 @@ if __name__ == "__main__":
 			loglevel = logging.DEBUG
 
 	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases,
-		args.unbound_leases, args.hosts)
+		args.unbound_leases, args.hosts, socket_path=args.socket_path)
 
 	with daemon.DaemonContext(
 		detach_process=args.daemon,
