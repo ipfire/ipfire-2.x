@@ -437,18 +437,9 @@ class DHCPLeases(object):
 				if not "hardware" in properties:
 					continue
 
+
 				lease = Lease(ipaddr, properties)
-
-				# Check if a lease for this Ethernet address already
-				# exists in the list of known leases. If so replace
-				# if with the most recent lease
-				for i, l in enumerate(leases):
-					if l.ipaddr == lease.ipaddr:
-						leases[i] = max(lease, l)
-						break
-
-				else:
-					leases.append(lease)
+				leases.append(lease)
 
 		return leases
 
@@ -514,7 +505,6 @@ class FixLeases(object):
 				l = Lease(ipaddr, {
 					"binding"         : "state active",
 					"client-hostname" : hostname,
-					"hardware"        : "ethernet %s" % hwaddr,
 					"starts"          : now.strftime("%w %Y/%m/%d %H:%M:%S"),
 					"ends"            : "never",
 				})
@@ -568,18 +558,6 @@ class Lease(object):
 	@property
 	def active(self):
 		return self.binding_state == "active"
-
-	@property
-	def hwaddr(self):
-		hardware = self._properties.get("hardware")
-
-		if not hardware:
-			return
-
-		ethernet, address = hardware.split(" ", 1)
-
-		return address
-
 	@property
 	def hostname(self):
 		hostname = self._properties.get("client-hostname")
