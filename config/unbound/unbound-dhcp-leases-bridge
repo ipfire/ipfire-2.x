@@ -219,10 +219,23 @@ class UnboundDHCPLeasesBridge(object):
 			address = message.get("ADDRESS")
 			name    = message.get("NAME")
 
+			# Find the old lease
+			old_lease = self._find_lease(address)
+
 			# Create a new lease
 			lease = Lease(address, {
 				"client-hostname" : name,
 			})
+			self._add_lease(lease)
+
+			# Can we skip the update?
+			if old_lease:
+				if lease.rrset == old_lease.rrset:
+					log.debug("Won't update %s as nothing has changed" % lease)
+					return
+
+				# Remove the old lease first
+				self.unbound.remove_lease(old_lease)
 
 			# Apply the lease
 			self.unbound.apply_lease(lease)
