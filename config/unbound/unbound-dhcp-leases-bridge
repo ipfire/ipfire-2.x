@@ -37,8 +37,6 @@ import sys
 import tempfile
 import time
 
-import inotify.adapters
-
 LOCAL_TTL = 60
 
 log = logging.getLogger("dhcp")
@@ -87,12 +85,6 @@ class UnboundDHCPLeasesBridge(object):
 		self.hosts_file = hosts_file
 		self.socket_path = socket_path
 
-		self.watches = {
-			self.leases_file     : inotify.constants.IN_MODIFY,
-			self.fix_leases_file : 0,
-			self.hosts_file      : 0,
-		}
-
 		self.socket = None
 
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
@@ -111,18 +103,6 @@ class UnboundDHCPLeasesBridge(object):
 		# Open the server socket
 		self.socket = self._open_socket(self.socket_path)
 
-		i = inotify.adapters.Inotify()
-
-		# Add watches for the directories of every relevant file
-		for f, mask in self.watches.items():
-			i.add_watch(
-				os.path.dirname(f),
-				mask | inotify.constants.IN_CLOSE_WRITE | inotify.constants.IN_MOVED_TO,
-			)
-
-		# Enabled so that we update hosts and leases on startup
-		update_hosts = update_leases = True
-
 		while self.running:
 			log.debug("Wakeup of main loop")
 
@@ -137,39 +117,7 @@ class UnboundDHCPLeasesBridge(object):
 
 			log.error("Received message:\n%s" % data.decode())
 
-			# Process the entire inotify queue and identify what we need to do
-			for event in i.event_gen():
-				# Nothing to do
-				if event is None:
-					break
-
-				# Decode the event
-				header, type_names, path, filename = event
-
-				file = os.path.join(path, filename)
-
-				log.debug("inotify event received for %s: %s", file, " ".join(type_names))
-
-				# Did the hosts file change?
-				if self.hosts_file == file:
-					update_hosts = True
-
-				# We will need to update the leases on any change
-				update_leases = True
-
-			# Update hosts (if needed)
-			if update_hosts:
-				self.hosts = self.read_static_hosts()
-
-			# Update leases (if needed)
-			if update_leases:
-				self.update_dhcp_leases()
-
-			# Reset
-			update_hosts = update_leases = False
-
-			# Wait a moment before we start the next iteration
-			time.sleep(5)
+			# TODO
 
 		log.info("Unbound DHCP Leases Bridge terminated")
 
