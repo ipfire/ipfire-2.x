@@ -236,6 +236,7 @@ class UnboundDHCPLeasesBridge(object):
 
 				# Remove the old lease first
 				self.unbound.remove_lease(old_lease)
+				self._remove_lease(old_lease)
 
 			# Apply the lease
 			self.unbound.apply_lease(lease)
@@ -253,6 +254,7 @@ class UnboundDHCPLeasesBridge(object):
 
 			# Remove the lease
 			self.unbound.remove_lease(lease)
+			self._remove_lease(lease)
 
 		# Raise an error if the event is not supported
 		else:
@@ -296,6 +298,9 @@ class UnboundDHCPLeasesBridge(object):
 		elif not lease.active or lease.expired:
 			return
 
+		# Remove any previous leases
+		self._remove_lease(lease)
+
 		# Store the lease
 		self.leases.add(lease)
 
@@ -309,6 +314,12 @@ class UnboundDHCPLeasesBridge(object):
 		for lease in self.leases:
 			if lease.ipaddr == ipaddr:
 				return lease
+
+	def _remove_lease(self, lease):
+		try:
+			self.leases.remove(lease)
+		except KeyError:
+			pass
 
 	def read_static_hosts(self):
 		log.info("Reading static hosts from %s" % self.hosts_file)
