@@ -279,7 +279,7 @@ class UnboundDHCPLeasesBridge(object):
 				log.debug("  %s:" % lease.fqdn)
 				log.debug("    Start: %s" % lease.time_starts)
 				log.debug("    End  : %s" % lease.time_ends)
-				if lease.expired:
+				if lease.has_expired():
 					log.debug("    Expired")
 
 		self.unbound.update_dhcp_leases(self.leases)
@@ -296,7 +296,7 @@ class UnboundDHCPLeasesBridge(object):
 			return
 
 		# Don't add expired leases
-		elif lease.expired:
+		elif lease.has_expired():
 			log.debug("Skipping expired lease: %s" % lease)
 			return
 
@@ -632,8 +632,10 @@ class Lease(object):
 
 		return self._parse_time(ends)
 
-	@property
-	def expired(self):
+	def has_expired(self):
+		if not self.time_starts:
+			return
+
 		if not self.time_ends:
 			return self.time_starts > datetime.datetime.utcnow()
 
