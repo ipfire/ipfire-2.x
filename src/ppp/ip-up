@@ -33,7 +33,7 @@ echo -n "$4" > /var/ipfire/red/local-ipaddress
 echo -n "$5" > /var/ipfire/red/remote-ipaddress
 touch /var/ipfire/red/active
 
-/sbin/ip route replace default via ${IPREMOTE} dev ppp0 >/dev/null 2>&1
+/sbin/ip route replace default via ${IPREMOTE} dev ppp0
 run_subdir ${rc_base}/init.d/networking/red.up/
 
 #Check if gateway has answerd to ping, if not replace with ping.ipfire.org
