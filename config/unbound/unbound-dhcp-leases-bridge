@@ -277,7 +277,6 @@ class UnboundDHCPLeasesBridge(object):
 			log.debug("DHCP Leases:")
 			for lease in self.leases:
 				log.debug("  %s:" % lease.fqdn)
-				log.debug("    State: %s" % lease.binding_state)
 				log.debug("    Start: %s" % lease.time_starts)
 				log.debug("    End  : %s" % lease.time_ends)
 				if lease.expired:
@@ -544,19 +543,6 @@ class Lease(object):
 
 	def __hash__(self):
 		return hash(self.ipaddr)
-
-	@property
-	def binding_state(self):
-		state = self._properties.get("binding")
-
-		if state:
-			state = state.split(" ", 1)
-			return state[1]
-
-	def free(self):
-		self._properties.update({
-			"binding" : "state free",
-		})
 
 	@property
 	def hostname(self):
