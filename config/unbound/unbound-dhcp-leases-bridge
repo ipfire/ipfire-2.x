@@ -88,21 +88,17 @@ class UnboundDHCPLeasesBridge(object):
 		self.socket = None
 
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
-		self.running = False
 
 		# Load all required data
 		self.reload()
 
 	def run(self):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
-		self.running = True
 
 		# Open the server socket
 		self.socket = self._open_socket(self.socket_path)
 
-		while self.running:
-			log.debug("Wakeup of main loop")
-
+		while True:
 			# Accept any incoming connections
 			try:
 				conn, peer = self.socket.accept()
@@ -222,8 +218,6 @@ class UnboundDHCPLeasesBridge(object):
 		# Close the socket
 		if self.socket:
 			self.socket.close()
-
-		self.running = False
 
 
 class DHCPLeases(object):
