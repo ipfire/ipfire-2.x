@@ -89,6 +89,9 @@ class UnboundDHCPLeasesBridge(object):
 
 		self.socket = None
 
+		# Store all known leases
+		self.leases = set()
+
 		# Create a queue for all received events
 		self.queue = queue.Queue()
 
@@ -239,28 +242,21 @@ class UnboundDHCPLeasesBridge(object):
 			raise ValueError("Unsupported event: %s" % event)
 
 	def update_dhcp_leases(self):
-		leases = []
+		# Drop all known leases
+		self.leases.clear()
 
+		# Add all dynamic leases
 		for lease in DHCPLeases(self.leases_file):
-			# Don't bother with any leases that don't have a hostname
-			if not lease.fqdn:
-				continue
+			self._add_lease(lease)
 
-			leases.append(lease)
-
+		# Add all static leases
 		for lease in FixLeases(self.fix_leases_file):
-			leases.append(lease)
-
-		# Skip any leases that also are a static host
-		leases = [l for l in leases if not l.fqdn in self.hosts]
-
-		# Remove any inactive or expired leases
-		leases = [l for l in leases if l.active and not l.expired]
+			self._add_lease(lease)
 
 		# Dump leases
-		if leases:
+		if self.leases:
 			log.debug("DHCP Leases:")
-			for lease in leases:
+			for lease in self.leases:
 				log.debug("  %s:" % lease.fqdn)
 				log.debug("    State: %s" % lease.binding_state)
 				log.debug("    Start: %s" % lease.time_starts)
@@ -268,7 +264,23 @@ class UnboundDHCPLeasesBridge(object):
 				if lease.expired:
 					log.debug("    Expired")
 
-		self.unbound.update_dhcp_leases(leases)
+		self.unbound.update_dhcp_leases(self.leases)
+
+	def _add_lease(self, lease):
+		# Skip leases without an FQDN
+		if not lease.fqdn:
+			return
+
+		# Skip any leases that also are a static host
+		elif lease.fqdn in self.hosts:
+			return
+
+		# Don't add inactive or expired leases
+		elif not lease.active or lease.expired:
+			return
+
+		# Store the lease
+		self.leases.add(lease)
 
 	def read_static_hosts(self):
 		log.info("Reading static hosts from %s" % self.hosts_file)
