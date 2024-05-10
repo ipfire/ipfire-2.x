@@ -400,7 +400,7 @@ class Worker(threading.Thread):
 			try:
 				self.callback(message)
 			except Exception as e:
-				log.error("Callback failed: %s" % e)
+				log.error("Callback failed: %s" % e, exc_info=True)
 
 		log.debug("Worker %s terminated" % self.native_id)
 
