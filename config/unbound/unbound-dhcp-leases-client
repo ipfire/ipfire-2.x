@@ -1,0 +1,75 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2016  Michael Tremer                                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+SOCKET="/var/run/unbound-dhcp-leases-bridge.sock"
+
+main() {
+	local event="${1}"
+	shift
+
+	# Check if we have received an event
+	if [ -z "${event}" ]; then
+		echo "${0}: Missing event" >&2
+		return 2
+	fi
+
+	# Check if the socket exists
+	if [ ! -S "${SOCKET}" ]; then
+		echo "${0}: ${SOCKET} does not exist" >&2
+		return 1
+	fi
+
+	# Connect to the socket
+	coproc NC { nc -U "${SOCKET}"; }
+
+	local arg
+	local response
+
+	# Send the message
+	{
+		# Send the event
+		echo "EVENT=${event}"
+
+		# Send all arguments
+		for arg in $@; do
+			echo "${arg}"
+		done
+	} >&"${NC[1]}"
+
+	# Close the input part of the connection
+	exec {NC[1]}>&-
+
+	# Capture the response
+	read response <&"${NC[0]}"
+
+	case "${response}" in
+		OK)
+			return 0
+			;;
+
+		*)
+			echo "${response}" >&2
+			return 1
+			;;
+	esac
+}
+
+main "$@" || exit $?

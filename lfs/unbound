@@ -99,6 +99,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install DHCP leases bridge
 	install -v -m 755 $(DIR_SRC)/config/unbound/unbound-dhcp-leases-bridge \
 		/usr/sbin/unbound-dhcp-leases-bridge
+	install -v -m 755 $(DIR_SRC)/config/unbound/unbound-dhcp-leases-client \
+		/usr/sbin/unbound-dhcp-leases-client
 
 	# Install key
 	-mkdir -pv /var/lib/unbound
