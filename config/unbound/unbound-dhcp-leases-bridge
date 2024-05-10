@@ -482,12 +482,10 @@ class DHCPLeases(object):
 
 
 class FixLeases(object):
-	cache = {}
-
 	def __init__(self, path):
 		self.path = path
 
-		self._leases = self.cache[self.path] = self._parse()
+		self._leases = self._parse()
 
 	def __iter__(self):
 		return iter(self._leases)
@@ -495,8 +493,9 @@ class FixLeases(object):
 	def _parse(self):
 		log.info("Reading fix leases from %s" % self.path)
 
-		leases = []
 		now = datetime.datetime.utcnow()
+
+		leases = []
 
 		with open(self.path) as f:
 			for line in f.readlines():
@@ -520,15 +519,6 @@ class FixLeases(object):
 					"ends"            : "never",
 				})
 				leases.append(l)
-
-		# Try finding any deleted leases
-		for lease in self.cache.get(self.path, []):
-			if lease in leases:
-				continue
-
-			# Free the deleted lease
-			lease.free()
-			leases.append(lease)
 
 		return leases
 
