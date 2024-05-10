@@ -231,8 +231,12 @@ class UnboundDHCPLeasesBridge(object):
 		elif event in ("release", "expiry"):
 			address = message.get("ADDRESS")
 
-			# Create a new lease
-			lease = Lease(address, {})
+			# Find the lease
+			lease = self._find_lease(address)
+
+			if not lease:
+				log.warning("Could not find lease for %s" % address)
+				return
 
 			# Remove the lease
 			self.unbound.remove_lease(lease)
@@ -281,6 +285,17 @@ class UnboundDHCPLeasesBridge(object):
 
 		# Store the lease
 		self.leases.add(lease)
+
+	def _find_lease(self, ipaddr):
+		"""
+			Returns the lease with the specified IP address
+		"""
+		if not isinstance(ipaddr, ipaddress.IPv4Address):
+			ipaddr = ipaddress.IPv4Address(ipaddr)
+
+		for lease in self.leases:
+			if lease.ipaddr == ipaddr:
+				return lease
 
 	def read_static_hosts(self):
 		log.info("Reading static hosts from %s" % self.hosts_file)
