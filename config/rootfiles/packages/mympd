@@ -3,6 +3,8 @@ usr/bin/mympd
 usr/bin/mympd-config
 usr/bin/mympd-script
 #usr/lib/systemd/system/mympd.service
+#usr/lib/systemd/user
+#usr/lib/systemd/user/mympd.service
 #usr/share/doc/mympd
 #usr/share/doc/mympd/CHANGELOG.md
 #usr/share/doc/mympd/LICENSE.md
