@@ -90,11 +90,8 @@ class UnboundDHCPLeasesBridge(object):
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
 		self.running = False
 
-		# Read all static hosts
-		self.hosts = self.read_static_hosts()
-
-		# Unconditionally update all leases and reload Unbound
-		self.update_dhcp_leases()
+		# Load all required data
+		self.reload()
 
 	def run(self):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
@@ -213,6 +210,13 @@ class UnboundDHCPLeasesBridge(object):
 			log.debug("  %-20s : %s" % (name, ", ".join(hosts[name])))
 
 		return hosts
+
+	def reload(self, *args, **kwargs):
+		# Read all static hosts
+		self.hosts = self.read_static_hosts()
+
+		# Unconditionally update all leases and reload Unbound
+		self.update_dhcp_leases()
 
 	def terminate(self, *args, **kwargs):
 		# Close the socket
@@ -610,7 +614,7 @@ if __name__ == "__main__":
 		detach_process=args.daemon,
 		stderr=None if args.daemon else sys.stderr,
 		signal_map = {
-			signal.SIGHUP  : bridge.update_dhcp_leases,
+			signal.SIGHUP  : bridge.reload,
 			signal.SIGINT  : bridge.terminate,
 			signal.SIGTERM : bridge.terminate,
 		},
