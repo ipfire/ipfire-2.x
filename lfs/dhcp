@@ -84,6 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc/dhcp \
 			--with-srv-conf-file=/etc/dhcp/dhcpd.conf \
 			--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
+			--enable-execute \
 			--enable-paranoia \
 			--enable-early-chroot \
 			--disable-dhcpv6
