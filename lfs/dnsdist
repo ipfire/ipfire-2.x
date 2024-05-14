@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A highly DNS-, DoS- and abuse-aware loadbalancer
 
-VER        = 1.9.3
+VER        = 1.9.4
 
 THISAPP    = dnsdist-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dnsdist
-PAK_VER    = 21
+PAK_VER    = 23
 
 SUP_ARCH   = x86_64 aarch64
 
@@ -52,7 +52,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 663b8a2161c5a7b94541cd775f135a99997024648c5bb57fd2ec18c7ede29aebda142452f97332300c45af32b5131e4dd5f9c1f904a1d68962398fa9a28c474e
+$(DL_FILE)_BLAKE2 = a8cfc5c2da135ed96b857f9f1b6c3caa796b27f66ff7ead6e976b871a5e5db208ef3ce275c23085318bd7ff2f0fa2ec19e28ad36234991d84b8d13e74acb2f34
 
 install : $(TARGET)
 
