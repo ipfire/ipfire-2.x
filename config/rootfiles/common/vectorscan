@@ -1,0 +1,13 @@
+#usr/include/hs
+#usr/include/hs/hs.h
+#usr/include/hs/hs_common.h
+#usr/include/hs/hs_compile.h
+#usr/include/hs/hs_runtime.h
+#usr/include/hs/hs_version.h
+#usr/lib/libhs.so
+usr/lib/libhs.so.5
+usr/lib/libhs.so.5.4.11
+#usr/lib/libhs_runtime.so
+usr/lib/libhs_runtime.so.5
+usr/lib/libhs_runtime.so.5.4.11
+#usr/lib/pkgconfig/libhs.pc
