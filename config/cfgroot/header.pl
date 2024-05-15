@@ -454,12 +454,16 @@ END
 			$hostname = "";
 		}
 
-		if ($line =~ /^\s*ends/) {
-			$line =~ /(\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+)/;
+		if ($line =~ /^\s*ends \d (\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+)/) {
 			$endtime = timegm($6, $5, $4, $3, $2 - 1, $1 - 1900);
 			($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime($endtime);
 			$endtime_print = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
 			$expired = $endtime < time();
+
+		} elsif ($line =~ /^\s*ends never/) {
+			$endtime = 0;
+			$endtime_print = $Lang::tr{'never'};
+			$expired = 0;
 		}
 
 		if ($line =~ /^\s*hardware ethernet/) {
