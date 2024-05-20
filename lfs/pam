@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.0
+VER        = 1.6.1
 
 THISAPP    = Linux-PAM-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8ad3ed2d58b48cf43d065f15669788c113eee2aa3fc86cf38565a0e4835b142564ff1af5bcd3377db08af77141d25b4e93752a387ff7eabc00b4a826aa9ea39d
+$(DL_FILE)_BLAKE2 = 649b4ff892fbd3eb90adcbd9ccc5b3f5df51bf1c79b9084c7a1613c432587b13b81761d1eb4f31ef12d58843d16af24a3c441d0b6f5d2f2a1db9c8da15a61e2f
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/Linux-PAM-1.6.0-libpam:_fix_build_with_--enable-read-both-confs.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
 		--sbindir=/lib/security \

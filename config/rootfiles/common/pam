@@ -101,9 +101,7 @@ lib/security/pam_unix.so
 #lib/security/pam_wheel.so
 #lib/security/pam_xauth.la
 #lib/security/pam_xauth.so
-#lib/security/pwhistory_helper
 lib/security/unix_chkpwd
-lib/security/unix_update
 #usr/include/security
 #usr/include/security/_pam_compat.h
 #usr/include/security/_pam_macros.h
@@ -237,6 +235,4 @@ usr/lib/libpamc.so.0.82.1
 #usr/share/man/man8/pam_warn.8
 #usr/share/man/man8/pam_wheel.8
 #usr/share/man/man8/pam_xauth.8
-#usr/share/man/man8/pwhistory_helper.8
 #usr/share/man/man8/unix_chkpwd.8
-#usr/share/man/man8/unix_update.8
