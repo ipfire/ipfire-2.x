@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.39.3
+VER        = 2.40.1
 
 THISAPP    = util-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cd7b2b3c820e920d4a6ecd46fd807e018fc8e54439292f5e62c5f6863dd0f2505df3ec02c470d9be255a437c6ee8e4077908ac78d19a0d1273854d99eb571df0
+$(DL_FILE)_BLAKE2 = a51fcf9b63c033e470da4f4f0094f0f923fdeb5a649a5c59d2d44888e5e741dfd95e589247355296e050d9ec8dc4334c5898453af055abcb30082af6b835a3e3
 
 install : $(TARGET)
 
@@ -85,6 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-setpriv \
 		--disable-runuser \
 		--disable-pylibmount \
+		--disable-liblastlog2 \
 		--enable-pg \
 		--enable-hardlink \
 		--without-python \

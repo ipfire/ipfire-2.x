@@ -59,6 +59,8 @@ usr/bin/choom
 #usr/bin/colrm
 #usr/bin/column
 usr/bin/eject
+usr/bin/enosys
+usr/bin/exch
 #usr/bin/fadvise
 usr/bin/fallocate
 usr/bin/fincore
@@ -77,6 +79,7 @@ usr/bin/irqtop
 #usr/bin/linux64
 usr/bin/logger
 #usr/bin/look
+usr/bin/lsclocks
 usr/bin/lscpu
 usr/bin/lsipc
 usr/bin/lsirq
@@ -96,6 +99,7 @@ usr/bin/renice
 usr/bin/scriptlive
 #usr/bin/scriptreplay
 #usr/bin/setarch
+usr/bin/setpgid
 usr/bin/setsid
 #usr/bin/setterm
 #usr/bin/taskset
@@ -162,6 +166,8 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/delpart
 #usr/share/bash-completion/completions/dmesg
 #usr/share/bash-completion/completions/eject
+#usr/share/bash-completion/completions/enosys
+#usr/share/bash-completion/completions/exch
 #usr/share/bash-completion/completions/fadvise
 #usr/share/bash-completion/completions/fallocate
 #usr/share/bash-completion/completions/fdisk
@@ -191,6 +197,7 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/look
 #usr/share/bash-completion/completions/losetup
 #usr/share/bash-completion/completions/lsblk
+#usr/share/bash-completion/completions/lsclocks
 #usr/share/bash-completion/completions/lscpu
 #usr/share/bash-completion/completions/lsipc
 #usr/share/bash-completion/completions/lsirq
@@ -226,6 +233,7 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/scriptlive
 #usr/share/bash-completion/completions/scriptreplay
 #usr/share/bash-completion/completions/setarch
+#usr/share/bash-completion/completions/setpgid
 #usr/share/bash-completion/completions/setsid
 #usr/share/bash-completion/completions/setterm
 #usr/share/bash-completion/completions/sfdisk
@@ -259,6 +267,8 @@ usr/sbin/rtcwake
 #usr/share/man/man1/column.1
 #usr/share/man/man1/dmesg.1
 #usr/share/man/man1/eject.1
+#usr/share/man/man1/enosys.1
+#usr/share/man/man1/exch.1
 #usr/share/man/man1/fadvise.1
 #usr/share/man/man1/fallocate.1
 #usr/share/man/man1/fincore.1
@@ -273,6 +283,7 @@ usr/sbin/rtcwake
 #usr/share/man/man1/irqtop.1
 #usr/share/man/man1/logger.1
 #usr/share/man/man1/look.1
+#usr/share/man/man1/lsclocks.1
 #usr/share/man/man1/lscpu.1
 #usr/share/man/man1/lsfd.1
 #usr/share/man/man1/lsipc.1
@@ -292,6 +303,7 @@ usr/sbin/rtcwake
 #usr/share/man/man1/script.1
 #usr/share/man/man1/scriptlive.1
 #usr/share/man/man1/scriptreplay.1
+#usr/share/man/man1/setpgid.1
 #usr/share/man/man1/setsid.1
 #usr/share/man/man1/setterm.1
 #usr/share/man/man1/taskset.1
@@ -317,6 +329,7 @@ usr/sbin/rtcwake
 #usr/share/man/man3/uuid_unparse.3
 #usr/share/man/man5/adjtime_config.5
 #usr/share/man/man5/fstab.5
+#usr/share/man/man5/scols-filter.5
 #usr/share/man/man5/terminal-colors.d.5
 #usr/share/man/man8/addpart.8
 #usr/share/man/man8/agetty.8
