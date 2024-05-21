@@ -1,10 +1,10 @@
 source: https://github.com/vim/vim/issues/5581
 
-diff -Naur vim90/src/structs.h.orig vim90/src/structs.h
+diff -Naur vim91/src/structs.h.orig vim91/src/structs.h
 
---- vim90/src/structs.h.orig	2022-06-14 14:26:55.000000000 +0200
-+++ vim90/src/structs.h	2022-07-09 15:41:39.320170402 +0200
-@@ -1542,7 +1542,7 @@
+--- vim91/src/structs.h.orig	2023-12-18 08:47:12.000000000 +0100
++++ vim91/src/structs.h	2024-05-21 13:18:22.389336943 +0200
+@@ -1727,7 +1727,7 @@
  {
      typval_T	di_tv;		// type and value of the variable
      char_u	di_flags;	// DI_FLAGS_ flags (only used for variable)
