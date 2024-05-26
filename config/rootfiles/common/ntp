@@ -10,7 +10,6 @@ usr/bin/ntpd
 usr/bin/ntpdate
 usr/bin/ntpdc
 usr/bin/ntpq
-#usr/bin/ntpsnmpd
 usr/bin/ntptime
 usr/bin/ntptrace
 usr/bin/sntp
@@ -18,6 +17,7 @@ usr/bin/tickadj
 usr/bin/update-leap
 #usr/share/doc/ntp
 #usr/share/doc/ntp/html
+#usr/share/doc/ntp/html/.datecheck
 #usr/share/doc/ntp/html/access.html
 #usr/share/doc/ntp/html/accopt.html
 #usr/share/doc/ntp/html/assoc.html
@@ -277,7 +277,6 @@ usr/bin/update-leap
 #usr/share/man/man1/ntpdc.1
 #usr/share/man/man1/ntpq.1
 #usr/share/man/man1/ntptrace.1
-#usr/share/man/man1/ntpsnmpd.1
 #usr/share/man/man1/sntp.1
 #usr/share/man/man1/update-leap.1
 #usr/share/man/man5/ntp.conf.5
