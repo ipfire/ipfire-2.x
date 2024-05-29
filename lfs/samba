@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.19.5
+VER        = 4.20.1
 SUMMARY    = A SMB/CIFS File, Print, and Authentication Server
 
 THISAPP    = samba-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 100
+PAK_VER    = 101
 
 DEPS       = avahi cups perl-Parse-Yapp perl-JSON wsdd
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0f0081380ad459cca914e5e4cf505a4783ce97f0fb8c0471a6e558c747c16b0b327e545358265f365599c3807540985bcddb68aa67d14136cee4dbcb5158090c
+$(DL_FILE)_BLAKE2 = 5516b3d74705ee829971119d9931ccd339aaa857647dc46e40fda96f65ec5ba695db107f91075a46e1a7135cfdcc0a56ee67aa3475649b314260be03e4e44657
 
 install : $(TARGET)
 
