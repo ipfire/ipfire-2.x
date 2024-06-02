@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2022-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2022-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.9
+VER        = 2.6.11
 
 THISAPP    = oath-toolkit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 572512311bbfa18d325c7b9b8d88ff85c05241c9a22942bc67edf531ed621e68b031dc4562bd8473ec1b1bfe264c8a4084c1c304ba0d24914acc5b21325b8601
+$(DL_FILE)_BLAKE2 = f3fa3ab1818f4f9bbf7c8c88432cd3432fbfb30dfcc660ab85f07e2d3d7e1616fc24579900bc55bbf72fb81b2eac4a6591553968872f07d8b3955ce4e6495afd
 
 install : $(TARGET)
 
