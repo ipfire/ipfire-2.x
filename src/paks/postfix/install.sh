@@ -25,10 +25,6 @@
 extract_files
 restore_backup ${NAME}
 
-# change main.cf parameter from default value to prevent smtp smuggling attack
-# will not be required once postfix-3.9.x is released as default will then be yes
-postconf -e 'smtpd_forbid_bare_newline = yes'
-
 postalias /etc/aliases
 # Set postfix's hostname
 postconf -e "myhostname=$(hostname -f)"
