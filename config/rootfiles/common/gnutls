@@ -32,7 +32,7 @@ usr/lib/libgnutls-dane.so.0.4.1
 #usr/lib/libgnutls.la
 #usr/lib/libgnutls.so
 usr/lib/libgnutls.so.30
-usr/lib/libgnutls.so.30.37.1
+usr/lib/libgnutls.so.30.39.0
 #usr/lib/libgnutlsxx.la
 #usr/lib/libgnutlsxx.so
 usr/lib/libgnutlsxx.so.30
@@ -1257,8 +1257,10 @@ usr/lib/libgnutlsxx.so.30.0.0
 #usr/share/man/man3/gnutls_x509_rdn_get_by_oid.3
 #usr/share/man/man3/gnutls_x509_rdn_get_oid.3
 #usr/share/man/man3/gnutls_x509_spki_deinit.3
+#usr/share/man/man3/gnutls_x509_spki_get_rsa_oaep_params.3
 #usr/share/man/man3/gnutls_x509_spki_get_rsa_pss_params.3
 #usr/share/man/man3/gnutls_x509_spki_init.3
+#usr/share/man/man3/gnutls_x509_spki_set_rsa_oaep_params.3
 #usr/share/man/man3/gnutls_x509_spki_set_rsa_pss_params.3
 #usr/share/man/man3/gnutls_x509_tlsfeatures_add.3
 #usr/share/man/man3/gnutls_x509_tlsfeatures_check_crt.3
