@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.7.1
+VER        = 0.8
 SUMMARY    = A Web Service Discovery host daemon.
 
 THISAPP    = wsdd-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wsdd
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ce43022c3bd9f7ff1fd7169ac0d5ab6b2ff78d35c221c05b2e20908a5772d563ab2aca571d4e6ae48a55d19d4adcb9cde60f720ae47af8ee950198224fcfdb26
+$(DL_FILE)_BLAKE2 = e4b8e29073b6ea23b73d2f740f6dbabd8c90b615de32d9972c59e5a822daf6232fcdeafb180492a37c4a29ec266c733b160376abedce3b6a90feded2aed25aa2
 
 install : $(TARGET)
 
