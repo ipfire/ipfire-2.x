@@ -133,6 +133,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
 
+	# reset ax88179 twice like in older kernels
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.32-asix88179_reset.patch
+
 	# Fix external module compile
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
 
