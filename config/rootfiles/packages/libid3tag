@@ -1,7 +1,10 @@
 #usr/include/id3tag.h
-#usr/lib/libid3tag.a
-#usr/lib/libid3tag.la
+#usr/lib/cmake/id3tag
+#usr/lib/cmake/id3tag/id3tagConfig.cmake
+#usr/lib/cmake/id3tag/id3tagConfigVersion.cmake
+#usr/lib/cmake/id3tag/id3tagTargets-noconfig.cmake
+#usr/lib/cmake/id3tag/id3tagTargets.cmake
 #usr/lib/libid3tag.so
 usr/lib/libid3tag.so.0
-usr/lib/libid3tag.so.0.3.0
+usr/lib/libid3tag.so.0.16.3
 #usr/lib/pkgconfig/id3tag.pc

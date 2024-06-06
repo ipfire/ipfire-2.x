@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = ID3 Tag Manipulation Library
 
-VER        = 0.15.1b
+VER        = 0.16.3
 
 THISAPP    = libid3tag-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/$(PROG)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libid3tag
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a4e4e66177eae9aaa251c71d605034488fdd9a0a207a41a41f85793ecbb763dd4a4c8f01183eb45a5c8563c4ad120e73b29578fd4c3bb8e467e39c5427b530b5
+$(DL_FILE)_BLAKE2 = 58a4ce211aebef4b2f1f0e1a7214e2804e71d2cea805d3c275812978fb702148c5b435c289f9e83fd81fa1970bf83b7b8e772ed24843bcae7519fff455b50c15
 
 install : $(TARGET)
 
@@ -82,11 +82,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	# install id3tag pkgconfig file
-	install -v -m 644 ${DIR_SRC}/config/libid3tag/id3tag.pc \
-			/usr/lib/pkgconfig/id3tag.pc
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && mkdir build
+	cd $(DIR_APP)/build && cmake ..		\
+		-DCMAKE_INSTALL_PREFIX=/usr
+	cd $(DIR_APP)/build && make $(MAKETUNING)
+	cd $(DIR_APP)/build && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
