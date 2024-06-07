@@ -104,8 +104,8 @@ done
 extract_files
 
 # Remove files
-#rm -rvf \
-#	/XXX
+rm -rvf \
+	/var/ipfire/ovpn/openssl
 
 # update linker config
 ldconfig

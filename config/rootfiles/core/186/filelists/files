@@ -15,5 +15,6 @@ etc/rc.d/rc6.d/K01grub-btrfsd
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/local/bin/ipsec-interfaces
 usr/sbin/unbound-dhcp-leases-bridge
+usr/share/openvpn/openssl.cnf
 var/ipfire/header.pl
 var/ipfire/ipblocklist/sources
