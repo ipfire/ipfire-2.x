@@ -797,6 +797,7 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/doc/openssl/html/man3/SSL_set_incoming_stream_policy.html
 #usr/share/doc/openssl/html/man3/SSL_set_retry_verify.html
 #usr/share/doc/openssl/html/man3/SSL_set_session.html
+#usr/share/doc/openssl/html/man3/SSL_set_session_secret_cb.html
 #usr/share/doc/openssl/html/man3/SSL_set_shutdown.html
 #usr/share/doc/openssl/html/man3/SSL_set_verify_result.html
 #usr/share/doc/openssl/html/man3/SSL_shutdown.html
@@ -966,6 +967,7 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/doc/openssl/html/man7/OSSL_PROVIDER-default.html
 #usr/share/doc/openssl/html/man7/OSSL_PROVIDER-legacy.html
 #usr/share/doc/openssl/html/man7/OSSL_PROVIDER-null.html
+#usr/share/doc/openssl/html/man7/OSSL_STORE-winstore.html
 #usr/share/doc/openssl/html/man7/RAND.html
 #usr/share/doc/openssl/html/man7/RSA-PSS.html
 #usr/share/doc/openssl/html/man7/X25519.html
@@ -5515,6 +5517,7 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/man/man3/SSL_set_security_level.3ossl
 #usr/share/man/man3/SSL_set_session.3ossl
 #usr/share/man/man3/SSL_set_session_id_context.3ossl
+#usr/share/man/man3/SSL_set_session_secret_cb.3ossl
 #usr/share/man/man3/SSL_set_shutdown.3ossl
 #usr/share/man/man3/SSL_set_split_send_fragment.3ossl
 #usr/share/man/man3/SSL_set_srp_server_param.3ossl
@@ -6703,6 +6706,7 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/man/man3/sk_TYPE_value.3ossl
 #usr/share/man/man3/sk_TYPE_zero.3ossl
 #usr/share/man/man3/ssl_ct_validation_cb.3ossl
+#usr/share/man/man3/tls_session_secret_cb_fn.3ossl
 #usr/share/man/man5/config.5ossl
 #usr/share/man/man5/fips_config.5ossl
 #usr/share/man/man5/x509v3_config.5ossl
@@ -6828,6 +6832,7 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/man/man7/OSSL_PROVIDER-default.7ossl
 #usr/share/man/man7/OSSL_PROVIDER-legacy.7ossl
 #usr/share/man/man7/OSSL_PROVIDER-null.7ossl
+#usr/share/man/man7/OSSL_STORE-winstore.7ossl
 #usr/share/man/man7/RAND.7ossl
 #usr/share/man/man7/RSA-PSS.7ossl
 #usr/share/man/man7/RSA.7ossl
