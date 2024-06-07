@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.7
+VER        = 6.9
 
 THISAPP    = ethtool-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 94a6fd8d29ff479eb894fe56bf991f522fff9af5a94c176d06be2819fe2520125cb48dbded229df1a9f5a0308aeaec503c55caf5d248eef87640c7f90f1132ec
+$(DL_FILE)_BLAKE2 = e04fa530084ad14abfea8c3802f272eb61eae9ee07aa2a12d16eeb77708b5ab021f1cdee10c24f83f77d65f2740ba5aceda99c21c47ef6cbcd65834af8334b00
 
 install : $(TARGET)
 
