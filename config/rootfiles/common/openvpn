@@ -25,6 +25,7 @@ usr/sbin/openvpn-authenticator
 #usr/share/doc/openvpn/openvpn.8.html
 #usr/share/man/man5/openvpn-examples.5
 #usr/share/man/man8/openvpn.8
+usr/share/openvpn/openssl.cnf
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
 var/ipfire/ovpn/ccd
@@ -35,7 +36,6 @@ var/ipfire/ovpn/certs/serial
 var/ipfire/ovpn/crls
 var/ipfire/ovpn/n2nconf
 #var/ipfire/ovpn/openssl
-var/ipfire/ovpn/openssl/ovpn.cnf
 var/ipfire/ovpn/openvpn-authenticator
 var/ipfire/ovpn/ovpn-leases.db
 var/ipfire/ovpn/ovpnconfig

@@ -101,6 +101,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown root:root /etc/fcron.daily/openvpn-crl-updater
 	chmod 750 /etc/fcron.daily/openvpn-crl-updater
 
+	# Move the OpenSSL configuration file out of /var/ipfire
+	mkdir -pv /usr/share/openvpn
+	mv -v /var/ipfire/ovpn/openssl/ovpn.cnf \
+		/usr/share/openvpn/
+	rmdir -v /usr/share/openvpn
+
 	# Install authenticator
 	install -v -m 755 $(DIR_SRC)/config/ovpn/openvpn-authenticator \
 		/usr/sbin/openvpn-authenticator

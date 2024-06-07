@@ -1836,7 +1836,7 @@ END
 			'-days', '999999', '-newkey', 'rsa:4096', '-sha512',
 			'-keyout', "${General::swroot}/ovpn/ca/cakey.pem",
 			'-out', "${General::swroot}/ovpn/ca/cacert.pem",
-			'-config',"${General::swroot}/ovpn/openssl/ovpn.cnf")) {
+			'-config', "/usr/share/openvpn/ovpn.cnf")) {
 		$errormessage = "$Lang::tr{'cant start openssl'}: $!";
 		goto ROOTCERT_ERROR;
 	    }
@@ -1868,7 +1868,7 @@ END
 			'-keyout', "${General::swroot}/ovpn/certs/serverkey.pem",
 			'-out', "${General::swroot}/ovpn/certs/serverreq.pem",
 			'-extensions', 'server',
-			'-config', "${General::swroot}/ovpn/openssl/ovpn.cnf" )) {
+			'-config', "/usr/share/openvpn/ovpn.cnf" )) {
 		$errormessage = "$Lang::tr{'cant start openssl'}: $!";
 		unlink ("${General::swroot}/ovpn/certs/serverkey.pem");
 		unlink ("${General::swroot}/ovpn/certs/serverreq.pem");
@@ -1885,7 +1885,7 @@ END
 		'-in',  "${General::swroot}/ovpn/certs/serverreq.pem",
 		'-out', "${General::swroot}/ovpn/certs/servercert.pem",
 		'-extensions', 'server',
-		'-config', "${General::swroot}/ovpn/openssl/ovpn.cnf");
+		'-config', "/usr/share/openvpn/ovpn.cnf");
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 	    unlink ("${General::swroot}/ovpn/ca/cakey.pem");
@@ -1904,7 +1904,7 @@ END
 	# System call is safe, because all arguments are passed as array.
 	system('/usr/bin/openssl', 'ca', '-gencrl',
 		'-out', "${General::swroot}/ovpn/crls/cacrl.pem",
-		'-config', "${General::swroot}/ovpn/openssl/ovpn.cnf" );
+		'-config', "/usr/share/openvpn/ovpn.cnf" );
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 	    unlink ("${General::swroot}/ovpn/certs/serverkey.pem");
@@ -2426,8 +2426,8 @@ else
 
 	if ($confighash{$cgiparams{'KEY'}}) {
 		# Revoke certificate if certificate was deleted and rewrite the CRL
-		&General::system("/usr/bin/openssl", "ca", "-revoke", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
-		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
+		&General::system("/usr/bin/openssl", "ca", "-revoke", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "-config", "/usr/share/openvpn/ovpn.cnf");
+		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "/usr/share/openvpn/ovpn.cnf");
 
 ###
 # m.a.d net2net
@@ -2480,7 +2480,7 @@ else
 		&General::system("/usr/local/bin/openvpnctrl", "-drrd", "$confighash{$cgiparams{'KEY'}}[1]");
 
 		delete $confighash{$cgiparams{'KEY'}};
-		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
+		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "/usr/share/openvpn/ovpn.cnf");
 		&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 	} else {
@@ -4053,7 +4053,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		'-batch', '-notext',
 		'-in', $filename,
 		'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
-		'-config',"${General::swroot}/ovpn/openssl/ovpn.cnf");
+		'-config', "/usr/share/openvpn/ovpn.cnf");
 	    if ($?) {
 		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 		unlink ($filename);
@@ -4266,7 +4266,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			'-newkey', 'rsa:4096',
 			'-keyout', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 			'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
-			'-config',"${General::swroot}/ovpn/openssl/ovpn.cnf")) {
+			'-config', "/usr/share/openvpn/ovpn.cnf")) {
 		    $errormessage = "$Lang::tr{'cant start openssl'}: $!";
 		    unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem");
 		    unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem");
@@ -4280,7 +4280,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		'-batch', '-notext',
 		'-in',  "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
 		'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
-		'-config',"${General::swroot}/ovpn/openssl/ovpn.cnf");
+		'-config', "/usr/share/openvpn/ovpn.cnf");
 	    if ($?) {
 		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem");
