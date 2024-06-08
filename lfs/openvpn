@@ -105,7 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -pv /usr/share/openvpn
 	mv -v /var/ipfire/ovpn/openssl/ovpn.cnf \
 		/usr/share/openvpn/
-	rmdir -v /usr/share/openvpn
+	rmdir -v /var/ipfire/ovpn/openssl
 
 	# Install authenticator
 	install -v -m 755 $(DIR_SRC)/config/ovpn/openvpn-authenticator \
