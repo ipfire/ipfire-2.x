@@ -12,6 +12,7 @@ etc/rc.d/init.d/grub-btrfsd
 etc/rc.d/rc0.d/K01grub-btrfsd
 etc/rc.d/rc3.d/S99grub-btrfsd
 etc/rc.d/rc6.d/K01grub-btrfsd
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/local/bin/ipsec-interfaces
 usr/sbin/unbound-dhcp-leases-bridge
