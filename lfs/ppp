@@ -72,7 +72,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./autogen.sh
+	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/ppp/ppp-2.5.0-1-we-don-t-want-to-accidentally-leak-fds.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-e1266c7-2-everywhere-O_CLOEXEC-harder.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/ppp/ppp-2.5.0-3-everywhere-use-SOCK_CLOEXEC-when-creating-socket.patch
@@ -84,6 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 					--sysconfdir=/etc \
 					--with-logfile-dir=/var/log \
 					--localstatedir=/var \
+					--with-runtime-dir=/var/run \
 					cc="gcc" \
 					cflags="$(CFLAGS)"
 	cd $(DIR_APP) && make $(MAKETUNING)
