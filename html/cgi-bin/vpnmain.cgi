@@ -1856,8 +1856,8 @@ END
 
 		# Allow nothing or a string (DN,FDQN,) beginning with @
 		# with no comma but slashes between RID eg @O=FR/C=Paris/OU=myhome/CN=franck
-		if ( ($cgiparams{'LOCAL_ID'} !~ /^(|[\w.-]*@[\w. =*\/-]+|\d+\.\d+\.\d+\.\d+)$/) ||
-			($cgiparams{'REMOTE_ID'} !~ /^(|[\w.-]*@[\w. =*\/-]+|\d+\.\d+\.\d+\.\d+)$/) ||
+		if ( ($cgiparams{'LOCAL_ID'} !~ /^(|[\w.-]*@[@#]?[\w. =*\/-]+|\d+\.\d+\.\d+\.\d+)$/) ||
+			($cgiparams{'REMOTE_ID'} !~ /^(|[\w.-]*@[@#]?[\w. =*\/-]+|\d+\.\d+\.\d+\.\d+)$/) ||
 			(($cgiparams{'REMOTE_ID'} eq $cgiparams{'LOCAL_ID'}) && ($cgiparams{'LOCAL_ID'} ne ''))
 		) {
 			$errormessage = $Lang::tr{'invalid local-remote id'} . '<br />' .
