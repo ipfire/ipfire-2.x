@@ -43,7 +43,6 @@ OVPN="/var/ipfire/ovpn"
 CRL="${OVPN}/crls/cacrl.pem"
 CAKEY="${OVPN}/ca/cakey.pem"
 CACERT="${OVPN}/ca/cacert.pem"
-OPENSSLCONF="${OVPN}/openssl/ovpn.cnf"
 
 # Check if CRL is presant or if OpenVPN is active
 if [ ! -e "${CAKEY}" ]; then
@@ -76,7 +75,7 @@ UPDATE="14"
 ## Mainpart
 # Check if OpenVPNs CRL needs to be renewed
 if [ ${NEXTUPDATE} -le ${UPDATE} ]; then
-    if openssl ca -gencrl -keyfile "${CAKEY}" -cert "${CACERT}" -out "${CRL}" -config "${OPENSSLCONF}"; then
+    if openssl ca -gencrl -keyfile "${CAKEY}" -cert "${CACERT}" -out "${CRL}" -config "/usr/share/openvpn/ovpn.cnf"; then
 		logger -t openvpn "CRL has been updated"
     else
 		logger -t openvpn "error: Could not update CRL"
