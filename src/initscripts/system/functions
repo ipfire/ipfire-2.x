@@ -931,6 +931,10 @@ readhash() {
 			continue
 		fi
 
+		# strip leading and trailing single quotes
+		val="${val#\'}"
+		val="${val%\'}"
+
 		printf -v "${array}[${key}]" "%s" "${val}"
 	done < "${file}"
 }

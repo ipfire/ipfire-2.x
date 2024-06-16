@@ -14,6 +14,7 @@ readhash "CONFIG" "${SCRIPT_PATH}/data/1"
 # test if we read the correct data
 test_value_in_array "CONFIG" "RED_DHCP_HOSTNAME" "ipfire"
 test_value_in_array "CONFIG" "BLUE_MACADDR" "bc:30:7d:58:6b:e3"
+test_value_in_array "CONFIG" "BLUE_DEV" "blue0 net0"
 
 # Test that comments are skipped
 # apparently the way we read the file strips the whitespace, so the key does not contain any whitespace either
