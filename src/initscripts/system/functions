@@ -910,6 +910,12 @@ readhash() {
 			continue
 		fi
 
+		# Skip lines without a =
+		if ! [[ ${line} =~ [^=]*=[^=]*$ ]]; then
+			echo "Invalid line '${line}'" >&2
+			continue
+		fi
+
 		local key="${line%=*}"
 		local val="${line#*=}"
 

@@ -15,6 +15,7 @@ RED_ADDRESS=0.0.0.0
 RED_NETMASK=0.0.0.0
 RED_TYPE=PPPOE
 RED_NETADDRESS=0.0.0.0
+Line_without_a_equal_sign_is_also_invalid
 
 # Comment for testing  
     # Comment for testing Comments with spaces before
