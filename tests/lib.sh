@@ -48,6 +48,14 @@ test_value_in_array() {
 		return 1
 	fi
 
+	# If key is not defined we return _
+	# If the key is defined we return nothing
+	# See also https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+	if [[ "${array["${key}"]+_}" == ""  ]]; then
+		log_test_failed "The array does not contain the key '${key}', valid keys are: ${!array[*]}"
+		return 1
+	fi
+
 	if [[ "${array[${key}]}" == "${value}" ]] ; then
 		log_test_succeded "The array '${1}' contains the value '${value}' under the key '${key}'"
 		return 0
