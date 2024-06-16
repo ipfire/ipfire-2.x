@@ -25,3 +25,17 @@ test_command() {
 var_has_value() {
 	[[ "${!1}" == "${2}" ]]
 }
+
+test_value_in_array() {
+	local -n array="${1}"
+	local key="${2}"
+	local value="${3}"
+
+	if [[ "${array[${key}]}" == "${value}" ]] ; then
+		echo -e "${CLR_GREEN_BG}Test succeded: The array '${1}' contains the value '${value}' under the key '${key}' ${CLR_RESET}"
+		return 0
+	else
+		echo -e "${CLR_RED_BG}Test failed: The array '${1}' contains the value '${array[${key}]}' under the key '${key} and not '${value}' ${CLR_RESET}"
+		return 1
+	fi
+}
