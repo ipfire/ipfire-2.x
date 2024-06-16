@@ -913,6 +913,12 @@ readhash() {
 		local key="${line%=*}"
 		local val="${line#*=}"
 
+		# Skip lines with an invalid key
+		if ! [[ ${key} =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+			echo "Invalid key '${key}'" >&2
+			continue
+		fi
+
 		printf -v "${array}[${key}]" "%s" "${val}"
 	done < "${file}"
 }
