@@ -905,6 +905,11 @@ readhash() {
 			continue
 		fi
 
+		# Skip Comments
+		if [[ ${line} =~ ^#.*$ ]]; then
+			continue
+		fi
+
 		local key="${line%=*}"
 		local val="${line#*=}"
 
