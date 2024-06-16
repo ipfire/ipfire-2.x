@@ -11,13 +11,21 @@ LIB_DIR="$(dirname "${LIB_DIR}")"
 
 . ${LIB_DIR}/lib_color.sh
 
+log_test_failed(){
+	echo -e "${CLR_RED_BG}Test failed: ${*}${CLR_RESET}'"
+}
+
+log_test_succeded(){
+	echo -e "${CLR_GREEN_BG}Test succeded: ${*}${CLR_RESET}"
+}
+
 test_command() {
 
 	if ! "$@" ; then
-		echo -e "${CLR_RED_BG} Test failed: ${*} ${CLR_RESET}"
+		log_test_failed "${*}"
 		return 1
 	else
-		echo -e "${CLR_GREEN_BG} Test succeded: ${*} ${CLR_RESET}"
+		log_test_succeded "${*}"
 		return 0
 	fi
 }
@@ -36,15 +44,15 @@ test_value_in_array() {
 	# If the array was not declared as indexed or associative array we fail. We cannot check for a value in an array if 
 	# we were not given array.
 	if [[ ! "$(declare  -p "${arrayname}")" =~ "declare -a" && ! "$(declare  -p "${arrayname}")" =~ "declare -A" ]]; then
-		echo -e "${CLR_RED_BG}Test failed: The array '${1}' does not exists. The variable is not set.${CLR_RESET}'"
+		log_test_failed "The array '${1}' does not exists. The variable is not set."
 		return 1
 	fi
 
 	if [[ "${array[${key}]}" == "${value}" ]] ; then
-		echo -e "${CLR_GREEN_BG}Test succeded: The array '${1}' contains the value '${value}' under the key '${key}' ${CLR_RESET}"
+		log_test_succeded "The array '${1}' contains the value '${value}' under the key '${key}'"
 		return 0
 	else
-		echo -e "${CLR_RED_BG}Test failed: The array '${1}' contains the value '${array[${key}]}' under the key '${key} and not '${value}' ${CLR_RESET}"
+		log_test_failed "The array '${1}' contains the value '${array[${key}]}' under the key '${key} and not '${value}'"
 		return 1
 	fi
 }
