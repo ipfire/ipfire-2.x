@@ -12,11 +12,11 @@ LIB_DIR="$(dirname "${LIB_DIR}")"
 . ${LIB_DIR}/lib_color.sh
 
 log_test_failed(){
-	echo -e "${CLR_RED_BG}Test failed: ${*}${CLR_RESET}'"
+	echo -e "${CLR_RED_R}FAILED:${CLR_RESET} ${*}"
 }
 
 log_test_succeded(){
-	echo -e "${CLR_GREEN_BG}Test succeded: ${*}${CLR_RESET}"
+	echo -e "${CLR_GREEN_R}PASSED:${CLR_RESET} ${*}"
 }
 
 test_command() {
