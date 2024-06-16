@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Anonymizing overlay network for TCP (The onion router)
 
-VER        = 0.4.8.11
+VER        = 0.4.8.12
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 85
+PAK_VER    = 86
 
 DEPS       = libseccomp
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b7f5bb855a6f8fe7dfd0e0efe7b48798e9d4642e401641c83554ed0f98fe238a5f303e9466e9e24a7ade63488a745b3c957ed6cc53a2f5e21f5f9c3f78f7fa78
+$(DL_FILE)_BLAKE2 = adaf1f90c698ee373d7ef93c77e883b76a2d75932a50b2bf7a4f5a2d387f3f8cc00d83860ed61e1e2c1d224680d07828137cf4805adb9975d9cc7218c493d19d
 
 install : $(TARGET)
 
