@@ -64,3 +64,32 @@ test_value_in_array() {
 		return 1
 	fi
 }
+
+test_that_output_is(){
+	local reference_output_file="${1}"
+	local file_descriptor="${2}"
+	shift
+	shift
+
+	local command="$@"
+
+	local temp="$(mktemp)"
+
+	case "${file_descriptor}" in
+		"stdout"|"1")
+			$command 1> "${temp}" 2>/dev/null
+			;;
+		"stderr"|"2")
+			$command 2> "${temp}" 1>/dev/null
+			;;
+	esac
+
+	if diff -u "${temp}" "${reference_output_file}" &> /dev/null; then
+		log_test_succeded "The output of command '${command}' on file descriptor '${file_descriptor}' is equal to the reference output."
+	else
+		log_test_failed "The output of command '${command}' on file descriptor '${file_descriptor}' is unequal to the reference output."
+		diff -u --color "${reference_output_file}" "${temp}"
+	fi
+
+	rm "${temp}"
+}
