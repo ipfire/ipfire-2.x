@@ -919,6 +919,12 @@ readhash() {
 			continue
 		fi
 
+		# Skip lines with invalid values
+		if ! [[ ${val} =~ ^[\'][\ A-Za-z0-9=/,.:%_@#+-]*[\']$ ]] && ! [[ ${val} =~ ^[A-Za-z0-9=/,.:%_@#+-]*$ ]]; then
+			echo "Invalid value '${val}' for key '${key}'" >&2
+			continue
+		fi
+
 		printf -v "${array}[${key}]" "%s" "${val}"
 	done < "${file}"
 }
