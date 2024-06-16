@@ -74,6 +74,24 @@ test_value_in_array() {
 	fi
 }
 
+test_that_array_doesnt_have_key() {
+	local -n array="${1}"
+	local arrayname="${1}"
+	local key="${2}"
+
+	test_that_array_is_defined "${arrayname}"  || return 1
+
+	if [[ "${array["${key}"]+_}" == "_"  ]]; then
+		log_test_failed "The array '${arrayname}' does contain the key '${key}'."
+		return 1
+	else
+		log_test_succeded "The array '${arrayname}' does not contain the key '${key}'"
+		return 0
+	fi
+
+}
+
+
 test_that_output_is(){
 	local reference_output_file="${1}"
 	local file_descriptor="${2}"
