@@ -890,3 +890,18 @@ volume_fs_type() {
 
 	stat -f --format="%T" ${1}
 }
+
+readhash() {
+	local array="${1}"
+	local file="${2}"
+
+	declare -A -g "${array}"
+
+	local line
+	while read -r line; do
+		local key="${line%=*}"
+		local val="${line#*=}"
+
+		printf -v "${array}[${key}]" "%s" "${val}"
+	done < "${file}"
+}
