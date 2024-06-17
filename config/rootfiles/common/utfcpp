@@ -1,0 +1,8 @@
+#usr/include/utf8
+#usr/include/utf8.h
+#usr/include/utf8/checked.h
+#usr/include/utf8/core.h
+#usr/include/utf8/cpp11.h
+#usr/include/utf8/cpp17.h
+#usr/include/utf8/cpp20.h
+#usr/include/utf8/unchecked.h

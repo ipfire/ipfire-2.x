@@ -1540,6 +1540,7 @@ buildipfire() {
   lfsmake2 7zip
   lfsmake2 lynis
   lfsmake2 sshfs
+  lfsmake2 utfcpp
   lfsmake2 taglib
   lfsmake2 perl-gettext
   lfsmake2 perl-Sort-Naturally
