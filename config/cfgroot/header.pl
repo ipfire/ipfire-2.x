@@ -16,6 +16,7 @@ use File::Basename;
 use HTML::Entities();
 use Socket;
 use Time::Local;
+use Encode;
 
 our %color = ();
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
@@ -365,8 +366,13 @@ sub escape($) {
 sub cleanhtml {
 	my $outstring =$_[0];
 	$outstring =~ tr/,/ / if not defined $_[1] or $_[1] ne 'y';
-
-	return escape($outstring);
+	# decode the UTF-8 text so that characters with diacritical marks such as
+	# umlauts are treated correctly by the escape command
+	$outstring = &Encode::decode("UTF-8",$outstring);
+	escape($outstring);
+	# encode the text back to UTF-8 after running the escape command
+	$outstring = &Encode::encode("UTF-8",$outstring);
+	return $outstring;
 }
 
 sub connectionstatus
