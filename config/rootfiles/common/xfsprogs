@@ -20,8 +20,6 @@ sbin/xfs_repair
 #usr/lib/libhandle.a
 #usr/lib/libhandle.la
 #usr/lib/libhandle.so
-#usr/lib/xfsprogs
-#usr/lib/xfsprogs/xfs_scrub_all.cron
 usr/sbin/xfs_admin
 usr/sbin/xfs_bmap
 usr/sbin/xfs_copy
@@ -113,3 +111,4 @@ usr/sbin/xfs_spaceman
 #usr/share/xfsprogs/mkfs/lts_5.4.conf
 #usr/share/xfsprogs/mkfs/lts_6.1.conf
 #usr/share/xfsprogs/mkfs/lts_6.6.conf
+#usr/share/xfsprogs/xfs_scrub_all.cron
