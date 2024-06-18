@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Terminal multiplexer
 
-VER        = 3.3a
+VER        = 3.4
 
 THISAPP    = tmux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tmux
-PAK_VER    = 11
+PAK_VER    = 12
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e835ce0f136175521035a684419f221864edb0a9506d7d68cbc0239b1349e78949ebd96573a9d8651a2df6d99acb433075d6e0c20d7394a53fe6b44bd9e56069
+$(DL_FILE)_BLAKE2 = 2b1990b95d7439702e9287402d9828d4ecab573202c099aa482969c047b540d4b899f79d87587fc712e727d9cebf5fa7393512087e469fc355b4a30b1894e229
 
 install : $(TARGET)
 
@@ -81,12 +81,9 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr
-
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
