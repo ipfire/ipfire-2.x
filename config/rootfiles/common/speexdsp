@@ -1,0 +1,14 @@
+#usr/include/speex
+#usr/include/speex/speex_echo.h
+#usr/include/speex/speex_jitter.h
+#usr/include/speex/speex_preprocess.h
+#usr/include/speex/speex_resampler.h
+#usr/include/speex/speexdsp_config_types.h
+#usr/include/speex/speexdsp_types.h
+#usr/lib/libspeexdsp.la
+#usr/lib/libspeexdsp.so
+#usr/lib/libspeexdsp.so.1
+#usr/lib/libspeexdsp.so.1.5.2
+#usr/lib/pkgconfig/speexdsp.pc
+#usr/share/doc/speexdsp
+#usr/share/doc/speexdsp/manual.pdf
