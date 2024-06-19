@@ -1689,6 +1689,7 @@ buildipfire() {
   lfsmake2 zabbix_agentd
   lfsmake2 flashrom
   lfsmake2 firmware-update
+  lfsmake2 ruby
   lfsmake2 tshark
   lfsmake2 speedtest-cli
   lfsmake2 amazon-ssm-agent
