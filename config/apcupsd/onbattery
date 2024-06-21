@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# This shell script if placed in /etc/apcupsd
+# will be called by /etc/apcupsd/apccontrol when the UPS
+# goes on batteries.
+# We send an email message to root to notify him.
+#
+
+FROM="enter from email address"
+TO="enter to email address"
+
+HOSTNAME=`hostname`
+MSG="$HOSTNAME Power Failure on UPS $1"
+#
+(
+echo From: $FROM
+echo To: $TO
+echo Subject: $MSG
+echo " "
+echo "$MSG"
+echo " "
+echo -ne $(echo "\r\n"; while read line; do echo "$line\r\n"; done < <(echo "$(/sbin/apcaccess status)"))
+) | sudo -u nobody /usr/sbin/sendmail -t -f $FROM
+exit 0
