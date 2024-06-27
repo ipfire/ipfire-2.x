@@ -37,6 +37,8 @@ done
 extract_files
 
 # Remove files
+rm -rfv \
+	/usr/share/vim/vim90
 
 # update linker config
 ldconfig
