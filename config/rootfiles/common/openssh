@@ -1,8 +1,6 @@
 #etc/ssh
 etc/ssh/moduli
 etc/ssh/ssh_config
-#etc/ssh/ssh_host_dsa_key
-#etc/ssh/ssh_host_dsa_key.pub
 #etc/ssh/ssh_host_ecdsa_key
 #etc/ssh/ssh_host_ecdsa_key.pub
 #etc/ssh/ssh_host_ed25519_key
@@ -22,6 +20,7 @@ usr/lib/openssh/sftp-server
 #usr/lib/openssh/ssh-keysign
 usr/lib/openssh/ssh-pkcs11-helper
 usr/lib/openssh/ssh-sk-helper
+#usr/lib/openssh/sshd-session
 usr/sbin/sshd
 #usr/share/man/man1/scp.1
 #usr/share/man/man1/sftp.1
