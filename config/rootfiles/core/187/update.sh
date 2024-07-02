@@ -52,6 +52,7 @@ ldconfig
 # Start services
 /etc/init.d/unbound restart
 /etc/init.d/suricata restart
+/etc/init.d/sshd restart
 
 # Build initial ramdisks (for intel-microcode)
 dracut --regenerate-all --force
