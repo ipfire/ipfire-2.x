@@ -52,6 +52,16 @@ ldconfig
 # Start services
 /etc/init.d/unbound restart
 
+# Build initial ramdisks (for intel-microcode)
+dracut --regenerate-all --force
+KVER="xxxKVERxxx"
+case "$(uname -m)" in
+	aarch64)
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		# dont remove initramfs because grub need this to boot.
+		;;
+esac
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
