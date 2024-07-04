@@ -511,6 +511,7 @@ enterchroot() {
 
 		# Create a new mount namespace
 		"--mount"
+		"--propagation=slave"
 
 		# Create a new PID namespace and fork
 		"--pid"
