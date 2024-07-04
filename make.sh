@@ -504,7 +504,37 @@ enterchroot() {
 		PATH="${CUSTOM_PATH}:${PATH}"
 	fi
 
-	PATH="${PATH}" chroot ${LFS} env -i \
+	# Configure a new namespace
+	local unshare=(
+		# Create a new cgroup namespace
+		"--cgroup"
+
+		# Create a new IPC namespace
+		"--ipc"
+
+		# Create a new mount namespace
+		"--mount"
+
+		# Create a new PID namespace and fork
+		"--pid"
+		"--fork"
+
+		# Create a new time namespace
+		"--time"
+
+		# Create a new UTS namespace
+		"--uts"
+
+		# Mount /proc so that the build environment does not see
+		# any foreign processes.
+		"--mount-proc=${LFS}/proc"
+	)
+
+	PATH="${PATH}" \
+	unshare \
+		"${unshare[@]}" \
+	chroot "${LFS}" \
+	env -i \
 		HOME="/root" \
 		TERM="${TERM}" \
 		PS1="${PS1}" \
