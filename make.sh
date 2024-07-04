@@ -52,6 +52,20 @@ else
 	INTERACTIVE=false
 fi
 
+# Define color for messages
+BOLD="\\033[1;39m"
+DONE="\\033[1;32m"
+SKIP="\\033[1;34m"
+WARN="\\033[1;35m"
+FAIL="\\033[1;31m"
+NORMAL="\\033[0;39m"
+
+# New architecture variables
+HOST_ARCH="$(uname -m)"
+
+PWD=$(pwd)
+BASENAME=$(basename $0)
+
 # Sets or adjusts pretty formatting variables
 resize_terminal() {
 	## Screen Dimentions
@@ -79,40 +93,6 @@ resize_terminal
 
 # Call resize_terminal when terminal is being resized
 trap "resize_terminal" WINCH
-
-# Define color for messages
-BOLD="\\033[1;39m"
-DONE="\\033[1;32m"
-SKIP="\\033[1;34m"
-WARN="\\033[1;35m"
-FAIL="\\033[1;31m"
-NORMAL="\\033[0;39m"
-
-# New architecture variables
-HOST_ARCH="$(uname -m)"
-
-PWD=$(pwd)
-BASENAME=$(basename $0)
-
-# Debian specific settings
-if [ ! -e /etc/debian_version ]; then
-	FULLPATH=`which $0`
-else
-	if [ -x /usr/bin/realpath ]; then
-		FULLPATH=`/usr/bin/realpath $0`
-	else
-		echo "ERROR: Need to do apt-get install realpath"
-		exit 1
-	fi
-fi
-
-# This is the directory where make.sh is in
-export BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
-
-LOGFILE=$BASEDIR/log/_build.preparation.log
-export LOGFILE
-DIR_CHK=$BASEDIR/cache/check
-mkdir $BASEDIR/log/ 2>/dev/null
 
 system_processors() {
 	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
@@ -381,10 +361,6 @@ prepareenv() {
 	if [ "${UID}" -ne 0 ]; then
 		exiterror "root privileges required for building"
 	fi
-
-	# Set directories
-	readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
-	readonly BUILD_DIR="${BASEDIR}/build"
 
 	local free_space free_blocks block_size
 
@@ -974,39 +950,6 @@ update_contributors() {
 	print_status DONE
 	return 0
 }
-
-# Default settings
-CCACHE_CACHE_SIZE="4G"
-ENABLE_RAMDISK="auto"
-
-# Load configuration file
-if [ -f .config ]; then
-	. .config
-fi
-
-# TARGET_ARCH is BUILD_ARCH now
-if [ -n "${TARGET_ARCH}" ]; then
-	BUILD_ARCH="${TARGET_ARCH}"
-	unset TARGET_ARCH
-fi
-
-# Get some information about the host system
-SYSTEM_PROCESSORS="$(system_processors)"
-SYSTEM_MEMORY="$(system_memory)"
-
-if [ -n "${BUILD_ARCH}" ]; then
-	configure_build "${BUILD_ARCH}"
-else
-	configure_build "default"
-fi
-
-# Automatically enable/disable ramdisk usage
-if [ "${ENABLE_RAMDISK}" = "auto" ]; then
-	# Enable only when the host system has 4GB of RAM or more
-	if [ ${SYSTEM_MEMORY} -ge 3900 ]; then
-		ENABLE_RAMDISK="on"
-	fi
-fi
 
 buildtoolchain() {
 	local gcc=$(type -p gcc)
@@ -1873,21 +1816,75 @@ exec_in_namespace() {
 		"${0}" "$@"
 }
 
+# Debian specific settings
+if [ ! -e /etc/debian_version ]; then
+	FULLPATH=`which $0`
+else
+	if [ -x /usr/bin/realpath ]; then
+		FULLPATH=`/usr/bin/realpath $0`
+	else
+		echo "ERROR: Need to do apt-get install realpath"
+		exit 1
+	fi
+fi
+
+# This is the directory where make.sh is in
+export BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
+
+LOGFILE=$BASEDIR/log/_build.preparation.log
+export LOGFILE
+DIR_CHK=$BASEDIR/cache/check
+mkdir $BASEDIR/log/ 2>/dev/null
+
+# Get some information about the host system
+SYSTEM_PROCESSORS="$(system_processors)"
+SYSTEM_MEMORY="$(system_memory)"
+
+# Default settings
+BUILD_ARCH="default"
+CCACHE_CACHE_SIZE="4G"
+ENABLE_RAMDISK="auto"
+
+# Enable only when the host system has 4GB of RAM or more
+if [ ${SYSTEM_MEMORY} -ge 3900 ]; then
+	ENABLE_RAMDISK="on"
+fi
+
+# Load configuration file
+if [ -f .config ]; then
+	source .config
+fi
+
+# TARGET_ARCH is BUILD_ARCH now
+if [ -n "${TARGET_ARCH}" ]; then
+	BUILD_ARCH="${TARGET_ARCH}"
+fi
+
+# Parse any command line options (not commands)
 while [ $# -gt 0 ]; do
 	case "${1}" in
 		--target=*)
-			configure_build "${1#--target=}"
+			BUILD_ARCH="${1#--target=}"
 			;;
+
 		-*)
 			exiterror "Unknown configuration option: ${1}"
 			;;
+
+		# Found a command, so exit options parsing
 		*)
-			# Found a command, so exit options parsing.
 			break
 			;;
 	esac
 	shift
 done
+
+# Configure the build
+configure_build "${BUILD_ARCH}"
+
+# Set directories
+readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
+readonly BUILD_DIR="${BASEDIR}/build"
 
 # See what we're supposed to do
 case "$1" in
