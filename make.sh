@@ -509,9 +509,6 @@ enterchroot() {
 		# Create a new cgroup namespace
 		"--cgroup"
 
-		# Create a new IPC namespace
-		"--ipc"
-
 		# Create a new mount namespace
 		"--mount"
 
