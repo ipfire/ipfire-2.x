@@ -114,6 +114,9 @@ export LOGFILE
 DIR_CHK=$BASEDIR/cache/check
 mkdir $BASEDIR/log/ 2>/dev/null
 
+# Set BUILD_DIR
+readonly BUILD_DIR="${BASEDIR}/build"
+
 system_processors() {
 	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
 }
@@ -399,15 +402,10 @@ prepareenv() {
 	# Set umask
 	umask 022
 
-	# Set LFS Directory
-	LFS=$BASEDIR/build
-
-	BUILD_DIR="${BASEDIR}/build"
-
 	# Setup environment
 	set +h
 	LC_ALL=POSIX
-	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM RUSTFLAGS NINJAJOBS
+	export LFS="${BUILD_DIR}" LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM RUSTFLAGS NINJAJOBS
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
@@ -569,13 +567,13 @@ enterchroot() {
 
 		# Mount /proc so that the build environment does not see
 		# any foreign processes.
-		"--mount-proc=${LFS}/proc"
+		"--mount-proc=${BUILD_DIR}/proc"
 	)
 
 	PATH="${PATH}" \
 	unshare \
 		"${unshare[@]}" \
-	chroot "${LFS}" \
+	chroot "${BUILD_DIR}" \
 	env -i \
 		HOME="/root" \
 		TERM="${TERM}" \
@@ -612,7 +610,7 @@ enterchroot() {
 }
 
 entershell() {
-	echo "Entering to a shell inside LFS chroot, go out with exit"
+	echo "Entering to a shell inside the build environment, go out with exit"
 
 	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
@@ -696,7 +694,7 @@ lfsmake1() {
 			BUILD_ARCH="${BUILD_ARCH}" \
 			BUILD_PLATFORM="${BUILD_PLATFORM}" \
 			LFS_BASEDIR="${BASEDIR}" \
-			ROOT="${LFS}" \
+			ROOT="${BUILD_DIR}" \
 			KVER="${KVER}" \
 			install >> $LOGFILE 2>&1 &
 
@@ -857,7 +855,7 @@ qemu_install_helper() {
 	fi
 
 	# Check if the helper is already installed.
-	if [ -x "${LFS}${QEMU_TARGET_HELPER}" ]; then
+	if [ -x "${BUILD_DIR}${QEMU_TARGET_HELPER}" ]; then
 		return 0
 	fi
 
@@ -871,10 +869,10 @@ qemu_install_helper() {
 		# Must be static.
 		file_is_static "${file}" || continue
 
-		local dirname="${LFS}$(dirname "${file}")"
+		local dirname="${BUILD_DIR}$(dirname "${file}")"
 		mkdir -p "${dirname}"
 
-		install -m 755 "${file}" "${LFS}${QEMU_TARGET_HELPER}"
+		install -m 755 "${file}" "${BUILD_DIR}${QEMU_TARGET_HELPER}"
 		return 0
 	done
 
@@ -1814,7 +1812,7 @@ buildpackages() {
   # Check if there is a loop device for building in virtual environments
   lfsmake2 flash-images
 
-  mv $LFS/install/images/{*.iso,*.img.xz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
+  mv ${BUILD_DIR}/install/images/{*.iso,*.img.xz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
 
@@ -1845,7 +1843,7 @@ ipfirepackages() {
 		fi
 	done
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
+  mv -f ${BUILD_DIR}/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
 }
 
