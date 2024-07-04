@@ -64,7 +64,6 @@ NORMAL="\\033[0;39m"
 HOST_ARCH="$(uname -m)"
 
 PWD=$(pwd)
-BASENAME=$(basename $0)
 
 # Sets or adjusts pretty formatting variables
 resize_terminal() {
@@ -93,6 +92,27 @@ resize_terminal
 
 # Call resize_terminal when terminal is being resized
 trap "resize_terminal" WINCH
+
+find_base() {
+	local path
+
+	# Figure out the absolute script path using readlink
+	path="$(readlink -f "${0}" 2>&1)"
+
+	# If that failed, try realpath
+	if [ -z "${path}" ]; then
+		path="$(realpath "${0}" 2>&1)"
+	fi
+
+	# If that failed, I am out of ideas
+	if [ -z "${path}" ]; then
+		echo "${0}: Could not determine BASEDIR" >&2
+		return 1
+	fi
+
+	# Return the dirname
+	dirname "${path}"
+}
 
 system_processors() {
 	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
@@ -1816,20 +1836,8 @@ exec_in_namespace() {
 		"${0}" "$@"
 }
 
-# Debian specific settings
-if [ ! -e /etc/debian_version ]; then
-	FULLPATH=`which $0`
-else
-	if [ -x /usr/bin/realpath ]; then
-		FULLPATH=`/usr/bin/realpath $0`
-	else
-		echo "ERROR: Need to do apt-get install realpath"
-		exit 1
-	fi
-fi
-
-# This is the directory where make.sh is in
-export BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
+# Set BASEDIR
+readonly BASEDIR="$(find_base)"
 
 LOGFILE=$BASEDIR/log/_build.preparation.log
 export LOGFILE
