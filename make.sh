@@ -385,18 +385,17 @@ prepareenv() {
 			exiterror "root privileges required for building"
 	fi
 
-	# Checking for necessary temporary space
-	print_line "Checking for necessary space on disk $BASE_DEV"
-	BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
-	BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
-	if (( 2048000 > $BASE_ASPACE )); then
-			BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
-			if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
-				print_status FAIL
-				exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
-			fi
-	else
-			print_status DONE
+	local free_space free_blocks block_size
+
+	# Fetch free blocks
+	read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BUILD_DIR}")"
+
+	# Calculate free space
+	(( free_space = free_blocks * block_size / 1024 / 1024 ))
+
+	# Check if we have at least 4GB of space
+	if [ "${free_space}" -lt 4096 ]; then
+		exiterror "Not enough temporary space available, need at least 4GB"
 	fi
 
 	# Set umask
