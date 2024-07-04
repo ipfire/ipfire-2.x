@@ -38,6 +38,22 @@ SUP_ARCH   = x86_64 aarch64
 # smaller machines
 MAX_PARALLELISM = $(shell echo $$(( $(SYSTEM_MEMORY) / 1024)))
 
+ifeq "$(BUILD_ARCH)" "aarch64"
+	EXTRA_ARGS += \
+		-DFAT_RUNTIME=ON \
+		-DBUILD_SVE=ON \
+		-DBUILD_SVE2=ON \
+		-DBUILD_SVE2_BITPERM=ON
+endif
+
+ifeq "$(BUILD_ARCH)" "x86_64"
+	EXTRA_ARGS += \
+		-DFAT_RUNTIME=ON \
+		-DBUILD_AVX2=ON \
+		-DBUILD_AVX512=ON \
+		-DBUILD_AVX512VBMI=ON
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -80,7 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-DCMAKE_INSTALL_PREFIX:PATH=/usr \
 		-DBUILD_SHARED_LIBS=ON \
 		-DCMAKE_BUILD_TYPE=RELEASE \
-		-DBUILD_EXAMPLES=OFF
+		-DBUILD_EXAMPLES=OFF \
+		$(EXTRA_ARGS)
+		-Wno-dev
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
