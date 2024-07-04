@@ -1845,11 +1845,6 @@ if [ -f .config ]; then
 	source .config
 fi
 
-# TARGET_ARCH is BUILD_ARCH now
-if [ -n "${TARGET_ARCH}" ]; then
-	BUILD_ARCH="${TARGET_ARCH}"
-fi
-
 # Parse any command line options (not commands)
 while [ $# -gt 0 ]; do
 	case "${1}" in
