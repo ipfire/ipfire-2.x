@@ -45,6 +45,8 @@ ZSTD_OPT="-T0 --ultra -22"
 #
 ###############################################################################
 
+PS1='\u:\w$ '
+
 # Remember if the shell is interactive or not
 if [ -t 0 ] && [ -t 1 ]; then
 	INTERACTIVE=true
@@ -712,8 +714,6 @@ lfsmake2() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
-	local PS1='\u:\w$ '
-
 	enterchroot \
 		bash -x -c "cd /usr/src/lfs && \
 			make -f $* \
@@ -731,8 +731,6 @@ lfsmake2() {
 ipfiredist() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
-
-	local PS1='\u:\w$ '
 
 	enterchroot \
 		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src dist" \
