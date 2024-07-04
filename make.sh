@@ -990,8 +990,7 @@ buildtoolchain() {
 		exiterror "Could not create ${TOOLS_DIR} symbolic link"
 	fi
 
-	LOGFILE="$BASEDIR/log/_build.toolchain.log"
-	export LOGFILE
+	local LOGFILE="$BASEDIR/log/_build.toolchain.log"
 
 	lfsmake1 stage1
 	lfsmake1 binutils			PASS=1
@@ -1037,8 +1036,8 @@ buildtoolchain() {
 }
 
 buildbase() {
-	LOGFILE="$BASEDIR/log/_build.base.log"
-	export LOGFILE
+	local LOGFILE="$BASEDIR/log/_build.base.log"
+
 	lfsmake2 stage2
 	lfsmake2 linux			KCFG="-headers"
 	lfsmake2 man-pages
@@ -1111,8 +1110,8 @@ buildbase() {
 }
 
 buildipfire() {
-  LOGFILE="$BASEDIR/log/_build.ipfire.log"
-  export LOGFILE
+  local LOGFILE="$BASEDIR/log/_build.ipfire.log"
+
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
@@ -1746,8 +1745,8 @@ buildipfire() {
 
 buildinstaller() {
   # Run installer scripts one by one
-  LOGFILE="$BASEDIR/log/_build.installer.log"
-  export LOGFILE
+  local LOGFILE="$BASEDIR/log/_build.installer.log"
+
   lfsmake2 memtest
   lfsmake2 installer
   # use toolchain bash for chroot to strip
@@ -1755,8 +1754,8 @@ buildinstaller() {
 }
 
 buildpackages() {
-  LOGFILE="$BASEDIR/log/_build.packages.log"
-  export LOGFILE
+  local LOGFILE="$BASEDIR/log/_build.packages.log"
+
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
 
@@ -1839,11 +1838,6 @@ exec_in_namespace() {
 # Set BASEDIR
 readonly BASEDIR="$(find_base)"
 
-LOGFILE=$BASEDIR/log/_build.preparation.log
-export LOGFILE
-DIR_CHK=$BASEDIR/cache/check
-mkdir $BASEDIR/log/ 2>/dev/null
-
 # Get some information about the host system
 SYSTEM_PROCESSORS="$(system_processors)"
 SYSTEM_MEMORY="$(system_memory)"
@@ -1893,6 +1887,13 @@ configure_build "${BUILD_ARCH}"
 # Set directories
 readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
 readonly BUILD_DIR="${BASEDIR}/build"
+readonly LOG_DIR="${BASEDIR}/log"
+
+# Set the LOGFILE
+LOGFILE="${LOG_DIR}/_build.preparation.log"
+
+# Ensure the log directory exists
+mkdir -p "${LOG_DIR}"
 
 # See what we're supposed to do
 case "$1" in
