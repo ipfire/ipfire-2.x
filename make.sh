@@ -1807,6 +1807,20 @@ ipfirepackages() {
   rm -rf  $BASEDIR/build/install/packages/*
 }
 
+# This function will re-execute a command in a new namespace
+exec_in_namespace() {
+	# Nothing to do if we are already in a new namespace
+	if [ -n "${IN_NAMESPACE}" ]; then
+		return 0
+	fi
+
+	IN_NAMESPACE=1 \
+	exec unshare \
+		--mount \
+		--propagation=private \
+		"${0}" "$@"
+}
+
 while [ $# -gt 0 ]; do
 	case "${1}" in
 		--target=*)
@@ -1827,6 +1841,9 @@ done
 case "$1" in
 build)
 	START_TIME="${SECONDS}"
+
+	# Launch in a new namespace
+	exec_in_namespace "$@"
 
 	PACKAGE="$BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst"
 	#only restore on a clean disk
@@ -1871,6 +1888,9 @@ build)
 	print_build_summary $(( SECONDS - START_TIME ))
 	;;
 shell)
+	# Launch in a new namespace
+	exec_in_namespace "$@"
+
 	# enter a shell inside LFS chroot
 	# may be used to changed kernel settings
 	prepareenv
@@ -1971,6 +1991,9 @@ downloadsrc)
 	cd - >/dev/null 2>&1
 	;;
 toolchain)
+	# Launch in a new namespace
+	exec_in_namespace "$@"
+
 	prepareenv
 	print_build_stage "Toolchain compilation (${BUILD_ARCH})"
 	buildtoolchain
