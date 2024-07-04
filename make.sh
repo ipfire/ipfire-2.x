@@ -27,7 +27,6 @@ CORE="187"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
-BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 
 # Information from Git
@@ -1770,10 +1769,7 @@ buildpackages() {
   lfsmake2 cdrom
 
   # Check if there is a loop device for building in virtual environments
-  modprobe loop 2>/dev/null
-  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
-	lfsmake2 flash-images
-  fi
+  lfsmake2 flash-images
 
   mv $LFS/install/images/{*.iso,*.img.xz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
