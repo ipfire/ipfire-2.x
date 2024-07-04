@@ -1,3 +1,4 @@
+etc/fcron.daily/openvpn-crl-updater
 etc/rc.d/init.d/firewall
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/dns.cgi
