@@ -426,6 +426,9 @@ prepareenv() {
 
 	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
 
+	# Make BUILD_DIR a mountpoint
+	mount -o bind "${BUILD_DIR}" "${BUILD_DIR}"
+
 	# Create a new, minimal /dev
 	mount build_dev "${BUILD_DIR}/dev" \
 		-t tmpfs -o "nosuid,noexec,mode=0755,size=4m,nr_inodes=64k"
