@@ -381,8 +381,8 @@ prepareenv() {
 	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGQUIT
 
 	# Checking if running as root user
-	if [ $(id -u) -ne 0 ]; then
-			exiterror "root privileges required for building"
+	if [ "${UID}" -ne 0 ]; then
+		exiterror "root privileges required for building"
 	fi
 
 	local free_space free_blocks block_size
