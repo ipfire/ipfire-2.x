@@ -244,26 +244,6 @@ configure_build_guess() {
 	esac
 }
 
-stdumount() {
-	umount $BASEDIR/build/sys			2>/dev/null;
-	umount $BASEDIR/build/dev/shm		2>/dev/null;
-	umount $BASEDIR/build/dev/pts		2>/dev/null;
-	umount $BASEDIR/build/dev			2>/dev/null;
-	umount $BASEDIR/build/proc			2>/dev/null;
-	umount $BASEDIR/build/install/mnt		2>/dev/null;
-	umount $BASEDIR/build/usr/src/cache	2>/dev/null;
-	umount $BASEDIR/build/usr/src/ccache	2>/dev/null;
-	umount $BASEDIR/build/usr/src/config	2>/dev/null;
-	umount $BASEDIR/build/usr/src/doc		2>/dev/null;
-	umount $BASEDIR/build/usr/src/html		2>/dev/null;
-	umount $BASEDIR/build/usr/src/langs	2>/dev/null;
-	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
-	umount $BASEDIR/build/usr/src/log		2>/dev/null;
-	umount $BASEDIR/build/usr/src/src		2>/dev/null;
-	umount $BASEDIR/build/usr/src		2>/dev/null;
-	umount $BASEDIR/build/tmp		2>/dev/null;
-}
-
 format_runtime() {
 	local seconds=${1}
 
@@ -363,13 +343,6 @@ print_build_summary() {
 }
 
 exiterror() {
-	stdumount
-	for i in `seq 0 7`; do
-		if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
-		losetup -d /dev/loop${i} 2>/dev/null
-		fi;
-	done
-
 	# Dump logfile
 	if [ -n "${LOGFILE}" ] && [ -e "${LOGFILE}" ]; then
 		echo # empty line
@@ -562,19 +535,12 @@ enterchroot() {
 }
 
 entershell() {
-	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
-	fi
-
 	echo "Entering to a shell inside LFS chroot, go out with exit"
+
 	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
-	if enterchroot bash -i; then
-		stdumount
-	else
-		print_status FAIL
-		exiterror "chroot error"
-	fi
+	# Run an interactive shell
+	enterchroot bash -i
 }
 
 lfsmakecommoncheck() {
@@ -1783,7 +1749,6 @@ buildpackages() {
   cd $PWD
 
   # Cleanup
-  stdumount
   rm -rf $BASEDIR/build/tmp/*
 
   cd $PWD
@@ -1899,19 +1864,6 @@ shell)
 clean)
 	print_line "Cleaning build directory..."
 
-	for i in `mount | grep $BASEDIR | sed 's/^.*loop=\(.*\))/\1/'`; do
-		$LOSETUP -d $i 2>/dev/null
-	done
-	#for i in `mount | grep $BASEDIR | cut -d " " -f 1`; do
-	#	umount $i
-	#done
-	stdumount
-	for i in `seq 0 7`; do
-		if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
-		umount /dev/loop${i}     2>/dev/null;
-		losetup -d /dev/loop${i} 2>/dev/null;
-		fi;
-	done
 	rm -rf $BASEDIR/build
 	rm -rf $BASEDIR/cdrom
 	rm -rf $BASEDIR/packages
@@ -1919,7 +1871,6 @@ clean)
 	if [ -h "${TOOLS_DIR}" ]; then
 		rm -f "${TOOLS_DIR}"
 	fi
-	rm -f $BASEDIR/ipfire-*
 	print_status DONE
 	;;
 docker)
@@ -2003,7 +1954,6 @@ toolchain)
 		| zstd ${ZSTD_OPT} > cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst
 	b2sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.b2
-	stdumount
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
