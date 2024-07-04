@@ -408,16 +408,21 @@ prepareenv() {
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
-	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
-	mkdir -p $BASEDIR/build/{etc,usr/src,tmp} 2>/dev/null
-	mkdir -p $BASEDIR/{cache,ccache/${BUILD_ARCH}/${TOOLCHAINVER}} 2>/dev/null
-
-	if [ "${ENABLE_RAMDISK}" = "on" ]; then
-		mkdir -p $BASEDIR/build/usr/src
-		mount -t tmpfs tmpfs -o size=8G,nr_inodes=1M,mode=1777 $BASEDIR/build/usr/src
-	fi
-
-	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
+	mkdir -p "${BUILD_DIR}/${TOOLS_DIR}"
+	mkdir -p "${BUILD_DIR}/cache"
+	mkdir -p "${BUILD_DIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
+	mkdir -p "${BUILD_DIR}/etc"
+	mkdir -p "${BUILD_DIR}/tmp"
+	mkdir -p "${BUILD_DIR}/usr/src"
+	mkdir -p "${BUILD_DIR}/usr/src/cache"
+	mkdir -p "${BUILD_DIR}/usr/src/ccache"
+	mkdir -p "${BUILD_DIR}/usr/src/config"
+	mkdir -p "${BUILD_DIR}/usr/src/doc"
+	mkdir -p "${BUILD_DIR}/usr/src/html"
+	mkdir -p "${BUILD_DIR}/usr/src/langs"
+	mkdir -p "${BUILD_DIR}/usr/src/lfs"
+	mkdir -p "${BUILD_DIR}/usr/src/log"
+	mkdir -p "${BUILD_DIR}/usr/src/src"
 
 	# Make BUILD_DIR a mountpoint
 	mount -o bind "${BUILD_DIR}" "${BUILD_DIR}"
@@ -472,25 +477,32 @@ prepareenv() {
 	mount build_tmp "${BUILD_DIR}/tmp" \
 		-t tmpfs -o "nosuid,nodev,strictatime,size=4G,nr_inodes=1M,mode=1777"
 
+	# Optionally make /usr/src a ramdisk for less disk I/O
+	if [ "${ENABLE_RAMDISK}" = "on" ]; then
+		mount build_usr_src "${BUILD_DIR}/usr/src" \
+			-t tmpfs -o size=8G,nr_inodes=1M,mode=1777
+	fi
+
 	# Make all sources and proc available under lfs build
-	mount --bind /sys            $BASEDIR/build/sys
-	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
-	mount --bind $BASEDIR/ccache/${BUILD_ARCH}/${TOOLCHAINVER} $BASEDIR/build/usr/src/ccache
-	mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
-	mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
-	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
-	mount --bind $BASEDIR/langs  $BASEDIR/build/usr/src/langs
-	mount --bind $BASEDIR/lfs    $BASEDIR/build/usr/src/lfs
-	mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
-	mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
+	mount --bind /sys					"${BUILD_DIR}/sys"
+	mount --bind "${BASEDIR}/cache"		"${BUILD_DIR}/usr/src/cache"
+	mount --bind "${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}" \
+		"${BUILD_DIR}/usr/src/ccache"
+	mount --bind "${BASEDIR}/config"	"${BUILD_DIR}/usr/src/config"
+	mount --bind "${BASEDIR}/doc"		"${BUILD_DIR}/usr/src/doc"
+	mount --bind "${BASEDIR}/html"		"${BUILD_DIR}/usr/src/html"
+	mount --bind "${BASEDIR}/langs"		"${BUILD_DIR}/usr/src/langs"
+	mount --bind "${BASEDIR}/lfs"		"${BUILD_DIR}/usr/src/lfs"
+	mount --bind "${BASEDIR}/log"		"${BUILD_DIR}/usr/src/log"
+	mount --bind "${BASEDIR}/src"		"${BUILD_DIR}/usr/src/src"
 
 	# Run LFS static binary creation scripts one by one
-	export CCACHE_DIR=$BASEDIR/ccache
+	export CCACHE_DIR="${BASEDIR}/ccache"
 	export CCACHE_TEMPDIR="/tmp"
 	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
 	# Remove pre-install list of installed files in case user erase some files before rebuild
-	rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
+	rm -f "${BUILD_DIR}/usr/src/lsalr"
 
 	# Prepare string for /etc/system-release.
 	local system_release="${NAME} ${VERSION} (${BUILD_ARCH})"
