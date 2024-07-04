@@ -431,7 +431,6 @@ prepareenv() {
 	mount --bind /dev            $BASEDIR/build/dev
 	mount --bind /dev/pts        $BASEDIR/build/dev/pts
 	mount --bind /dev/shm        $BASEDIR/build/dev/shm
-	mount --bind /proc           $BASEDIR/build/proc
 	mount --bind /sys            $BASEDIR/build/sys
 	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
 	mount --bind $BASEDIR/ccache/${BUILD_ARCH}/${TOOLCHAINVER} $BASEDIR/build/usr/src/ccache
