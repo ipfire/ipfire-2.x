@@ -474,12 +474,6 @@ prepareenv() {
 	mount build_tmp "${BUILD_DIR}/tmp" \
 		-t tmpfs -o "nosuid,nodev,strictatime,size=4G,nr_inodes=1M,mode=1777"
 
-	# Optionally make /usr/src a ramdisk for less disk I/O
-	if [ "${ENABLE_RAMDISK}" = "on" ]; then
-		mount build_usr_src "${BUILD_DIR}/usr/src" \
-			-t tmpfs -o size=8G,nr_inodes=1M,mode=1777
-	fi
-
 	# Make all sources and proc available under lfs build
 	mount --bind /sys					"${BUILD_DIR}/sys"
 	mount --bind "${BASEDIR}/cache"		"${BUILD_DIR}/usr/src/cache"
@@ -1845,12 +1839,6 @@ SYSTEM_MEMORY="$(system_memory)"
 # Default settings
 BUILD_ARCH="default"
 CCACHE_CACHE_SIZE="4G"
-ENABLE_RAMDISK="auto"
-
-# Enable only when the host system has 4GB of RAM or more
-if [ ${SYSTEM_MEMORY} -ge 3900 ]; then
-	ENABLE_RAMDISK="on"
-fi
 
 # Load configuration file
 if [ -f .config ]; then
