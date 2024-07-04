@@ -412,16 +412,12 @@ prepareenv() {
 
 	# Make some extra directories
 	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
-	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
-	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
+	mkdir -p $BASEDIR/build/{etc,usr/src,tmp} 2>/dev/null
 	mkdir -p $BASEDIR/{cache,ccache/${BUILD_ARCH}/${TOOLCHAINVER}} 2>/dev/null
 
 	if [ "${ENABLE_RAMDISK}" = "on" ]; then
 		mkdir -p $BASEDIR/build/usr/src
 		mount -t tmpfs tmpfs -o size=8G,nr_inodes=1M,mode=1777 $BASEDIR/build/usr/src
-
-		mkdir -p ${BASEDIR}/build/tmp
-		mount -t tmpfs tmpfs -o size=4G,nr_inodes=1M,mode=1777 ${BASEDIR}/build/tmp
 	fi
 
 	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
@@ -474,6 +470,10 @@ prepareenv() {
 	# Mount a new /dev/shm
 	mount build_dev_shm "${BUILD_DIR}/dev/shm" \
 		-t tmpfs -o "nosuid,nodev,strictatime,mode=1777,size=1024m"
+
+	# Mount a new /tmp
+	mount build_tmp "${BUILD_DIR}/tmp" \
+		-t tmpfs -o "nosuid,nodev,strictatime,size=4G,nr_inodes=1M,mode=1777"
 
 	# Make all sources and proc available under lfs build
 	mount --bind /sys            $BASEDIR/build/sys
