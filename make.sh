@@ -114,9 +114,6 @@ export LOGFILE
 DIR_CHK=$BASEDIR/cache/check
 mkdir $BASEDIR/log/ 2>/dev/null
 
-# Set BUILD_DIR
-readonly BUILD_DIR="${BASEDIR}/build"
-
 system_processors() {
 	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
 }
@@ -385,6 +382,10 @@ prepareenv() {
 		exiterror "root privileges required for building"
 	fi
 
+	# Set directories
+	readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
+	readonly BUILD_DIR="${BASEDIR}/build"
+
 	local free_space free_blocks block_size
 
 	# Fetch free blocks
@@ -408,9 +409,9 @@ prepareenv() {
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
+	mkdir -p "${CCACHE_DIR}"
 	mkdir -p "${BUILD_DIR}/${TOOLS_DIR}"
 	mkdir -p "${BUILD_DIR}/cache"
-	mkdir -p "${BUILD_DIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
 	mkdir -p "${BUILD_DIR}/etc"
 	mkdir -p "${BUILD_DIR}/tmp"
 	mkdir -p "${BUILD_DIR}/usr/src"
@@ -486,8 +487,6 @@ prepareenv() {
 	# Make all sources and proc available under lfs build
 	mount --bind /sys					"${BUILD_DIR}/sys"
 	mount --bind "${BASEDIR}/cache"		"${BUILD_DIR}/usr/src/cache"
-	mount --bind "${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}" \
-		"${BUILD_DIR}/usr/src/ccache"
 	mount --bind "${BASEDIR}/config"	"${BUILD_DIR}/usr/src/config"
 	mount --bind "${BASEDIR}/doc"		"${BUILD_DIR}/usr/src/doc"
 	mount --bind "${BASEDIR}/html"		"${BUILD_DIR}/usr/src/html"
@@ -496,8 +495,10 @@ prepareenv() {
 	mount --bind "${BASEDIR}/log"		"${BUILD_DIR}/usr/src/log"
 	mount --bind "${BASEDIR}/src"		"${BUILD_DIR}/usr/src/src"
 
-	# Run LFS static binary creation scripts one by one
-	export CCACHE_DIR="${BASEDIR}/ccache"
+	# Mount the ccache
+	mount --bind "${CCACHE_DIR}"		"${BUILD_DIR}/usr/src/ccache"
+
+	# Configure the ccache
 	export CCACHE_TEMPDIR="/tmp"
 	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
@@ -689,7 +690,7 @@ lfsmake1() {
 
 	cd $BASEDIR/lfs && env -i \
 		PATH="${PATH}" \
-		CCACHE_DIR="${CCACHE_DIR}"/${BUILD_ARCH}/${TOOLCHAINVER} \
+		CCACHE_DIR="${CCACHE_DIR}" \
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		CFLAGS="${CFLAGS}" \
