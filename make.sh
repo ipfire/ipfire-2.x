@@ -494,6 +494,11 @@ enterchroot() {
 
 	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
 
+	# Check if we are running in our namespace
+	if [ -z "${IN_NAMESPACE}" ]; then
+		exiterror "Not running in namespace"
+	fi
+
 	# Prepend any custom changes to PATH
 	if [ -n "${CUSTOM_PATH}" ]; then
 		PATH="${CUSTOM_PATH}:${PATH}"
