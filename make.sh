@@ -844,8 +844,8 @@ run_command() {
 		"${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null
 	} &
 
+	# Wait for the process to complete
 	while :; do
-		# Wait for the process to complete
 		wait "$!"
 
 		# If the return code is >= 128, wait has been interrupted by the timer
