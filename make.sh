@@ -748,38 +748,91 @@ lfsmake1() {
 	print_status DONE
 }
 
-lfsmake2() {
-	lfsmakecommoncheck $*
+run_command() {
+	local pkg
+	local action
+
+	local chroot="false"
+
+	while [ $# -gt 0 ]; do
+		case "${1}" in
+			--chroot)
+				chroot="true"
+				;;
+
+			-*)
+				echo "Unknown argument: ${1}" >&2
+				return 2
+				;;
+
+			*)
+				# Set pkg
+				if [ -z "${pkg}" ]; then
+					pkg="${1}"
+
+				# Set action
+				elif [ -z "${action}" ]; then
+					action="${1}"
+
+				# Fail on everything else
+				else
+					echo "Unknown argument: ${1}" >&2
+					return 2
+				fi
+				;;
+		esac
+		shift
+	done
+
+	# Run the common check
+	lfsmakecommoncheck "${pkg}"
 	[ $? == 1 ] && return 0
 
-	enterchroot \
-		bash -x -c "cd /usr/src/lfs && \
-			make -f $* \
-			LFS_BASEDIR=/usr/src install" \
-		>> ${LOGFILE} 2>&1 &
+	local command=(
+		# Run a shell
+		"bash"
 
-	if ! wait_until_finished $!; then
+		# Enable tracing
+		"-x"
+
+		# Run the following command
+		"-c" "cd /usr/src/lfs && make -f ${pkg} LFS_BASEDIR=/usr/src ${action}"
+	)
+
+	# Run this in chroot?
+	case "${chroot}" in
+		true)
+			command=( "enterchroot" "${command[@]}" )
+			;;
+	esac
+
+	# Run the command and pipe all output to the logfile
+	if ! "${command[@]}" >> "${LOGFILE}" 2>&1; then
 		print_status FAIL
-		exiterror "Building $*"
+		return 1
 	fi
 
+	# All done
 	print_status DONE
+	return 0
+}
+
+lfsmake2() {
+	local pkg="${1}"
+
+	# Run install on the package
+	if ! run_command --chroot "${pkg}" install; then
+		exiterror "Building ${pkg}"
+	fi
 }
 
 ipfiredist() {
-	lfsmakecommoncheck $*
-	[ $? == 1 ] && return 0
+	local pkg="${1}"
 
-	enterchroot \
-		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src dist" \
-		>> ${LOGFILE} 2>&1 &
-
-	if ! wait_until_finished $!; then
-		print_status FAIL
-		exiterror "Packaging $*"
+	# Run dist on the package
+	if ! run_command --chroot "${pkg}" dist; then
+		exiterror "Packging ${pkg}"
 	fi
-
-	print_status DONE
 }
 
 wait_until_finished() {
