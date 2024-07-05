@@ -965,6 +965,59 @@ update_contributors() {
 	return 0
 }
 
+# Download the toolchain
+download_toolchain() {
+	local toolchain="${1}"
+
+	# Do nothing if the toolchain has already been downloaded
+	if [ -e "${TOOLCHAIN_DIR}/${toolchain}" ]; then
+		return 0
+	fi
+
+	# Ensure the directory exists
+	mkdir -p "${TOOLCHAIN_DIR}"
+
+	# Create a temporary directory
+	local tmp="$(mktemp -d)"
+
+	# Make the name for the checksum file
+	local checksums="${toolchain/.tar.zst/.b2}"
+
+	# Download the toolchain and checksum files
+	if ! wget --quiet --directory-prefix="${tmp}" \
+			"${TOOLCHAIN_URL}/${toolchain}" \
+			"${TOOLCHAIN_URL}/${checksums}"; then
+		# Cleanup
+		rm -rf "${tmp}"
+
+		return 1
+	fi
+
+	# Check integrity
+	if ! b2sum --quiet --check "${tmp}/${checksums}"; then
+		# Cleanup
+		rm -rf "${tmp}"
+
+		return 1
+	fi
+
+	# Everything is good, move the files to their destination
+	if ! mv \
+			"${tmp}/${toolchain}" \
+			"${tmp}/${checksums}" \
+			"${TOOLCHAIN_DIR}"; then
+		# Cleanup
+		rm -rf "${tmp}"
+
+		return 1
+	fi
+
+	# Cleanup
+	rm -rf "${tmp}"
+
+	return 0
+}
+
 # Extracts the toolchain
 extract_toolchain() {
 	local toolchain="${1}"
@@ -977,7 +1030,7 @@ extract_toolchain() {
 		"ax"
 
 		# The file to extract
-		"-f" "${toolchain}"
+		"-f" "${TOOLCHAIN_DIR}/${toolchain}"
 
 		# The destination
 		"-C" "${BASEDIR}"
@@ -1900,10 +1953,14 @@ configure_build "${BUILD_ARCH}"
 
 # Set directories
 readonly CACHE_DIR="${BASEDIR}/cache"
+readonly TOOLCHAIN_DIR="${CACHE_DIR}/toolchains"
 readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
 readonly BUILD_DIR="${BASEDIR}/build_${BUILD_ARCH}"
 readonly LOG_DIR="${BASEDIR}/log_${BUILD_ARCH}"
 readonly TOOLS_DIR="/tools_${BUILD_ARCH}"
+
+# Set URLs
+readonly TOOLCHAIN_URL="https://source.ipfire.org/toolchains"
 
 # Set the LOGFILE
 LOGFILE="${LOG_DIR}/_build.preparation.log"
@@ -1911,8 +1968,8 @@ LOGFILE="${LOG_DIR}/_build.preparation.log"
 # Ensure the log directory exists
 mkdir -p "${LOG_DIR}"
 
-# Path to the toolchain
-readonly TOOLCHAIN="${CACHE_DIR}/toolchains/${SNAME}-${VERSION}-toolchain-${TOOLCHAINVER}-${BUILD_ARCH}.tar.zst"
+# Toolchain Archive
+readonly TOOLCHAIN="${SNAME}-${VERSION}-toolchain-${TOOLCHAINVER}-${BUILD_ARCH}.tar.zst"
 
 # See what we're supposed to do
 case "$1" in
@@ -1928,7 +1985,7 @@ build)
 	# Check if the toolchain is available
 	if [ ! -e "${BUILD_DIR}${TOOLS_DIR}/.toolchain-successful" ]; then
 		# If we have the toolchain available, we extract it into the build environment
-		if [ -r "${TOOLCHAIN}" ]; then
+		if [ -r "${TOOLCHAIN_DIR}/${TOOLCHAIN}" ]; then
 			print_build_stage "Packaged toolchain compilation"
 
 			# Extract the toolchain
@@ -2054,26 +2111,7 @@ toolchain)
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.b2
 	;;
 gettoolchain)
-	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}
-	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.zst ]; then
-		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
-		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-		echo "`date -u '+%b %e %T'`: Load toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
-		cd $BASEDIR/cache/toolchains
-		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.zst $URL_TOOLCHAIN/$PACKAGE.b2 >& /dev/null
-		if [ $? -ne 0 ]; then
-			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for ${BUILD_ARCH} machine" | tee -a $LOGFILE
-		else
-			if [ "`b2sum $PACKAGE.tar.zst | awk '{print $1}'`" = "`cat $PACKAGE.b2 | awk '{print $1}'`" ]; then
-				echo "`date -u '+%b %e %T'`: toolchain BLAKE2 checksum ok" | tee -a $LOGFILE
-			else
-				exiterror "$PACKAGE BLAKE2 checksum did not match, check downloaded package"
-			fi
-		fi
-	else
-		echo "Toolchain is already downloaded. Exiting..."
-	fi
+	download_toolchain "${TOOLCHAIN}"
 	;;
 uploadsrc)
 	if [ -z $IPFIRE_USER ]; then
