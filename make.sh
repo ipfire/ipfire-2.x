@@ -740,7 +740,7 @@ lfsmake1() {
 
 run_command() {
 	local pkg
-	local action
+	local actions=()
 
 	local chroot="false"
 
@@ -760,14 +760,9 @@ run_command() {
 				if [ -z "${pkg}" ]; then
 					pkg="${1}"
 
-				# Set action
-				elif [ -z "${action}" ]; then
-					action="${1}"
-
-				# Fail on everything else
+				# Set actions
 				else
-					echo "Unknown argument: ${1}" >&2
-					return 2
+					actions+=( "${1}" )
 				fi
 				;;
 		esac
@@ -782,7 +777,7 @@ run_command() {
 		"-x"
 
 		# Run the following command
-		"-c" "cd /usr/src/lfs && make -f ${pkg} LFS_BASEDIR=/usr/src ${action}"
+		"-c" "cd /usr/src/lfs && make -f ${pkg} LFS_BASEDIR=/usr/src ${actions[@]}"
 	)
 
 	# Run this in chroot?
