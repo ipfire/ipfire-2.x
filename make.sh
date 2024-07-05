@@ -806,15 +806,28 @@ run_command() {
 			;;
 	esac
 
+	# Return code
+	local r=0
+
+	# Store the start time
+	local t="${SECONDS}"
+
 	# Run the command and pipe all output to the logfile
 	if ! "${command[@]}" >> "${LOGFILE}" 2>&1; then
-		print_status FAIL
-		return 1
+		r="$?"
 	fi
 
+	# Print the runtime
+	print_runtime "$(( SECONDS - t ))"
+
 	# All done
-	print_status DONE
-	return 0
+	if [ "${r}" -eq 0 ]; then
+		print_status DONE
+	else
+		print_status FAIL
+	fi
+
+	return "${r}"
 }
 
 lfsmake2() {
