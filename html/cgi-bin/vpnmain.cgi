@@ -94,6 +94,7 @@ $cgiparams{'LOCAL_ID'} = '';
 $cgiparams{'REMOTE_ID'} = '';
 $cgiparams{'REMARK'} = '';
 $cgiparams{'PSK'} = '';
+$cgiparams{'BASE_64'} = '';
 $cgiparams{'CERT_NAME'} = '';
 $cgiparams{'CERT_EMAIL'} = '';
 $cgiparams{'CERT_OU'} = '';
@@ -481,8 +482,12 @@ sub writeipsecfiles {
 		if ($lconfighash{$key}[4] eq 'psk') {
 			$psk_line = ($lconfighash{$key}[7] ? $lconfighash{$key}[7] : $localside) . " " ;
 			$psk_line .= $lconfighash{$key}[9] ? $lconfighash{$key}[9] : $lconfighash{$key}[10]; #remoteid or remote address?
-			my $decoded_psk = MIME::Base64::decode_base64($lconfighash{$key}[5]);
-			$psk_line .= " : PSK '$decoded_psk'\n";
+			if ($lconfighash{$key}[40] eq 'YES') {
+				my $decoded_psk = MIME::Base64::decode_base64($lconfighash{$key}[5]);
+				$psk_line .= " : PSK '$decoded_psk'\n";
+			} else {
+				$psk_line .= " : PSK '$lconfighash{$key}[5]'\n";
+			}
 			# if the line contains %any, it is less specific than two IP or ID, so move it at end of file.
 			if ($psk_line =~ /%any/) {
 				$last_secrets .= $psk_line;
@@ -1703,6 +1708,7 @@ END
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
 		$cgiparams{'DNS_SERVERS'}		= $confighash{$cgiparams{'KEY'}}[39];
+		$cgiparams{'BASE_64'}			= $confighash{$cgiparams{'KEY'}}[40];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1884,6 +1890,7 @@ END
 		}
 
 		if ($cgiparams{'AUTH'} eq 'psk') {
+			$cgiparams{'BASE_64'} = 'YES';
 			if (! length($cgiparams{'PSK'}) ) {
 				$errormessage = $Lang::tr{'pre-shared key is too short'};
 				goto VPNCONF_ERROR;
@@ -2261,7 +2268,13 @@ END
 	$confighash{$key}[3] = $cgiparams{'TYPE'};
 	if ($cgiparams{'AUTH'} eq 'psk') {
 		$confighash{$key}[4] = 'psk';
-		$confighash{$key}[5] = MIME::Base64::encode_base64($cgiparams{'PSK'}, "");
+		if ($cgiparams{'BASE_64'} eq 'YES') {
+			$confighash{$key}[5] = MIME::Base64::encode_base64($cgiparams{'PSK'}, "");
+			$confighash{$key}[40] = 'YES';
+		} else {
+			$confighash{$key}[5] = $cgiparams{'PSK'};
+			$confighash{$key}[40] = '';
+		}
 	} else {
 		$confighash{$key}[4] = 'cert';
 	}
