@@ -385,8 +385,11 @@ __timer() {
 	local pid="${1}"
 
 	# Send SIGUSR1 to the main process once a second
+	# If the parent process has gone away, we will terminate.
 	while sleep 1; do
-		kill -USR1 "${pid}"
+		if ! kill -USR1 "${pid}" &>/dev/null; then
+			break
+		fi
 	done
 
 	return 0
@@ -394,7 +397,16 @@ __timer() {
 
 # Called when the timer triggers
 __timer_event() {
-	: # TODO
+	local t
+
+	# If we have a running process, we update the runtime
+	# every time this is being triggered
+	if [ -n "${TIMER}" ] && [ "${TIMER}" -gt 0 ]; then
+		# Print the runtime
+		print_runtime "${TIMER} - $(( SECONDS - TIMER ))"
+	fi
+
+	return 0
 }
 
 exiterror() {
@@ -814,16 +826,40 @@ run_command() {
 	# Return code
 	local r=0
 
-	# Store the start time
-	local t="${SECONDS}"
-
 	# Launch the timer
 	launch_timer
 
-	# Run the command and pipe all output to the logfile
-	if ! "${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null; then
+	# Store the start time
+	local t="${SECONDS}"
+
+	# If we are not running in quiet mode, we set the timer
+	case "${quiet}" in
+		false)
+			TIMER="${t}"
+			;;
+	esac
+
+	# Run the command in the background and pipe all output to the logfile
+	{
+		"${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null
+	} &
+
+	while :; do
+		# Wait for the process to complete
+		wait "$!"
+
+		# If the return code is >= 128, wait has been interrupted by the timer
+		if [ "$?" -ge 128 ]; then
+			continue
+		fi
+
+		# Store the return code
 		r="$?"
-	fi
+		break
+	done
+
+	# Clear the timer
+	TIMER=0
 
 	# Show runtime and status unless quiet
 	case "${quiet}" in
