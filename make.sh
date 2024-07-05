@@ -180,7 +180,6 @@ configure_build() {
 	fi
 
 	BUILD_ARCH="${build_arch}"
-	TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 	# Enables hardening
 	HARDENING_CFLAGS="-Wp,-U_FORTIFY_SOURCE -Wp,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fstack-clash-protection"
@@ -1869,9 +1868,11 @@ done
 configure_build "${BUILD_ARCH}"
 
 # Set directories
+readonly CACHE_DIR="${BASEDIR}/cache"
 readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
-readonly BUILD_DIR="${BASEDIR}/build"
-readonly LOG_DIR="${BASEDIR}/log"
+readonly BUILD_DIR="${BASEDIR}/build_${BUILD_ARCH}"
+readonly LOG_DIR="${BASEDIR}/log_${BUILD_ARCH}"
+readonly TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 # Set the LOGFILE
 LOGFILE="${LOG_DIR}/_build.preparation.log"
