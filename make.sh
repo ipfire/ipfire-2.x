@@ -387,7 +387,7 @@ prepareenv() {
 	local free_space free_blocks block_size
 
 	# Fetch free blocks
-	read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BUILD_DIR}")"
+	read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BASEDIR}")"
 
 	# Calculate free space
 	(( free_space = free_blocks * block_size / 1024 / 1024 ))
