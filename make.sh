@@ -647,6 +647,9 @@ enterchroot() {
 		# Mount /proc so that the build environment does not see
 		# any foreign processes.
 		"--mount-proc=${BUILD_DIR}/proc"
+
+		# If unshare is asked to terminate, terminate all child processes
+		"--kill-child"
 	)
 
 	PATH="${PATH}" \
