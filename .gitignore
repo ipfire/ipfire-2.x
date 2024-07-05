@@ -4,8 +4,6 @@
 /build_*
 /cache
 /ccache
-/doc/ChangeLog
-/doc/packages-list.txt
 /log
 /log_*
 /packages

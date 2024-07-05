@@ -170,10 +170,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > $(DIR_TMP)/cdrom/README.txt
 	cp $(DIR_SRC)/doc/COPYING $(DIR_TMP)/cdrom/
 
-	# Install documentation
-	-mkdir -pv $(DIR_TMP)/cdrom/doc
-	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	$(DIR_TMP)/cdrom/doc
-
 	mkdir -p $(DIR_TMP)/cdrom/boot/isolinux
 
 	cp /boot/vmlinuz-$(KVER)-ipfire $(DIR_TMP)/cdrom/boot/isolinux/vmlinuz
