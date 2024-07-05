@@ -358,6 +358,45 @@ print_build_summary() {
 	print_status DONE
 }
 
+# Launches a timer process as a co-process
+launch_timer() {
+	# Do nothing if the timer is already running
+	if [ -n "${TIMER_PID}" ]; then
+		return 0
+	fi
+
+	# Launch the co-process
+	coproc TIMER { "${0}" "__timer" "$$"; }
+
+	# Register the signal handlers
+	trap "__timer_event" SIGUSR1
+	trap "terminate_timer" EXIT
+}
+
+# Terminates a previously launched timer
+terminate_timer() {
+	if [ -n "${TIMER_PID}" ]; then
+		kill -TERM "${TIMER_PID}"
+	fi
+}
+
+# The timer main loop
+__timer() {
+	local pid="${1}"
+
+	# Send SIGUSR1 to the main process once a second
+	while sleep 1; do
+		kill -USR1 "${pid}"
+	done
+
+	return 0
+}
+
+# Called when the timer triggers
+__timer_event() {
+	: # TODO
+}
+
 exiterror() {
 	# Dump logfile
 	if [ -n "${LOGFILE}" ] && [ -e "${LOGFILE}" ]; then
@@ -777,6 +816,9 @@ run_command() {
 
 	# Store the start time
 	local t="${SECONDS}"
+
+	# Launch the timer
+	launch_timer
 
 	# Run the command and pipe all output to the logfile
 	if ! "${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null; then
@@ -2332,6 +2374,9 @@ check-manualpages)
 	else
 		print_status FAIL
 	fi
+	;;
+__timer)
+	__timer "${2}" || exit $?
 	;;
 *)
 	echo "Usage: $0 [OPTIONS] {build|check-manualpages|clean|downloadsrc|find-dependencies|gettoolchain|lang|shell|toolchain|update-contributors|uploadsrc}"
