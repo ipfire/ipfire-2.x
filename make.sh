@@ -2066,6 +2066,7 @@ readonly LOG_DIR="${BASEDIR}/log_${BUILD_ARCH}"
 readonly TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 # Set URLs
+readonly SOURCE_URL="https://source.ipfire.org/ipfire-2.x"
 readonly TOOLCHAIN_URL="https://source.ipfire.org/toolchains"
 
 # Set the LOGFILE
@@ -2232,14 +2233,12 @@ gettoolchain)
 	download_toolchain "${TOOLCHAIN}"
 	;;
 uploadsrc)
-	if [ -z $IPFIRE_USER ]; then
-		echo -n "You have to setup IPFIRE_USER first. See .config for details."
-		print_status FAIL
-		exit 1
+	# Check if IPFIRE_USER is set
+	if [ -z "${IPFIRE_USER}" ]; then
+		exiterror "You have to setup IPFIRE_USER first. See .config for details."
 	fi
 
-	URL_SOURCE="$(awk '/^URL_SOURCE/ { print $3 }' lfs/Config)"
-
+	# Sync with upstream
 	rsync \
 		--recursive \
 		--update \
@@ -2247,8 +2246,8 @@ uploadsrc)
 		--progress \
 		--human-readable \
 		--exclude="toolchains/" \
-		"${BASEDIR}/cache/" \
-		"${IPFIRE_USER}@${URL_SOURCE}"
+		"${CACHE_DIR}/" \
+		"${IPFIRE_USER}@people.ipfire.org:/pub/sources/source-2.x"
 
 	exit 0
 	;;
