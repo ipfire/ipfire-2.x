@@ -814,7 +814,7 @@ wait_until_finished() {
 }
 
 fake_environ() {
-	[ -e "${BASEDIR}/build${TOOLS_DIR}/lib/libpakfire_preload.so" ] || return
+	[ -e "${BUILD_DIR}${TOOLS_DIR}/lib/libpakfire_preload.so" ] || return
 
 	local env="LD_PRELOAD=${TOOLS_DIR}/lib/libpakfire_preload.so"
 
