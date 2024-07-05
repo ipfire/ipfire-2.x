@@ -44,6 +44,7 @@ ZSTD_OPT="-T0 --ultra -22"
 #
 ###############################################################################
 
+LC_ALL=POSIX
 PS1='\u:\w$ '
 
 # Remember if the shell is interactive or not
@@ -431,11 +432,6 @@ prepareenv() {
 
 	# Set umask
 	umask 022
-
-	# Setup environment
-	LC_ALL=POSIX
-	export LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM RUSTFLAGS NINJAJOBS
-	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
 	mkdir -p "${CCACHE_DIR}"
