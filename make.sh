@@ -1059,7 +1059,77 @@ extract_toolchain() {
 	tar "${args[@]}" || return $?
 }
 
-buildtoolchain() {
+# Compresses the toolchain
+compress_toolchain() {
+	local toolchain="${1}"
+
+	log "Creating toolchain image for ${BUILD_ARCH}"
+
+	# Create a temporary directory
+	local tmp="$(mktemp -d)"
+
+	# Make the name for the checksum file
+	local checksums="${toolchain/.tar.zst/.b2}"
+
+	local build_dir="${BUILD_DIR#${BASEDIR}/}"
+	local log_dir="${LOG_DIR#${BASEDIR}/}"
+
+	local args=(
+		"--create"
+
+		# Filter through zstd with custom options
+		"-I" "zstd ${ZSTD_OPT}"
+
+		# Write to the temporary directory
+		"-f" "${tmp}/${toolchain}"
+
+		# Start in the base directory
+		"-C" "${BASEDIR}"
+
+		# Exclude the build logs
+		"--exclude" "${log_dir}/_build.*.log"
+
+		# Include /bin/sh
+		"${build_dir}/bin/sh"
+
+		# Include the /tools_${BUILD_ARCH} directory
+		"${build_dir}/${TOOLS_DIR}"
+
+		# Include the log directory
+		"${log_dir}"
+	)
+
+	# Create the archive
+	if ! tar "${args[@]}"; then
+		# Cleanup
+		rm -rf "${tmp}"
+
+		return 1
+	fi
+
+	# Create the checksums
+	if ! b2sum "${tmp}/${toolchain}" > "${tmp}/${checksums}"; then
+		# Cleanup
+		rm -rf "${tmp}"
+
+		return 1
+	fi
+
+	# Everything is good, move the files to their destination
+	if ! mv \
+			"${tmp}/${toolchain}" \
+			"${tmp}/${checksums}" \
+			"${TOOLCHAIN_DIR}"; then
+		# Cleanup
+		rm -rf "${tmp}"
+
+		return 1
+	fi
+
+	return 0
+}
+
+build_toolchain() {
 	local gcc=$(type -p gcc)
 	if [ -z "${gcc}" ]; then
 		exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
@@ -2011,7 +2081,7 @@ build)
 		# Otherwise perform a full toolchain compilation
 		else
 			print_build_stage "Full toolchain compilation"
-			buildtoolchain
+			build_toolchain
 		fi
 	fi
 
@@ -2120,16 +2190,23 @@ toolchain)
 	# Launch in a new namespace
 	exec_in_namespace "$@"
 
+	# Prepare the environment
 	prepareenv
+
 	print_build_stage "Toolchain compilation (${BUILD_ARCH})"
-	buildtoolchain
-	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
-	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log \
-		| zstd ${ZSTD_OPT} > cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst
-	b2sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.b2
+
+	# Build the toolchain
+	build_toolchain
+
+	# Ensure the toolchain directory exists
+	mkdir -p "${TOOLCHAIN_DIR}"
+
+	# Compress the toolchain
+	if ! compress_toolchain "${TOOLCHAIN}"; then
+		exiterror "Could not compress toolchain"
+	fi
 	;;
+
 gettoolchain)
 	download_toolchain "${TOOLCHAIN}"
 	;;
