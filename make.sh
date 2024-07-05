@@ -398,17 +398,36 @@ prepareenv() {
 		exiterror "root privileges required for building"
 	fi
 
-	local free_space free_blocks block_size
+	local required_space
 
-	# Fetch free blocks
-	read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BASEDIR}")"
+	# Parse arguments
+	while [ $# -gt 0 ]; do
+		case "${1}" in
+			--required-space=*)
+				required_space="${1#--required-space=}"
+				;;
 
-	# Calculate free space
-	(( free_space = free_blocks * block_size / 1024 / 1024 ))
+			*)
+				exiterror "Unknown argument: ${1}"
+				;;
+		esac
+		shift
+	done
 
-	# Check if we have at least 4GB of space
-	if [ "${free_space}" -lt 4096 ]; then
-		exiterror "Not enough temporary space available, need at least 4GB"
+	# Do we need to check the required space?
+	if [ -n "${required_space}" ]; then
+		local free_space free_blocks block_size
+
+		# Fetch free blocks
+		read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BASEDIR}")"
+
+		# Calculate free space
+		(( free_space = free_blocks * block_size / 1024 / 1024 ))
+
+		# Check if we have at least 4GB of space
+		if [ "${free_space}" -lt "${required_space}" ]; then
+			exiterror "Not enough temporary space available, need at least ${required_space}MiB"
+		fi
 	fi
 
 	# Set umask
@@ -2067,7 +2086,7 @@ build)
 	exec_in_namespace "$@"
 
 	# Prepare the environment
-	prepareenv
+	prepareenv --required-space=2048
 
 	# Check if the toolchain is available
 	if [ ! -e "${BUILD_DIR}${TOOLS_DIR}/.toolchain-successful" ]; then
