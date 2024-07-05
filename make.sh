@@ -826,15 +826,15 @@ run_command() {
 	# Return code
 	local r=0
 
-	# Launch the timer
-	launch_timer
-
 	# Store the start time
 	local t="${SECONDS}"
 
 	# If we are not running in quiet mode, we set the timer
 	case "${quiet}" in
 		false)
+			# Launch the timer
+			launch_timer
+
 			TIMER="${t}"
 			;;
 	esac
