@@ -965,6 +965,32 @@ update_contributors() {
 	return 0
 }
 
+# Extracts the toolchain
+extract_toolchain() {
+	local toolchain="${1}"
+
+	local build_dir="${BUILD_DIR#${BASEDIR}/}"
+	local log_dir="${LOG_DIR#${BASEDIR}/}"
+
+	local args=(
+		# Extract
+		"ax"
+
+		# The file to extract
+		"-f" "${toolchain}"
+
+		# The destination
+		"-C" "${BASEDIR}"
+
+		# Transform any older toolchains
+		"--transform" "s@^build/@${build_dir}/@"
+		"--transform" "s@^log/@${log_dir}/@"
+	)
+
+	# Extract the toolchain
+	tar "${args[@]}" || return $?
+}
+
 buildtoolchain() {
 	local gcc=$(type -p gcc)
 	if [ -z "${gcc}" ]; then
@@ -1880,6 +1906,9 @@ LOGFILE="${LOG_DIR}/_build.preparation.log"
 # Ensure the log directory exists
 mkdir -p "${LOG_DIR}"
 
+# Path to the toolchain
+readonly TOOLCHAIN="${CACHE_DIR}/toolchains/${SNAME}-${VERSION}-toolchain-${TOOLCHAINVER}-${BUILD_ARCH}.tar.zst"
+
 # See what we're supposed to do
 case "$1" in
 build)
@@ -1888,25 +1917,25 @@ build)
 	# Launch in a new namespace
 	exec_in_namespace "$@"
 
-	PACKAGE="$BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst"
-	#only restore on a clean disk
-	if [ ! -e "${BASEDIR}/build${TOOLS_DIR}/.toolchain-successful" ]; then
-		if [ ! -n "$PACKAGE" ]; then
-			print_build_stage "Full toolchain compilation"
-			prepareenv
-			buildtoolchain
-		else
-			PACKAGENAME=${PACKAGE%.tar.zst}
+	# Prepare the environment
+	prepareenv
+
+	# Check if the toolchain is available
+	if [ ! -e "${BUILD_DIR}${TOOLS_DIR}/.toolchain-successful" ]; then
+		# If we have the toolchain available, we extract it into the build environment
+		if [ -r "${TOOLCHAIN}" ]; then
 			print_build_stage "Packaged toolchain compilation"
-			if [ `b2sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.b2 | awk '{print $1}'` ]; then
-				zstd -d < "${PACKAGE}" | tar x
-				prepareenv
-			else
-				exiterror "$PACKAGENAME BLAKE2 checksum did not match, check downloaded package"
+
+			# Extract the toolchain
+			if ! extract_toolchain "${TOOLCHAIN}"; then
+				exiterror "Failed extracting the toolchain"
 			fi
+
+		# Otherwise perform a full toolchain compilation
+		else
+			print_build_stage "Full toolchain compilation"
+			buildtoolchain
 		fi
-	else
-		prepareenv
 	fi
 
 	print_build_stage "Building LFS"
