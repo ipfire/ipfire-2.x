@@ -1373,8 +1373,8 @@ build_toolchain() {
 	lfsmake1 cleanup-toolchain
 }
 
-buildbase() {
-	local LOGFILE="${LOG_DIR}/_build.base.log"
+build_system() {
+	local LOGFILE="${LOG_DIR}/_build.${SNAME}.log"
 
 	lfsmake2 stage2
 	lfsmake2 linux			KCFG="-headers"
@@ -1445,11 +1445,6 @@ buildbase() {
 	lfsmake2 vim
 	lfsmake2 e2fsprogs
 	lfsmake2 jq
-}
-
-buildipfire() {
-	local LOGFILE="${LOG_DIR}/_build.ipfire.log"
-
 	lfsmake2 configroot
 	lfsmake2 initscripts
 	lfsmake2 backup
@@ -2079,14 +2074,12 @@ buildipfire() {
 	lfsmake2 linux		KCFG=""
 	lfsmake2 rtl8812au		KCFG=""
 	lfsmake2 linux-initrd		KCFG=""
-}
-
-buildinstaller() {
-	# Run installer scripts one by one
-	local LOGFILE="${LOG_DIR}/_build.installer.log"
 
 	lfsmake2 memtest
+
+	# Build the installer
 	lfsmake2 installer
+
 	# use toolchain bash for chroot to strip
 	CUSTOM_PATH="${TOOLS_DIR}/bin" lfsmake2 strip
 }
@@ -2266,16 +2259,10 @@ build)
 		fi
 	fi
 
-	print_build_stage "Building LFS"
-	buildbase
+	print_build_stage "Building ${NAME}"
+	build_system
 
-	print_build_stage "Building IPFire"
-	buildipfire
-
-	print_build_stage "Building installer"
-	buildinstaller
-
-	print_build_stage "Building packages"
+	print_build_stage "Building Packages"
 	buildpackages
 
 	print_build_stage "Checking Logfiles for new Files"
