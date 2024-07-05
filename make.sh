@@ -774,10 +774,6 @@ run_command() {
 		shift
 	done
 
-	# Run the common check
-	lfsmakecommoncheck "${pkg}"
-	[ $? == 1 ] && return 0
-
 	local command=(
 		# Run a shell
 		"bash"
@@ -823,6 +819,10 @@ run_command() {
 lfsmake2() {
 	local pkg="${1}"
 
+	# Run the common check
+	lfsmakecommoncheck "${pkg}"
+	[ $? == 1 ] && return 0
+
 	# Run install on the package
 	if ! run_command --chroot "${pkg}" install; then
 		exiterror "Building ${pkg}"
@@ -831,6 +831,10 @@ lfsmake2() {
 
 ipfiredist() {
 	local pkg="${1}"
+
+	# Run the common check
+	lfsmakecommoncheck "${pkg}"
+	[ $? == 1 ] && return 0
 
 	# Run dist on the package
 	if ! run_command --chroot "${pkg}" dist; then
