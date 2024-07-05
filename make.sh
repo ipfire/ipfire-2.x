@@ -2033,13 +2033,18 @@ shell)
 clean)
 	print_line "Cleaning build directory..."
 
-	rm -rf $BASEDIR/build
-	rm -rf $BASEDIR/cdrom
-	rm -rf $BASEDIR/packages
-	rm -rf $BASEDIR/log
+	# Cleanup build files
+	rm -rf \
+		"${BUILD_DIR}" \
+		"${BASEDIR}/cdrom" \
+		"${BASEDIR}/packages" \
+		"${LOG_DIR}"
+
+	# Remove the /tools symlink
 	if [ -h "${TOOLS_DIR}" ]; then
 		rm -f "${TOOLS_DIR}"
 	fi
+
 	print_status DONE
 	;;
 downloadsrc)
