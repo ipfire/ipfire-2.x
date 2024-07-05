@@ -787,7 +787,7 @@ run_command() {
 	local t="${SECONDS}"
 
 	# Run the command and pipe all output to the logfile
-	if ! "${command[@]}" >> "${LOGFILE}" 2>&1; then
+	if ! "${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null; then
 		r="$?"
 	fi
 
