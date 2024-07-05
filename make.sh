@@ -501,8 +501,10 @@ prepareenv() {
 	mount --bind -o ro	"${BASEDIR}/html"		"${BUILD_DIR}/usr/src/html"
 	mount --bind -o ro	"${BASEDIR}/langs"		"${BUILD_DIR}/usr/src/langs"
 	mount --bind -o ro	"${BASEDIR}/lfs"		"${BUILD_DIR}/usr/src/lfs"
-	mount --bind    	"${BASEDIR}/log"		"${BUILD_DIR}/usr/src/log"
 	mount --bind -o ro	"${BASEDIR}/src"		"${BUILD_DIR}/usr/src/src"
+
+	# Mount the log directory
+	mount --bind "${LOG_DIR}"			"${BUILD_DIR}/usr/src/log"
 
 	# Mount the ccache
 	mount --bind "${CCACHE_DIR}"		"${BUILD_DIR}/usr/src/ccache"
