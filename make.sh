@@ -680,16 +680,6 @@ lfsmakecommoncheck() {
 		fi
 	fi
 
-	# Script slipped?
-	local i
-	for i in $SKIP_PACKAGE_LIST
-	do
-		if [ "$i" == "$1" ]; then
-			print_status SKIP
-			return 1;
-		fi
-	done
-
 	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
 
 	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
