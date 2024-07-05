@@ -481,7 +481,8 @@ sub writeipsecfiles {
 		if ($lconfighash{$key}[4] eq 'psk') {
 			$psk_line = ($lconfighash{$key}[7] ? $lconfighash{$key}[7] : $localside) . " " ;
 			$psk_line .= $lconfighash{$key}[9] ? $lconfighash{$key}[9] : $lconfighash{$key}[10]; #remoteid or remote address?
-			$psk_line .= " : PSK '$lconfighash{$key}[5]'\n";
+			my $decoded_psk = MIME::Base64::decode_base64($lconfighash{$key}[5]);
+			$psk_line .= " : PSK '$decoded_psk'\n";
 			# if the line contains %any, it is less specific than two IP or ID, so move it at end of file.
 			if ($psk_line =~ /%any/) {
 				$last_secrets .= $psk_line;
@@ -2260,7 +2261,7 @@ END
 	$confighash{$key}[3] = $cgiparams{'TYPE'};
 	if ($cgiparams{'AUTH'} eq 'psk') {
 		$confighash{$key}[4] = 'psk';
-		$confighash{$key}[5] = $cgiparams{'PSK'};
+		$confighash{$key}[5] = MIME::Base64::encode_base64($cgiparams{'PSK'}, "");
 	} else {
 		$confighash{$key}[4] = 'cert';
 	}
