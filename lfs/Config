@@ -78,7 +78,6 @@ ZSTD_OPTIONS = \
 # a site you should change its URL to that of a suitable mirror site.
 #
 URL_IPFIRE  = https://source.ipfire.org/source-2.x
-URL_TOOLCHAIN = https://source.ipfire.org/toolchains
 
 # Don't change this; it will be overridden by other makefiles where necessary.
 #
