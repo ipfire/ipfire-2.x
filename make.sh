@@ -95,6 +95,21 @@ resize_terminal
 # Call resize_terminal when terminal is being resized
 trap "resize_terminal" WINCH
 
+# Writes a line to the log file
+log() {
+	local line="$@"
+
+	# Fetch the current timestamp
+	local t="$(date -u "+%b %e %T")"
+
+	# Append the line to file
+	if [ -w "${LOGFILE}" ]; then
+		echo "${t}: ${line}" >> "${LOGFILE}"
+	fi
+
+	return 0
+}
+
 find_base() {
 	local path
 
