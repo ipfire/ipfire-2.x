@@ -730,13 +730,17 @@ run_command() {
 	local pkg
 	local actions=()
 
-	local chroot="false"
+	local basedir="${BASEDIR}"
+	local command=()
 	local quiet="false"
 
 	while [ $# -gt 0 ]; do
 		case "${1}" in
 			--chroot)
-				chroot="true"
+				command+=( "enterchroot" )
+
+				# Move the basedir
+				basedir="/usr/src"
 				;;
 
 			--quiet)
@@ -762,7 +766,8 @@ run_command() {
 		shift
 	done
 
-	local command=(
+	# Build the command
+	command+=(
 		# Run a shell
 		"bash"
 
@@ -770,15 +775,8 @@ run_command() {
 		"-x"
 
 		# Run the following command
-		"-c" "cd /usr/src/lfs && make -f ${pkg} LFS_BASEDIR=/usr/src ${actions[@]}"
+		"-c" "cd ${basedir}/lfs && make -f ${pkg} LFS_BASEDIR=${basedir} ${actions[@]}"
 	)
-
-	# Run this in chroot?
-	case "${chroot}" in
-		true)
-			command=( "enterchroot" "${command[@]}" )
-			;;
-	esac
 
 	# Return code
 	local r=0
