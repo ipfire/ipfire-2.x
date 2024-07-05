@@ -26,7 +26,6 @@ VERSION="2.29"							# Version number
 CORE="187"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
-MAX_RETRIES=1							# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 
 # Information from Git
@@ -1055,6 +1054,37 @@ update_contributors() {
 
 	print_status DONE
 	return 0
+}
+
+# Download sources
+download_sources() {
+	local file
+	local pkg
+
+	local status=0
+
+	# Walk through all files in LFS
+	for file in "${BASEDIR}/lfs/"*; do
+		pkg="${file##*/}"
+
+		# Skip some packages
+		case "${pkg}" in
+			Config)
+				continue
+				;;
+		esac
+
+		# Run the common check
+		lfsmakecommoncheck "${pkg}"
+		[ $? == 1 ] && continue
+
+		# Download and check the package
+		if ! run_command "${pkg}" download b2; then
+			status=1
+		fi
+	done
+
+	return "${status}"
 }
 
 # Download the toolchain
@@ -2128,8 +2158,8 @@ readonly TOOLCHAIN_URL="https://source.ipfire.org/toolchains"
 # Set the LOGFILE
 LOGFILE="${LOG_DIR}/_build.preparation.log"
 
-# Ensure the log directory exists
-mkdir -p "${LOG_DIR}"
+# Ensure that some basic directories exist
+mkdir -p "${CACHE_DIR}" "${LOG_DIR}"
 
 # Toolchain Archive
 readonly TOOLCHAIN="${SNAME}-${VERSION}-toolchain-${TOOLCHAINVER}-${BUILD_ARCH}.tar.zst"
@@ -2211,58 +2241,13 @@ clean)
 	print_status DONE
 	;;
 downloadsrc)
-	if [ ! -d $BASEDIR/cache ]; then
-		mkdir $BASEDIR/cache
-	fi
-	mkdir -p $BASEDIR/log
-	echo -e "${BOLD}Preload all source files${NORMAL}" | tee -a $LOGFILE
-	FINISHED=0
-	cd $BASEDIR/lfs
-	for c in `seq $MAX_RETRIES`; do
-		if (( FINISHED==1 )); then
-			break
-		fi
-		FINISHED=1
-		cd $BASEDIR/lfs
-		for i in *; do
-			if [ -f "$i" -a "$i" != "Config" ]; then
-				lfsmakecommoncheck ${i} || continue
+	# Tell the user what we are about to do
+	print_headline "Pre-loading all source files"
 
-				make -s -f $i LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
-					MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
-				if [ $? -ne 0 ]; then
-					print_status FAIL
-					FINISHED=0
-				else
-					if [ $c -eq 1 ]; then
-					print_status DONE
-					fi
-				fi
-			fi
-		done
-	done
-	echo -e "${BOLD}***Verifying BLAKE2 checksum${NORMAL}"
-	ERROR=0
-	for i in *; do
-		if [ -f "$i" -a "$i" != "Config" ]; then
-			lfsmakecommoncheck ${i} > /dev/null || continue
-			make -s -f $i LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
-				MESSAGE="$i\t " b2 >> $LOGFILE 2>&1
-			if [ $? -ne 0 ]; then
-				echo -ne "BLAKE2 checksum difference in lfs/$i"
-				print_status FAIL
-				ERROR=1
-			fi
-		fi
-	done
-	if [ $ERROR -eq 0 ]; then
-		echo -ne "${BOLD}all files BLAKE2 checksum match${NORMAL}"
-		print_status DONE
-	else
-		echo -ne "${BOLD}not all files were correctly download${NORMAL}"
-		print_status FAIL
+	# Download all sources
+	if ! download_sources; then
+		exiterror "Failed to download sources"
 	fi
-	cd - >/dev/null 2>&1
 	;;
 toolchain)
 	# Launch in a new namespace
