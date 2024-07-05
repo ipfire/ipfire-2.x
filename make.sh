@@ -743,11 +743,16 @@ run_command() {
 	local actions=()
 
 	local chroot="false"
+	local quiet="false"
 
 	while [ $# -gt 0 ]; do
 		case "${1}" in
 			--chroot)
 				chroot="true"
+				;;
+
+			--quiet)
+				quiet="true"
 				;;
 
 			-*)
@@ -798,15 +803,20 @@ run_command() {
 		r="$?"
 	fi
 
-	# Print the runtime
-	print_runtime "$(( SECONDS - t ))"
+	# Show runtime and status unless quiet
+	case "${quiet}" in
+		false)
+			# Print the runtime
+			print_runtime "$(( SECONDS - t ))"
 
-	# All done
-	if [ "${r}" -eq 0 ]; then
-		print_status DONE
-	else
-		print_status FAIL
-	fi
+			# All done
+			if [ "${r}" -eq 0 ]; then
+				print_status DONE
+			else
+				print_status FAIL
+			fi
+			;;
+	esac
 
 	return "${r}"
 }
