@@ -985,7 +985,7 @@ buildtoolchain() {
 		exiterror "Could not create ${TOOLS_DIR} symbolic link"
 	fi
 
-	local LOGFILE="$BASEDIR/log/_build.toolchain.log"
+	local LOGFILE="${LOG_DIR}/_build.toolchain.log"
 
 	lfsmake1 stage1
 	lfsmake1 binutils			PASS=1
@@ -1031,7 +1031,7 @@ buildtoolchain() {
 }
 
 buildbase() {
-	local LOGFILE="$BASEDIR/log/_build.base.log"
+	local LOGFILE="${LOG_DIR}/_build.base.log"
 
 	lfsmake2 stage2
 	lfsmake2 linux			KCFG="-headers"
@@ -1105,7 +1105,7 @@ buildbase() {
 }
 
 buildipfire() {
-  local LOGFILE="$BASEDIR/log/_build.ipfire.log"
+  local LOGFILE="${LOG_DIR}/_build.ipfire.log"
 
   lfsmake2 configroot
   lfsmake2 initscripts
@@ -1740,7 +1740,7 @@ buildipfire() {
 
 buildinstaller() {
   # Run installer scripts one by one
-  local LOGFILE="$BASEDIR/log/_build.installer.log"
+  local LOGFILE="${LOG_DIR}/_build.installer.log"
 
   lfsmake2 memtest
   lfsmake2 installer
@@ -1749,7 +1749,7 @@ buildinstaller() {
 }
 
 buildpackages() {
-  local LOGFILE="$BASEDIR/log/_build.packages.log"
+  local LOGFILE="${LOG_DIR}/_build.packages.log"
 
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
