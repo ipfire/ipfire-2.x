@@ -411,6 +411,7 @@ prepareenv() {
 	mkdir -p "${BUILD_DIR}/${TOOLS_DIR}"
 	mkdir -p "${BUILD_DIR}/cache"
 	mkdir -p "${BUILD_DIR}/etc"
+	mkdir -p "${BUILD_DIR}/proc"
 	mkdir -p "${BUILD_DIR}/tmp"
 	mkdir -p "${BUILD_DIR}/usr/src"
 	mkdir -p "${BUILD_DIR}/usr/src/cache"
