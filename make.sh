@@ -1848,11 +1848,16 @@ exec_in_namespace() {
 		return 0
 	fi
 
+	# Forward any configuration
+	local args=(
+		"--target=${BUILD_ARCH}"
+	)
+
 	IN_NAMESPACE=1 \
 	exec unshare \
 		--mount \
 		--propagation=private \
-		"${0}" "$@"
+		"${0}" "${args[@]}" "$@"
 }
 
 # Set BASEDIR
