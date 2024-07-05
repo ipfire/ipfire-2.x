@@ -480,15 +480,15 @@ prepareenv() {
 		-t tmpfs -o "nosuid,nodev,strictatime,size=4G,nr_inodes=1M,mode=1777"
 
 	# Make all sources and proc available under lfs build
-	mount --bind /sys					"${BUILD_DIR}/sys"
-	mount --bind "${BASEDIR}/cache"		"${BUILD_DIR}/usr/src/cache"
-	mount --bind "${BASEDIR}/config"	"${BUILD_DIR}/usr/src/config"
-	mount --bind "${BASEDIR}/doc"		"${BUILD_DIR}/usr/src/doc"
-	mount --bind "${BASEDIR}/html"		"${BUILD_DIR}/usr/src/html"
-	mount --bind "${BASEDIR}/langs"		"${BUILD_DIR}/usr/src/langs"
-	mount --bind "${BASEDIR}/lfs"		"${BUILD_DIR}/usr/src/lfs"
-	mount --bind "${BASEDIR}/log"		"${BUILD_DIR}/usr/src/log"
-	mount --bind "${BASEDIR}/src"		"${BUILD_DIR}/usr/src/src"
+	mount --bind     	/sys					"${BUILD_DIR}/sys"
+	mount --bind -o ro	"${BASEDIR}/cache"		"${BUILD_DIR}/usr/src/cache"
+	mount --bind -o ro	"${BASEDIR}/config"		"${BUILD_DIR}/usr/src/config"
+	mount --bind -o ro	"${BASEDIR}/doc"		"${BUILD_DIR}/usr/src/doc"
+	mount --bind -o ro	"${BASEDIR}/html"		"${BUILD_DIR}/usr/src/html"
+	mount --bind -o ro	"${BASEDIR}/langs"		"${BUILD_DIR}/usr/src/langs"
+	mount --bind -o ro	"${BASEDIR}/lfs"		"${BUILD_DIR}/usr/src/lfs"
+	mount --bind    	"${BASEDIR}/log"		"${BUILD_DIR}/usr/src/log"
+	mount --bind -o ro	"${BASEDIR}/src"		"${BUILD_DIR}/usr/src/src"
 
 	# Mount the ccache
 	mount --bind "${CCACHE_DIR}"		"${BUILD_DIR}/usr/src/ccache"
