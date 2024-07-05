@@ -682,18 +682,6 @@ lfsmakecommoncheck() {
 
 	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
-		MESSAGE="$1\t " download  >> $LOGFILE 2>&1
-	if [ $? -ne 0 ]; then
-		exiterror "Download error in $1"
-	fi
-
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
-		MESSAGE="$1\t b2sum" b2  >> $LOGFILE 2>&1
-	if [ $? -ne 0 ]; then
-		exiterror "BLAKE2 checksum error in $1, check file in cache or signature"
-	fi
-
 	return 0	# pass all!
 }
 
@@ -827,6 +815,11 @@ lfsmake2() {
 	# Run the common check
 	lfsmakecommoncheck "${pkg}"
 	[ $? == 1 ] && return 0
+
+	# Download source outside of the toolchain
+	if ! run_command --quiet "${pkg}" download b2sum; then
+		exiterror "Downloading ${pkg}"
+	fi
 
 	# Run install on the package
 	if ! run_command --chroot "${pkg}" install; then
