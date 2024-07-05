@@ -396,16 +396,8 @@ __timer() {
 }
 
 # Called when the timer triggers
+# This function does nothing, but is needed interrupt the wait call
 __timer_event() {
-	local t
-
-	# If we have a running process, we update the runtime
-	# every time this is being triggered
-	if [ -n "${TIMER}" ] && [ "${TIMER}" -gt 0 ]; then
-		# Print the runtime
-		print_runtime "${TIMER} - $(( SECONDS - TIMER ))"
-	fi
-
 	return 0
 }
 
@@ -832,10 +824,7 @@ run_command() {
 	# If we are not running in quiet mode, we set the timer
 	case "${quiet}" in
 		false)
-			# Launch the timer
 			launch_timer
-
-			TIMER="${t}"
 			;;
 	esac
 
@@ -850,6 +839,13 @@ run_command() {
 
 		# If the return code is >= 128, wait has been interrupted by the timer
 		if [ "$?" -ge 128 ]; then
+			# Update the runtime
+			case "${quiet}" in
+				false)
+					print_runtime "$(( SECONDS - t ))"
+					;;
+			esac
+
 			continue
 		fi
 
@@ -857,9 +853,6 @@ run_command() {
 		r="$?"
 		break
 	done
-
-	# Clear the timer
-	TIMER=0
 
 	# Show runtime and status unless quiet
 	case "${quiet}" in
