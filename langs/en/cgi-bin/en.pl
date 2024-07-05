@@ -1516,7 +1516,7 @@
 'intrusion prevention system' => 'Intrusion Prevention System',
 'invalid broadcast ip' => 'Invalid broadcast IP',
 'invalid cache size' => 'Invalid cache size.',
-'invalid characters found in pre-shared key' => 'Invalid characters found in pre-shared key.',
+'invalid characters found in pre-shared key' => 'Invalid single quotation mark found in pre-shared key.',
 'invalid date entered' => 'Invalid date entered.',
 'invalid default lease time' => 'Invalid default lease time.',
 'invalid domain name' => 'Invalid domain name.',
