@@ -877,31 +877,33 @@ run_command() {
 
 lfsmake2() {
 	local pkg="${1}"
+	shift
 
 	# Run the common check
-	lfsmakecommoncheck "${pkg}"
+	lfsmakecommoncheck "${pkg}" "$@"
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! run_command --quiet "${pkg}" download b2sum; then
+	if ! run_command --quiet "${pkg}" download b2sum "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
 	# Run install on the package
-	if ! run_command --chroot "${pkg}" install; then
+	if ! run_command --chroot "${pkg}" install "$@"; then
 		exiterror "Building ${pkg}"
 	fi
 }
 
 ipfiredist() {
 	local pkg="${1}"
+	shift
 
 	# Run the common check
-	lfsmakecommoncheck "${pkg}"
+	lfsmakecommoncheck "${pkg}" "$@"
 	[ $? == 1 ] && return 0
 
 	# Run dist on the package
-	if ! run_command --chroot "${pkg}" dist; then
+	if ! run_command --chroot "${pkg}" dist "$@"; then
 		exiterror "Packging ${pkg}"
 	fi
 }
