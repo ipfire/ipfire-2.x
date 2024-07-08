@@ -240,7 +240,6 @@ endif
 	-fsck.ext4 -f -y $(PART_ROOT)
 	fsck.ext4 -f -y $(PART_ROOT)
 
-	sleep 10     #Ubuntu compiling: allow time to automount/dismount
 	kpartx -d -v $(DEVICE)
 	losetup -d $(DEVICE)
 
