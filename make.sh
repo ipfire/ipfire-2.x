@@ -2248,6 +2248,12 @@ build)
 
 	print_build_summary $(( SECONDS - START_TIME ))
 	;;
+tail)
+	tail -F \
+		"${LOG_DIR}/_build.toolchain.log" \
+		"${LOG_DIR}/_build.${SNAME}.log" \
+		"${LOG_DIR}/_build.packages.log" 2>/dev/null
+	;;
 shell)
 	# Launch in a new namespace
 	exec_in_namespace "$@"
@@ -2376,7 +2382,7 @@ __timer)
 	__timer "${2}" || exit $?
 	;;
 *)
-	echo "Usage: $0 [OPTIONS] {build|check-manualpages|clean|downloadsrc|find-dependencies|gettoolchain|lang|shell|toolchain|update-contributors|uploadsrc}"
+	echo "Usage: $0 [OPTIONS] {build|check-manualpages|clean|downloadsrc|find-dependencies|gettoolchain|lang|shell|tail|toolchain|update-contributors|uploadsrc}"
 	cat doc/make.sh-usage
 	;;
 esac
