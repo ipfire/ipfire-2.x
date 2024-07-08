@@ -1,3 +1,4 @@
+etc/fcron.daily/openvpn-crl-updater
 etc/rc.d/helper/aws-setup
 etc/rc.d/helper/azure-setup
 etc/rc.d/helper/exoscale-setup
