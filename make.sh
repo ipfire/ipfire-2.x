@@ -478,6 +478,7 @@ prepareenv() {
 
 	# Make some extra directories
 	mkdir -p "${CCACHE_DIR}"
+	mkdir -p "${IMAGES_DIR}"
 	mkdir -p "${BUILD_DIR}/${TOOLS_DIR}"
 	mkdir -p "${BUILD_DIR}/cache"
 	mkdir -p "${BUILD_DIR}/dev"
@@ -491,6 +492,7 @@ prepareenv() {
 	mkdir -p "${BUILD_DIR}/usr/src/config"
 	mkdir -p "${BUILD_DIR}/usr/src/doc"
 	mkdir -p "${BUILD_DIR}/usr/src/html"
+	mkdir -p "${BUILD_DIR}/usr/src/images"
 	mkdir -p "${BUILD_DIR}/usr/src/langs"
 	mkdir -p "${BUILD_DIR}/usr/src/lfs"
 	mkdir -p "${BUILD_DIR}/usr/src/log"
@@ -564,6 +566,9 @@ prepareenv() {
 
 	# Mount the ccache
 	mount --bind "${CCACHE_DIR}"		"${BUILD_DIR}/usr/src/ccache"
+
+	# Mount the images directory
+	mount --bind "${IMAGES_DIR}"		"${BUILD_DIR}/usr/src/images"
 
 	# Configure the ccache
 	export CCACHE_TEMPDIR="/tmp"
@@ -2188,6 +2193,7 @@ readonly CACHE_DIR="${BASEDIR}/cache"
 readonly TOOLCHAIN_DIR="${CACHE_DIR}/toolchains"
 readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
 readonly BUILD_DIR="${BASEDIR}/build_${BUILD_ARCH}"
+readonly IMAGES_DIR="${BASEDIR}/images_${BUILD_ARCH}"
 readonly LOG_DIR="${BASEDIR}/log_${BUILD_ARCH}"
 readonly TOOLS_DIR="/tools_${BUILD_ARCH}"
 
