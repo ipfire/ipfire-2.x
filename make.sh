@@ -1263,7 +1263,7 @@ build_toolchain() {
 	fi
 
 	if [ ! -e "${TOOLS_DIR}" ]; then
-		ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
+		ln -s "${BUILD_DIR}${TOOLS_DIR}" "${TOOLS_DIR}"
 	fi
 
 	if [ ! -h "${TOOLS_DIR}" ]; then
