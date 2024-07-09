@@ -368,7 +368,7 @@ prepareenv() {
 	# Make some extra directories
 	mkdir -p "${CCACHE_DIR}"
 	mkdir -p "${IMAGES_DIR}"
-	mkdir -pv "${PACKAGES_DIR}"
+	mkdir -p "${PACKAGES_DIR}"
 	mkdir -p "${BUILD_DIR}/${TOOLS_DIR}"
 	mkdir -p "${BUILD_DIR}/cache"
 	mkdir -p "${BUILD_DIR}/dev"
