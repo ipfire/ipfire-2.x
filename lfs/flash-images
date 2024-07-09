@@ -104,7 +104,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(IMG) $(MNThdd) && mkdir -p $(MNThdd)
 
 	# Allocate image on disk
-	dd if=/dev/zero of=$(IMG) bs=512 count=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
+	dd if=/dev/zero of=$(IMG) bs=512 count=0 seek=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
 	losetup $(DEVICE) $(IMG)
 
 	# Write Partition table
