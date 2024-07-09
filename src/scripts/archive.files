@@ -26,7 +26,7 @@ for i in BUILD_ARCH BUILDTARGET KVER; do
 	fi
 done
 
-FILELIST=
+FILELIST=()
 
 for dir in $@; do
 	# Skip all objects that do not exist.
@@ -34,7 +34,7 @@ for dir in $@; do
 
 	# Files go directly to the rootfile.
 	if [ -f "${dir}" ]; then
-		FILELIST="${FILELIST} ${dir}"
+		FILELIST+=( "${dir}" )
 		continue
 	fi
 
@@ -43,7 +43,7 @@ for dir in $@; do
 		EXCLUDE="$EXCLUDE $exclude"
 	done
 
-	FILELIST="${FILELIST} ${EXCLUDE}"
+	FILELIST+=( "${EXCLUDE}" )
 
 	for include in ${dir}/*; do
 		[ -d ${include} ] && continue
@@ -54,9 +54,9 @@ for dir in $@; do
 				break
 			fi
 		done
-		${IN} && FILELIST="${FILELIST} ${include}"
+		${IN} && FILELIST+=( "${include}" )
 	done
 done
 
-cat ${FILELIST} 2>/dev/null | grep -v ^# | sort | uniq | \
+grep --no-filename -v ^# "${FILELIST[@]}" 2>/dev/null | sort -u | \
 	sed -e "s/KVER/${KVER}/g" -e "s/xxxMACHINExxx/${BUILD_ARCH}/g" -e "s/BUILDTARGET/${BUILDTARGET}/g"
