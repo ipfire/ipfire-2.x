@@ -2022,9 +2022,6 @@ build_system() {
 	# Build the installer
 	lfsmake2 installer
 
-	# use toolchain bash for chroot to strip
-	CUSTOM_PATH="${TOOLS_DIR}/bin" lfsmake2 strip
-
 	# Build images
 	lfsmake2 cdrom
 	lfsmake2 flash-images

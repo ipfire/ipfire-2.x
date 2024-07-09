@@ -360,8 +360,12 @@ define COPY_FILES
 	# Copy all files from $(1) to $(2)
 	$(call COLLECT_FILES,$(1)) | $(call __FILES_IN) | $(call __FILES_OUT,$(2))
 
-	# Strip everything
-	$(DIR_SRC)/src/stripper $(2)
+	# Strip everything, except a few things
+	$(DIR_SRC)/src/stripper $(2) \
+		--exclude=/lib/firmware \
+		--exclude=/usr/lib/go \
+		--exclude=/usr/lib/vdr \
+		--exclude=/usr/sbin/vdr
 endef
 
 # Called to compress a file that will be distributed
