@@ -45,8 +45,6 @@ HOST_ARCH="${HOSTTYPE}"
 LC_ALL=POSIX
 PS1='\u:\w$ '
 
-PWD=$(pwd)
-
 # Are we reading from/writing to a terminal?
 is_terminal() {
 	[ -t 0 ] && [ -t 1 ] && [ -t 2 ]
@@ -2274,10 +2272,10 @@ build)
 
 	print_headline "Checking Logfiles for new Files"
 
-	cd $BASEDIR
+	pushd "${BASEDIR}" &>/dev/null
 	tools/checknewlog.pl
 	tools/checkrootfiles
-	cd $PWD
+	popd &>/dev/null
 
 	print_build_summary $(( SECONDS - START_TIME ))
 	;;
