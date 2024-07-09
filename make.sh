@@ -1192,9 +1192,13 @@ download_sources() {
 		[ $? == 1 ] && continue
 
 		# Download and check the package
-		if ! run_command "${pkg}" download b2; then
+		if ! make_pkg "${pkg}" download b2; then
+			print_status FAIL
 			status=1
+			continue
 		fi
+
+		print_status DONE
 	done
 
 	return "${status}"
