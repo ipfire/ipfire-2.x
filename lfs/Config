@@ -31,9 +31,17 @@
 ###############################################################################
 
 # Cleanup environment from any variables
-unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
+unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN
+unexport NAME SNAME VERSION CORE SLOGAN SYSTEM_RELEASE PAKFIRE_TREE CONFIG_ROOT
+unexport KVER
+unexport SYSTEM_PROCESSOR SYSTEM_MEMORY
+unexport DEFAULT_PARALLELISM
+unexport LFS_BASEDIR
 unexport BUILD_DIR
+unexport IMAGES_DIR
 unexport LOG_DIR
+unexport PACKAGES_DIR
+unexport TOOLS_DIR
 unexport XZ_OPT
 unexport ZSTD_OPT
 
