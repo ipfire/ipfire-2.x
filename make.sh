@@ -70,6 +70,12 @@ resize_terminal() {
 		COLUMNS=80
 	fi
 
+	# Wipe any previous content before updating the counters
+	if [ -n "${TIME_COL}" ]; then
+		tput hpa "${TIME_COL}"
+		tput el
+	fi
+
 	# The status column is always 8 characters wide
 	STATUS_WIDTH=8
 
