@@ -244,4 +244,4 @@ ifeq "$(HAS_ISOLINUX)" "1"
 endif
 
 	# Create checksum file
-	cd $(IMAGES_DIR) && b2sum "$(notdir $(ISO_FILE))" > "$(notdir "$(ISO_FILE)").b2"
+	cd $(IMAGES_DIR) && b2sum "$(notdir $(ISO_FILE))" > "$(notdir $(ISO_FILE)).b2"
