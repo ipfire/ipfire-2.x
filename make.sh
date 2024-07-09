@@ -41,49 +41,46 @@ TOOLCHAINVER=20240521
 #
 ###############################################################################
 
+HOST_ARCH="${HOSTTYPE}"
 LC_ALL=POSIX
 PS1='\u:\w$ '
 
-# Remember if the shell is interactive or not
-if [ -t 0 ] && [ -t 1 ]; then
-	INTERACTIVE=true
-else
-	INTERACTIVE=false
-fi
+PWD=$(pwd)
+
+# Are we reading from/writing to a terminal?
+is_terminal() {
+	[ -t 0 ] && [ -t 1 ] && [ -t 2 ]
+}
 
 # Define color for messages
-BOLD="\\033[1;39m"
-DONE="\\033[1;32m"
-SKIP="\\033[1;34m"
-WARN="\\033[1;35m"
-FAIL="\\033[1;31m"
-NORMAL="\\033[0;39m"
-
-# New architecture variables
-HOST_ARCH="${HOSTTYPE}"
-
-PWD=$(pwd)
+if is_terminal; then
+	BOLD="$(tput bold)"
+	RED="$(tput setaf 1)"
+	GREEN="$(tput setaf 2)"
+	YELLOW="$(tput setaf 3)"
+	CYAN="$(tput setaf 6)"
+	NORMAL="$(tput sgr0)"
+fi
 
 # Sets or adjusts pretty formatting variables
 resize_terminal() {
-	## Screen Dimentions
 	# Find current screen size
-	COLUMNS=$(tput cols)
+	COLUMNS="$(tput cols)"
 
 	# When using remote connections, such as a serial port, stty size returns 0
-	if ! ${INTERACTIVE} || [ "${COLUMNS}" = "0" ]; then
+	if ! is_terminal || [ "${COLUMNS}" = "0" ]; then
 		COLUMNS=80
 	fi
 
-	# Measurements for positioning result messages
-	OPTIONS_WIDTH=20
-	TIME_WIDTH=12
+	# The status column is always 8 characters wide
 	STATUS_WIDTH=8
-	NAME_WIDTH=$(( COLUMNS - OPTIONS_WIDTH - TIME_WIDTH - STATUS_WIDTH ))
-	LINE_WIDTH=$(( COLUMNS - STATUS_WIDTH ))
 
-	TIME_COL=$(( NAME_WIDTH + OPTIONS_WIDTH ))
-	STATUS_COL=$(( TIME_COL + TIME_WIDTH ))
+	# The time column is always 12 characters wide
+	TIME_WIDTH=12
+
+	# Where do the columns start?
+	(( STATUS_COL = COLUMNS - STATUS_WIDTH ))
+	(( TIME_COL   = STATUS_COL - TIME_WIDTH ))
 }
 
 # Initially setup terminal
@@ -164,32 +161,12 @@ format_runtime() {
 }
 
 print_line() {
-	local line="$@"
-
-	printf "%-${LINE_WIDTH}s" "${line}"
-}
-
-_print_line() {
-	local status="${1}"
-	shift
-
-	if ${INTERACTIVE}; then
-		printf "${!status}"
-	fi
-
-	print_line "$@"
-
-	if ${INTERACTIVE}; then
-		printf "${NORMAL}"
-	fi
+	# Print the string all the way to the status column
+	printf "%-${STATUS_COL}s" "$*"
 }
 
 print_headline() {
-	_print_line BOLD "$@"
-}
-
-print_error() {
-	_print_line FAIL "$@"
+	printf "${BOLD}%s${NORMAL}\n" "$*"
 }
 
 print_package() {
@@ -204,37 +181,54 @@ print_package() {
 		string="${string} (${version})"
 	fi
 
-	printf "%-$(( ${NAME_WIDTH} - 1 ))s " "${string}"
-	printf "%$(( ${OPTIONS_WIDTH} - 1 ))s " "${options}"
+	# Add the options
+	if [ -n "${options}" ]; then
+		string="${string} (${options[@]})"
+	fi
+
+	# Print the string
+	print_line "${string}"
 }
 
 print_runtime() {
 	local runtime=$(format_runtime $@)
 
-	if ${INTERACTIVE}; then
-		printf "\\033[${TIME_COL}G[ ${BOLD}%$(( ${TIME_WIDTH} - 4 ))s${NORMAL} ]" "${runtime}"
-	else
-		printf "[ %$(( ${TIME_WIDTH} - 4 ))s ]" "${runtime}"
+	# Move back the cursor to rewrite the runtime
+	if is_terminal; then
+		tput hpa "${TIME_COL}"
 	fi
+
+	printf "[ ${BOLD}%$(( TIME_WIDTH - 4 ))s${NORMAL} ]" "${runtime}"
 }
 
 print_status() {
 	local status="${1}"
+	local color
 
-	local color="${!status}"
+	case "${status}" in
+		DONE)
+			color="${BOLD}${GREEN}"
+			;;
+		FAIL)
+			color="${BOLD}${RED}"
+			;;
+		SKIP)
+			color="${BOLD}${CYAN}"
+			;;
+		WARN)
+			color="${BOLD}${YELLOW}"
+			;;
+		*)
+			color="${BOLD}"
+			;;
+	esac
 
-	if ${INTERACTIVE}; then
-		printf "\\033[${STATUS_COL}G[${color-${BOLD}} %-$(( ${STATUS_WIDTH} - 4 ))s ${NORMAL}]\n" "${status}"
-	else
-		printf "[ %-$(( ${STATUS_WIDTH} - 4 ))s ]\n" "${status}"
+	# Move to the start of the column
+	if is_terminal; then
+		tput hpa "${STATUS_COL}"
 	fi
-}
 
-print_build_stage() {
-	print_headline "$@"
-
-	# end line
-	printf "\n"
+	printf "[ ${color}%$(( STATUS_WIDTH - 4 ))s${NORMAL} ]\n" "${status}"
 }
 
 print_build_summary() {
@@ -248,6 +242,11 @@ print_build_summary() {
 launch_timer() {
 	# Do nothing if the timer is already running
 	if [ -n "${TIMER_PID}" ]; then
+		return 0
+	fi
+
+	# Don't launch the timer when we are not on a terminal
+	if ! is_terminal; then
 		return 0
 	fi
 
@@ -302,7 +301,7 @@ exiterror() {
 
 	local line
 	for line in "ERROR: $@" "    Check ${LOGFILE} for errors if applicable"; do
-		print_error "${line}"
+		echo "${line}"
 		print_status FAIL
 	done
 
@@ -2040,7 +2039,7 @@ build_packages() {
 	local LOGFILE="${LOG_DIR}/_build.packages.log"
 
 	# Build packages
-	print_build_stage "Building Packages"
+	print_headline "Building Packages"
 
 	local path
 	local -A pkgs=()
@@ -2253,7 +2252,7 @@ build)
 	if [ ! -e "${BUILD_DIR}${TOOLS_DIR}/.toolchain-successful" ]; then
 		# If we have the toolchain available, we extract it into the build environment
 		if [ -r "${TOOLCHAIN_DIR}/${TOOLCHAIN}" ]; then
-			print_build_stage "Packaged toolchain compilation"
+			print_headline "Packaged toolchain compilation"
 
 			# Extract the toolchain
 			if ! extract_toolchain "${TOOLCHAIN}"; then
@@ -2262,18 +2261,18 @@ build)
 
 		# Otherwise perform a full toolchain compilation
 		else
-			print_build_stage "Full toolchain compilation"
+			print_headline "Full toolchain compilation"
 			build_toolchain
 		fi
 	fi
 
-	print_build_stage "Building ${NAME}"
+	print_headline "Building ${NAME}"
 	build_system
 
 	# Build all packages
 	build_packages
 
-	print_build_stage "Checking Logfiles for new Files"
+	print_headline "Checking Logfiles for new Files"
 
 	cd $BASEDIR
 	tools/checknewlog.pl
@@ -2331,7 +2330,7 @@ toolchain)
 	# Prepare the environment
 	prepareenv
 
-	print_build_stage "Toolchain compilation (${BUILD_ARCH})"
+	print_headline "Toolchain compilation (${BUILD_ARCH})"
 
 	# Build the toolchain
 	build_toolchain
