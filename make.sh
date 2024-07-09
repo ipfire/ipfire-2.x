@@ -2204,7 +2204,7 @@ XZ_OPT=(
 
 # Configure Zstandard
 ZSTD_OPT=(
-	"-T0" "--ultra" "-22" "--long"
+	"-T0" "-19" "--long"
 )
 
 # Set directories
