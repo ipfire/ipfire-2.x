@@ -365,6 +365,7 @@ prepareenv() {
 	# Make some extra directories
 	mkdir -p "${CCACHE_DIR}"
 	mkdir -p "${IMAGES_DIR}"
+	mkdir -pv "${PACKAGES_DIR}"
 	mkdir -p "${BUILD_DIR}/${TOOLS_DIR}"
 	mkdir -p "${BUILD_DIR}/cache"
 	mkdir -p "${BUILD_DIR}/dev"
@@ -594,6 +595,7 @@ execute() {
 		# Paths
 		[LFS_BASEDIR]="${BASEDIR}"
 		[IMAGES_DIR]="${IMAGES_DIR}"
+		[PACKAGES_DIR]="${PACKAGES_DIR}"
 		[TOOLS_DIR]="${TOOLS_DIR}"
 	)
 
@@ -641,6 +643,7 @@ execute() {
 					# Paths
 					[LFS_BASEDIR]="/usr/src"
 					[IMAGES_DIR]="/usr/src/images"
+					[PACKAGES_DIR]="/usr/src/images/packages"
 
 					# Compiler Cache
 					[CCACHE_DIR]="/usr/src/ccache"
@@ -2018,40 +2021,27 @@ build_system() {
 	lfsmake2 flash-images
 }
 
-buildpackages() {
-  local LOGFILE="${LOG_DIR}/_build.packages.log"
+build_packages() {
+	local LOGFILE="${LOG_DIR}/_build.packages.log"
 
-  ipfirepackages
+	# Build packages
+	print_build_stage "Building Packages"
 
-  cd $BASEDIR
+	local path
+	local -A pkgs=()
+	local pkg
 
-  for i in $(ls *.bz2 *.img.xz *.iso 2>/dev/null); do
-	b2sum $i > $i.b2
-  done
-  cd $PWD
-
-  # Cleanup
-  rm -rf $BASEDIR/build/tmp/*
-
-  cd $PWD
-}
-
-ipfirepackages() {
-	lfsmake2 core-updates
-
-	local i
-	for i in $(find $BASEDIR/config/rootfiles/packages{/${BUILD_ARCH},} -maxdepth 1 -type f); do
-		i=$(basename ${i})
-		if [ -e $BASEDIR/lfs/$i ]; then
-			ipfiredist $i
-		else
-			echo -n $i
-			print_status SKIP
-		fi
+	# Collect all packages
+	for path in \
+			"${BASEDIR}/config/rootfiles/packages/"* \
+			"${BASEDIR}/config/rootfiles/packages/${BUILD_ARCH}"/*; do
+		pkgs["${path##*/}"]="${path}"
 	done
-  test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f ${BUILD_DIR}/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
-  rm -rf  $BASEDIR/build/install/packages/*
+
+	# Package them all
+	for pkg in ${!pkgs[@]}; do
+		ipfiredist "${pkg}"
+	done
 }
 
 # This function will re-execute a command in a new namespace
@@ -2217,6 +2207,7 @@ readonly CCACHE_DIR="${BASEDIR}/ccache/${BUILD_ARCH}/${TOOLCHAINVER}"
 readonly BUILD_DIR="${BASEDIR}/build_${BUILD_ARCH}"
 readonly IMAGES_DIR="${BASEDIR}/images_${BUILD_ARCH}"
 readonly LOG_DIR="${BASEDIR}/log_${BUILD_ARCH}"
+readonly PACKAGES_DIR="${IMAGES_DIR}/packages"
 readonly TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 # Set URLs
@@ -2264,8 +2255,8 @@ build)
 	print_build_stage "Building ${NAME}"
 	build_system
 
-	print_build_stage "Building Packages"
-	buildpackages
+	# Build all packages
+	build_packages
 
 	print_build_stage "Checking Logfiles for new Files"
 

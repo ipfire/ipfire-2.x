@@ -377,7 +377,7 @@ define PAK
 	sed -i $(DIR_TMP_PAK)/ROOTFILES -e "/^#/d"
 
 	# Make package
-	cd $(DIR_TMP_PAK) && tar cf /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire *
+	cd $(DIR_TMP_PAK) && tar cf $(PACKAGES_DIR)/$(PROG)-$(VER)-$(PAK_VER).ipfire *
 
 	# Cleanup
 	rm -rf $(DIR_TMP_PAK)
@@ -390,9 +390,9 @@ define PAK
 		-e "s/VER/$(VER)/g" \
 		-e "s/RELEASE/$(PAK_VER)/g" \
 		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/$$(stat --format=%s /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
+		-e "s/SIZE/$$(stat --format=%s $(PACKAGES_DIR)/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
 		-e "s/SERVICES/$(SERVICES)/g" \
-	  < /usr/src/src/pakfire/meta > /install/packages/meta-$(PROG)
+	  < /usr/src/src/pakfire/meta > $(PACKAGES_DIR)/meta-$(PROG)
 endef
 
 define INSTALL_INITSCRIPT
