@@ -2128,18 +2128,14 @@ build_system() {
 
 	# use toolchain bash for chroot to strip
 	CUSTOM_PATH="${TOOLS_DIR}/bin" lfsmake2 strip
+
+	# Build images
+	lfsmake2 cdrom
+	lfsmake2 flash-images
 }
 
 buildpackages() {
   local LOGFILE="${LOG_DIR}/_build.packages.log"
-
-  # Create images for install
-  lfsmake2 cdrom
-
-  # Check if there is a loop device for building in virtual environments
-  lfsmake2 flash-images
-
-  mv ${BUILD_DIR}/install/images/{*.iso,*.img.xz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
 

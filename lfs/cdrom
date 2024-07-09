@@ -118,7 +118,7 @@ GRUB_EFI_MODULES = \
 	true \
 	usb_keyboard
 
-ISO_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).iso
+ISO_FILE = $(IMAGES_DIR)/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).iso
 
 ###############################################################################
 # Top-level Rules
@@ -236,9 +236,12 @@ endif
 	cd $(DIR_TMP)/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
 
-	mkdir -p /install/images
+	# Master the ISO file
 	cd $(DIR_TMP)/cdrom && mkisofs $(ISO_ARGS) -o $(ISO_FILE) .
 
 ifeq "$(HAS_ISOLINUX)" "1"
 	isohybrid $(ISOHYBRID_ARGS) $(ISO_FILE)
 endif
+
+	# Create checksum file
+	cd $(IMAGES_DIR) && b2sum "$(notdir $(ISO_FILE))" > "$(notdir "$(ISO_FILE)").b2"

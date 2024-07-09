@@ -36,7 +36,7 @@ ifeq "$(EFI)" "1"
 endif
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-IMAGE_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
+IMAGE_FILE = $(IMAGES_DIR)/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -255,3 +255,6 @@ endif
 	# Compress Image
 	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
 	rm -rf $(IMG) $(MNThdd) $(DIR_TMP)/cdrom
+
+	# Create checksum file
+	cd $(IMAGES_DIR) && b2sum "$(notdir $(IMAGE_FILE))" > "$(notdir "$(IMAGE_FILE)").b2"
