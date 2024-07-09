@@ -2289,6 +2289,7 @@ build)
 	;;
 tail)
 	tail -F \
+		"${LOG_DIR}/_build.preparation.log" \
 		"${LOG_DIR}/_build.toolchain.log" \
 		"${LOG_DIR}/_build.${SNAME}.log" \
 		"${LOG_DIR}/_build.packages.log" 2>/dev/null
