@@ -101,9 +101,6 @@ SFDISK_EFI  = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) ))),$(S_EFI),U\n
 SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) ))),$(S_ROOT),L\n
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	# Stop if $(MNThdd) is still mounted
-	mountpoint $(MNThdd) && exit 1 || exit 0
-
 	rm -rf $(IMG) $(MNThdd) && mkdir -p $(MNThdd)
 
 	# Allocate image on disk
