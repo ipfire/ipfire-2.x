@@ -1135,7 +1135,7 @@ download_toolchain() {
 	fi
 
 	# Check integrity
-	if ! b2sum --quiet --check "${tmp}/${checksums}"; then
+	if ! cd "${tmp}" && b2sum --quiet --check "${checksums}"; then
 		# Cleanup
 		rm -rf "${tmp}"
 
@@ -1234,7 +1234,7 @@ compress_toolchain() {
 	fi
 
 	# Create the checksums
-	if ! b2sum "${tmp}/${toolchain}" > "${tmp}/${checksums}"; then
+	if ! cd "${tmp}" && b2sum "${toolchain}" > "${tmp}/${checksums}"; then
 		# Cleanup
 		rm -rf "${tmp}"
 
