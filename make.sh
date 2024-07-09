@@ -873,7 +873,7 @@ lfsmake1() {
 		exiterror "Downloading ${pkg}"
 	fi
 
-	if ! make_pkg "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}" "$@"; then
+	if ! make_pkg --timer="update_runtime" "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}" "$@"; then
 		print_status FAIL
 
 		exiterror "Building ${pkg}"
