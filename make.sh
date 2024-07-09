@@ -845,8 +845,11 @@ run_command() {
 	while :; do
 		wait "$!"
 
+		# Store the return code
+		r="$?"
+
 		# If the return code is >= 128, wait has been interrupted by the timer
-		if [ "$?" -ge 128 ]; then
+		if [ "${r}" -ge 128 ]; then
 			# Update the runtime
 			case "${quiet}" in
 				false)
@@ -857,8 +860,6 @@ run_command() {
 			continue
 		fi
 
-		# Store the return code
-		r="$?"
 		break
 	done
 
