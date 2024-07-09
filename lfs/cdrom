@@ -144,25 +144,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Create a directory to authorise the CDROM in
 	rm -rf $(DIR_TMP)/cdrom && mkdir -p $(DIR_TMP)/cdrom
 
-	# Clear mtab (prevents .journal problems)
-	rm -vf /etc/mtab
-	ln -s /proc/self/mounts /etc/mtab
-
-	# Create filelist for packaging.
-	BUILDTARGET="$(BUILDTARGET)" BUILD_ARCH="$(BUILD_ARCH)" KVER="$(KVER)" \
-		$(DIR_SRC)/src/scripts/archive.files \
-		$(DIR_SRC)/config/rootfiles/common \
-		> $(DIR_TMP)/ROOTFILES
-
-	# Compress root filesystem
-	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
+	# Create the target directory
 	rm -rf $(DIR_TMP)/root && mkdir -p $(DIR_TMP)/root
-	tar $(TAR_OPTIONS) -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/*' \
-		--exclude='__pycache__' \
-		-C / --files-from=$(DIR_TMP)/ROOTFILES | tar $(TAR_OPTIONS) -x -C $(DIR_TMP)/root
-	rm -f $(DIR_TMP)/ROOTFILES
+
+	# Copy all files that we want
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(DIR_TMP)/root)
+
 	mkdir $(DIR_TMP)/root/sys
-	cd $(DIR_TMP)/root && tar $(TAR_OPTIONS) -cf - * | zstd $(ZSTD_OPTIONS) > $(DIR_TMP)/cdrom/distro.img
+
+	# Create the archive
+	$(call COMPRESS_ZSTD,$(DIR_TMP)/root,$(DIR_TMP)/cdrom/distro.img)
+
+	# Remove the raw files
 	rm -rf $(DIR_TMP)/root
 
 	# Other files

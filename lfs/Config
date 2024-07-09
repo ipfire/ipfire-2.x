@@ -67,7 +67,9 @@ endif
 TAR_OPTIONS = \
 	--format=pax \
 	--acls \
-	--xattrs --xattrs-include='*'
+	--xattrs \
+	--xattrs-include='*' \
+	--sparse
 
 ZSTD_OPTIONS = \
 	-T$(PARALLELISM) \
@@ -330,6 +332,56 @@ define B2SUM
 	[ "$($@_BLAKE2)" = "$$(b2sum $(DIR_DL)/$@ | awk '{ print $$1 }')" ] && echo "$@ checksum OK"
 endef
 
+# Takes one rootfile or a directory and will return a list of all included files
+define COLLECT_FILES
+	BUILDTARGET="$(BUILDTARGET)" \
+	BUILD_ARCH="$(BUILD_ARCH)" \
+	KVER="$(KVER)" \
+		$(DIR_SRC)/src/scripts/archive.files $(1)
+endef
+
+# Takes a filelist from standard input and streams a tarball with all files
+__FILES_IN = \
+	tar \
+		--create \
+		$(TAR_OPTIONS) \
+		--directory=/ \
+		--exclude="dev/pts/*" \
+		--exclude="proc/*" \
+		--exclude="tmp/*" \
+		--exclude="__pycache__" \
+		--files-from=-
+
+# Takes a tarball and extracts it in the target directory
+__FILES_OUT = \
+	tar \
+		--extract \
+		$(TAR_OPTIONS) \
+		--directory="$(1)"
+
+# Copies all files on a rootfile into the given directory
+define COPY_FILES
+	# Copy all files from $(1) to $(2)
+	$(call COLLECT_FILES,$(1)) | $(call __FILES_IN) | $(call __FILES_OUT,$(2))
+
+	# Strip everything
+	$(DIR_SRC)/src/stripper $(2)
+endef
+
+# Called to compress a file that will be distributed
+__COMPRESS = \
+	tar \
+		--create \
+		--verbose --verbose \
+		--use-compress-program="$(3)" \
+		$(TAR_OPTIONS) \
+		--directory="$(1)" \
+		--file="$(2)" \
+		.
+
+COMPRESS_XZ   = $(call __COMPRESS,$(1),$(2),xz $(XZ_OPT))
+COMPRESS_ZSTD = $(call __COMPRESS,$(1),$(2),zstd $(ZSTD_OPT))
+
 define PAK
 	# Bringing the files to their right place.
 	@rm -rf $(DIR_TMP_PAK) && mkdir -p $(DIR_TMP_PAK)
@@ -347,12 +399,6 @@ define PAK
 		fi; \
 	done
 
-	# Replace variables in rootfiles
-	sed -i $(DIR_TMP_PAK)/ROOTFILES \
-		-e 's/BUILDTARGET/$(BUILDTARGET)/g' \
-		-e 's/KVER/$(KVER)/g' \
-		-e 's/xxxMACHINExxx/$(BUILD_ARCH)/g'
-
 	# Replace variables in scripts
 	sed -i $(DIR_TMP_PAK)/install.sh \
 		-e 's/xxxKVERxxx/$(KVER)/g'
@@ -362,13 +408,12 @@ define PAK
 
 	# Collect all files
 	rm -rf $(DIR_TMP_PAK)/root && mkdir -p $(DIR_TMP_PAK)/root
-	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/*' \
-		--exclude='__pycache__' \
-		-C / --files-from=$(DIR_TMP_PAK)/ROOTFILES | tar -x -C $(DIR_TMP_PAK)/root; \
-		exit $${PIPESTATUS[0]}
+
+	# Copy all files
+	$(call COPY_FILES,$(DIR_TMP_PAK)/ROOTFILES,$(DIR_TMP_PAK)/root)
 
 	# Compress tarball
-	cd $(DIR_TMP_PAK)/root && tar cf - * | xz $(XZ_OPT) > $(DIR_TMP_PAK)/files.tar.xz
+	$(call COMPRESS_XZ,$(DIR_TMP_PAK)/root,$(DIR_TMP_PAK)/files.tar.xz)
 
 	# Cleanup temporary files
 	rm -rf $(DIR_TMP_PAK)/root
