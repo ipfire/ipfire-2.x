@@ -751,6 +751,9 @@ execute() {
 		execute+=( "chroot" "${BUILD_DIR}" )
 	fi
 
+	# Set PATH so that we can find the env binary
+	local PATH="${environ[PATH]}:${PATH}"
+
 	# Reset the environment
 	execute+=(
 		"env"
