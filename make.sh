@@ -595,7 +595,9 @@ execute() {
 
 		# Paths
 		[LFS_BASEDIR]="${BASEDIR}"
+		[BUILD_DIR]="${BUILD_DIR}"
 		[IMAGES_DIR]="${IMAGES_DIR}"
+		[LOG_DIR]="${LOG_DIR}"
 		[PACKAGES_DIR]="${PACKAGES_DIR}"
 		[TOOLS_DIR]="${TOOLS_DIR}"
 	)
@@ -643,7 +645,9 @@ execute() {
 
 					# Paths
 					[LFS_BASEDIR]="/usr/src"
+					[BUILD_DIR]="/"
 					[IMAGES_DIR]="/usr/src/images"
+					[LOG_DIR]="/usr/src/log"
 					[PACKAGES_DIR]="/usr/src/images/packages"
 
 					# Compiler Cache
