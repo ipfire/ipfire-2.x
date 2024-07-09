@@ -630,6 +630,36 @@ enterchroot() {
 		PATH="${CUSTOM_PATH}:${PATH}"
 	fi
 
+	# Create a new environment
+	local env=(
+		# Clear the previous environment
+		"--ignore-environment"
+
+		HOME="/root"
+		TERM="${TERM}"
+		PS1="${PS1}"
+		PATH="${PATH}"
+
+		# Compiler flags
+		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}"
+		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}"
+		RUSTFLAGS="${RUSTFLAGS}"
+
+		# Compiler cache
+		CCACHE_DIR="/usr/src/ccache"
+		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}"
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}"
+
+		# Go cache
+		GOCACHE="/usr/src/ccache/go"
+
+		# Append the fake environment
+		$(fake_environ)
+
+		# Setup the QEMU environment
+		$(qemu_environ)
+	)
+
 	# Configure a new namespace
 	local unshare=(
 		# Create a new cgroup namespace
@@ -657,43 +687,8 @@ enterchroot() {
 		"--kill-child"
 	)
 
-	PATH="${PATH}" \
-	unshare \
-		"${unshare[@]}" \
-	chroot "${BUILD_DIR}" \
-	env -i \
-		HOME="/root" \
-		TERM="${TERM}" \
-		PS1="${PS1}" \
-		PATH="${PATH}" \
-		SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
-		PAKFIRE_TREE="${PAKFIRE_TREE}" \
-		NAME="${NAME}" \
-		SNAME="${SNAME}" \
-		VERSION="${VERSION}" \
-		CORE="${CORE}" \
-		SLOGAN="${SLOGAN}" \
-		TOOLS_DIR="${TOOLS_DIR}" \
-		CONFIG_ROOT="${CONFIG_ROOT}" \
-		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
-		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
-		RUSTFLAGS="${RUSTFLAGS}" \
-		BUILDTARGET="${BUILDTARGET}" \
-		CROSSTARGET="${CROSSTARGET}" \
-		BUILD_ARCH="${BUILD_ARCH}" \
-		BUILD_PLATFORM="${BUILD_PLATFORM}" \
-		CCACHE_DIR=/usr/src/ccache \
-		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
-		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-		GOCACHE="/usr/src/ccache/go" \
-		KVER="${KVER}" \
-		XZ_OPT="${XZ_OPT}" \
-		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}" \
-		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
-		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
-		$(fake_environ) \
-		$(qemu_environ) \
-		"$@"
+	# Put everything together
+	unshare "${unshare[@]}" chroot "${BUILD_DIR}" env "${env[@]}" "$@"
 }
 
 entershell() {
@@ -777,8 +772,44 @@ run_command() {
 
 	local basedir="${BASEDIR}"
 	local command=()
-	local env=()
 	local quiet="false"
+
+	# Pass some variables
+	local vars=(
+		BUILD_ARCH="${BUILD_ARCH}"
+		BUILD_PLATFORM="${BUILD_PLATFORM}"
+
+		# Targets
+		CROSSTARGET="${CROSSTARGET}"
+		BUILDTARGET="${BUILDTARGET}"
+
+		# Paths
+		CONFIG_ROOT="${CONFIG_ROOT}"
+		IMAGES_DIR="/usr/src/images"
+		TOOLS_DIR="${TOOLS_DIR}"
+
+		# Distro Information
+		NAME="${NAME}"
+		SNAME="${SNAME}"
+		VERSION="${VERSION}"
+		CORE="${CORE}"
+		SLOGAN="${SLOGAN}"
+		SYSTEM_RELEASE="${SYSTEM_RELEASE}"
+		PAKFIRE_TREE="${PAKFIRE_TREE}"
+
+		# Kernel Version
+		KVER="${KVER}"
+
+		# System Properties
+		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}"
+		SYSTEM_MEMORY="${SYSTEM_MEMORY}"
+
+		# Parallelism
+		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}"
+
+		# Compression Options
+		XZ_OPT="${XZ_OPT}"
+	)
 
 	while [ $# -gt 0 ]; do
 		case "${1}" in
@@ -799,7 +830,7 @@ run_command() {
 				;;
 
 			*=*)
-				env+=( "${1}" )
+				vars+=( "${1}" )
 				;;
 
 			*)
@@ -816,16 +847,19 @@ run_command() {
 		shift
 	done
 
+	# Pass LFS_BASEDIR
+	vars+=(
+		"LFS_BASEDIR=${basedir}"
+	)
+
 	# Build the command
 	command+=(
-		# Run a shell
-		"bash"
-
-		# Enable tracing
-		"-x"
-
-		# Run the following command
-		"-c" "cd ${basedir}/lfs && make -f ${pkg} LFS_BASEDIR=${basedir} ${env[@]} ${actions[@]}"
+		# Run make
+		"make"
+			"--directory=${basedir}/lfs"
+			"--file=${pkg}"
+			"${vars[@]}"
+			"${actions[@]}"
 	)
 
 	# Return code
