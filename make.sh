@@ -583,6 +583,7 @@ execute() {
 
 		# Compression Options
 		[XZ_OPT]="${XZ_OPT[@]}"
+		[ZSTD_OPT]="${ZSTD_OPT[@]}"
 
 		# Build Architecture
 		[BUILD_ARCH]="${BUILD_ARCH}"

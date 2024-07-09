@@ -33,6 +33,7 @@
 # Cleanup environment from any variables
 unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 unexport XZ_OPT
+unexport ZSTD_OPT
 
 # Basic Variables
 EMPTY :=
@@ -70,11 +71,6 @@ TAR_OPTIONS = \
 	--xattrs \
 	--xattrs-include='*' \
 	--sparse
-
-ZSTD_OPTIONS = \
-	-T$(PARALLELISM) \
-	-19 \
-	--long
 
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
