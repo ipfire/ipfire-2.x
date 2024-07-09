@@ -652,14 +652,8 @@ lfsmakecommoncheck() {
 }
 
 execute() {
-	# Check if we are running in our namespace
-	if [ -z "${IN_NAMESPACE}" ]; then
-		exiterror "Not running in namespace"
-	fi
-
-	local command=()
-
 	local chroot="false"
+	local command=()
 	local interactive="false"
 	local timer
 
@@ -717,32 +711,36 @@ execute() {
 		[TOOLS_DIR]="${TOOLS_DIR}"
 	)
 
+	local unshare=()
+
 	# Configure a new namespace
-	local unshare=(
-		# Create a new cgroup namespace
-		"--cgroup"
+	if [ -n "${IN_NAMESPACE}" ]; then
+		unshare+=(
+			# Create a new cgroup namespace
+			"--cgroup"
 
-		# Create a new mount namespace
-		"--mount"
-		"--propagation=slave"
+			# Create a new mount namespace
+			"--mount"
+			"--propagation=slave"
 
-		# Create a new PID namespace and fork
-		"--pid"
-		"--fork"
+			# Create a new PID namespace and fork
+			"--pid"
+			"--fork"
 
-		# Create a new time namespace
-		"--time"
+			# Create a new time namespace
+			"--time"
 
-		# Create a new UTS namespace
-		"--uts"
+			# Create a new UTS namespace
+			"--uts"
 
-		# Mount /proc so that the build environment does not see
-		# any foreign processes.
-		"--mount-proc=${BUILD_DIR}/proc"
+			# Mount /proc so that the build environment does not see
+			# any foreign processes.
+			"--mount-proc=${BUILD_DIR}/proc"
 
-		# If unshare is asked to terminate, terminate all child processes
-		"--kill-child"
-	)
+			# If unshare is asked to terminate, terminate all child processes
+			"--kill-child"
+		)
+	fi
 
 	while [ $# -gt 0 ]; do
 		case "${1}" in
@@ -848,9 +846,11 @@ execute() {
 	local env
 
 	# Create new namespaces
-	execute+=(
-		"unshare" "${unshare[@]}"
-	)
+	if [ "${#unshare[@]}" -gt 0 ]; then
+		execute+=(
+			"unshare" "${unshare[@]}"
+		)
+	fi
 
 	# Run in chroot?
 	if [ "${chroot}" = "true" ]; then
