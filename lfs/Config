@@ -329,12 +329,11 @@ define B2SUM
 endef
 
 # Takes one rootfile or a directory and will return a list of all included files
-define COLLECT_FILES
-	BUILDTARGET="$(BUILDTARGET)" \
+COLLECT_FILES = \
 	BUILD_ARCH="$(BUILD_ARCH)" \
+	BUILDTARGET="$(BUILDTARGET)" \
 	KVER="$(KVER)" \
-		$(DIR_SRC)/src/scripts/archive.files $(1)
-endef
+		$(DIR_SRC)/src/scripts/archive.files $(BUILD_ARCH) $(1) $(2)
 
 # Takes a filelist from standard input and streams a tarball with all files
 __FILES_IN = \
