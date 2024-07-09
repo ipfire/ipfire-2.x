@@ -753,8 +753,8 @@ execute() {
 		# Clear the previous environment
 		"--ignore-environment"
 
-		# Change the working directory
-		--chdir="${environ[LFS_BASEDIR]}/lfs"
+		# Change to the home directory
+		--chdir="${environ[HOME]}"
 	)
 
 	# Export the environment
@@ -823,12 +823,20 @@ make_pkg() {
 	local args=()
 	local pkg
 
+	local basedir="${BASEDIR}"
+
 	while [ $# -gt 0 ]; do
 		local arg="${1}"
 		shift
 
 		case "${arg}" in
 			--*)
+				case "${arg}" in
+					--chroot)
+						basedir="/usr/src"
+						;;
+				esac
+
 				args+=( "${arg}" )
 				;;
 
@@ -840,7 +848,7 @@ make_pkg() {
 	done
 
 	# Execute the make command in the environment
-	execute "${args[@]}" make --file="${pkg}" "$@"
+	execute "${args[@]}" make --directory="${basedir}/lfs" --file="${pkg}" "$@"
 }
 
 lfsmake1() {
