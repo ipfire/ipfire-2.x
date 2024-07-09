@@ -777,6 +777,7 @@ run_command() {
 
 	local basedir="${BASEDIR}"
 	local command=()
+	local env=()
 	local quiet="false"
 
 	while [ $# -gt 0 ]; do
@@ -795,6 +796,10 @@ run_command() {
 			-*)
 				echo "Unknown argument: ${1}" >&2
 				return 2
+				;;
+
+			*=*)
+				env+=( "${1}" )
 				;;
 
 			*)
@@ -820,7 +825,7 @@ run_command() {
 		"-x"
 
 		# Run the following command
-		"-c" "cd ${basedir}/lfs && make -f ${pkg} LFS_BASEDIR=${basedir} ${actions[@]}"
+		"-c" "cd ${basedir}/lfs && make -f ${pkg} LFS_BASEDIR=${basedir} ${env[@]} ${actions[@]}"
 	)
 
 	# Return code
