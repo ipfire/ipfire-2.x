@@ -895,7 +895,7 @@ lfsmake2() {
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! run_command --quiet "${pkg}" download b2sum "$@"; then
+	if ! run_command --quiet "${pkg}" download b2 "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
