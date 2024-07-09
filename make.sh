@@ -980,7 +980,7 @@ lfsmake2() {
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! make_pkg "${pkg}" download b2 "$@"; then
+	if ! make_pkg "${pkg}" download "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
