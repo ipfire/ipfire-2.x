@@ -413,6 +413,3 @@ define UPDATE_AUTOMAKE
 	done
 endef
 endif
-
-test:
-	$(call INSTALL_INITSCRIPT,hostapd)
