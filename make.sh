@@ -614,20 +614,130 @@ prepareenv() {
 	esac
 
 	# Setup ccache cache size
-	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}"
+	execute --chroot ccache --max-size="${CCACHE_CACHE_SIZE}"
 }
 
-enterchroot() {
-	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
+entershell() {
+	echo "Entering to a shell inside the build environment, go out with exit"
+
+	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
+
+	# Run an interactive shell
+	execute --chroot --interactive bash -i
+}
+
+lfsmakecommoncheck() {
+	# Script present?
+	if [ ! -f $BASEDIR/lfs/$1 ]; then
+		exiterror "No such file or directory: $BASEDIR/$1"
+	fi
+
+	# Print package name and version
+	print_package $@
+
+	# Check if this package is supported by our architecture.
+	# If no SUP_ARCH is found, we assume the package can be built for all.
+	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
+		# Check if package supports ${BUILD_ARCH} or all architectures.
+		if ! grep -E "^SUP_ARCH.*${BUILD_ARCH}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
+			print_runtime 0
+			print_status SKIP
+			return 1
+		fi
+	fi
+
+	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
+
+	return 0	# pass all!
+}
+
+execute() {
+	local command=()
+
+	local basedir="${BASEDIR}"
+	local chroot="false"
+	local interactive="false"
+	local timer
 
 	# Check if we are running in our namespace
 	if [ -z "${IN_NAMESPACE}" ]; then
 		exiterror "Not running in namespace"
 	fi
 
+	while [ $# -gt 0 ]; do
+		case "${1}" in
+			--chroot)
+				chroot="true"
+
+				# Move the basedir
+				basedir="/usr/src"
+				;;
+
+			--interactive)
+				interactive="true"
+				;;
+
+			--timer=*)
+				timer="${1#--timer=}"
+				;;
+
+			-*)
+				echo "Unknown argument: ${1}" >&2
+				return 2
+				;;
+
+			# Parse any custom environment variables
+			*=*)
+				env+=( "${1}" )
+				;;
+
+			# The rest is the command
+			*)
+				command+=( "$@" )
+				break
+				;;
+		esac
+		shift
+	done
+
+	local cwd="${basedir}/lfs"
+	local home="${HOME}"
+	local path
+	local ps1="${PS1}"
+	local term="vt100"
+
+	local ccache_dir="${CCACHE_DIR}"
+
+	# Initialize lots of variables depending on whether we are running in chroot or not
+	case "${chroot}" in
+		true)
+			# Set HOME
+			home="/root"
+
+			# Set PATH
+			path="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
+
+			# Update the ccache directory
+			ccache_dir="/usr/src/ccache"
+			;;
+
+		false)
+			# Set PATH
+			path="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}"
+			;;
+	esac
+
+	# Initilize some variables depending on whether we are running interactively or not
+	case "${interactive}" in
+		true)
+			cwd="/usr/src"
+			term="${TERM}"
+			;;
+	esac
+
 	# Prepend any custom changes to PATH
 	if [ -n "${CUSTOM_PATH}" ]; then
-		PATH="${CUSTOM_PATH}:${PATH}"
+		path="${CUSTOM_PATH}:${path}"
 	fi
 
 	# Create a new environment
@@ -635,30 +745,77 @@ enterchroot() {
 		# Clear the previous environment
 		"--ignore-environment"
 
-		HOME="/root"
-		TERM="${TERM}"
-		PS1="${PS1}"
-		PATH="${PATH}"
+		# Change the working directory
+		--chdir="${cwd}"
+
+		# Set basic variables
+		HOME="${home}"
+		PATH="${path}"
+		PS1="${ps1}"
+		TERM="${term}"
 
 		# Compiler flags
 		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}"
 		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}"
 		RUSTFLAGS="${RUSTFLAGS}"
 
-		# Compiler cache
-		CCACHE_DIR="/usr/src/ccache"
+		# Distro Information
+		NAME="${NAME}"
+		SNAME="${SNAME}"
+		VERSION="${VERSION}"
+		CORE="${CORE}"
+		SLOGAN="${SLOGAN}"
+		SYSTEM_RELEASE="${SYSTEM_RELEASE}"
+		PAKFIRE_TREE="${PAKFIRE_TREE}"
+		CONFIG_ROOT="${CONFIG_ROOT}"
+
+		# Kernel Version
+		KVER="${KVER}"
+
+		# System Properties
+		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}"
+		SYSTEM_MEMORY="${SYSTEM_MEMORY}"
+
+		# Parallelism
+		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}"
+
+		# Compression Options
+		XZ_OPT="${XZ_OPT}"
+
+		# Compiler Cache
+		CCACHE_DIR="${ccache_dir}"
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}"
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}"
 
-		# Go cache
-		GOCACHE="/usr/src/ccache/go"
+		# Go Cache
+		GOCACHE="${ccache_dir}/go"
 
 		# Append the fake environment
 		$(fake_environ)
 
 		# Setup the QEMU environment
 		$(qemu_environ)
+
+		BUILD_ARCH="${BUILD_ARCH}"
+		BUILD_PLATFORM="${BUILD_PLATFORM}"
+
+		# Targets
+		CROSSTARGET="${CROSSTARGET}"
+		BUILDTARGET="${BUILDTARGET}"
+
+		# Paths
+		LFS_BASEDIR="${basedir}"
+		TOOLS_DIR="${TOOLS_DIR}"
 	)
+
+	# Add extra environment variables for the chroot environment
+	case "${chroot}" in
+		true)
+			env+=(
+				IMAGES_DIR="/usr/src/images"
+			)
+			;;
+	esac
 
 	# Configure a new namespace
 	local unshare=(
@@ -687,180 +844,18 @@ enterchroot() {
 		"--kill-child"
 	)
 
-	# Put everything together
-	unshare "${unshare[@]}" chroot "${BUILD_DIR}" env "${env[@]}" "$@"
-}
+	# Prepend the fresh environment to the command
+	command=( "env" "${env[@]}" "${command[@]}" )
 
-entershell() {
-	echo "Entering to a shell inside the build environment, go out with exit"
+	# Change root?
+	case "${chroot}" in
+		true)
+			command=( "chroot" "${BUILD_DIR}" "${command[@]}" )
+			;;
+	esac
 
-	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
-
-	# Run an interactive shell
-	enterchroot bash -i
-}
-
-lfsmakecommoncheck() {
-	# Script present?
-	if [ ! -f $BASEDIR/lfs/$1 ]; then
-		exiterror "No such file or directory: $BASEDIR/$1"
-	fi
-
-	# Print package name and version
-	print_package $@
-
-	# Check if this package is supported by our architecture.
-	# If no SUP_ARCH is found, we assume the package can be built for all.
-	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
-		# Check if package supports ${BUILD_ARCH} or all architectures.
-		if ! grep -E "^SUP_ARCH.*${BUILD_ARCH}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
-			print_runtime 0
-			print_status SKIP
-			return 1
-		fi
-	fi
-
-	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
-
-	return 0	# pass all!
-}
-
-lfsmake1() {
-	lfsmakecommoncheck $*
-	[ $? == 1 ] && return 0
-
-	# Set PATH to use the toolchain tools first and then whatever the host has set
-	local PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}"
-
-	if [ -n "${CUSTOM_PATH}" ]; then
-		PATH="${CUSTOM_PATH}:${PATH}"
-	fi
-
-	cd $BASEDIR/lfs && env -i \
-		PATH="${PATH}" \
-		CCACHE_DIR="${CCACHE_DIR}" \
-		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
-		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-		CFLAGS="${CFLAGS}" \
-		CXXFLAGS="${CXXFLAGS}" \
-		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}" \
-		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
-		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
-		make -f $* \
-			TOOLCHAIN=1 \
-			TOOLS_DIR="${TOOLS_DIR}" \
-			CROSSTARGET="${CROSSTARGET}" \
-			BUILDTARGET="${BUILDTARGET}" \
-			BUILD_ARCH="${BUILD_ARCH}" \
-			BUILD_PLATFORM="${BUILD_PLATFORM}" \
-			LFS_BASEDIR="${BASEDIR}" \
-			ROOT="${BUILD_DIR}" \
-			KVER="${KVER}" \
-			install >> $LOGFILE 2>&1 &
-
-	if ! wait_until_finished $!; then
-		print_status FAIL
-		exiterror "Building $*"
-	fi
-
-	print_status DONE
-}
-
-run_command() {
-	local pkg
-	local actions=()
-
-	local basedir="${BASEDIR}"
-	local command=()
-	local quiet="false"
-
-	# Pass some variables
-	local vars=(
-		BUILD_ARCH="${BUILD_ARCH}"
-		BUILD_PLATFORM="${BUILD_PLATFORM}"
-
-		# Targets
-		CROSSTARGET="${CROSSTARGET}"
-		BUILDTARGET="${BUILDTARGET}"
-
-		# Paths
-		CONFIG_ROOT="${CONFIG_ROOT}"
-		IMAGES_DIR="/usr/src/images"
-		TOOLS_DIR="${TOOLS_DIR}"
-
-		# Distro Information
-		NAME="${NAME}"
-		SNAME="${SNAME}"
-		VERSION="${VERSION}"
-		CORE="${CORE}"
-		SLOGAN="${SLOGAN}"
-		SYSTEM_RELEASE="${SYSTEM_RELEASE}"
-		PAKFIRE_TREE="${PAKFIRE_TREE}"
-
-		# Kernel Version
-		KVER="${KVER}"
-
-		# System Properties
-		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}"
-		SYSTEM_MEMORY="${SYSTEM_MEMORY}"
-
-		# Parallelism
-		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}"
-
-		# Compression Options
-		XZ_OPT="${XZ_OPT}"
-	)
-
-	while [ $# -gt 0 ]; do
-		case "${1}" in
-			--chroot)
-				command+=( "enterchroot" )
-
-				# Move the basedir
-				basedir="/usr/src"
-				;;
-
-			--quiet)
-				quiet="true"
-				;;
-
-			-*)
-				echo "Unknown argument: ${1}" >&2
-				return 2
-				;;
-
-			*=*)
-				vars+=( "${1}" )
-				;;
-
-			*)
-				# Set pkg
-				if [ -z "${pkg}" ]; then
-					pkg="${1}"
-
-				# Set actions
-				else
-					actions+=( "${1}" )
-				fi
-				;;
-		esac
-		shift
-	done
-
-	# Pass LFS_BASEDIR
-	vars+=(
-		"LFS_BASEDIR=${basedir}"
-	)
-
-	# Build the command
-	command+=(
-		# Run make
-		"make"
-			"--directory=${basedir}/lfs"
-			"--file=${pkg}"
-			"${vars[@]}"
-			"${actions[@]}"
-	)
+	# Create new namespaces
+	command=( "unshare" "${unshare[@]}" "${command[@]}" )
 
 	# Return code
 	local r=0
@@ -868,56 +863,93 @@ run_command() {
 	# Store the start time
 	local t="${SECONDS}"
 
-	# If we are not running in quiet mode, we set the timer
-	case "${quiet}" in
-		false)
-			launch_timer
-			;;
-	esac
-
 	# Run the command in the background and pipe all output to the logfile
-	{
-		"${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null
-	} &
-
-	# Wait for the process to complete
-	while :; do
-		wait "$!"
-
-		# Store the return code
-		r="$?"
-
-		# If the return code is >= 128, wait has been interrupted by the timer
-		if [ "${r}" -ge 128 ]; then
-			# Update the runtime
-			case "${quiet}" in
-				false)
-					print_runtime "$(( SECONDS - t ))"
-					;;
-			esac
-
-			continue
-		fi
-
-		break
-	done
-
-	# Show runtime and status unless quiet
-	case "${quiet}" in
-		false)
-			# Print the runtime
-			print_runtime "$(( SECONDS - t ))"
-
-			# All done
-			if [ "${r}" -eq 0 ]; then
-				print_status DONE
-			else
-				print_status FAIL
-			fi
+	case "${interactive}" in
+		true)
+			"${command[@]}" || return $?
 			;;
+
+		false)
+			# Launch the timer if needed
+			if [ -n "${timer}" ]; then
+				launch_timer
+			fi
+
+			# Dispatch the command to the background
+			{
+				"${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null
+			} &
+
+			# Wait for the process to complete
+			while :; do
+				wait "$!"
+
+				# Store the return code
+				r="$?"
+
+				# If the return code is >= 128, wait has been interrupted by the timer
+				if [ "${r}" -ge 128 ]; then
+					# Call the timer callback
+					if [ -n "${timer}" ]; then
+						"${timer}"
+					fi
+
+					# Go back and wait
+					continue
+				fi
+
+				break
+			done
+
+			# Call the timer callback at least once
+			if [ -n "${timer}" ]; then
+				"${timer}"
+			fi
 	esac
 
 	return "${r}"
+}
+
+# Calls the makefile of a package
+make_pkg() {
+	local args=()
+	local pkg
+
+	while [ $# -gt 0 ]; do
+		local arg="${1}"
+		shift
+
+		case "${arg}" in
+			--*)
+				args+=( "${arg}" )
+				;;
+
+			*)
+				pkg="${arg}"
+				break
+				;;
+		esac
+	done
+
+	# Execute the make command in the environment
+	execute "${args[@]}" make --file="${pkg}" "$@"
+}
+
+lfsmake1() {
+	local pkg="${1}"
+	shift
+
+	# Run the common check
+	lfsmakecommoncheck "${pkg}" "$@"
+	[ $? == 1 ] && return 0
+
+	if ! make_pkg "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}"; then
+		print_status FAIL
+
+		exiterror "Building ${pkg}"
+	fi
+
+	print_status DONE
 }
 
 lfsmake2() {
@@ -929,14 +961,18 @@ lfsmake2() {
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! run_command --quiet "${pkg}" download b2 "$@"; then
+	if ! make_pkg "${pkg}" download b2 "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
 	# Run install on the package
-	if ! run_command --chroot "${pkg}" install "$@"; then
+	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" install "$@"; then
+		print_status FAIL
+
 		exiterror "Building ${pkg}"
 	fi
+
+	print_status DONE
 }
 
 ipfiredist() {
@@ -948,40 +984,17 @@ ipfiredist() {
 	[ $? == 1 ] && return 0
 
 	# Run dist on the package
-	if ! run_command --chroot "${pkg}" dist "$@"; then
-		exiterror "Packging ${pkg}"
+	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" dist "$@"; then
+		print_status FAIL
+
+		exiterror "Packaging ${pkg}"
 	fi
+
+	print_status DONE
 }
 
-wait_until_finished() {
-	local pid=${1}
-
-	local start_time="${SECONDS}"
-
-	# Show progress
-	if ${INTERACTIVE}; then
-		# Wait a little just in case the process
-		# has finished very quickly.
-		sleep 0.1
-
-		local runtime
-		while kill -0 ${pid} 2>/dev/null; do
-			print_runtime $(( SECONDS - start_time ))
-
-			# Wait a little
-			sleep 1
-		done
-	fi
-
-	# Returns the exit code of the child process
-	wait ${pid}
-	local ret=$?
-
-	if ! ${INTERACTIVE}; then
-		print_runtime $(( SECONDS - start_time ))
-	fi
-
-	return ${ret}
+update_runtime() {
+	print_runtime "$(( SECONDS - t ))"
 }
 
 fake_environ() {
