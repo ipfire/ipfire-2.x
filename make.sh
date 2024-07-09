@@ -574,6 +574,9 @@ prepareenv() {
 	export CCACHE_TEMPDIR="/tmp"
 	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
+	# Install the QEMU helper
+	qemu_install_helper
+
 	# Remove pre-install list of installed files in case user erase some files before rebuild
 	rm -f "${BUILD_DIR}/usr/src/lsalr"
 
@@ -615,9 +618,6 @@ prepareenv() {
 }
 
 enterchroot() {
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
 	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
 
 	# Check if we are running in our namespace
