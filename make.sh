@@ -1047,7 +1047,10 @@ qemu_install_helper() {
 		local dirname="${BUILD_DIR}$(dirname "${file}")"
 		mkdir -p "${dirname}"
 
-		install -m 755 "${file}" "${BUILD_DIR}${QEMU_TARGET_HELPER}"
+		# Create the mountpoint
+		touch "${BUILD_DIR}${QEMU_TARGET_HELPER}"
+
+		mount --bind -o ro "${file}" "${BUILD_DIR}${QEMU_TARGET_HELPER}"
 		return 0
 	done
 
