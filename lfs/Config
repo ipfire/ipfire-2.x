@@ -382,6 +382,9 @@ __COMPRESS = \
 COMPRESS_XZ   = $(call __COMPRESS,$(1),$(2),xz $(XZ_OPT))
 COMPRESS_ZSTD = $(call __COMPRESS,$(1),$(2),zstd $(ZSTD_OPT))
 
+# Helper function to make sure that we have all sorts of mountpoints in the images
+CREATE_MOUNTPOINTS = mkdir -pv $(1)/dev $(1)/proc $(1)/sys
+
 define PAK
 	# Bringing the files to their right place.
 	@rm -rf $(DIR_TMP_PAK) && mkdir -p $(DIR_TMP_PAK)

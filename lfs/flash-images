@@ -142,8 +142,11 @@ endif
 	# Copy all files
 	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(MNThdd))
 
+	# Create mount points
+	$(call CREATE_MOUNTPOINTS,$(MNThdd))
+
 	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
-	mkdir $(MNThdd)/proc
+
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
