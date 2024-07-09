@@ -962,6 +962,11 @@ lfsmake1() {
 	lfsmakecommoncheck "${pkg}" "$@"
 	[ $? == 1 ] && return 0
 
+	# Download source outside of the toolchain
+	if ! make_pkg "${pkg}" download "$@"; then
+		exiterror "Downloading ${pkg}"
+	fi
+
 	if ! make_pkg "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}"; then
 		print_status FAIL
 
