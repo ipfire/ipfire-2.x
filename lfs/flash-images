@@ -145,8 +145,6 @@ endif
 	# Create mount points
 	$(call CREATE_MOUNTPOINTS,$(MNThdd))
 
-	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
-
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
