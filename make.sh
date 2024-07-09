@@ -305,7 +305,7 @@ exiterror() {
 
 	local line
 	for line in "ERROR: $@" "    Check ${LOGFILE} for errors if applicable"; do
-		echo "${line}"
+		print_line "${line}"
 		print_status FAIL
 	done
 
