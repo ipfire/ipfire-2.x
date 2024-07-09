@@ -974,11 +974,11 @@ qemu_install_helper() {
 		mkdir -p "${dirname}"
 
 		# Create the mountpoint
-		touch "${BUILD_DIR}${QEMU_TARGET_HELPER}"
+		touch "${BUILD_DIR}${file}"
 
 		# Mount the helper
-		if ! mount --bind -o ro "${file}" "${BUILD_DIR}${qemu_build_helper}"; then
-			exiterror "Could not mount ${qemu_build_helper}"
+		if ! mount --bind -o ro "${file}" "${BUILD_DIR}${file}"; then
+			exiterror "Could not mount ${file}"
 		fi
 
 		# Set
