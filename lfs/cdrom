@@ -150,7 +150,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Copy all files that we want
 	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(DIR_TMP)/root)
 
-	# Create mountpoints
+	# Create mount points
 	$(call CREATE_MOUNTPOINTS,$(DIR_TMP)/root)
 
 	# Create the archive
