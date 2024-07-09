@@ -35,9 +35,6 @@ GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
 TOOLCHAINVER=20240521
 
-# use multicore and max compression
-ZSTD_OPT="-T0 --ultra -22"
-
 ###############################################################################
 #
 # Beautifying variables & presentation & input output interface
@@ -63,7 +60,7 @@ FAIL="\\033[1;31m"
 NORMAL="\\033[0;39m"
 
 # New architecture variables
-HOST_ARCH="$(uname -m)"
+HOST_ARCH="${HOSTTYPE}"
 
 PWD=$(pwd)
 
@@ -147,117 +144,6 @@ system_memory() {
 				;;
 		esac
 	done < /proc/meminfo
-}
-
-configure_build() {
-	local build_arch="${1}"
-
-	if [ "${build_arch}" = "default" ]; then
-		build_arch="$(configure_build_guess)"
-	fi
-
-	case "${build_arch}" in
-		x86_64)
-			BUILDTARGET="${build_arch}-pc-linux-gnu"
-			CROSSTARGET="${build_arch}-cross-linux-gnu"
-			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic -fcf-protection=full"
-			;;
-
-		aarch64)
-			BUILDTARGET="${build_arch}-pc-linux-gnu"
-			CROSSTARGET="${build_arch}-cross-linux-gnu"
-			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-mbranch-protection=standard"
-			;;
-
-		riscv64)
-			BUILDTARGET="${build_arch}-pc-linux-gnu"
-			CROSSTARGET="${build_arch}-cross-linux-gnu"
-			BUILD_PLATFORM="riscv"
-			CFLAGS_ARCH=""
-			;;
-
-		*)
-			exiterror "Cannot build for architure ${build_arch}"
-			;;
-	esac
-
-	# Check if the QEMU helper is available if needed.
-	if qemu_is_required "${build_arch}"; then
-		local qemu_build_helper="$(qemu_find_build_helper_name "${build_arch}")"
-
-		if [ -n "${qemu_build_helper}" ]; then
-			QEMU_TARGET_HELPER="${qemu_build_helper}"
-		else
-			exiterror "Could not find a binfmt_misc helper entry for ${build_arch}"
-		fi
-	fi
-
-	BUILD_ARCH="${build_arch}"
-
-	# Enables hardening
-	HARDENING_CFLAGS="-Wp,-U_FORTIFY_SOURCE -Wp,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fstack-clash-protection"
-
-	CFLAGS="-O2 -g0 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
-	CXXFLAGS="${CFLAGS}"
-
-	RUSTFLAGS="-Copt-level=3 -Clink-arg=-Wl,-z,relro,-z,now -Ccodegen-units=1 --cap-lints=warn ${RUSTFLAGS_ARCH}"
-
-	# Determine parallelism
-	# We assume that each process consumes about
-	# 128MB of memory. Therefore we find out how
-	# many processes fit into memory.
-	local mem_max=$(( ${SYSTEM_MEMORY} / 128 ))
-	local cpu_max=$(( ${SYSTEM_PROCESSORS} ))
-
-	local parallelism
-	if [ ${mem_max} -lt ${cpu_max} ]; then
-		parallelism=${mem_max}
-	else
-		parallelism=${cpu_max}
-	fi
-
-	# Use this as default PARALLELISM
-	DEFAULT_PARALLELISM="${parallelism}"
-
-	# Limit lauched ninja build jobs to computed parallel value.
-	NINJAJOBS="${parallelism}"
-
-	# Compression parameters
-	# We use mode 8 for reasonable memory usage when decompressing
-	# but with overall good compression
-	XZ_OPT="-8"
-
-	# We try to use as many cores as possible
-	XZ_OPT="${XZ_OPT} -T0"
-
-	# We need to limit memory because XZ uses too much when running
-	# in parallel and it isn't very smart in limiting itself.
-	# We allow XZ to use up to 70% of all system memory.
-	local xz_memory=$(( SYSTEM_MEMORY * 7 / 10 ))
-
-	XZ_OPT="${XZ_OPT} --memory=${xz_memory}MiB"
-}
-
-configure_build_guess() {
-	case "${HOST_ARCH}" in
-		x86_64)
-			echo "x86_64"
-			;;
-
-		aarch64)
-			echo "aarch64"
-			;;
-
-		riscv64)
-			echo "riscv64"
-			;;
-
-		*)
-			exiterror "Cannot guess build architecture"
-			;;
-	esac
 }
 
 format_runtime() {
@@ -678,9 +564,9 @@ execute() {
 		[KVER]="${KVER}"
 
 		# Compiler flags
-		[CFLAGS]="${CFLAGS} ${HARDENING_CFLAGS}"
-		[CXXFLAGS]="${CXXFLAGS} ${HARDENING_CFLAGS}"
-		[RUSTFLAGS]="${RUSTFLAGS}"
+		[CFLAGS]="${CFLAGS[@]}"
+		[CXXFLAGS]="${CFLAGS[@]}"
+		[RUSTFLAGS]="${RUSTFLAGS[@]}"
 
 		# ccache
 		[CCACHE_DIR]="${CCACHE_DIR}"
@@ -695,7 +581,7 @@ execute() {
 		[DEFAULT_PARALLELISM]="${DEFAULT_PARALLELISM}"
 
 		# Compression Options
-		[XZ_OPT]="${XZ_OPT}"
+		[XZ_OPT]="${XZ_OPT[@]}"
 
 		# Build Architecture
 		[BUILD_ARCH]="${BUILD_ARCH}"
@@ -1052,20 +938,13 @@ qemu_install_helper() {
 		exiterror "binfmt_misc not enabled. QEMU_TARGET_HELPER not useable."
 	fi
 
-
-	if [ -z "${QEMU_TARGET_HELPER}" ]; then
-		exiterror "QEMU_TARGET_HELPER not set"
-	fi
-
-	# Check if the helper is already installed.
-	if [ -x "${BUILD_DIR}${QEMU_TARGET_HELPER}" ]; then
-		return 0
-	fi
+	# Search for the helper binary
+	local qemu_build_helper="$(qemu_find_build_helper_name "${BUILD_ARCH}")"
 
 	# Try to find a suitable binary that we can install
 	# to the build environment.
 	local file
-	for file in "${QEMU_TARGET_HELPER}" "${QEMU_TARGET_HELPER}-static"; do
+	for file in "${qemu_build_helper}" "${qemu_build_helper}-static"; do
 		# file must exist and be executable.
 		[ -x "${file}" ] || continue
 
@@ -1078,11 +957,18 @@ qemu_install_helper() {
 		# Create the mountpoint
 		touch "${BUILD_DIR}${QEMU_TARGET_HELPER}"
 
-		mount --bind -o ro "${file}" "${BUILD_DIR}${QEMU_TARGET_HELPER}"
+		# Mount the helper
+		if ! mount --bind -o ro "${file}" "${BUILD_DIR}${qemu_build_helper}"; then
+			exiterror "Could not mount ${qemu_build_helper}"
+		fi
+
+		# Set
+		QEMU_TARGET_HELPER="${file}"
+
 		return 0
 	done
 
-	exiterror "Could not find a statically-linked QEMU emulator: ${QEMU_TARGET_HELPER}"
+	exiterror "Could not find a statically-linked QEMU emulator: ${qemu_build_helper}"
 }
 
 qemu_find_build_helper_name() {
@@ -1302,7 +1188,7 @@ compress_toolchain() {
 		"--create"
 
 		# Filter through zstd with custom options
-		"-I" "zstd ${ZSTD_OPT}"
+		"-I" "zstd ${ZSTD_OPT[@]}"
 
 		# Write to the temporary directory
 		"-f" "${tmp}/${toolchain}"
@@ -2195,7 +2081,7 @@ SYSTEM_PROCESSORS="$(system_processors)"
 SYSTEM_MEMORY="$(system_memory)"
 
 # Default settings
-BUILD_ARCH="default"
+BUILD_ARCH="${HOST_ARCH}"
 CCACHE_CACHE_SIZE="4G"
 
 # Load configuration file
@@ -2222,8 +2108,107 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-# Configure the build
-configure_build "${BUILD_ARCH}"
+# Check the architecture
+case "${BUILD_ARCH}" in
+	aarch64|x86_64|riscv64)
+		;;
+
+	*)
+		exiterror "Unsupported architecture: ${BUILD_ARCH}"
+		;;
+esac
+
+# Set build platform
+case "${BUILD_ARCH}" in
+	aarch64)
+		BUILD_PLATFORM="arm"
+		;;
+
+	riscv64)
+		BUILD_PLATFORM="riscv"
+		;;
+
+	x86_64)
+		BUILD_PLATFORM="x86"
+		;;
+esac
+
+# Configure the C compiler
+CFLAGS=(
+	# Optimize the code
+	"-O2"
+
+	# Do not compile in any debugging information
+	"-g0"
+
+	# Do not write temporary files
+	"-pipe"
+
+	# Enable all warnings
+	"-Wall"
+
+	# Enable exceptions
+	"-fexceptions"
+
+	# Compile place-independent code
+	"-fPIC"
+
+	# Fortify Source
+	"-Wp,-U_FORTIFY_SOURCE"
+	"-Wp,-D_FORTIFY_SOURCE=3"
+
+	# Enable additional checks for C++ in glibc
+	"-Wp,-D_GLIBCXX_ASSERTIONS"
+
+	# Enable stack smashing protection
+	"-fstack-protector-strong"
+
+	# Enable stack clash protection
+	"-fstack-clash-protection"
+)
+
+# Architecture-dependent compiler flags
+case "${BUILD_ARCH}" in
+	aarch64)
+		CFLAGS+=(
+			"-mbranch-protection=standard"
+		)
+		;;
+
+	x86_64)
+		CFLAGS+=(
+			"-m64" "-mtune=generic" "-fcf-protection=full"
+		)
+		;;
+esac
+
+# Configure the Rust compiler
+RUSTFLAGS=(
+	"-Copt-level=3"
+	"-Clink-arg=-Wl,-z,relro,-z,now"
+	"-Ccodegen-units=1"
+	"--cap-lints=warn"
+)
+
+# Configure the compiler tuple
+CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
+BUILDTARGET="${BUILD_ARCH}-pc-linux-gnu"
+
+# Use this as default PARALLELISM
+DEFAULT_PARALLELISM="${SYSTEM_PROCESSORS}"
+
+# Limit lauched ninja build jobs to computed parallel value
+NINJAJOBS="${DEFAULT_PARALLELISM}"
+
+# Configure XZ
+XZ_OPT=(
+	"-T0" "-8"
+)
+
+# Configure Zstandard
+ZSTD_OPT=(
+	"-T0" "--ultra" "-22"
+)
 
 # Set directories
 readonly CACHE_DIR="${BASEDIR}/cache"
