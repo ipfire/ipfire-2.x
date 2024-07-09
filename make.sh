@@ -371,6 +371,7 @@ prepareenv() {
 	mkdir -p "${BUILD_DIR}/dev"
 	mkdir -p "${BUILD_DIR}/etc"
 	mkdir -p "${BUILD_DIR}/proc"
+	mkdir -p "${BUILD_DIR}/root"
 	mkdir -p "${BUILD_DIR}/sys"
 	mkdir -p "${BUILD_DIR}/tmp"
 	mkdir -p "${BUILD_DIR}/usr/src"
