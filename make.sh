@@ -652,170 +652,70 @@ lfsmakecommoncheck() {
 }
 
 execute() {
-	local command=()
-
-	local basedir="${BASEDIR}"
-	local chroot="false"
-	local interactive="false"
-	local timer
-
 	# Check if we are running in our namespace
 	if [ -z "${IN_NAMESPACE}" ]; then
 		exiterror "Not running in namespace"
 	fi
 
-	while [ $# -gt 0 ]; do
-		case "${1}" in
-			--chroot)
-				chroot="true"
+	local command=()
 
-				# Move the basedir
-				basedir="/usr/src"
-				;;
+	local chroot="false"
+	local interactive="false"
+	local timer
 
-			--interactive)
-				interactive="true"
-				;;
-
-			--timer=*)
-				timer="${1#--timer=}"
-				;;
-
-			-*)
-				echo "Unknown argument: ${1}" >&2
-				return 2
-				;;
-
-			# Parse any custom environment variables
-			*=*)
-				env+=( "${1}" )
-				;;
-
-			# The rest is the command
-			*)
-				command+=( "$@" )
-				break
-				;;
-		esac
-		shift
-	done
-
-	local cwd="${basedir}/lfs"
-	local home="${HOME}"
-	local path
-	local ps1="${PS1}"
-	local term="vt100"
-
-	local ccache_dir="${CCACHE_DIR}"
-
-	# Initialize lots of variables depending on whether we are running in chroot or not
-	case "${chroot}" in
-		true)
-			# Set HOME
-			home="/root"
-
-			# Set PATH
-			path="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
-
-			# Update the ccache directory
-			ccache_dir="/usr/src/ccache"
-			;;
-
-		false)
-			# Set PATH
-			path="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}"
-			;;
-	esac
-
-	# Initilize some variables depending on whether we are running interactively or not
-	case "${interactive}" in
-		true)
-			cwd="/usr/src"
-			term="${TERM}"
-			;;
-	esac
-
-	# Prepend any custom changes to PATH
-	if [ -n "${CUSTOM_PATH}" ]; then
-		path="${CUSTOM_PATH}:${path}"
-	fi
-
-	# Create a new environment
-	local env=(
-		# Clear the previous environment
-		"--ignore-environment"
-
-		# Change the working directory
-		--chdir="${cwd}"
-
-		# Set basic variables
-		HOME="${home}"
-		PATH="${path}"
-		PS1="${ps1}"
-		TERM="${term}"
-
-		# Compiler flags
-		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}"
-		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}"
-		RUSTFLAGS="${RUSTFLAGS}"
+	# Collect environment variables
+	local -A environ=(
+		[PATH]="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}"
+		[HOME]="${HOME}"
+		[PS1]="${PS1}"
+		[TERM]="vt100"
 
 		# Distro Information
-		NAME="${NAME}"
-		SNAME="${SNAME}"
-		VERSION="${VERSION}"
-		CORE="${CORE}"
-		SLOGAN="${SLOGAN}"
-		SYSTEM_RELEASE="${SYSTEM_RELEASE}"
-		PAKFIRE_TREE="${PAKFIRE_TREE}"
-		CONFIG_ROOT="${CONFIG_ROOT}"
+		[NAME]="${NAME}"
+		[SNAME]="${SNAME}"
+		[VERSION]="${VERSION}"
+		[CORE]="${CORE}"
+		[SLOGAN]="${SLOGAN}"
+		[SYSTEM_RELEASE]="${SYSTEM_RELEASE}"
+		[PAKFIRE_TREE]="${PAKFIRE_TREE}"
+		[CONFIG_ROOT]="${CONFIG_ROOT}"
 
 		# Kernel Version
-		KVER="${KVER}"
+		[KVER]="${KVER}"
+
+		# Compiler flags
+		[CFLAGS]="${CFLAGS} ${HARDENING_CFLAGS}"
+		[CXXFLAGS]="${CXXFLAGS} ${HARDENING_CFLAGS}"
+		[RUSTFLAGS]="${RUSTFLAGS}"
+
+		# ccache
+		[CCACHE_DIR]="${CCACHE_DIR}"
+		[CCACHE_TEMPDIR]="${CCACHE_TEMPDIR}"
+		[CCACHE_COMPILERCHECK]="${CCACHE_COMPILERCHECK}"
 
 		# System Properties
-		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}"
-		SYSTEM_MEMORY="${SYSTEM_MEMORY}"
+		[SYSTEM_PROCESSORS]="${SYSTEM_PROCESSORS}"
+		[SYSTEM_MEMORY]="${SYSTEM_MEMORY}"
 
 		# Parallelism
-		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}"
+		[DEFAULT_PARALLELISM]="${DEFAULT_PARALLELISM}"
 
 		# Compression Options
-		XZ_OPT="${XZ_OPT}"
+		[XZ_OPT]="${XZ_OPT}"
 
-		# Compiler Cache
-		CCACHE_DIR="${ccache_dir}"
-		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}"
-		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}"
-
-		# Go Cache
-		GOCACHE="${ccache_dir}/go"
-
-		# Append the fake environment
-		$(fake_environ)
-
-		# Setup the QEMU environment
-		$(qemu_environ)
-
-		BUILD_ARCH="${BUILD_ARCH}"
-		BUILD_PLATFORM="${BUILD_PLATFORM}"
+		# Build Architecture
+		[BUILD_ARCH]="${BUILD_ARCH}"
+		[BUILD_PLATFORM]="${BUILD_PLATFORM}"
 
 		# Targets
-		CROSSTARGET="${CROSSTARGET}"
-		BUILDTARGET="${BUILDTARGET}"
+		[CROSSTARGET]="${CROSSTARGET}"
+		[BUILDTARGET]="${BUILDTARGET}"
 
 		# Paths
-		LFS_BASEDIR="${basedir}"
-		TOOLS_DIR="${TOOLS_DIR}"
+		[LFS_BASEDIR]="${BASEDIR}"
+		[IMAGES_DIR]="${IMAGES_DIR}"
+		[TOOLS_DIR]="${TOOLS_DIR}"
 	)
-
-	# Add extra environment variables for the chroot environment
-	case "${chroot}" in
-		true)
-			env+=(
-				IMAGES_DIR="/usr/src/images"
-			)
-			;;
-	esac
 
 	# Configure a new namespace
 	local unshare=(
@@ -844,18 +744,137 @@ execute() {
 		"--kill-child"
 	)
 
-	# Prepend the fresh environment to the command
-	command=( "env" "${env[@]}" "${command[@]}" )
+	while [ $# -gt 0 ]; do
+		case "${1}" in
+			--chroot)
+				chroot="true"
 
-	# Change root?
-	case "${chroot}" in
-		true)
-			command=( "chroot" "${BUILD_DIR}" "${command[@]}" )
-			;;
-	esac
+				# Update some variables
+				environ+=(
+					[PATH]="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
+					[HOME]="/root"
+
+					# Paths
+					[LFS_BASEDIR]="/usr/src"
+					[IMAGES_DIR]="/usr/src/images"
+
+					# Compiler Cache
+					[CCACHE_DIR]="/usr/src/ccache"
+
+					# Go Cache
+					[GOCACHE]="/usr/src/ccache/go"
+				)
+
+				# Fake environment
+				if [ -e "${BUILD_DIR}${TOOLS_DIR}/lib/libpakfire_preload.so" ]; then
+					environ+=(
+						[LD_PRELOAD]="${TOOLS_DIR}/lib/libpakfire_preload.so"
+
+						# Fake kernel version, because some of the packages do not
+						# compile with kernel 3.0 and later
+						[UTS_RELEASE]="${KVER}-${SNAME}"
+
+						# Fake machine
+						[UTS_MACHINE]="${BUILD_ARCH}"
+					)
+				fi
+				;;
+
+			--interactive)
+				interactive="true"
+
+				# Use the actual value of $TERM
+				environ+=(
+					[TERM]="${TERM}"
+				)
+				;;
+
+			--timer=*)
+				timer="${1#--timer=}"
+				;;
+
+			-*)
+				echo "Unknown argument: ${1}" >&2
+				return 2
+				;;
+
+			# Parse any custom environment variables
+			*=*)
+				environ["${1%=*}"]="${1#*=}"
+				;;
+
+			# The rest is the command
+			*)
+				command+=( "$@" )
+				break
+				;;
+		esac
+		shift
+	done
+
+	# Prepend any custom changes to PATH
+	if [ -n "${CUSTOM_PATH}" ]; then
+		environ[PATH]="${CUSTOM_PATH}:${environ[PATH]}"
+	fi
+
+	# Setup QEMU
+	if qemu_is_required; then
+		environ+=(
+			[QEMU_TARGET_HELPER]="${QEMU_TARGET_HELPER}"
+
+			# Enable QEMU strace
+			#[QEMU_STRACE]="1"
+		)
+
+		case "${BUILD_ARCH}" in
+			arm*)
+				environ+=(
+					[QEMU_CPU]="${QEMU_CPU:-cortex-a9}"
+				)
+				;;
+
+			riscv64)
+				environ+=(
+					[QEMU_CPU]="${QEMU_CPU:-sifive-u54}"
+
+					# Bug fix for QEMU locking up
+					[G_SLICE]="always-malloc"
+				)
+				;;
+		esac
+	fi
+
+	local execute=()
+	local env
 
 	# Create new namespaces
-	command=( "unshare" "${unshare[@]}" "${command[@]}" )
+	execute+=(
+		"unshare" "${unshare[@]}"
+	)
+
+	# Run in chroot?
+	if [ "${chroot}" = "true" ]; then
+		execute+=( "chroot" "${BUILD_DIR}" )
+	fi
+
+	# Reset the environment
+	execute+=(
+		"env"
+
+		# Clear the previous environment
+		"--ignore-environment"
+
+		# Change the working directory
+		--chdir="${environ[LFS_BASEDIR]}/lfs"
+	)
+
+	# Export the environment
+	for env in ${!environ[@]}; do
+		execute+=( "${env}=${environ[${env}]}" )
+	done
+
+	# Append the command
+	execute+=( "${command[@]}" )
 
 	# Return code
 	local r=0
@@ -866,7 +885,7 @@ execute() {
 	# Run the command in the background and pipe all output to the logfile
 	case "${interactive}" in
 		true)
-			"${command[@]}" || return $?
+			"${execute[@]}" || return $?
 			;;
 
 		false)
@@ -877,7 +896,7 @@ execute() {
 
 			# Dispatch the command to the background
 			{
-				"${command[@]}" >> "${LOGFILE}" 2>&1 </dev/null
+				"${execute[@]}" >> "${LOGFILE}" 2>&1 </dev/null
 			} &
 
 			# Wait for the process to complete
@@ -995,49 +1014,6 @@ ipfiredist() {
 
 update_runtime() {
 	print_runtime "$(( SECONDS - t ))"
-}
-
-fake_environ() {
-	[ -e "${BUILD_DIR}${TOOLS_DIR}/lib/libpakfire_preload.so" ] || return
-
-	local env="LD_PRELOAD=${TOOLS_DIR}/lib/libpakfire_preload.so"
-
-	# Fake kernel version, because some of the packages do not compile
-	# with kernel 3.0 and later.
-	env="${env} UTS_RELEASE=${KVER}-ipfire"
-
-	# Fake machine version.
-	env="${env} UTS_MACHINE=${BUILD_ARCH}"
-
-	echo "${env}"
-}
-
-qemu_environ() {
-	local env="QEMU_TARGET_HELPER=${QEMU_TARGET_HELPER}"
-
-	# Don't add anything if qemu is not used.
-	if ! qemu_is_required; then
-		return
-	fi
-
-	# Set default qemu options
-	case "${BUILD_ARCH}" in
-		arm*)
-			QEMU_CPU="${QEMU_CPU:-cortex-a9}"
-
-			env="${env} QEMU_CPU=${QEMU_CPU}"
-			;;
-		riscv64)
-			QEMU_CPU="${QEMU_CPU:-sifive-u54}"
-			G_SLICE="always-malloc"
-			env="${env} QEMU_CPU=${QEMU_CPU} G_SLICE=${G_SLICE}"
-			;;
-	esac
-
-	# Enable QEMU strace
-	#env="${env} QEMU_STRACE=1"
-
-	echo "${env}"
 }
 
 qemu_is_required() {
