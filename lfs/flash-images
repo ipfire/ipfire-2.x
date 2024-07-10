@@ -252,4 +252,4 @@ endif
 	rm -rf $(IMG) $(MNThdd) $(DIR_TMP)/cdrom
 
 	# Create checksum file
-	cd $(IMAGES_DIR) && b2sum "$(notdir $(IMAGE_FILE))" > "$(notdir "$(IMAGE_FILE)").b2"
+	cd $(IMAGES_DIR) && b2sum "$(notdir $(IMAGE_FILE))" > "$(notdir $(IMAGE_FILE)).b2"
