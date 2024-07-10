@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.8
+VER        = 6.9.1
 
 THISAPP    = man-pages-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0a859ad9c81224c72efc9d2b164c48aad1ede6107a7cea15f65e51c1f79f0307ab713d29b73cba63e05f57b0a4476b7e6ab5ea6ac229076b387846e5b9ba4cc4
+$(DL_FILE)_BLAKE2 = 04c502e10f16cb75e5879b8c1db0795d0f53b58c8d4715b0401cbea99b879951aef3418bb8c4cbae1a74c1d40206c6e523a1de33e3eafba6793c15fea51d0aa3
 
 install : $(TARGET)
 
