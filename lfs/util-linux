@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.40.1
+VER        = 2.40.2
 
 THISAPP    = util-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a51fcf9b63c033e470da4f4f0094f0f923fdeb5a649a5c59d2d44888e5e741dfd95e589247355296e050d9ec8dc4334c5898453af055abcb30082af6b835a3e3
+$(DL_FILE)_BLAKE2 = 8306d651f27db6665e91a937c9f1970938fec5b069636fea3c2688afddebd1a3424f0b0802a034eab049cf7692dd435cf93e82aa5f4a40cc8064d60b4ca59535
 
 install : $(TARGET)
 
