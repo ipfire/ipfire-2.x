@@ -33,9 +33,6 @@ RELEASE		= $(CORE)
 
 SUMMARY		= IPFire Core Update $(CORE)
 
-ARCHIVE_DIR = /tmp/archive
-ARCHIVE_TMP = $(ARCHIVE_DIR)/.tmp
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################

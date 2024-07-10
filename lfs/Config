@@ -338,6 +338,9 @@ define B2SUM
 	[ "$($@_BLAKE2)" = "$$(b2sum $(DIR_DL)/$@ | awk '{ print $$1 }')" ] && echo "$@ checksum OK"
 endef
 
+ARCHIVE_DIR      = /tmp/archive
+ARCHIVE_TMP      = $(ARCHIVE_DIR)/.tmp
+
 # The filename of the package file
 PACKAGE_FILENAME = $(PROG)-$(VER)-$(RELEASE).ipfire
 
