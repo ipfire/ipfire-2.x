@@ -381,7 +381,7 @@ define COPY_FILES
 		$(call __FILES_OUT,$(2))
 
 	# Strip everything, except a few things
-	$(DIR_SRC)/src/stripper $(4) \
+	$(DIR_SRC)/src/stripper $(2) \
 		--exclude=/lib/firmware \
 		--exclude=/usr/lib/go \
 		--exclude=/usr/lib/vdr \
