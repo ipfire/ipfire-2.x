@@ -55,10 +55,7 @@ install:
 	@rm -rf $(ARCHIVE_DIR) && mkdir -pv $(ARCHIVE_DIR) $(ARCHIVE_TMP)
 
 	# Generate the archive and write out the rootfile
-	$(call COPY_FILES, \
-		$(DIR_SRC)/config/rootfiles/core/$(CORE)/filelists,$(ARCHIVE_TMP), \
-		$(ARCHIVE_DIR)/ROOTFILES \
-	)
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/core/$(CORE)/filelists,$(ARCHIVE_TMP),,$(ARCHIVE_DIR)/ROOTFILES)
 
 	# Create the archive
 	$(call COMPRESS_XZ,$(ARCHIVE_TMP),$(ARCHIVE_DIR)/files.tar.xz)

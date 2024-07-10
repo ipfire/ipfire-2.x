@@ -349,7 +349,7 @@ COLLECT_FILES = \
 	BUILD_ARCH="$(BUILD_ARCH)" \
 	BUILDTARGET="$(BUILDTARGET)" \
 	KVER="$(KVER)" \
-		$(DIR_SRC)/src/scripts/archive.files $(BUILD_ARCH) $(1) $(2)
+		$(DIR_SRC)/src/scripts/archive.files $(BUILD_ARCH) $(1) $(2) | tee $(3)
 
 # Takes a filelist from standard input and streams a tarball with all files
 __FILES_IN = \
@@ -368,20 +368,17 @@ __FILES_OUT = \
 	tar \
 		--extract \
 		$(TAR_OPTIONS) \
-		--directory="$(1)"
-
-__WRITE_ROOTFILE = tee $(1)
+		--directory=$(1)
 
 # Copies all files on a rootfile into the given directory
 define COPY_FILES
-	# Copy all files from $(1) to $(2)
-	$(call COLLECT_FILES,$(1)) | \
-		$(if $(3),$(call __WRITE_ROOTFILE,$(3)) |) \
+	# Copy all files from $(1) to $(2) ($(3))
+	$(call COLLECT_FILES,$(1),$(3),$(4)) | \
 		$(call __FILES_IN) | \
 		$(call __FILES_OUT,$(2))
 
 	# Strip everything, except a few things
-	$(DIR_SRC)/src/stripper $(2) \
+	$(DIR_SRC)/src/stripper $(4) \
 		--exclude=/lib/firmware \
 		--exclude=/usr/lib/go \
 		--exclude=/usr/lib/vdr \
@@ -466,16 +463,13 @@ define PAK
 	rm -rf $(DIR_TMP_PAK)/root && mkdir -p $(DIR_TMP_PAK)/root
 
 	# Copy all files
-	$(call COPY_FILES,$(DIR_TMP_PAK)/ROOTFILES,$(DIR_TMP_PAK)/root)
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/packages,$(DIR_TMP_PAK)/root,$(PROG),$(DIR_TMP_PAK)/ROOTFILES)
 
 	# Compress tarball
 	$(call COMPRESS_XZ,$(DIR_TMP_PAK)/root,$(DIR_TMP_PAK)/files.tar.xz)
 
 	# Cleanup temporary files
 	rm -rf $(DIR_TMP_PAK)/root
-
-	# Remove any commented lines
-	sed -i $(DIR_TMP_PAK)/ROOTFILES -e "/^#/d"
 
 	# Make package
 	cd $(DIR_TMP_PAK) && tar cf $(PACKAGES_DIR)/$(PROG)-$(VER)-$(PAK_VER).ipfire *
