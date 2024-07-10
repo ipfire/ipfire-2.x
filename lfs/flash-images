@@ -140,7 +140,7 @@ ifeq "$(EFI)" "1"
 endif
 
 	# Copy all files
-	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,,$(MNThdd))
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(MNThdd))
 
 	# Create mount points
 	$(call CREATE_MOUNTPOINTS,$(MNThdd))
