@@ -518,6 +518,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/http_chunk.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/http_content.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/mdsearch.py
+#usr/lib/python3.10/site-packages/samba/tests/blackbox/misc_dfs_widelink.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/ndrdump.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/netads_dns.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/netads_json.py
