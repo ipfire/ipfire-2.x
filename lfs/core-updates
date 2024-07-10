@@ -53,7 +53,6 @@ $(TARGET) : $(CORE)
 core/%:
 	rm -rf /install/packages/package /tmp/*
 	mkdir -p /install/packages/package
-	eval $$(cat /usr/src/config/rootfiles/$@/meta)
 
 	#Generate ROOTFILES from filelists
 	BUILD_ARCH=$(BUILD_ARCH) BUILDTARGET=$(BUILDTARGET) KVER=$(KVER) \
