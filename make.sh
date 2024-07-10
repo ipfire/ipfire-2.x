@@ -2065,6 +2065,11 @@ build_packages() {
 	for path in \
 			"${BASEDIR}/config/rootfiles/packages/"* \
 			"${BASEDIR}/config/rootfiles/packages/${BUILD_ARCH}"/*; do
+		# Skip directories
+		if [ -d "${path}" ]; then
+			continue
+		fi
+
 		pkgs["${path##*/}"]="${path}"
 	done
 
