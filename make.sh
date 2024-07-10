@@ -812,16 +812,18 @@ execute() {
 				# Store the return code
 				r="$?"
 
-				# If the return code is >= 128, wait has been interrupted by the timer
-				if [ "${r}" -ge 128 ]; then
-					# Call the timer callback
-					if [ -n "${timer}" ]; then
-						"${timer}"
-					fi
+				case "${r}" in
+					# Code means that we have received SIGUSR1 from the timer
+					138)
+						# Call the timer callback
+						if [ -n "${timer}" ]; then
+							"${timer}"
+						fi
 
-					# Go back and wait
-					continue
-				fi
+						# Go back and wait
+						continue
+						;;
+				esac
 
 				break
 			done
