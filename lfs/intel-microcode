@@ -74,7 +74,12 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && mkdir -p $(DIR_APP) && tar axf $(DIR_DL)/$(DL_FILE)
+
 	# Copy the firmware files into the right position
 	cd $(DIR_APP) && cp -R intel-ucode /lib/firmware/
+
+	# Hardlink any identical files
+	hardlink -c -vv /lib/firmware/intel-ucode
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
