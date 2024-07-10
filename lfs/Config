@@ -397,6 +397,7 @@ __COMPRESS = \
 		$(TAR_OPTIONS) \
 		--directory=$(1) \
 		--file=$(2) \
+		--show-transform \
 		--transform="s@^\./@@" \
 		.
 
