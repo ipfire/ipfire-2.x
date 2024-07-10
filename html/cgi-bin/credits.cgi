@@ -62,8 +62,8 @@ print <<END
 	<!-- CONTRIBUTORS -->
 Michael Tremer,
 Arne Fitzenreiter,
-Peter Müller,
 Adolf Belka,
+Peter Müller,
 Stefan Schantl,
 Matthias Fischer,
 Christian Schmidt,
