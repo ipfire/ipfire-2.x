@@ -394,6 +394,7 @@ __COMPRESS = \
 		$(TAR_OPTIONS) \
 		--directory=$(1) \
 		--file=$(2) \
+		--transform="s@^\./@@" \
 		.
 
 COMPRESS_XZ   = $(call __COMPRESS,$(1),$(2),xz $(XZ_OPT))
