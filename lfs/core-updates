@@ -24,16 +24,21 @@
 
 include Config
 
-VER = ipfire
-
 THISAPP     = core-updates
 TARGET      = $(DIR_INFO)/$(THISAPP)
+
+PROG		= core-upgrade
+VER         = $(VERSION)
+RELEASE		= $(CORE)
+
+SUMMARY		= IPFire Core Update $(CORE)
+
+ARCHIVE_DIR = /tmp/archive
+ARCHIVE_TMP = $(ARCHIVE_DIR)/.tmp
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-
-install : $(TARGET)
 
 check :
 
@@ -45,56 +50,37 @@ b2 :
 # Installation Details
 ###############################################################################
 
-CORE = $(patsubst $(DIR_SRC)/config/rootfiles/%,%,$(wildcard $(DIR_SRC)/config/rootfiles/core/*))
-
-$(TARGET) : $(CORE)
-
 .PHONY:
-core/%:
-	rm -rf /install/packages/package /tmp/*
-	mkdir -p /install/packages/package
+install:
+	@rm -rf $(ARCHIVE_DIR) && mkdir -pv $(ARCHIVE_DIR) $(ARCHIVE_TMP)
 
-	#Generate ROOTFILES from filelists
-	BUILD_ARCH=$(BUILD_ARCH) BUILDTARGET=$(BUILDTARGET) KVER=$(KVER) \
-		$(DIR_SRC)/src/scripts/archive.files \
-		$(DIR_SRC)/config/rootfiles/$@/filelists \
-		$(DIR_SRC)/config/rootfiles/$@/files \
-		$(DIR_SRC)/config/rootfiles/$@/files.$(BUILD_ARCH) \
-		> /tmp/ROOTFILES.tmp
+	# Generate the archive and write out the rootfile
+	$(call COPY_FILES, \
+		$(DIR_SRC)/config/rootfiles/core/$(CORE)/filelists,$(ARCHIVE_TMP), \
+		$(ARCHIVE_DIR)/ROOTFILES \
+	)
 
-	#remove excluded files from ROOTFILES
-	grep -f $(DIR_SRC)/config/rootfiles/$@/exclude -v /tmp/ROOTFILES.tmp > /tmp/ROOTFILES
-	rm -rf /tmp/ROOTFILES.tmp
+	# Create the archive
+	$(call COMPRESS_XZ,$(ARCHIVE_TMP),$(ARCHIVE_DIR)/files.tar.xz)
 
-	#Change KVER to Kernelversion
-	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
+	# Remove the temporary files
+	rm -rf $(ARCHIVE_TMP)
 
-	#Remove doubled files with tar/untar/tar to save space
-	tar $(TAR_OPTIONS) -c --exclude='proc/*' --exclude='tmp/ROOTFILES' --exclude='__pycache__' --exclude='#*' --exclude='dev/pts/*' \
-		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude \
-		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
-	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
-	tar $(TAR_OPTIONS) -p --numeric-owner -x  -C /tmp -f /$(SNAME).tar
-	rm -f /$(SNAME).tar
-	cd /tmp && XZ_OPT="$(XZ_OPT)" tar $(TAR_OPTIONS) -cJf /install/packages/package/files.tar.xz $(TAR_OPTIONS) * && rm -rf *
-	cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
-	rm /install/packages/package/ROOTFILES
-	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
+	# Install update scripts
+	cd $(DIR_SRC) && install -v -m 744 config/rootfiles/core/$(CORE)/update.sh \
+		$(ARCHIVE_DIR)/update.sh
 
-	#build package
-	cp -f $(DIR_SRC)/config/rootfiles/$@/update.sh /install/packages/package
-	chmod 755 /install/packages/package/update.sh
-	#Change xxxKVERxxx to Kernelversion
-	sed -e "s/xxxKVERxxx/$(KVER)/g" -i /install/packages/package/update.sh
+	# Replace the kernel version
+	sed -e "s/xxxKVERxxx/$(KVER)/g" -i $(ARCHIVE_DIR)/update.sh
 
-	cd /install/packages/package && tar cf ../core-upgrade-$(VERSION)-$$(basename $@).ipfire \
-		update.sh files.tar.xz ROOTFILES
-	rm -rf /install/packages/package
-	sed -e "s/NAME/core-upgrade/g" \
-	    -e "s/SUMMARY/IPFire Core Update/g" \
-		-e "s/VER/$(VERSION)/g" \
-		-e "s/RELEASE/$$(basename $@)/g" \
-		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-$(VERSION)-$$(basename $@).ipfire | awk '{ print $$5 }'`/g" \
-		-e "s/SERVICES//g" \
-		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-$$(basename $@)
+	# Create the package
+	$(call CREATE_PACKAGE,$(ARCHIVE_DIR),$(PACKAGES_DIR)/$(PACKAGE_FILENAME))
+
+	# Write the meta file
+	$(call CREATE_META, \
+		$(PACKAGES_DIR)/$(PACKAGE_FILENAME), \
+		$(PACKAGES_DIR)/$(META_FILENAME) \
+	)
+
+	# Cleanup
+	@rm -rf $(ARCHIVE_DIR)

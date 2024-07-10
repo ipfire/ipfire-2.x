@@ -338,6 +338,12 @@ define B2SUM
 	[ "$($@_BLAKE2)" = "$$(b2sum $(DIR_DL)/$@ | awk '{ print $$1 }')" ] && echo "$@ checksum OK"
 endef
 
+# The filename of the package file
+PACKAGE_FILENAME = $(PROG)-$(VER)-$(RELEASE).ipfire
+
+# The filename of the meta file
+META_FILENAME    = meta-$(PROG)
+
 # Takes one rootfile or a directory and will return a list of all included files
 COLLECT_FILES = \
 	BUILD_ARCH="$(BUILD_ARCH)" \
@@ -364,10 +370,15 @@ __FILES_OUT = \
 		$(TAR_OPTIONS) \
 		--directory="$(1)"
 
+__WRITE_ROOTFILE = tee $(1)
+
 # Copies all files on a rootfile into the given directory
 define COPY_FILES
 	# Copy all files from $(1) to $(2)
-	$(call COLLECT_FILES,$(1)) | $(call __FILES_IN) | $(call __FILES_OUT,$(2))
+	$(call COLLECT_FILES,$(1)) | \
+		$(if $(3),$(call __WRITE_ROOTFILE,$(3)) |) \
+		$(call __FILES_IN) | \
+		$(call __FILES_OUT,$(2))
 
 	# Strip everything, except a few things
 	$(DIR_SRC)/src/stripper $(2) \
@@ -390,6 +401,39 @@ __COMPRESS = \
 
 COMPRESS_XZ   = $(call __COMPRESS,$(1),$(2),xz $(XZ_OPT))
 COMPRESS_ZSTD = $(call __COMPRESS,$(1),$(2),zstd $(ZSTD_OPT))
+
+# Command to create a Pakfire package
+define CREATE_PACKAGE
+	# Compress the package
+	tar \
+		--create \
+		--format=pax \
+		--no-acls \
+		--no-xattrs \
+		--directory="$(1)" \
+		--file="$(2)" \
+		--transform="s@^\./@@" \
+		.
+endef
+
+# Returns the filesize in bytes
+PACKAGE_SIZE = stat --format=%s $(1)
+
+# Creates the meta file for a Pakfire package
+define CREATE_META
+	# Clear/create the file
+	: > $(2)
+
+	# Write payload
+	echo "Name: $(PROG)"							>> $(2)
+	echo "Summary: $(SUMMARY)"						>> $(2)
+	echo "ProgVersion: $(VER)"						>> $(2)
+	echo "Release: $(RELEASE)"						>> $(2)
+	echo "Size: $(call PACKAGE_SIZE,$(1))"			>> $(2)
+	echo "Dependencies: $(DEPS)"					>> $(2)
+	echo "File: $(PROG)-$(VER)-$(RELEASE).ipfire"	>> $(2)
+	echo "Services: $(SERVICES)"					>> $(2)
+endef
 
 # Helper function to make sure that we have all sorts of mountpoints in the images
 CREATE_MOUNTPOINTS = mkdir -pv $(1)/dev $(1)/proc $(1)/sys
