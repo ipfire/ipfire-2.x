@@ -586,8 +586,8 @@ execute() {
 		[DEFAULT_PARALLELISM]="${DEFAULT_PARALLELISM}"
 
 		# Compression Options
-		[XZ_OPT]="${XZ_OPT[@]}"
-		[ZSTD_OPT]="${ZSTD_OPT[@]}"
+		[XZ_OPT]="${XZ_OPT[*]}"
+		[ZSTD_OPT]="${ZSTD_OPT[*]}"
 
 		# Build Architecture
 		[BUILD_ARCH]="${BUILD_ARCH}"
@@ -1211,7 +1211,7 @@ compress_toolchain() {
 		"--create"
 
 		# Filter through zstd with custom options
-		"-I" "zstd ${ZSTD_OPT[@]}"
+		"-I" "zstd ${ZSTD_OPT[*]}"
 
 		# Write to the temporary directory
 		"-f" "${tmp}/${toolchain}"
