@@ -1240,13 +1240,20 @@ compress_toolchain() {
 		return 1
 	fi
 
+	# Change to the temporary directory
+	pushd "${tmp}" &>/dev/null
+
 	# Create the checksums
-	if ! cd "${tmp}" && b2sum "${toolchain}" > "${tmp}/${checksums}"; then
+	if ! b2sum "${toolchain}" > "${tmp}/${checksums}"; then
+		popd &>/dev/null
+
 		# Cleanup
 		rm -rf "${tmp}"
 
 		return 1
 	fi
+
+	popd &>/dev/null
 
 	# Everything is good, move the files to their destination
 	if ! mv \
