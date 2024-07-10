@@ -231,11 +231,6 @@ ifeq "$(TOOLCHAIN)" "1"
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpc-$(MPC_VER).tar.gz
 	cd $(DIR_APP) && mv -v mpc-$(MPC_VER) mpc
 
-ifeq "$(PASS)" "2"
-	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
-			`dirname $$($(TOOLS_DIR)/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
-endif
-
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
 			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
 		echo "Processing $${file}..."; \
@@ -279,6 +274,10 @@ endif
 
 ifeq "$(TOOLCHAIN)" "1"
  ifeq "$(PASS)" "1"
+	# Fix limits.h
+	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
+		`dirname $$($(TOOLS_DIR)/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include/limits.h
+
 	ln -svf libgcc.a $$($(TOOLS_DIR)/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
  endif
 
