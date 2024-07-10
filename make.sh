@@ -777,6 +777,8 @@ execute() {
 	# Append the command
 	execute+=( "${command[@]}" )
 
+	local pid
+
 	# Return code
 	local r=0
 
@@ -800,9 +802,12 @@ execute() {
 				"${execute[@]}" >> "${LOGFILE}" 2>&1 </dev/null
 			} &
 
+			# Store the PID
+			pid="$!"
+
 			# Wait for the process to complete
 			while :; do
-				wait "$!"
+				wait "${pid}"
 
 				# Store the return code
 				r="$?"
