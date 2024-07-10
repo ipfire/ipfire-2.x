@@ -960,7 +960,7 @@ WARNING: untranslated string: drop action = Default behaviour of (forward) firew
 WARNING: untranslated string: drop action1 = Default behaviour of (outgoing) firewall in mode "Blocked"
 WARNING: untranslated string: drop action2 = Default behaviour of (input) firewall
 WARNING: untranslated string: drop forward = Log dropped forward packets
-WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)
+WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/blocklists/do-not-route-or-peer/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
 WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and martians
 WARNING: untranslated string: duration = Duration
@@ -1353,6 +1353,7 @@ WARNING: untranslated string: most preferred = most preferred
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: nameserver = Nameserver
 WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
+WARNING: untranslated string: never = Never
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: none = none
@@ -1419,6 +1420,7 @@ WARNING: untranslated string: reboot fsck = Reboot & run &lsquo;fsck&rsquo;
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
 WARNING: untranslated string: red1 = RED
+WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
 WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.

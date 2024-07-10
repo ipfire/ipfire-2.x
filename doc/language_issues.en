@@ -680,7 +680,7 @@ WARNING: untranslated string: drop action = Default behaviour of (forward) firew
 WARNING: untranslated string: drop action1 = Default behaviour of (outgoing) firewall in mode "Blocked"
 WARNING: untranslated string: drop action2 = Default behaviour of (input) firewall
 WARNING: untranslated string: drop forward = Log dropped forward packets
-WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)
+WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/blocklists/do-not-route-or-peer/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop input = Log dropped input packets
 WARNING: untranslated string: drop newnotsyn = Log dropped new not SYN packets
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
@@ -1382,6 +1382,7 @@ WARNING: untranslated string: network time from = Obtain time from a network tim
 WARNING: untranslated string: network traffic graphs external = Net-Traffic graphs (external)
 WARNING: untranslated string: network traffic graphs internal = Net-Traffic graphs (internal)
 WARNING: untranslated string: network traffic graphs others = Network (others)
+WARNING: untranslated string: never = Never
 WARNING: untranslated string: new optionsfw later = Some options need a reboot to take effect
 WARNING: untranslated string: newer = Newer
 WARNING: untranslated string: next = next
@@ -1584,6 +1585,7 @@ WARNING: untranslated string: red1 = RED
 WARNING: untranslated string: references = References
 WARNING: untranslated string: refresh = Refresh
 WARNING: untranslated string: refresh index page while connected = Refresh index.cgi page while connected
+WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
 WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
