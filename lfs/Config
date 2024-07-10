@@ -441,58 +441,33 @@ endef
 CREATE_MOUNTPOINTS = mkdir -pv $(1)/dev $(1)/proc $(1)/sys
 
 define PAK
-	# Bringing the files to their right place.
-	@rm -rf $(DIR_TMP_PAK) && mkdir -p $(DIR_TMP_PAK)
-	if [ -e "/usr/src/src/paks/$(PROG)" ]; then \
-		cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
-		$(DIR_TMP_PAK); \
+	# Bringing the files to their right place
+	@rm -rf $(ARCHIVE_DIR) && mkdir -p $(ARCHIVE_DIR) $(ARCHIVE_TMP)
+
+	# Install scripts
+	cd $(DIR_SRC) && if [ -e "src/paks/$(PROG)" ]; then \
+		install -v -m 744 src/paks/$(PROG)/{install,uninstall,update}.sh $(ARCHIVE_DIR); \
 	else \
-		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
-		$(DIR_TMP_PAK); \
+		install -v -m 744 src/paks/default/{install,uninstall,update}.sh $(ARCHIVE_DIR); \
 	fi
-	for i in $(DIR_SRC)/config/rootfiles/packages/{$(BUILD_ARCH),}/$(PROG); do \
-		if [ -e "$${i}" ]; then \
-			cp -v $${i} $(DIR_TMP_PAK)/ROOTFILES; \
-			break; \
-		fi; \
-	done
-
-	# Replace variables in scripts
-	sed -i $(DIR_TMP_PAK)/install.sh \
-		-e 's/xxxKVERxxx/$(KVER)/g'
-
-	# Make scripts executable
-	chmod 754 $(DIR_TMP_PAK)/{{,un}install,update}.sh
-
-	# Collect all files
-	rm -rf $(DIR_TMP_PAK)/root && mkdir -p $(DIR_TMP_PAK)/root
 
 	# Copy all files
-	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/packages,$(DIR_TMP_PAK)/root,$(PROG),$(DIR_TMP_PAK)/ROOTFILES)
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/packages,$(ARCHIVE_TMP),$(PROG),$(ARCHIVE_DIR)/ROOTFILES)
 
 	# Compress tarball
-	$(call COMPRESS_XZ,$(DIR_TMP_PAK)/root,$(DIR_TMP_PAK)/files.tar.xz)
+	$(call COMPRESS_XZ,$(ARCHIVE_TMP),$(ARCHIVE_DIR)/files.tar.xz)
 
 	# Cleanup temporary files
-	rm -rf $(DIR_TMP_PAK)/root
+	rm -rf $(ARCHIVE_TMP)
 
-	# Make package
-	cd $(DIR_TMP_PAK) && tar cf $(PACKAGES_DIR)/$(PROG)-$(VER)-$(PAK_VER).ipfire *
+	# Create the package
+	$(call CREATE_PACKAGE,$(ARCHIVE_DIR),$(PACKAGES_DIR)/$(PACKAGE_FILENAME))
+
+	# Write the meta file
+	$(call CREATE_META,$(PACKAGES_DIR)/$(PACKAGE_FILENAME),$(PACKAGES_DIR)/$(META_FILENAME))
 
 	# Cleanup
-	rm -rf $(DIR_TMP_PAK)
-
-	# Escape SUMMARY variable and create meta file
-	summaryEscaped=$$(sed 's/[&/\]/\\&/g' <<< "$(SUMMARY)"); \
-	sed \
-		-e "s/NAME/$(PROG)/g" \
-		-e "s/SUMMARY/$$summaryEscaped/g" \
-		-e "s/VER/$(VER)/g" \
-		-e "s/RELEASE/$(PAK_VER)/g" \
-		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/$$(stat --format=%s $(PACKAGES_DIR)/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
-		-e "s/SERVICES/$(SERVICES)/g" \
-	  < /usr/src/src/pakfire/meta > $(PACKAGES_DIR)/meta-$(PROG)
+	rm -rf $(ARCHIVE_DIR)
 endef
 
 define INSTALL_INITSCRIPT
