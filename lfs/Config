@@ -392,8 +392,8 @@ __COMPRESS = \
 		--verbose --verbose \
 		--use-compress-program="$(3)" \
 		$(TAR_OPTIONS) \
-		--directory="$(1)" \
-		--file="$(2)" \
+		--directory=$(1) \
+		--file=$(2) \
 		.
 
 COMPRESS_XZ   = $(call __COMPRESS,$(1),$(2),xz $(XZ_OPT))
@@ -407,8 +407,8 @@ define CREATE_PACKAGE
 		--format=pax \
 		--no-acls \
 		--no-xattrs \
-		--directory="$(1)" \
-		--file="$(2)" \
+		--directory=$(1) \
+		--file=$(2) \
 		--transform="s@^\./@@" \
 		.
 endef
