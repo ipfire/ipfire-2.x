@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 38
+PAK_VER    = 39
 # SUP_ARCH   = aarch64 x86_64
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr fmt
@@ -82,6 +82,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mpd-0.23.15_make_format_function_const_for_fmt-11.0.0.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && meson setup \
 				--prefix=/usr \
