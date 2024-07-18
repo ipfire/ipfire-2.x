@@ -2345,6 +2345,6 @@ var/ipfire/updatexlrator/bin/lscache
 var/ipfire/updatexlrator/updxlrator-lib.pl
 var/log/cache
 #var/log/squid
-#var/log/squid/access.log
+var/log/squid/access.log
 var/log/updatexlrator
 #var/logs
