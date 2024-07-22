@@ -37,6 +37,7 @@ done
 extract_files
 
 # Remove files
+/etc/init.d/apache restart
 
 # update linker config
 ldconfig
