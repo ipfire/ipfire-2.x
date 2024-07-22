@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="187"							# Core Level (Filename)
+CORE="188"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
