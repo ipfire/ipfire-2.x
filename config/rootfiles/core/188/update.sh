@@ -37,7 +37,8 @@ done
 extract_files
 
 # Remove files
-/etc/init.d/apache restart
+rm -vrf \
+	/srv/web/ipfire/html/themes/ipfire/include/functions.pl
 
 # update linker config
 ldconfig
@@ -49,6 +50,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/apache restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot

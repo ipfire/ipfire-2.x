@@ -1,0 +1,11 @@
+etc/rc.d/init.d/connectd
+etc/rc.d/init.d/functions
+etc/rc.d/init.d/networking/functions.network
+etc/rc.d/init.d/networking/red
+srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/system.cgi
+srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+var/ipfire/general-functions.pl
+var/ipfire/graphs.pl
+var/ipfire/header.pl
+var/ipfire/network-functions.pl
