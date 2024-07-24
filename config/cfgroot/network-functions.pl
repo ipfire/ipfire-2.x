@@ -28,9 +28,12 @@ require "/var/ipfire/general-functions.pl";
 use experimental 'smartmatch';
 use Socket;
 
-# System ethernet configuration
-our %ethernet_settings = ();
-&General::readhash("${General::swroot}/ethernet/settings", \%ethernet_settings);
+our %ethernet = ();
+our %ppp = ();
+
+# Read configuration files
+&General::readhash("${General::swroot}/ethernet/settings", \%ethernet);
+&General::readhash("${General::swroot}/ppp/settings", \%ppp);
 
 # List of all possible network zones that can be configured
 our @known_network_zones = ("red", "green", "orange", "blue");
@@ -289,6 +292,43 @@ sub get_broadcast($) {
 	my ($network_bin, $netmask_bin) = &network2bin($network);
 
 	return &bin2ip($network_bin ^ ~$netmask_bin);
+}
+
+sub get_prefix($) {
+	my $network = shift;
+
+	# Convert to binary
+	my ($network_bin, $netmask_bin) = &network2bin($network);
+
+	if (defined $netmask_bin) {
+		my $prefix = 0;
+
+		while (1) {
+			# End the loop if we have consumed all ones
+			last if ($netmask_bin == 0);
+
+			# Increment prefix
+			$prefix++;
+
+			# Remove the most-significant one
+			$netmask_bin <<= 1;
+			$netmask_bin &= 0xffffffff;
+		}
+
+		return $prefix;
+	}
+
+	return undef;
+}
+
+sub get_netmask($) {
+	my $network = shift;
+
+	# Fetch the prefix
+	my $prefix = &get_prefix($network);
+
+	# Convert to netmask
+	return &convert_prefix2netmask($prefix);
 }
 
 # Returns True if $address is in $network.
@@ -556,7 +596,7 @@ sub get_intf_by_address($) {
 #
 sub get_available_network_zones () {
 	# Obtain the configuration type from the netsettings hash.
-	my $config_type = $ethernet_settings{'CONFIG_TYPE'};
+	my $config_type = $ethernet{'CONFIG_TYPE'};
 
 	# Hash which contains the conversation from the config mode
 	# to the existing network interface names. They are stored like
@@ -588,10 +628,10 @@ sub get_available_network_zones () {
 #
 sub is_zone_available() {
 	my $zone = lc shift;
-	
+
 	# Make sure the zone is valid
 	die("Unknown network zone '$zone'") unless ($zone ~~ @known_network_zones);
-	
+
 	# Get available zones and return result
 	my @available_zones = get_available_network_zones();
 	return ($zone ~~ @available_zones);
@@ -602,8 +642,8 @@ sub is_zone_available() {
 #
 sub is_red_mode_ip() {
 	# Obtain the settings from the netsettings hash
-	my $config_type = $ethernet_settings{'CONFIG_TYPE'};
-	my $red_type = $ethernet_settings{'RED_TYPE'};
+	my $config_type = $ethernet{'CONFIG_TYPE'};
+	my $red_type = $ethernet{'RED_TYPE'};
 
 	# RED must be a network device (configuration 1-4) with dynamic or static IP
 	return (($config_type ~~ [1..4]) && ($red_type ~~ ["DHCP", "STATIC"]));
@@ -664,7 +704,7 @@ sub testsuite() {
 	assert('find_next_ip_address("1.2.3.4", 2)', $result eq "1.2.3.6");
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0");
-	assert('network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0")', $result);
+	assert('network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0")', !$result);
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.0/25");
 	assert('network_equal("192.168.0.0/24", "192.168.0.0/25")', !$result);
@@ -689,6 +729,13 @@ sub testsuite() {
 
 	$result = &ip_address_in_range("192.168.30.21", "192.168.30.10", "192.168.30.20");
 	assert('ip_address_in_range("192.168.30.21", "192.168.30.10", "192.168.30.20")', !$result);
+
+	# Check &get_prefix()
+	$result = &get_prefix("192.168.0.0/24");
+	assert('get_prefix("192.168.0.0/24")', $result != 24);
+
+	$result = &get_prefix("192.168.0.0/255.255.0.0");
+	assert('get_prefix("192.168.0.0/255.255.0.0")', $result != 16);
 
 	print "Testsuite completed successfully!\n";
 

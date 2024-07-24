@@ -1,3 +1,17 @@
+:root {
+	--color-green          : #339933;
+	--color-green-invert   : #ffffff;
+	--color-red            : #993333;
+	--color-red-invert     : #ffffff;
+	--color-blue           : #333399;
+	--color-blue-invert    : #ffffff;
+	--color-grey           : #d6d6d6;
+	--color-light-grey     : #f0f0f0;
+
+	--color-primary        : #ff2e52;
+	--color-primary-invert : #ffffff;
+	--color-text           : #363636;
+}
 
 /* This controls the width of the fixed width layouts */
 
@@ -80,9 +94,10 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
 	font-size: 20px;
-	font-weight: normal;
-	letter-spacing: -1px;
-	text-align: left;
+}
+
+select, textarea, input[type=text], input[type=number] {
+	width: 100%;
 }
 
 br.clear {
@@ -154,6 +169,20 @@ iframe {
 	border-radius: 3px 3px 3px 3px;
 }
 
+section {
+	margin-bottom: 2rem;
+}
+
+section.is-box {
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--color-grey);
+}
+
+section .title {
+	margin-bottom: 1rem;
+	border-bottom: 1px solid var(--color-grey);
+}
+
 #main_inner {
 	padding-bottom: 1.5em;
 }
@@ -169,19 +198,6 @@ iframe {
 
 #main_inner h1 {
 	font-size: 1.8em;
-	margin-bottom: 1em;
-}
-
-#main_inner .post {
-	border: 1px solid silver;
-	padding: 1em 2em 1em 2em;
-	margin-bottom: 1em;
-	clear: both;
-}
-
-#main_inner .post h2 {
-	border-bottom: dotted 1px #e1e1e1;
-	font-size: 1.6em;
 	margin-bottom: 1em;
 }
 
@@ -289,6 +305,18 @@ table {
 	padding-right: 0.5em;
 }
 
+.tbl th[scope=row] {
+	text-align: left;
+}
+
+.tbl tr:nth-child(odd) td {
+	background-color: var(--color-grey);
+}
+
+.tbl tr:nth-child(even) td {
+	background-color: var(--color-light-grey);
+}
+
 .tbl th:first-child {
 	border-left: 1px solid #363636;
 	border-top: 1px solid #363636;
@@ -337,8 +365,85 @@ table {
 	border-bottom: 1px solid #363636;
 }
 
+.tbl .status {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .status.is-running {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .status.is-stopped {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+
+	width: 33%;
+}
+
+.tbl .status.is-vulnerable {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .status.is-mitigation {
+	background-color: var(--color-blue);
+	color: var(--color-blue-invert);
+}
+
+.tbl .status.is-not-affected {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
 table.fw-nat tbody tr td {
 	height: 2.25em;
+}
+
+/*
+	Graphs
+*/
+
+.graph {
+	padding: 0.125rem;
+}
+
+.graph img {
+	width: 100%;
+	min-height: 360px;
+
+	margin-bottom: 0.5rem;
+	padding: 0;
+
+	border: 1px solid var(--color-grey);
+}
+
+.graph ul {
+	list-style-type: none;
+
+	display: flex;
+	justify-content: center;
+}
+
+.graph ul li {
+	margin: 0 0.125rem;
+}
+
+.graph ul li button {
+	background: none;
+	border: none;
+	cursor: pointer;
+
+	background-color: var(--color-grey);
+	color: var(--color-text);
+
+	padding: 0.5rem 1rem;
+}
+
+.graph ul li button.selected {
+	background-color: var(--color-primary);
+	color: var(--color-primary-invert);
 }
 
 /* RRD graph images */

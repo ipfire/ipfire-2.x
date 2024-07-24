@@ -214,7 +214,7 @@ END
 	print "</table></div>\n";
 	&Header::closebox();
 
-	&Header::openbox('100%', 'center', "$Lang::tr{'processes'} $Lang::tr{'graph'}");
+	&Header::opensection('100%', 'center', "$Lang::tr{'processes'} $Lang::tr{'graph'}");
 	&Graphs::makegraphbox("services.cgi","processescpu","day");
 	&Header::closebox();
 

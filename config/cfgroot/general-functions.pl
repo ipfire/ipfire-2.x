@@ -19,7 +19,6 @@ use Socket;
 use IO::Socket;
 use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
-$|=1; # line buffering
 
 $General::version = 'VERSION';
 $General::swroot = 'CONFIG_ROOT';
@@ -116,15 +115,13 @@ sub log
 }
 sub setup_default_networks
 {
-	my %netsettings=();
+	my %netsettings = %Network::ethernet;
 	my $defaultNetworks = shift;
-	
-	&readhash("/var/ipfire/ethernet/settings", \%netsettings);
-	
+
 	# Get current defined networks (Red, Green, Blue, Orange)
 	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'IPT'} = "0.0.0.0/0.0.0.0";
 	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'NAME'} = "ALL";
-		
+
 	$defaultNetworks->{$Lang::tr{'green'}}{'IPT'} = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
 	$defaultNetworks->{$Lang::tr{'green'}}{'NET'} = "$netsettings{'GREEN_ADDRESS'}";
 	$defaultNetworks->{$Lang::tr{'green'}}{'NAME'} = "GREEN";
@@ -145,7 +142,7 @@ sub setup_default_networks
 		$defaultNetworks->{$Lang::tr{'blue'}}{'NET'} = "$netsettings{'BLUE_ADDRESS'}";
 		$defaultNetworks->{$Lang::tr{'blue'}}{'NAME'} = "BLUE";
 	}
-	
+
 	#IPFire himself
 	$defaultNetworks->{'IPFire'}{'NAME'} = "IPFire";
 
@@ -172,18 +169,18 @@ sub setup_default_networks
 		&readhash("${General::swroot}/vpn/settings", \%ipsecsettings);
 		if($ipsecsettings{'RW_NET'} ne '')
 		{
-			my ($ip,$sub) = split(/\//,$ipsecsettings{'RW_NET'});
-			$sub=&General::iporsubtocidr($sub);
-			my @tempipsecsubnet = split("\/", $ipsecsettings{'RW_NET'});
-			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'ADR'} = $tempipsecsubnet[0];
-			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NAME'} = "IPsec RW";
-			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NET'} = &getnextip($ip);
+			my $netaddress = &Network::get_netaddress($ipsecsettings{'RW_NET'});
+			my $prefix     = &Network::get_prefix($ipsecsettings{'RW_NET'});
+
+			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'ADR'}  = $netaddress;
+			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NAME'} = "IPsec RW";
+			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NET'}  = $netaddress;
 		}
 	}
 }
 sub get_aliases
 {
-	
+
 	my $defaultNetworks = shift;
 	open(FILE, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
 	my @current = <FILE>;
@@ -199,8 +196,19 @@ sub get_aliases
 			}
 			$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
 			$defaultNetworks->{$temp[2]}{'NET'} = "$temp[0]";
-			
+
 			$ctr++;
+		}
+	}
+}
+
+sub set_defaults($$) {
+	my $hash = shift;
+	my $defaults = shift;
+
+	foreach my $key (keys %$defaults) {
+		unless (defined($hash->{$key})) {
+			$hash->{$key} = $defaults->{$key};
 		}
 	}
 }
@@ -210,14 +218,14 @@ sub readhash
 	my $filename = $_[0];
 	my $hash = $_[1];
 	my ($var, $val);
-	
-	
+
+
 	# Some ipcop code expects that readhash 'complete' the hash if new entries
 	# are presents. Not clear it !!!
 	#%$hash = ();
 
 	open(FILE, $filename) or die "Unable to read file $filename";
-	
+
 	while (<FILE>)
 	{
 		chop;
@@ -251,50 +259,14 @@ sub writehash
 	my $filename = $_[0];
 	my $hash = $_[1];
 	my ($var, $val);
-	
+
 	# write cgi vars to the file.
 	open(FILE, ">${filename}") or die "Unable to write file $filename";
 	flock FILE, 2;
-	foreach $var (keys %$hash) 
+	foreach $var (keys %$hash)
 	{
 		if ( $var eq "__CGI__"){next;}
 		$val = $hash->{$var};
-		# Darren Critchley Jan 17, 2003 added the following because when submitting with a graphic, the x and y
-		# location of the mouse are submitted as well, this was being written to the settings file causing
-		# some serious grief! This skips the variable.x and variable.y
-		if (!($var =~ /(.x|.y)$/)) {
-			if ($val =~ / /) {
-				$val = "\'$val\'"; }
-			if (!($var =~ /^ACTION/)) {
-				print FILE "${var}=${val}\n"; }
-		}
-	}
-	close FILE;
-}
-
-sub writehashpart
-{
-	# This function replaces the given hash in the original hash by keeping the old
-	# content and just replacing the new content
-
-	my $filename = $_[0];
-	my $newhash = $_[1];
-	my %oldhash;
-	my ($var, $val);
-
-	readhash("${filename}", \%oldhash);
-
-	foreach $var (keys %$newhash){
-		$oldhash{$var}=$newhash->{$var};
-	}
-
-	# write cgi vars to the file.
-	open(FILE, ">${filename}") or die "Unable to write file $filename";
-	flock FILE, 2;
-	foreach $var (keys %oldhash) 
-	{
-		if ( $var eq "__CGI__"){next;}
-		$val = $oldhash{$var};
 		# Darren Critchley Jan 17, 2003 added the following because when submitting with a graphic, the x and y
 		# location of the mouse are submitted as well, this was being written to the settings file causing
 		# some serious grief! This skips the variable.x and variable.y
@@ -352,7 +324,7 @@ sub validip
 
 	if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
 		return 0; }
-	else 
+	else
 	{
 		my @octets = ($1, $2, $3, $4);
 		foreach $_ (@octets)
@@ -397,7 +369,7 @@ sub subtocidr {
 sub cidrtosub {
 	return &Network::convert_prefix2netmask(shift);
 }
-  
+
 sub iporsubtodec
 {
 	#Gets: Ip address or subnetmask in decimal oder CIDR
@@ -421,7 +393,7 @@ sub iporsubtodec
 							 return $net."/".$mask;
 				}
 			}
-		}	
+		}
 	}
 	#Subnet in binary format?
 	if ($mask=~/^(\d{1,2})$/ && (($1<=32 && $1>=0))){
@@ -433,8 +405,8 @@ sub iporsubtodec
 	}
 	return 3;
 }
-  
-  
+
+
 sub iporsubtocidr
 {
 	#gets: Ip Address  or subnetmask in decimal oder CIDR
@@ -457,7 +429,7 @@ sub iporsubtocidr
 							 return $net."/".&General::subtocidr($mask);
 				}
 			}
-		}	
+		}
 	}
 	#Subnet already in binary format?
 	if ($mask=~/^(\d{1,2})$/ && (($1<=32 && $1>=0))){
@@ -476,18 +448,6 @@ sub getnetworkip {
 	return &Network::get_netaddress($arg);
 }
 
-sub getccdbc
-{
-	#Gets: IP in Form ("192.168.0.0/24")
-	#Gives: Broadcastaddress of network
-	my $ccdnet=$_;
-	my ($ccdip,$ccdsubnet) = split "/",$ccdnet;
-	my $ip_address_binary = inet_aton( $ccdip );
-	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
-	my $broadcast_address  = inet_ntoa( $ip_address_binary | ~$netmask_binary );
-	return $broadcast_address;
-}
-
 sub ip2dec  {
 	return &Network::ip2bin(shift);
 }
@@ -496,21 +456,13 @@ sub dec2ip  {
 	return &Network::bin2ip(shift);
 }
 
-sub getnextip {
-	return &Network::find_next_ip_address(shift, 4);
-}
-
-sub getlastip {
-	return &Network::find_next_ip_address(shift, -1);
-}
-
 sub validipandmask
 {
 	#Gets: Ip address in 192.168.0.0/24 or 192.168.0.0/255.255.255.0 and checks if subnet valid
-	#Gives: True bzw 0 if success or false 
+	#Gives: True bzw 0 if success or false
 	my $ccdnet=$_[0];
 	my $subcidr;
-	
+
 	if (!($ccdnet =~ /^(.*?)\/(.*?)$/)) {
 		return 0;
 	}
@@ -530,7 +482,7 @@ sub validipandmask
 		}else{
 			return 0;
 		}
-		
+
 	}
 	return 0;
 }
@@ -581,13 +533,13 @@ sub checksubnets
 	&readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	foreach my $key (keys %ccdconfhash) {
 		@ccdconf=split(/\//,$ccdconfhash{$key}[1]);
-		if ($ccdname eq $ccdconfhash{$key}[0]) 
+		if ($ccdname eq $ccdconfhash{$key}[0])
 		{
 			$errormessage=$errormessage.$Lang::tr{'ccd err nameexist'}."<br>";
 			return $errormessage;
 		}
 		my ($newip,$newsub) = split(/\//,$ccdnet);
-		if (&IpInSubnet($newip,$ccdconf[0],&iporsubtodec($ccdconf[1]))) 
+		if (&IpInSubnet($newip,$ccdconf[0],&iporsubtodec($ccdconf[1])))
 		{
 			$errormessage=$errormessage.$Lang::tr{'ccd err issubnet'}." $ccdconfhash{$key}[0]<br>";
 			return $errormessage;
@@ -623,7 +575,7 @@ sub checksubnets
 			return $errormessage;
 		}
 	}
-	
+
 	#call check_net_internal
 	if ($checktype eq "exact")
 	{
@@ -636,11 +588,10 @@ sub checksubnets
 sub check_net_internal_range{
 	my $network=shift;
 	my ($ip,$cidr)=split(/\//,$network);
-	my %ownnet=();
+	my %ownnet = %Network::ethernet;
 	my $errormessage;
 	$cidr=&iporsubtocidr($cidr);
 	#check if we use one of ipfire's networks (green,orange,blue)
-	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
 	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'GREEN_NETADDRESS'},&iporsubtodec($ownnet{'GREEN_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
 	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'ORANGE_NETADDRESS'},&iporsubtodec($ownnet{'ORANGE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
 	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'BLUE_NETADDRESS'},&iporsubtodec($ownnet{'BLUE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
@@ -650,11 +601,10 @@ sub check_net_internal_range{
 sub check_net_internal_exact{
 	my $network=shift;
 	my ($ip,$cidr)=split(/\//,$network);
-	my %ownnet=();
+	my %ownnet = %Network::ethernet;
 	my $errormessage;
 	$cidr=&iporsubtocidr($cidr);
 	#check if we use one of ipfire's networks (green,orange,blue)
-	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
 	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &Network::network_equal("$ownnet{'GREEN_NETADDRESS'}/$ownnet{'GREEN_NETMASK'}", $network)){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
 	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &Network::network_equal("$ownnet{'ORANGE_NETADDRESS'}/$ownnet{'ORANGE_NETMASK'}", $network)){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
 	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &Network::network_equal("$ownnet{'BLUE_NETADDRESS'}/$ownnet{'BLUE_NETMASK'}", $network)){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
@@ -781,7 +731,7 @@ sub validfqdn
 		# but no more than 63 characters
 		if (length ($parts[$index]) < 1 || length ($parts[$index]) > 63) {
 			return 0;}
-		if ($index eq 0) {		
+		if ($index eq 0) {
 			# This is the hostname part
 			# Only valid characters are a-z, A-Z, 0-9 and -
 			if ($parts[$index] !~ /^[a-zA-Z0-9-]*$/) {
@@ -792,7 +742,7 @@ sub validfqdn
 			# Last character can only be a letter or a digit
 			if (substr ($parts[$index], -1, 1) !~ /^[a-zA-Z0-9]*$/) {
 				return 0;}
-		} else{				
+		} else{
 			# This is the domain part
 			# Only valid characters are a-z, A-Z, 0-9, _ and -
 			if ($parts[$index] !~ /^[a-zA-Z0-9_-]*$/) {
@@ -802,23 +752,23 @@ sub validfqdn
 	return 1;
 }
 
-sub validportrange # used to check a port range 
+sub validportrange # used to check a port range
 {
 	my $port = $_[0]; # port values
 	$port =~ tr/-/:/; # replace all - with colons just in case someone used -
 	my $srcdst = $_[1]; # is it a source or destination port
 
 	if (!($port =~ /^(\d+)\:(\d+)$/)) {
-	
-		if (!(&validport($port))) {	 
+
+		if (!(&validport($port))) {
 			if ($srcdst eq 'src'){
 				return $Lang::tr{'source port numbers'};
 			} else 	{
 				return $Lang::tr{'destination port numbers'};
-			} 
+			}
 		}
 	}
-	else 
+	else
 	{
 		my @ports = ($1, $2);
 		if ($1 >= $2){
@@ -826,16 +776,16 @@ sub validportrange # used to check a port range
 				return $Lang::tr{'bad source range'};
 			} else 	{
 				return $Lang::tr{'bad destination range'};
-			} 
+			}
 		}
 		foreach $_ (@ports)
 		{
 			if (!(&validport($_))) {
 				if ($srcdst eq 'src'){
-					return $Lang::tr{'source port numbers'}; 
+					return $Lang::tr{'source port numbers'};
 				} else 	{
 					return $Lang::tr{'destination port numbers'};
-				} 
+				}
 			}
 		}
 		return;
@@ -848,19 +798,6 @@ sub IpInSubnet {
 	my $netmask = shift;
 
 	return &Network::ip_address_in_network($addr, "$network/$netmask");
-}
-
-#
-# Return the following IP (IP+1) in dotted notation.
-# Call: NextIP ('1.1.1.1');
-# Return: '1.1.1.2'
-#
-sub NextIP {
-	return &Network::find_next_ip_address(shift, 1);
-}
-
-sub NextIP2 {
-	return &Network::find_next_ip_address(shift, 4);
 }
 
 sub ipcidr {
@@ -948,87 +885,6 @@ sub findhasharraykey {
     }
 }
 
-sub srtarray 
-# Darren Critchley - darrenc@telus.net - (c) 2003
-# &srtarray(SortOrder, AlphaNumeric, SortDirection, ArrayToBeSorted)
-# This subroutine will take the following parameters:
-#   ColumnNumber = the column which you want to sort on, starts at 1
-#   AlphaNumberic = a or n (lowercase) defines whether the sort should be alpha or numberic
-#   SortDirection = asc or dsc (lowercase) Ascending or Descending sort
-#   ArrayToBeSorted = the array that wants sorting
-#
-#   Returns an array that is sorted to your specs
-#
-#   If SortOrder is greater than the elements in array, then it defaults to the first element
-# 
-{
-	my ($colno, $alpnum, $srtdir, @tobesorted) = @_;
-	my @tmparray;
-	my @srtedarray;
-	my $line;
-	my $newline;
-	my $ctr;
-	my $ttlitems = scalar @tobesorted; # want to know the number of rows in the passed array
-	if ($ttlitems < 1){ # if no items, don't waste our time lets leave
-		return (@tobesorted);
-	}
-	my @tmp = split(/\,/,$tobesorted[0]);
-	$ttlitems = scalar @tmp; # this should be the number of elements in each row of the passed in array
-
-	# Darren Critchley - validate parameters
-	if ($colno > $ttlitems){$colno = '1';}
-	$colno--; # remove one from colno to deal with arrays starting at 0
-	if($colno < 0){$colno = '0';}
-	if ($alpnum ne '') { $alpnum = lc($alpnum); } else { $alpnum = 'a'; }
-	if ($srtdir ne '') { $srtdir = lc($srtdir); } else { $srtdir = 'src'; }
-
-	foreach $line (@tobesorted)
-	{
-		chomp($line);
-		if ($line ne '') {
-			my @temp = split(/\,/,$line);
-			# Darren Critchley - juggle the fields so that the one we want to sort on is first
-			my $tmpholder = $temp[0];
-			$temp[0] = $temp[$colno];
-			$temp[$colno] = $tmpholder;
-			$newline = "";
-			for ($ctr=0; $ctr < $ttlitems ; $ctr++) {
-				$newline=$newline . $temp[$ctr] . ",";
-			}
-			chop($newline);
-			push(@tmparray,$newline);
-		}
-	}
-	if ($alpnum eq 'n') {
-		@tmparray = sort {$a <=> $b} @tmparray;
-	} else {
-		@tmparray = (sort @tmparray);
-	}
-	foreach $line (@tmparray)
-	{
-		chomp($line);
-		if ($line ne '') {
-			my @temp = split(/\,/,$line);
-			my $tmpholder = $temp[0];
-			$temp[0] = $temp[$colno];
-			$temp[$colno] = $tmpholder;
-			$newline = "";
-			for ($ctr=0; $ctr < $ttlitems ; $ctr++){
-				$newline=$newline . $temp[$ctr] . ",";
-			}
-			chop($newline);
-			push(@srtedarray,$newline);
-		}
-	}
-
-	if ($srtdir eq 'dsc') {
-		@tmparray = reverse(@srtedarray);
-		return (@tmparray);
-	} else {
-		return (@srtedarray);
-	}
-}
-
 sub FetchPublicIp {
     my %proxysettings;
     &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
@@ -1056,12 +912,12 @@ sub FetchPublicIp {
 #	IP
 #	hostname
 #	domain
-# Output 
+# Output
 #	1 IP matches host.domain
 #	0 not in sync
 #
 sub DyndnsServiceSync ($;$;$) {
- 
+
     my ($ip,$hostName,$domain) = @_;
     my @addresses;
 
@@ -1078,7 +934,7 @@ sub DyndnsServiceSync ($;$;$) {
     }
 
     if ($addresses[0] ne '') { 		   	# got something ?
-	#&General::log("name:$addresses[0], alias:$addresses[1]");			    
+	#&General::log("name:$addresses[0], alias:$addresses[1]");
 	# Build clear text list of IP
 	@addresses = map ( &Socket::inet_ntoa($_), @addresses[4..$#addresses]);
 	if (grep (/$ip/, @addresses)) {
@@ -1190,11 +1046,8 @@ sub MakeUserAgent() {
 sub RedIsWireless() {
 	# This function checks if a network device is a wireless device.
 
-	my %settings = ();
-	&readhash("${General::swroot}/ethernet/settings", \%settings);
-
 	# Find the name of the network device.
-	my $device = $settings{'RED_DEV'};
+	my $device = $Network::ethernet{'RED_DEV'};
 
 	# Exit, if no device is configured.
 	return 0 if ($device eq "");
@@ -1225,11 +1078,11 @@ sub read_file_utf8 ($) {
 sub write_file_utf8 ($) {
 	my ($file, $content) = @_;
 
-	open my $out, '>:encoding(UTF-8)', $file or die "Could not open '$file' for writing $!";;           
+	open my $out, '>:encoding(UTF-8)', $file or die "Could not open '$file' for writing $!";;
 	print $out $content;
 	close $out;
 
-	return; 
+	return;
 }
 
 my $FIREWALL_RELOAD_INDICATOR = "${General::swroot}/firewall/reread";
@@ -1357,7 +1210,7 @@ sub get_nameservers () {
 }
 
 # Function to format a string containing the amount of bytes to
-# something human-readable. 
+# something human-readable.
 sub formatBytes {
 	# Private array which contains the units.
 	my @units = qw(B KB MB GB TB PB);

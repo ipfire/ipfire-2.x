@@ -402,19 +402,10 @@ case "${1}" in
 				AUTH=""
 			fi
 
-			### Dial On Demand
-			#
-			if [ "${RECONNECTION}" != "persistent" ]; then
-				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
-					SECONDS=$[${TIMEOUT} * 60]
-				else
-					SECONDS=300
-				fi
-				if [ "${RECONNECTION}" == "dialondemand" ]; then
-					touch /var/ipfire/red/dial-on-demand
-					DEMAND="demand persist idle ${SECONDS} 10.112.112.112:10.112.112.113"
-					DEMAND+=" ipcp-accept-remote ipcp-accept-local noipdefault ktune"
-				fi
+			if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
+				SECONDS=$[${TIMEOUT} * 60]
+			else
+				SECONDS=300
 			fi
 
 			if [ "$TYPE" == "pppoe" ]; then

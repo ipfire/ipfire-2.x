@@ -355,7 +355,6 @@ srv/web/ipfire/html/themes/ipfire/include/css/style.css
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Bold.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Medium.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Regular.ttf
-srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/js
 srv/web/ipfire/html/themes/ipfire/include/js/refreshInetInfo.js
 var/updatecache
