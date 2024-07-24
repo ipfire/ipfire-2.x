@@ -105,7 +105,7 @@ usr/bin/setsid
 usr/bin/uclampset
 #usr/bin/ul
 #usr/bin/uname26
-#usr/bin/unshare
+usr/bin/unshare
 usr/bin/uuidgen
 usr/bin/uuidparse
 usr/bin/waitpid
