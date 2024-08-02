@@ -1090,7 +1090,7 @@ download_sources() {
 	local file
 	local pkg
 
-	local status=0
+	local failed_packages=()
 
 	# Walk through all files in LFS
 	for file in "${BASEDIR}/lfs/"*; do
@@ -1109,15 +1109,18 @@ download_sources() {
 
 		# Download and check the package
 		if ! make_pkg "${pkg}" download b2; then
+			failed_packages+=( "${pkg}" )
 			print_status FAIL
-			status=1
 			continue
 		fi
 
 		print_status DONE
 	done
 
-	return "${status}"
+	# Fail if we could not download/verify all packages
+	if [ "${#failed_packages[@]}" -gt 0 ]; then
+		exiterror "Failed to download or verify some packages: ${failed_packages[@]}"
+	fi
 }
 
 # Download the toolchain
@@ -2342,9 +2345,7 @@ downloadsrc)
 	print_headline "Pre-loading all source files"
 
 	# Download all sources
-	if ! download_sources; then
-		exiterror "Failed to download sources"
-	fi
+	download_sources
 	;;
 toolchain)
 	# Launch in a new namespace
