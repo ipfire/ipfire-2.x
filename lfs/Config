@@ -418,9 +418,6 @@ define CREATE_PACKAGE
 		.
 endef
 
-# Returns the filesize in bytes
-PACKAGE_SIZE = stat --format=%s $(1)
-
 # Creates the meta file for a Pakfire package
 define CREATE_META
 	# Clear/create the file
@@ -431,7 +428,7 @@ define CREATE_META
 	echo "Summary: $(SUMMARY)"						>> $(2)
 	echo "ProgVersion: $(VER)"						>> $(2)
 	echo "Release: $(PAK_VER)"						>> $(2)
-	echo "Size: $(call PACKAGE_SIZE,$(1))"			>> $(2)
+	echo "Size: $(shell stat --format=%s $(1))"			>> $(2)
 	echo "Dependencies: $(DEPS)"					>> $(2)
 	echo "File: $(PROG)-$(VER)-$(PAK_VER).ipfire"	>> $(2)
 	echo "Services: $(SERVICES)"					>> $(2)
