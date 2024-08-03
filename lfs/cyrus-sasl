@@ -91,7 +91,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.am
 	cd $(DIR_APP) && autoconf
 
-ifeq "$(PASS)" ""
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		            --with-dbpath=/var/lib/sasl/sasldb2 \
 		            --with-saslauthd=/var/run/saslauthd \
@@ -106,17 +105,5 @@ ifeq "$(PASS)" ""
 	#install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
-else
-	# WITH LDAP SUPPORT AT THIS TIME
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-		            --with-dbpath=/var/lib/sasl/sasldb2 \
-		            --with-saslauthd=/var/run \
-			     --with-ldap --enable-ldapdb
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make -C include
-	cd $(DIR_APP) && make -C sasldb
-	cd $(DIR_APP) && make -C plugins
-	cd $(DIR_APP) && libtool --mode=install install plugins/libldapdb.la /usr/lib/sasl2
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
