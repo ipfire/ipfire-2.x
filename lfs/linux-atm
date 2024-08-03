@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.1
+VER        = 2.5.2
 
 THISAPP    = linux-atm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cc3d04d25198a811ebc3c98a28005b1ff62732f59ac1a9979492f5666c0d41dde8545e24b43e17a5b0e7151143802ce7196a2b668b39f59171276b3d53113e0e
+$(DL_FILE)_BLAKE2 = 329aad437a1e6a17fd7d7d2b81c976a76c684aaf127006ed3af1e998a0f52df056747cc84fc13c933dc15c07246f1f00e4ff101ac98ef1dd1bea102830a83625
 
 install : $(TARGET)
 
@@ -73,9 +73,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.4.1-gcc-4.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.4.1-arpd_includes.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.4.1-linux-5.2-SIOCGSTAMP.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.5.2-headers.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-use_socklen_t.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-remove-define-hacks.patch
+	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
