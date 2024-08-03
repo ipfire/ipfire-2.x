@@ -1793,7 +1793,6 @@ build_system() {
 	lfsmake2 strongswan
 	lfsmake2 rng-tools
 	lfsmake2 lsof
-	lfsmake2 br2684ctl
 	lfsmake2 lm_sensors
 	lfsmake2 libstatgrab
 	lfsmake2 liboping
