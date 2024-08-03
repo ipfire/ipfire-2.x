@@ -90,4 +90,5 @@ usr/sbin/testsaslauthd
 #usr/share/man/man8/saslauthd.8
 #usr/share/man/man8/sasldblistusers2.8
 #usr/share/man/man8/saslpasswd2.8
+#usr/share/man/man8/testsaslauthd.8
 var/lib/sasl

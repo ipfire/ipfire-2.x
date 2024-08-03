@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Implementation of Cyrus SASL API
 
-VER        = 2.1.26
+VER        = 2.1.28
 
 THISAPP    = cyrus-sasl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 08fe5c1624e7cccb4b5e562f6987fddd047e1221b671cedbbb684d5a2f39e09a438ad14ffcedb5f398c203ca0b6e23574106c87f43a632028d50a69619c54970
+$(DL_FILE)_BLAKE2 = 6cca8c26cebb9c2ee5d539c43797d30b6309a476ec4233225789978e1d7315c4ea5d2abbc7f5464be0f3c0de5fd9212706b43fbc92f40b76cd0b1013cc00f823
 
 install : $(TARGET)
 
@@ -86,10 +86,11 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && sed -i '/sasl_global/s/^static //' lib/client.c
-	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.am
-	cd $(DIR_APP) && autoconf
+
+	# Fix build with GCC 14
+	cd $(DIR_APP) && sed '/saslint/a #include <time.h>' -i lib/saslutil.c
+	cd $(DIR_APP) && sed '/plugin_common/a #include <time.h>' -i plugins/cram.c
+	cd $(DIR_APP) && sed '/plugin_common/a #include <time.h>' -i plugins/digestmd5.c
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		            --with-dbpath=/var/lib/sasl/sasldb2 \
