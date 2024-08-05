@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #define _XOPEN_SOURCE 500
 #include <signal.h>
 #include <stdio.h>
@@ -130,13 +131,13 @@ connection *getConnections() {
 		conn_last = conn_curr;
 
 		count = 0;
-		char *lineptr = &line;
+		char *lineptr = line;
 		while (1) {
-			if (*lineptr == NULL)
+			if (*lineptr == '\0')
 				break;
 
 			resultptr = result;
-			while (*lineptr != NULL) {
+			while (*lineptr != '\0') {
 				if (*lineptr == ',') {
 					lineptr++;
 					break;
@@ -338,7 +339,7 @@ char* getLocalSubnetAddress(const connection* conn) {
 	}
 
 	const char *zones[] = {"GREEN", "BLUE", "ORANGE", NULL};
-	char *zone = NULL;
+	const char *zone = NULL;
 
 	// Get net address of the local openvpn subnet.
 	char *subnetmask = strdup(conn->local_subnet);
@@ -458,7 +459,7 @@ void setFirewallRules(void) {
 }
 
 static void stopAuthenticator() {
-	const char* argv[] = {
+	char* argv[] = {
 		"/usr/sbin/openvpn-authenticator",
 		NULL,
 	};
@@ -473,7 +474,7 @@ void stopDaemon(void) {
 	stopAuthenticator();
 
 	int pid = readPidFile("/var/run/openvpn.pid");
-	if (!pid > 0) {
+	if (pid <= 0) {
 		exit(1);
 	}
 
@@ -485,7 +486,7 @@ void stopDaemon(void) {
 }
 
 static int startAuthenticator(void) {
-	const char* argv[] = { "-d", NULL };
+	char* argv[] = { "-d", NULL };
 
 	return run("/usr/sbin/openvpn-authenticator", argv);
 }
@@ -595,7 +596,7 @@ int killNet2Net(char *name) {
 	snprintf(pidfile, STRING_SIZE - 1, "/var/run/%sn2n.pid", conn->name);
 
 	int pid = readPidFile(pidfile);
-	if (!pid > 0) {
+	if (pid <= 0) {
 		fprintf(stderr, "Could not read pid file of connection %s.", conn->name);
 		return 1;
 	}
