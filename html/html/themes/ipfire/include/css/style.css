@@ -423,6 +423,10 @@ table {
 	color: var(--color-yellow);
 }
 
+.notes a {
+	color: inherit;
+}
+
 table.fw-nat tbody tr td {
 	height: 2.25em;
 }
