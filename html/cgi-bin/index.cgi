@@ -573,6 +573,19 @@ foreach my $file (@files) {
 	}
 }
 
+my %coredb = &Pakfire::coredbinfo();
+if (defined $coredb{'AvailableRelease'}) {
+	push(@warnings, "<a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $coredb{'Release'} $Lang::tr{'core notice 2'} $coredb{'AvailableRelease'} $Lang::tr{'core notice 3'}</a>");
+}
+
+if ( -e "/var/run/need_reboot" ) {
+	push(@warnings, $Lang::tr{'needreboot'});
+}
+
+if ( `/bin/grep -c "reiserfs" /proc/self/mounts`  > 0 ) {
+	push (@warnings, $Lang::tr{'reiserfs warning1'} . " " . $Lang::tr{'reiserfs warning2'});
+}
+
 # Show any warnings
 if (@warnings) {
 	&Header::opensection();
@@ -586,24 +599,6 @@ if (@warnings) {
 	print "</ul>\n";
 
 	&Header::closesection();
-}
-
-my %coredb = &Pakfire::coredbinfo();
-if (defined $coredb{'AvailableRelease'}) {
-	print "<br /><br /><br /><a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $coredb{'Release'} $Lang::tr{'core notice 2'} $coredb{'AvailableRelease'} $Lang::tr{'core notice 3'}</a>";
-}
-
-if ( -e "/var/run/need_reboot" ) {
-	print "<div style='text-align:center; color:red;'>";
-	print "<br/><br/>$Lang::tr{'needreboot'}!";
-	print "</div>";
-}
-
-if ( `/bin/grep -c "reiserfs" /proc/self/mounts`  > 0 ) {
-        print "<div style='text-align:center; color:blue;'>";
-        print "<br/><br/>$Lang::tr{'reiserfs warning1'}";
-        print "<br/>$Lang::tr{'reiserfs warning2'}";
-        print "</div>";
 }
 
 &Header::closebigbox();
