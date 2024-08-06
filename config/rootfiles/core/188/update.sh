@@ -38,7 +38,8 @@ extract_files
 
 # Remove files
 rm -vrf \
-	/srv/web/ipfire/html/themes/ipfire/include/functions.pl
+	/srv/web/ipfire/html/themes/ipfire/include/functions.pl \
+	/usr/bin/br2684ctl
 
 # update linker config
 ldconfig
