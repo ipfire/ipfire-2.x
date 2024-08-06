@@ -786,6 +786,10 @@ execute() {
 		)
 	fi
 
+	# Call a setup script in the new namespaces to perform
+	# further set up, but before we change root.
+	execute+=( "${BASEDIR}/tools/execute.sh" )
+
 	# Run in chroot?
 	if [ "${chroot}" = "true" ]; then
 		execute+=( "chroot" "${BUILD_DIR}" )
