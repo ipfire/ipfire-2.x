@@ -313,6 +313,8 @@ exiterror() {
 }
 
 prepareenv() {
+	local network="false"
+
 	# Are we running the right shell?
 	if [ -z "${BASH}" ]; then
 		exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
@@ -337,6 +339,10 @@ prepareenv() {
 		case "${1}" in
 			--required-space=*)
 				required_space="${1#--required-space=}"
+				;;
+
+			--network)
+				network="true"
 				;;
 
 			*)
@@ -460,6 +466,26 @@ prepareenv() {
 
 	# Mount the images directory
 	mount --bind "${IMAGES_DIR}"		"${BUILD_DIR}/usr/src/images"
+
+	# Bind-mount files requires for networking if requested
+	if [ "${network}" = "true" ]; then
+		local file
+
+		for file in /etc/resolv.conf /etc/hosts; do
+			# Skip if the source files does not exist
+			if [ ! -e "${file}" ]; then
+				continue
+			fi
+
+			# Create the destination if it does not exist
+			if [ ! -e "${BUILD_DIR}/${file}" ]; then
+				touch "${BUILD_DIR}/${file}"
+			fi
+
+			# Mount the file read-only
+			mount --bind -o ro "${file}" "${BUILD_DIR}/${file}"
+		done
+	fi
 
 	# Configure the ccache
 	export CCACHE_TEMPDIR="/tmp"
@@ -2329,7 +2355,7 @@ shell)
 
 	# enter a shell inside LFS chroot
 	# may be used to changed kernel settings
-	prepareenv
+	prepareenv --network
 	entershell
 	;;
 clean)
