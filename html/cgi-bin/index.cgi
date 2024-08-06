@@ -143,7 +143,7 @@ if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
 	    chomp ($ipaddr);
 	}
 
-&Header::openbox('100%', 'center', '');
+&Header::opensection();
 if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
 	if (open(IPADDR,"${General::swroot}/ddns/ipcache")) {
    	    $ipaddr = <IPADDR>;
@@ -372,7 +372,7 @@ print <<END;
 END
 	}
 print"</table>";
-&Header::closebox();
+&Header::closesection();
 
 #Check if there are any vpns configured (ipsec and openvpn)
 &General::readhasharray("${General::swroot}/vpn/config", \%vpnconfig);
@@ -394,7 +394,7 @@ foreach my $dkey (sort { ncmp($ovpnconfig{$a}[1],$ovpnconfig{$b}[1])} keys %ovpn
 
 if ($showbox){
 # Start of Box wich contains all vpn connections
-	&Header::openbox('100%', 'center', $Lang::tr{'vpn'});
+	&Header::opensection();
 
 	#show ipsec connectiontable
 	if ( $showipsec ) {
@@ -525,7 +525,8 @@ END
 		}
 		print"</table>";
 	}
-&Header::closebox();
+
+	&Header::closesection();
 }
 
 my @warnings = ();
