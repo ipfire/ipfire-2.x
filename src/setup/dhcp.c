@@ -38,7 +38,7 @@ void dhcpdialogcallbackdhcp(newtComponent cm, void *data);
 
 int handledhcp(void)
 {
-	char *results[MAX_BOXES];
+	const char *results[MAX_BOXES];
 	char enabledresult;
 	char startenabled;
 	struct newtExitStruct es;
