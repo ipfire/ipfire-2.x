@@ -528,26 +528,11 @@ END
 &Header::closebox();
 }
 
+my @warnings = ();
+
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
-	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
-}
-
-# EOL architecture
-my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
-if ($machine =~ m/^arm/) {
-	$warnmessage .= "<li><a href='https://wiki.ipfire.org/hardware/requirements' style='color:white;'>$Lang::tr{'eol architecture warning'}</a></li>";
-}
-
-# Memory usage warning
-my @free = `/usr/bin/free`;
-$free[1] =~ m/(\d+)/;
-my $mem = $1;
-$free[2] =~ m/(\d+)/;
-my $used = $1;
-my $pct = int 100 * ($mem - $used) / $mem;
-if ($used / $mem > 90) {
-	$warnmessage .= "<li>$Lang::tr{'high memory usage'}: $pct% !</li>";
+	push(@warnings, "<a href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a>");
 }
 
 # Diskspace usage warning
@@ -563,7 +548,7 @@ foreach my $line (@df) {
 		if ($1<5) {
 			# available:plain value in MB, and not %used as 10% is too much to waste on small disk
 			# and root size should not vary during time
-			$warnmessage .= "<li>$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !</li>";
+			push(@warnings, "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b>");
 		}
 
 	} else {
@@ -572,7 +557,7 @@ foreach my $line (@df) {
 		if ($1>90) {
 			@temp = split(/ /,$line);
 			$temp2=int(100-$1);
-			$warnmessage .= "<li>$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b> !</li>";
+			push(@warnings, "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b>");
 		}
 	}
 }
@@ -584,17 +569,23 @@ foreach my $file (@files) {
 	my $disk=`echo $file | cut -d"-" -f2`;
 	chomp ($disk);
 	if (`/bin/grep "SAVE ALL DATA" $file`) {
-		$warnmessage .= "<li>$Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>";
+		push(@warnings, "$Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'}");
 	}
 }
 
-if ($warnmessage) {
-	&Header::openbox('100%','center', );
-	print "<table class='tbl'>";
-	print "<tr><th>$Lang::tr{'fwhost hint'}</th></tr>";
-	print "<tr><td style='color:white; background-color:$Header::colourred;'>$warnmessage</td></tr>";
-    print "</table>";
-	&Header::closebox();
+# Show any warnings
+if (@warnings) {
+	&Header::opensection();
+
+	print "<ul class=\"notes\">\n";
+
+	foreach my $warning (@warnings) {
+		print "<li class=\"is-warning\">$warning</li>\n";
+	}
+
+	print "</ul>\n";
+
+	&Header::closesection();
 }
 
 my %coredb = &Pakfire::coredbinfo();

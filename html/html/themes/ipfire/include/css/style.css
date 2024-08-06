@@ -417,6 +417,12 @@ table {
 	color: var(--color-green-invert);
 }
 
+/* Notes */
+
+.notes .is-warning {
+	color: var(--color-yellow);
+}
+
 table.fw-nat tbody tr td {
 	height: 2.25em;
 }
