@@ -72,6 +72,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidguard-1.6.0-stdlib.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidguard-1.6.0-configure.patch
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
