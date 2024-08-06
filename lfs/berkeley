@@ -71,6 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/db-5.3.28-clang16.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/db-5.2.28-sqlite-configure-path.patch
+	cd $(DIR_APP)/dist && ./s_config
 	cd $(DIR_APP) && sed -i "s/\(__atomic_compare_exchange\)/\1_db/" src/dbinc/atomic.h
 	cd $(DIR_APP)/build_unix && ../dist/configure \
 		--prefix=/usr \
