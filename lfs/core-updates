@@ -27,11 +27,11 @@ include Config
 THISAPP     = core-updates
 TARGET      = $(DIR_INFO)/$(THISAPP)
 
-PROG		= core-upgrade
+PROG        = core-upgrade
 VER         = $(VERSION)
-RELEASE		= $(CORE)
+PAK_VER	    = $(CORE)
 
-SUMMARY		= IPFire Core Update $(CORE)
+SUMMARY     = IPFire Core Update $(CORE)
 
 ###############################################################################
 # Top-level Rules
