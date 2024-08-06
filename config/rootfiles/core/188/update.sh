@@ -38,8 +38,10 @@ extract_files
 
 # Remove files
 rm -vrf \
+	/srv/web/ipfire/cgi-bin/gpl.cgi \
 	/srv/web/ipfire/html/themes/ipfire/include/functions.pl \
-	/usr/bin/br2684ctl
+	/usr/bin/br2684ctl \
+	/usr/share/doc/licenses
 
 # update linker config
 ldconfig
