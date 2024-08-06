@@ -119,9 +119,11 @@ END
 
 	# Print range select buttons
 	foreach my $range (@time_ranges) {
+		my $selected = ($range eq $default_range) ? "class=\"selected\"" : "";
+
 		print <<END;
 				<li>
-					<button data-range="$range" onclick="rrdimage_selectRange(this)">
+					<button data-range="$range" onclick="rrdimage_selectRange(this)" $selected>
 						$Lang::tr{$range}
 					</button>
 				</li>
