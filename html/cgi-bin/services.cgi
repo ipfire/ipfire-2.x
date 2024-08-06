@@ -49,15 +49,6 @@ my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'hour' unless defined $querry[1];
 
-if ( $querry[0] =~ "processescpu"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateprocessescpugraph($querry[1]);
-}elsif ( $querry[0] =~ "processesmemory"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateprocessesmemorygraph($querry[1]);
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'status information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -205,17 +196,8 @@ END
 	print "</table></div>\n";
 	&Header::closebox();
 
-	&Header::opensection('100%', 'center', "$Lang::tr{'processes'} $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("services.cgi","processescpu","day");
-	&Header::closebox();
-
-	&Header::openbox('100%', 'center', "$Lang::tr{'processes'} $Lang::tr{'memory'} $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("services.cgi","processesmemory","day");
-	&Header::closebox();
-
 	&Header::closebigbox();
 	&Header::closepage();
-}
 
 sub isautorun (@) {
 	my ($pak, $service, $col) = @_;
