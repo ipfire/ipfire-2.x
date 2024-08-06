@@ -1408,6 +1408,7 @@ build_system() {
 	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 gcc PASS=A
 	lfsmake2 zstd
 	lfsmake2 autoconf
+	lfsmake2 autoconf-archive
 	lfsmake2 automake
 	lfsmake2 help2man
 	lfsmake2 libtool
