@@ -130,10 +130,12 @@
 < ids provider eol
 < ids unsupported provider
 < invalid ip or hostname
+< load average
 < log drop hostile in
 < log drop hostile out
 < openvpn cert expires soon
 < openvpn cert has expired
+< processors
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
@@ -158,6 +160,8 @@
 < hostile networks total
 < ids provider eol
 < ids unsupported provider
+< load average
+< processors
 < reg_file_data_sampling
 < system time
 < timeformat
@@ -478,6 +482,7 @@
 < itlb multihit
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -543,6 +548,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -1010,6 +1016,7 @@
 < itlb multihit
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -1095,6 +1102,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -1855,6 +1863,7 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -1978,6 +1987,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
@@ -2859,6 +2869,7 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -2980,6 +2991,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
@@ -3436,6 +3448,7 @@
 < itlb multihit
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < log drop hostile in
 < log drop hostile out
@@ -3470,6 +3483,7 @@
 < pakfire tree unstable
 < pak update
 < please reboot to apply your changes
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
