@@ -20,7 +20,6 @@ srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/getrrdimage.cgi
-srv/web/ipfire/cgi-bin/gpl.cgi
 #srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi

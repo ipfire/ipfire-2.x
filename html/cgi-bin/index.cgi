@@ -48,12 +48,6 @@ my $showbox=0;
 my $showipsec=0;
 my $showovpn=0;
 
-if ( ! -e "/var/ipfire/main/gpl_accepted" ) {
-	print "Status: 302 Moved Temporarily\n";
-	print "Location: gpl.cgi\n\n";
-	exit (0);
-}
-
 &Header::showhttpheaders();
 
 $cgiparams{'ACTION'} = '';
@@ -74,12 +68,10 @@ my %mainsettings = ();
 
 my $connstate = &Header::connectionstatus();
 
-if ( -e "/var/ipfire/main/gpl_accepted" ) {
-	if ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
-		$refresh = "<meta http-equiv='refresh' content='5;'>";
-	}elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
-		$refresh = "<meta http-equiv='refresh' content='30;'>";
-	}
+if ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
+	$refresh = "<meta http-equiv='refresh' content='5;'>";
+} elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
+	$refresh = "<meta http-equiv='refresh' content='30;'>";
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})

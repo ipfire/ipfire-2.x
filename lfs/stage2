@@ -143,10 +143,6 @@ endif
 	# A small hack to include /root to the iso but not all of it's files.
 	touch /root/ipfire
 
-	# License agreement
-	-mkdir -pv /usr/share/doc/licenses/
-	cp -vf $(DIR_SRC)/doc/COPYING /usr/share/doc/licenses/GPLv3
-
 	# System release
 	echo "$(SYSTEM_RELEASE)" > /etc/system-release
 

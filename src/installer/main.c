@@ -24,7 +24,6 @@
 #define _(x) dgettext("installer", x)
 
 #define INST_FILECOUNT 30000
-#define LICENSE_FILE	"/cdrom/COPYING"
 #define SOURCE_TEMPFILE "/tmp/downloads/image.iso"
 
 extern char url[STRING_SIZE];
@@ -155,36 +154,6 @@ static int newtWinOkCancel(const char* title, const char* message, int width, in
 	if (answer == btn_ok) {
 		ret = 0;
 	}
-
-	newtFormDestroy(form);
-	newtPopWindow();
-
-	return ret;
-}
-
-static int newtLicenseBox(const char* title, const char* text, int width, int height) {
-	int ret = 1;
-
-	newtCenteredWindow(width, height, title);
-
-	newtComponent form = newtForm(NULL, NULL, 0);
-
-	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 7,
-		NEWT_FLAG_WRAP|NEWT_FLAG_SCROLL);
-	newtTextboxSetText(textbox, text);
-	newtFormAddComponent(form, textbox);
-
-	char choice;
-	newtComponent checkbox = newtCheckbox(3, height - 3, _("I accept this license"),
-		' ', " *", &choice);
-
-	newtComponent btn = newtButton(width - 15, height - 4, _("OK"));
-
-	newtFormAddComponents(form, checkbox, btn, NULL);
-
-	newtComponent answer = newtRunForm(form);
-	if (answer == btn && choice == '*')
-		ret = 0;
 
 	newtFormDestroy(form);
 	newtPopWindow();
@@ -365,8 +334,6 @@ int main(int argc, char *argv[]) {
 	// Read /etc/system-release
 	char* system_release = get_system_release();
 
-	char discl_msg[40000] =	"Disclaimer\n";
-
 	char* sourcedrive = NULL;
 	struct hw_destination* destination = NULL;
 	struct hw_disk** selected_disks = NULL;
@@ -376,7 +343,6 @@ int main(int argc, char *argv[]) {
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
-	FILE *copying;
 
 	setlocale(LC_ALL, "");
 	sethostname(DISTRO_SNAME, strlen(DISTRO_SNAME));
@@ -568,23 +534,6 @@ int main(int argc, char *argv[]) {
 			sourcedrive, SOURCE_MOUNT_PATH, strerror(errno));
 		errorbox(message);
 		goto EXIT;
-	}
-
-	if (!config.unattended) {
-		// Read the license file.
-		if (!(copying = fopen(LICENSE_FILE, "r"))) {
-			sprintf(discl_msg, "Could not open license file: %s\n", LICENSE_FILE);
-			fprintf(flog, "%s", discl_msg);
-		} else {
-			fread(discl_msg, 1, 40000, copying);
-			fclose(copying);
-
-			if (newtLicenseBox(_("License Agreement"), discl_msg, 75, 20)) {
-				errorbox(_("License not accepted!"));
-
-				goto EXIT;
-			}
-		}
 	}
 
 	int part_type = HW_PART_TYPE_NORMAL;
@@ -864,12 +813,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	newtPopWindow();
-
-	/* Set marker that the user has already accepted the GPL if the license has been shown
-	 * in the installation process. In unatteded mode, the user will be presented the
-	 * license when he or she logs on to the web user interface for the first time. */
-	if (!config.unattended)
-		mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
 
 	/* Copy restore file from cdrom */
 	char* backup_file = hw_find_backup_file(logfile, SOURCE_MOUNT_PATH);

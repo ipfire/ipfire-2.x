@@ -440,8 +440,6 @@ sub genmenu {
     my %sublogshash = ();
     my $sublogs = \%sublogshash;
 
-  if ( -e "/var/ipfire/main/gpl_accepted") {
-
     eval `/bin/cat /var/ipfire/menu.d/*.menu`;
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
@@ -472,7 +470,6 @@ sub genmenu {
         $menu->{'03.network'}{'subMenu'}->{'80.macadressmenu'}{'enabled'} = 0;
         $menu->{'03.network'}{'subMenu'}->{'90.wakeonlan'}{'enabled'} = 0;
     }
-  }
 }
 
 sub showhttpheaders($) {

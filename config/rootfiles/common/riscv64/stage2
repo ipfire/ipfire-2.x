@@ -133,8 +133,6 @@ usr/local/bin/update-location-database
 usr/sbin/openvpn-metrics
 #usr/share
 #usr/share/doc
-#usr/share/doc/licenses
-usr/share/doc/licenses/GPLv3
 #usr/share/info
 #usr/share/locale
 #usr/share/man
