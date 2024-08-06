@@ -163,7 +163,7 @@ if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || (
 
 print <<END;
 <!-- Table of networks -->
-<table class='tbl' style='width:80%;'>
+<table class='tbl'>
   <tr>
         <th>$Lang::tr{'network'}</th>
         <th>$Lang::tr{'ip address'}</th>
@@ -239,7 +239,7 @@ if ( $netsettings{'RED_TYPE'} ne "STATIC" && $netsettings{'RED_TYPE'} ne "DHCP" 
 	if ( ( $pppsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
 		print <<END;
 		<br/>
-		<table style='width:80%;'>
+		<table>
 		<tr><td>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'profile'}:
 			<select name='PROFILE'>
@@ -284,7 +284,7 @@ END
 
 print <<END;
 <br/>
-<table class='tbl' style='width:80%;'>
+<table class='tbl'>
 <tr>
 	<th>$Lang::tr{'network'}</th>
 	<th>$Lang::tr{'ip address'}</th>
@@ -406,7 +406,7 @@ if ($showbox){
 		my $col="";
 		my $count=0;
 		print <<END;
-		<table class='tbl' style='width:80%;'>
+		<table class='tbl'>
 		<tr>
 			<th style='width:40%;'>$Lang::tr{'ipsec network'}</th>
 			<th style='width:30%;'>$Lang::tr{'ip address'}</th>
@@ -470,7 +470,7 @@ END
 	if ( $showovpn ){
 		print <<END;
 		<br/>
-		<table class='tbl' style='width:80%;'>
+		<table class='tbl'>
 		<tr>
 			<th style='width:40%;'>$Lang::tr{'openvpn network'}</th>
 			<th style='width:30%;'>$Lang::tr{'ip address'}</th>
@@ -590,7 +590,7 @@ foreach my $file (@files) {
 
 if ($warnmessage) {
 	&Header::openbox('100%','center', );
-	print "<table class='tbl' style='width:80%;'>";
+	print "<table class='tbl'>";
 	print "<tr><th>$Lang::tr{'fwhost hint'}</th></tr>";
 	print "<tr><td style='color:white; background-color:$Header::colourred;'>$warnmessage</td></tr>";
     print "</table>";
