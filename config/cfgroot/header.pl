@@ -236,7 +236,7 @@ print <<END;
 END
 
 
-print "<link href=\"/themes/ipfire/include/css/style.css?v=20240125\" rel=\"stylesheet\" type=\"text/css\" />\n";
+print "<link href=\"/themes/ipfire/include/css/style.css?v=20240806\" rel=\"stylesheet\" type=\"text/css\" />\n";
 
 
 if ($settings{'SPEED'} ne 'off') {
