@@ -514,7 +514,7 @@ entershell() {
 	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
 	# Run an interactive shell
-	execute --chroot --interactive bash -i
+	execute --chroot --interactive --network bash -i
 }
 
 lfsmakecommoncheck() {
@@ -547,6 +547,7 @@ execute() {
 	local command=()
 	local interactive="false"
 	local timer
+	local network="false"
 
 	# Collect environment variables
 	local -A environ=(
@@ -685,6 +686,10 @@ execute() {
 				)
 				;;
 
+			--network)
+				network="true"
+				;;
+
 			--timer=*)
 				timer="${1#--timer=}"
 				;;
@@ -738,6 +743,11 @@ execute() {
 				)
 				;;
 		esac
+	fi
+
+	# Network
+	if [ "${network}" = "false" ]; then
+		unshare+=( "--net" )
 	fi
 
 	local execute=()
