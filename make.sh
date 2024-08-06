@@ -915,7 +915,7 @@ lfsmake1() {
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! make_pkg "${pkg}" download "$@"; then
+	if ! make_pkg --network "${pkg}" download "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
@@ -937,7 +937,7 @@ lfsmake2() {
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! make_pkg "${pkg}" download "$@"; then
+	if ! make_pkg --network "${pkg}" download "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
@@ -1144,7 +1144,7 @@ download_sources() {
 		[ $? == 1 ] && continue
 
 		# Download and check the package
-		if ! make_pkg "${pkg}" download b2; then
+		if ! make_pkg --network "${pkg}" download b2; then
 			failed_packages+=( "${pkg}" )
 			print_status FAIL
 			continue
