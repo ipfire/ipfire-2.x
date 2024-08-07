@@ -2897,7 +2897,6 @@ END
 					}
 				}
 			}
-			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
 	} elsif ($optionsfw{'SHOWTABLES'} eq 'on') {
 		print <<END;
@@ -2907,40 +2906,36 @@ END
 END
 	}
 
+	print "</table>";
+	print "<br>";
+
 	#SHOW FINAL RULE
 	my $policy = 'fwdfw ' . $fwdfwsettings{'POLICY'};
-	my $colour = "bgcolor='green'";
+	my $colour = "class='policy is-allowed'";
 	if ($fwdfwsettings{'POLICY'} eq 'MODE1') {
-		$colour = "bgcolor='darkred'";
+		$colour = "class='policy is-blocked'";
 	}
+
+	print "<table class='tbl'>\n";
 
 	my $message;
 	if (($config eq '/var/ipfire/firewall/config') && ($fwdfwsettings{'POLICY'} ne 'MODE1')) {
-		print <<END;
-			<tr>
-				<td colspan='13'>&nbsp;</td>
-			</tr>
-			<tr>
-				<td colspan='13' style="padding-left:0px;padding-right:0px">
-					<table width="100%" border='1' rules="cols" cellspacing='0'>
-END
-
 		# GREEN
 		print <<END;
 			<tr>
-				<td align='center'>
-					<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+				<td class="intf green">
+					$Lang::tr{'green'} &gt;
 				</td>
-				<td align='center'>
-					<font color="$Header::colourred">$Lang::tr{'red'}</font>
+				<td class="intf red">
+					$Lang::tr{'red'}
 					($Lang::tr{'fwdfw pol allow'})
 				</td>
 END
 
 		if (&Header::orange_used()) {
 			print <<END;
-				<td align='center'>
-					<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+				<td class="intf orange">
+					$Lang::tr{'orange'}
 					($Lang::tr{'fwdfw pol allow'})
 				</td>
 END
@@ -2948,8 +2943,8 @@ END
 
 		if (&Header::blue_used()) {
 			print <<END;
-				<td align='center'>
-					<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+				<td class='intf blue'>
+					$Lang::tr{'blue'}
 					($Lang::tr{'fwdfw pol allow'})
 				</td>
 END
@@ -2961,23 +2956,23 @@ END
 		if (&Header::orange_used()) {
 			print <<END;
 				<tr>
-					<td align='center' width='20%'>
-						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+					<td class='intf orange'>
+						$Lang::tr{'orange'} &gt;
 					</td>
-					<td align='center'>
-						<font color="$Header::colourred">$Lang::tr{'red'}</font>
+					<td class='intf red'>
+						$Lang::tr{'red'}
 						($Lang::tr{'fwdfw pol allow'})
 					</td>
-					<td align='center'>
-						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+					<td class='intf green'>
+						$Lang::tr{'green'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 END
 
 			if (&Header::blue_used()) {
 				print <<END;
-					<td align='center'>
-						<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+					<td class='intf blue'>
+						$Lang::tr{'blue'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 END
@@ -2989,27 +2984,27 @@ END
 		if (&Header::blue_used()) {
 			print <<END;
 				<tr>
-					<td align='center'>
-						<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+					<td class='intf blue'>
+						$Lang::tr{'blue'} &gt;
 					</td>
-					<td align='center'>
-						<font color="$Header::colourred">$Lang::tr{'red'}</font>
+					<td class='intf red'>
+						$Lang::tr{'red'}
 						($Lang::tr{'fwdfw pol allow'})
 					</td>
 END
 
 			if (&Header::orange_used()) {
 				print <<END;
-					<td align='center'>
-						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+					<td class='intf orange'>
+						$Lang::tr{'orange'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 END
 			}
 
 			print <<END;
-					<td align='center'>
-						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+					<td class='intf green'>
+						$Lang::tr{'green'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 				</tr>
@@ -3017,7 +3012,6 @@ END
 		}
 
 		print <<END;
-					</table>
 				</td>
 			</tr>
 END
@@ -3026,24 +3020,27 @@ END
 
 	} elsif ($config eq '/var/ipfire/firewall/outgoing' && ($fwdfwsettings{'POLICY1'} ne 'MODE1')) {
 		$message = $Lang::tr{'fwdfw pol allow'};
-		$colour = "bgcolor='green'";
+		$colour = "class='policy is-allowed'";
 	} else {
 		$message = $Lang::tr{'fwdfw pol block'};
-		$colour = "bgcolor='darkred'";
+		$colour = "class='policy is-blocked'";
 	}
 
 	if ($message) {
+		my @available_zones = &Network::get_available_network_zones();
+
+		my $colspan = scalar @available_zones;
+
 		print <<END;
 			<tr>
-				<td $colour align='center' colspan='13'>
-					<font color='#FFFFFF'>$Lang::tr{'policy'}: $message</font>
+				<td $colour colspan='$colspan'>
+					$Lang::tr{'policy'}: $message
 				</td>
 			</tr>
 END
 	}
 
 	print "</table>";
-	print "<br>";
 
 	&Header::closebox();
 }

@@ -419,6 +419,50 @@ table {
 	color: var(--color-green-invert);
 }
 
+/* Interfaces */
+
+.tbl .intf {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .intf.red {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .intf.green {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .intf.orange {
+	background-color: var(--color-orange);
+	color: var(--color-orange-invert);
+}
+
+.tbl .intf.blue {
+	background-color: var(--color-blue);
+	color: var(--color-blue-invert);
+}
+
+/* Policies */
+
+.tbl .policy {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .policy.is-blocked {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .policy.is-allowed{
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
 /* Notes */
 
 .notes .is-warning {
