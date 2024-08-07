@@ -473,8 +473,10 @@ sub ipcolour($) {
 
 	foreach my $network (@networks) {
 		if (defined $network) {
-			if (&Network::ip_address_in_network($address, $network)) {
-				return $networks{$network};
+			if (&Network::check_ip_address_and_netmask($network)) {
+				if (&Network::ip_address_in_network($address, $network)) {
+					return $networks{$network};
+				}
 			}
 		}
 	}
