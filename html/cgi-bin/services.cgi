@@ -135,8 +135,7 @@ $querry[1] = 'hour' unless defined $querry[1];
 	}
 
 	print <<END
-<div align='center'>
-<table width='80%' cellspacing='1' class='tbl'>
+<table class='tbl'>
 <tr>
 	<th align='left'><b>$Lang::tr{addon} $Lang::tr{service}</b></th>
 	<th align='center'><b>Boot</b></th>
@@ -193,7 +192,8 @@ END
 		}
 	}
 
-	print "</table></div>\n";
+	print "</table>\n";
+
 	&Header::closebox();
 
 	&Header::closebigbox();
