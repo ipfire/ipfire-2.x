@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -68,9 +68,6 @@ case "$1" in
 		# ARM does not support to scan for sensors. In that case,
 		# we create an empty configuration file.
 		machine=$(uname -m)
-		if [ "${machine:0:3}" = "arm" ]; then
-			touch /etc/sysconfig/lm_sensors
-		fi
 		if [ "${machine:0:7}" = "aarch64" ]; then
 			touch /etc/sysconfig/lm_sensors
 		fi
