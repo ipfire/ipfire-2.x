@@ -652,7 +652,7 @@ if ($errormessage) {
 
 print <<END
   <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table width='66%'>
+	<table width='100%'>
 END
 ;
 	if ( $message ne "" ) {
@@ -673,7 +673,7 @@ END
 	if (($qossettings{'OUT_SPD'} ne '') && ($qossettings{'INC_SPD'} ne '')) {
 		print <<END
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	  <table width='66%'>
+	  <table width='100%'>
 		<tr><td colspan='3'>&nbsp;
 		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}: 	<td width='30%' align='left'>$qossettings{'INC_SPD'}
 		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='$Lang::tr{'modify'}' />
@@ -685,7 +685,7 @@ END
 	if (($qossettings{'DEFCLASS_OUT'} ne '') && ($qossettings{'DEFCLASS_INC'} ne '')) {
 		print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+		<table width='100%'>
 		<tr><td colspan='3'><hr />
 		<tr><td width='50%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_INC'}
 		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='$Lang::tr{'modify'}' />
@@ -695,7 +695,7 @@ END
 		</table>
 		</form>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%' border='0'>
+		<table width='100%' border='0'>
 			<tr><td width='100%' align='center'>
 			     <input type='submit' name='ACTION' value='$Lang::tr{'parentclass add'}' />
 			     <input type='submit' name='ACTION' value='$Lang::tr{'status'}' />
@@ -740,7 +740,7 @@ sub changedefclasses {
 	&Header::openbox('100%', 'center', $Lang::tr{'std classes'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+		<table width='100%'>
 		<tr><td width='100%' colspan='3'>$Lang::tr{'no filter pass'}
 		<tr><td width='33%' align='right'>$Lang::tr{'download'}:<td width='33%' align='left'><select name='DEFCLASS_INC'>
 END
@@ -781,7 +781,7 @@ sub changebandwidth {
 		print <<END;
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
-				<table width='66%'>
+				<table width='100%'>
 					<tr>
 						<td width='100%' colspan='2'>$Lang::tr{'down and up speed'}</td>
 					</tr>
@@ -843,7 +843,7 @@ sub parentclass {
 	&Header::openbox('100%', 'center', $Lang::tr{'parentclass'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+		<table width='100%'>
 END
 ;
 	if ( $message ne "" ) {
@@ -936,7 +936,7 @@ sub level7rule {
 	&Header::openbox('100%', 'center', $Lang::tr{'Level7 Rule'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+		<table width='100%'>
 END
 ;
 	if ( $message ne "" ) {
@@ -982,7 +982,7 @@ sub portrule {
 	&Header::openbox('100%', 'center', $Lang::tr{'Add Port Rule'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+		<table width='100%'>
 		<tr><td width='100%' colspan='3'>$Lang::tr{'enter data'}
 		<tr><td width='33%' align='right'>$Lang::tr{'protocol'}:
 		    <td width='33%' align='left'><select name='PPROT'>
@@ -1028,7 +1028,7 @@ sub tosrule {
 	}
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+		<table width='100%'>
 END
 ;
 	if ( $message ne "" ) {
