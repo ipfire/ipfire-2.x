@@ -2604,19 +2604,19 @@ END
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
 				$tooltip='ACCEPT';
-				$rulecolor=$color{'color17'};
+				$rulecolor="policy is-allowed";
 			}elsif($$hash{$key}[0] eq 'DROP'){
 				$ruletype='D';
 				$tooltip='DROP';
-				$rulecolor=$color{'color25'};
+				$rulecolor="policy is-blocked";
 			}elsif($$hash{$key}[0] eq 'REJECT'){
 				$ruletype='R';
 				$tooltip='REJECT';
-				$rulecolor=$color{'color16'};
+				$rulecolor="policy is-rejected";
 			}
 
 			print <<END;
-					<td bgcolor='$rulecolor' align='center' width='2%'>
+					<td class='$rulecolor' width='2%'>
 						<span title='$tooltip'>&nbsp;&nbsp;</span>
 					</td>
 END
