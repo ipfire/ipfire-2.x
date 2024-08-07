@@ -209,7 +209,7 @@ sub isautorun (@) {
 sub isrunningaddon (@) {
 	my ($pak, $service) = @_;
 
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+	my $status = "<td class='status is-stopped'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
@@ -221,7 +221,7 @@ sub isrunningaddon (@) {
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
 		$status = "<td align='center' width='8%'><a href='services.cgi?$pak!stop!$service'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
 		$status .= "<td align='center' width='8%'><a href='services.cgi?$pak!restart!$service'><img alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' src='/images/reload.gif' border='0' /></a></td> ";
-		$status .= "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
+		$status .= "<td class='status is-running'>$Lang::tr{'running'}</td>";
 		$testcmd =~ s/.* //gi;
 		$testcmd =~ s/[a-z_]//gi;
 		$testcmd =~ s/\[[0-1]\;[0-9]+//gi;
@@ -245,7 +245,7 @@ sub isrunningaddon (@) {
 		$status .="<td align='center'>$memory KB</td>";
 	}else{
 		$status = "<td align='center' width='16%' colspan=2><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
-		$status .= "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+		$status .= "<td class='status is-stopped'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
 	}
 	return $status;
 }
