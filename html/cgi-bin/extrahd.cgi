@@ -216,7 +216,7 @@ if ($errormessage) {
 	close(FILE);
 
 	print <<END
-		<table border='0' width='600' cellspacing="0">
+		<table border='0' width='100%' cellspacing="0">
 END
 ;
 	foreach my $device (sort @devices) {
