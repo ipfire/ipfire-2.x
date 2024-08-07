@@ -5,6 +5,8 @@
 	--color-red-invert     : #ffffff;
 	--color-blue           : #333399;
 	--color-blue-invert    : #ffffff;
+	--color-orange         : #ff9933;
+	--color-orange-invert  : #ffffff;
 	--color-grey           : #d6d6d6;
 	--color-light-grey     : #f0f0f0;
 
@@ -385,7 +387,7 @@ table {
 	font-weight: bold;
 }
 
-.tbl .status.is-running {
+.tbl .status.is-running, .tbl .status.is-connected {
 	background-color: var(--color-green);
 	color: var(--color-green-invert);
 }
@@ -397,12 +399,17 @@ table {
 	width: 33%;
 }
 
+.tbl .status.is-connecting {
+	background-color: var(--color-orange);
+	color: var(--color-orange-invert);
+}
+
 .tbl .status.is-vulnerable {
 	background-color: var(--color-red);
 	color: var(--color-red-invert);
 }
 
-.tbl .status.is-mitigation {
+.tbl .status.is-disabled, .tbl .status.is-mitigation {
 	background-color: var(--color-blue);
 	color: var(--color-blue-invert);
 }

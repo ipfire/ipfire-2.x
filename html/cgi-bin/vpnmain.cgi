@@ -3402,21 +3402,21 @@ END
 	foreach my $line (@status) {
 		if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
 		($line =~ /$confighash{$key}[1]\{.*INSTALLED/)) {
-			$col1="bgcolor='${Header::colourgreen}'";
-			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+			$col1="class='status is-connected'";
+			$active = "$Lang::tr{'capsopen'}";
 			last;
 		} elsif ($line =~ /$confighash{$key}[1]\[.*CONNECTING/) {
-			$col1="bgcolor='${Header::colourorange}'";
-			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn connecting'}</font></b>";
+			$col1="class='status is-connecting'";
+			$active = "$Lang::tr{'vpn connecting'}";
 		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
-			$col1="bgcolor='${Header::colourorange}'";
-			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
+			$col1="class='status is-connecting'";
+			$active = "$Lang::tr{'vpn on-demand'}";
 		}
 	}
 	# move to blue if really down
 	if ($confighash{$key}[0] eq 'off' && $col1 =~ /${Header::colourred}/ ) {
-		$col1="bgcolor='${Header::colourblue}'";
-		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+		$col1="class='status is-disabled'";
+		$active = "$Lang::tr{'capsclosed'}";
 	}
 	print <<END
 	<td align='center' $col1>$active</td>
