@@ -5462,12 +5462,12 @@ END
 	print "</td>";
 	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
-	$col1="bgcolor='${Header::colourred}'";
-	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+	$col1="class='status is-disconnected'";
+	my $active = "$Lang::tr{'capsclosed'}";
 
 	if ($confighash{$key}[0] eq 'off') {
-		$col1="bgcolor='${Header::colourblue}'";
-		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+		$col1="class='status is-disabled'";
+		$active = "$Lang::tr{'capsclosed'}";
 	} else {
 
 ###
@@ -5498,11 +5498,11 @@ END
 ####
 
 		if (($tustate[1] eq 'CONNECTED') || ($tustate[1] eq 'WAIT')) {
-			$col1="bgcolor='${Header::colourgreen}'";
-			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+			$col1="class='status is-connected'";
+			$active = "$Lang::tr{'capsopen'}";
 		}else {
-			$col1="bgcolor='${Header::colourred}'";
-			$active = "<b><font color='#FFFFFF'>$tustate[1]</font></b>";
+			$col1="class='status is-disconnected'";
+			$active = "$tustate[1]";
 		}
            }
            }
@@ -5518,8 +5518,8 @@ END
 					$cn = $match[1];
 				}
 				if ($cn eq "$confighash{$key}[2]") {
-					$col1="bgcolor='${Header::colourgreen}'";
-					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+					$col1="class='status is-connected'";
+					$active = "$Lang::tr{'capsopen'}";
 				}
 			}
 		}
