@@ -147,9 +147,6 @@ $querry[1] = 'hour' unless defined $querry[1];
 END
 ;
 
-	my $lines=0; # Used to count the outputlines to make different bgcolor
-	my $col;
-
 	my @paks;
 	my @addon_services;
 
@@ -163,26 +160,17 @@ END
 
 		if ("$metadata{'Services'}") {
 			foreach $service (split(/ /, "$metadata{'Services'}")) {
-				$lines++;
-				if ($lines % 2) {
-					print "<tr>";
-					$col="bgcolor='$color{'color22'}'";
-				} else {
-					print "<tr>";
-					$col="bgcolor='$color{'color20'}'";
-				}
-
 				# Add addon name to displayname of service if servicename differs from addon
 				my $displayname = ($pak ne $service) ? "$service ($pak)" : $service;
 				if ( -e "/srv/web/ipfire/cgi-bin/$pak.cgi" ) {
 					$displayname = ($pak ne $service) ? "$service (<a href=\'$pak.cgi\'>$pak</a>)" : "<a href=\'$pak.cgi\'>$service</a>";
 				}
 
-				print "<td align='left' $col width='31%'>$displayname</td> ";
+				print "<td align='left' width='31%'>$displayname</td> ";
 
-				my $status = isautorun($pak,$service,$col);
+				my $status = isautorun($pak,$service);
 				print "$status ";
-				my $status = isrunningaddon($pak,$service,$col);
+				my $status = isrunningaddon($pak,$service);
 				$status =~ s/\\[[0-1]\;[0-9]+m//g;
 
 				chomp($status);
@@ -200,18 +188,18 @@ END
 	&Header::closepage();
 
 sub isautorun (@) {
-	my ($pak, $service, $col) = @_;
+	my ($pak, $service) = @_;
 	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$pak", "boot-status", "$service");
 	my $testcmd = @testcmd[0];
-	my $status = "<td align='center' $col><img alt='$Lang::tr{'service boot setting unavailable'}' title='$Lang::tr{'service boot setting unavailable'}' src='/images/dialog-warning.png' border='0' width='16' height='16' /></td>";
+	my $status = "<td align='center'><img alt='$Lang::tr{'service boot setting unavailable'}' title='$Lang::tr{'service boot setting unavailable'}' src='/images/dialog-warning.png' border='0' width='16' height='16' /></td>";
 
 	# Check if autorun for the given service is enabled.
 	if ( $testcmd =~ /enabled\ on\ boot/ ) {
 		# Adjust status.
-		$status = "<td align='center' $col><a href='services.cgi?$pak!disable!$service'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
+		$status = "<td align='center'><a href='services.cgi?$pak!disable!$service'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
 	} elsif ( $testcmd =~ /disabled\ on\ boot/ ) {
 		# Adjust status.
-		$status = "<td align='center' $col><a href='services.cgi?$pak!enable!$service'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
+		$status = "<td align='center'><a href='services.cgi?$pak!enable!$service'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
 	}
 
 	# Return the status.
@@ -219,9 +207,9 @@ sub isautorun (@) {
 }
 
 sub isrunningaddon (@) {
-	my ($pak, $service, $col) = @_;
+	my ($pak, $service) = @_;
 
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
+	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
@@ -231,8 +219,8 @@ sub isrunningaddon (@) {
 	my $testcmd = @testcmd[0];
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
-		$status = "<td align='center' $col width='8%'><a href='services.cgi?$pak!stop!$service'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
-		$status .= "<td align='center' $col width='8%'><a href='services.cgi?$pak!restart!$service'><img alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' src='/images/reload.gif' border='0' /></a></td> ";
+		$status = "<td align='center' width='8%'><a href='services.cgi?$pak!stop!$service'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
+		$status .= "<td align='center' width='8%'><a href='services.cgi?$pak!restart!$service'><img alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' src='/images/reload.gif' border='0' /></a></td> ";
 		$status .= "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
 		$testcmd =~ s/.* //gi;
 		$testcmd =~ s/[a-z_]//gi;
@@ -242,7 +230,7 @@ sub isrunningaddon (@) {
 		$testcmd =~ s///gi;
 
 		my @pid = split(/\s/,$testcmd);
-		$status .="<td align='center' $col>$pid[0]</td>";
+		$status .="<td align='center'>$pid[0]</td>";
 
 		my $memory = 0;
 
@@ -254,10 +242,10 @@ sub isrunningaddon (@) {
 			}
 			$memory+=$memory[0];
 		}
-		$status .="<td align='center' $col>$memory KB</td>";
+		$status .="<td align='center'>$memory KB</td>";
 	}else{
-		$status = "<td align='center' $col width='16%' colspan=2><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
-		$status .= "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
+		$status = "<td align='center' width='16%' colspan=2><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
+		$status .= "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
 	}
 	return $status;
 }
