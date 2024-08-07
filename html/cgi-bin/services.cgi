@@ -232,17 +232,13 @@ sub isrunningaddon (@) {
 		my @pid = split(/\s/,$testcmd);
 		$status .="<td align='center'>$pid[0]</td>";
 
-		my $memory = 0;
+		# Fetch the memory consumption
+		my $memory = &General::get_memory_consumption(@pid);
 
-		foreach (@pid){
-			chomp($_);
-			if (open(FILE, "/proc/$_/statm")){
-				my $temp = <FILE>;
-				@memory = split(/ /,$temp);
-			}
-			$memory+=$memory[0];
-		}
-		$status .="<td align='center'>$memory KB</td>";
+		# Format memory
+		$memory = &General::formatBytes($memory);
+
+		$status .="<td align='right'>$memory</td>";
 	}else{
 		$status = "<td align='center' width='16%' colspan=2><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
 		$status .= "<td class='status is-stopped'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
