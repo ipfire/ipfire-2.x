@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -21,7 +21,7 @@
 
 shopt -s nullglob
 
-NOW="$(date "+%Y-%m-%d-%H:%M")"
+NOW="$(date "+%Y-%m-%d_%H-%M")"
 
 list_addons() {
 	local file
@@ -82,7 +82,8 @@ restore_backup() {
 	# Extract backup
 	if ! tar xvzpf "${filename}" -C / \
 			--exclude-from="/var/ipfire/backup/exclude" \
-			--exclude-from="/var/ipfire/backup/exclude.user"; then
+			--exclude-from="/var/ipfire/backup/exclude.user" \
+			--force-local; then
 		echo "Could not extract backup" >&2
 		return 1
 	fi
