@@ -1987,41 +1987,28 @@ END
 		&Header::closebox;
 		$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 		print <<END;
-			<center>
-				<table width="80%" class='tbl' id='actions'>
-					<tr>
-						<td width="33%" align="center" bgcolor="$color{'color17'}">
-							&nbsp;<br>&nbsp;
-						</td>
-						<td width="33%" align="center" bgcolor="$color{'color25'}">
-							&nbsp;<br>&nbsp;
-						</td>
-						<td width="33%" align="center" bgcolor="$color{'color16'}">
-							&nbsp;<br>&nbsp;
-						</td>
-					</tr>
-					<tr>
-						<td width="33%" align="center">
-							<label>
-								<input type="radio" name="RULE_ACTION" value="ACCEPT" $checked{"RULE_ACTION"}{"ACCEPT"}>
-								<strong>$Lang::tr{'fwdfw ACCEPT'}</strong>
-							</label>
-						</td>
-						<td width="33%" align="center">
-							<label>
-								<input type="radio" name="RULE_ACTION" value="DROP" $checked{"RULE_ACTION"}{"DROP"}>
-								<strong>$Lang::tr{'fwdfw DROP'}</strong>
-							</label>
-						</td>
-						<td width="33%" align="center">
-							<label>
-								<input type="radio" name="RULE_ACTION" value="REJECT" $checked{"RULE_ACTION"}{"REJECT"}>
-								<strong>$Lang::tr{'fwdfw REJECT'}</strong>
-							</label>
-						</td>
-					</tr>
-				</table>
-			</center>
+			<table class='tbl' id='actions'>
+				<tr>
+					<td width="33%" class="policy is-allowed">
+						<label>
+							<input type="radio" name="RULE_ACTION" value="ACCEPT" $checked{"RULE_ACTION"}{"ACCEPT"}>
+							<strong>$Lang::tr{'fwdfw ACCEPT'}</strong>
+						</label>
+					</td>
+					<td width="33%" class="policy is-blocked">
+						<label>
+							<input type="radio" name="RULE_ACTION" value="DROP" $checked{"RULE_ACTION"}{"DROP"}>
+							<strong>$Lang::tr{'fwdfw DROP'}</strong>
+						</label>
+					</td>
+					<td width="33%" class="policy is-rejected">
+						<label>
+							<input type="radio" name="RULE_ACTION" value="REJECT" $checked{"RULE_ACTION"}{"REJECT"}>
+							<strong>$Lang::tr{'fwdfw REJECT'}</strong>
+						</label>
+					</td>
+				</tr>
+			</table>
 
 			<br>
 END

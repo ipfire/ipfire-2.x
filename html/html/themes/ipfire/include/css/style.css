@@ -7,6 +7,8 @@
 	--color-blue-invert    : #ffffff;
 	--color-orange         : #ff9933;
 	--color-orange-invert  : #ffffff;
+	--color-black          : #000000;
+	--color-black-invert   : #ffffff;
 	--color-grey           : #d6d6d6;
 	--color-light-grey     : #f0f0f0;
 
@@ -458,9 +460,14 @@ table {
 	color: var(--color-red-invert);
 }
 
-.tbl .policy.is-allowed{
+.tbl .policy.is-allowed {
 	background-color: var(--color-green);
 	color: var(--color-green-invert);
+}
+
+.tbl .policy.is-rejected {
+	background-color: var(--color-black);
+	color: var(--color-black-invert);
 }
 
 /* Notes */
