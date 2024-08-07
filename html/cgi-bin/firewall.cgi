@@ -432,7 +432,8 @@ sub addrule
 {
 	&error;
 
-	&Header::openbox('100%', 'left', "");
+	&Header::opensection();
+
 	print <<END;
 		<form method="POST" action="">
 			<table border='0' width="100%">
@@ -452,11 +453,9 @@ END
 				</tr>
 			</table>
 		</form>
-
-		<br>
 END
 
-	&Header::closebox();
+	&Header::closesection();
 	&viewtablerule;
 }
 sub base
