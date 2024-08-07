@@ -318,6 +318,7 @@ WARNING: translation string unused: guest ok
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature
 WARNING: translation string unused: harddisk temperature graphs
+WARNING: translation string unused: high memory usage
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host allow
@@ -863,7 +864,6 @@ WARNING: untranslated string: available = available
 WARNING: untranslated string: bit = bit
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
-WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
 WARNING: untranslated string: cake profile bridged-vcmux 24 = Bridged VC-MUX (24 bytes)
@@ -1013,7 +1013,6 @@ WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: enable otp = Enable OTP
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: encryption = Encryption:
-WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
@@ -1729,6 +1728,7 @@ WARNING: untranslated string: wio_wan_up = unknown string
 WARNING: untranslated string: wio_wanname = unknown string
 WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
+WARNING: untranslated string: wireguard = WireGuard
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client = Wireless client
 WARNING: untranslated string: wlan client advanced settings = Advanced settings

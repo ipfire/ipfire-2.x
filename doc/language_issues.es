@@ -310,6 +310,7 @@ WARNING: translation string unused: encrypted
 WARNING: translation string unused: enter ack class
 WARNING: translation string unused: entropy
 WARNING: translation string unused: entropy graphs
+WARNING: translation string unused: eol architecture warning
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -422,6 +423,7 @@ WARNING: translation string unused: guest ok
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature
 WARNING: translation string unused: harddisk temperature graphs
+WARNING: translation string unused: high memory usage
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host allow
@@ -965,7 +967,6 @@ WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
-WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
@@ -1171,5 +1172,6 @@ WARNING: untranslated string: wio_wan_up = unknown string
 WARNING: untranslated string: wio_wanname = unknown string
 WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
+WARNING: untranslated string: wireguard = WireGuard
 WARNING: untranslated string: wlan client configuration = Wireless Client Configuration
 WARNING: untranslated string: wlanap = Access Point

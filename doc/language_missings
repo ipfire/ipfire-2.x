@@ -103,6 +103,7 @@
 < user management
 < vpn configuration main
 < winbind daemon
+< wireguard
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
@@ -149,6 +150,7 @@
 < system time
 < timeformat
 < transport mode does not support vti
+< wireguard
 < wlanap
 < wlan client configuration
 ############################################################################
@@ -172,6 +174,7 @@
 < system time
 < timeformat
 < upload fcdsl.o
+< wireguard
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -651,6 +654,7 @@
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -1206,6 +1210,7 @@
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -2176,6 +2181,7 @@
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -3183,6 +3189,7 @@
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -3567,6 +3574,7 @@
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
