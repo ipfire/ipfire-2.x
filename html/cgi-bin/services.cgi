@@ -141,7 +141,6 @@ $querry[1] = 'hour' unless defined $querry[1];
 	<th align='center'><b>Boot</b></th>
 	<th align='center' colspan=2><b>$Lang::tr{'action'}</b></th>
 	<th align='center'><b>$Lang::tr{'status'}</b></th>
-	<th align='center'><b>PID</b></th>
 	<th align='center'><b>$Lang::tr{'memory'}</b></th>
 </tr>
 END
@@ -210,10 +209,8 @@ sub isrunningaddon (@) {
 	my ($pak, $service) = @_;
 
 	my $status = "<td class='status is-stopped'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
-	my $pid = '';
 	my $testcmd = '';
 	my $exename;
-	my @memory;
 
 	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$pak", "status", "$service");
 	my $testcmd = @testcmd[0];
@@ -230,7 +227,6 @@ sub isrunningaddon (@) {
 		$testcmd =~ s///gi;
 
 		my @pid = split(/\s/,$testcmd);
-		$status .="<td align='center'>$pid[0]</td>";
 
 		# Fetch the memory consumption
 		my $memory = &General::get_memory_consumption(@pid);
