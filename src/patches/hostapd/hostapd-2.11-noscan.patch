@@ -1,6 +1,7 @@
---- a/hostapd/config_file.c
-+++ b/hostapd/config_file.c
-@@ -3474,6 +3474,10 @@ static int hostapd_config_fill(struct ho
+diff -Naur hostap_2_11.orig/hostapd/config_file.c hostap_2_11/hostapd/config_file.c
+--- hostap_2_11.orig/hostapd/config_file.c	2024-07-20 20:04:37.000000000 +0200
++++ hostap_2_11/hostapd/config_file.c	2024-08-06 12:55:53.750009117 +0200
+@@ -3678,6 +3678,10 @@
  		if (bss->ocv && !bss->ieee80211w)
  			bss->ieee80211w = 1;
  #endif /* CONFIG_OCV */
@@ -11,9 +12,10 @@
  	} else if (os_strcmp(buf, "ieee80211n") == 0) {
  		conf->ieee80211n = atoi(pos);
  	} else if (os_strcmp(buf, "ht_capab") == 0) {
---- a/src/ap/ap_config.h
-+++ b/src/ap/ap_config.h
-@@ -1014,6 +1014,8 @@ struct hostapd_config {
+diff -Naur hostap_2_11.orig/src/ap/ap_config.h hostap_2_11/src/ap/ap_config.h
+--- hostap_2_11.orig/src/ap/ap_config.h	2024-07-20 20:04:37.000000000 +0200
++++ hostap_2_11/src/ap/ap_config.h	2024-08-06 12:57:06.779631503 +0200
+@@ -1108,6 +1108,8 @@
  
  	int ht_op_mode_fixed;
  	u16 ht_capab;
@@ -22,9 +24,10 @@
  	int ieee80211n;
  	int secondary_channel;
  	int no_pri_sec_switch;
---- a/src/ap/hw_features.c
-+++ b/src/ap/hw_features.c
-@@ -517,7 +517,8 @@ static int ieee80211n_check_40mhz(struct
+diff -Naur hostap_2_11.orig/src/ap/hw_features.c hostap_2_11/src/ap/hw_features.c
+--- hostap_2_11.orig/src/ap/hw_features.c	2024-07-20 20:04:37.000000000 +0200
++++ hostap_2_11/src/ap/hw_features.c	2024-08-06 12:58:29.122962573 +0200
+@@ -551,7 +551,8 @@
  	int ret;
  
  	/* Check that HT40 is used and PRI / SEC switch is allowed */
@@ -34,9 +37,10 @@
  		return 0;
  
  	hostapd_set_state(iface, HAPD_IFACE_HT_SCAN);
---- a/src/ap/ieee802_11_ht.c
-+++ b/src/ap/ieee802_11_ht.c
-@@ -230,6 +230,9 @@ void hostapd_2040_coex_action(struct hos
+diff -Naur hostap_2_11.orig/src/ap/ieee802_11_ht.c hostap_2_11/src/ap/ieee802_11_ht.c
+--- hostap_2_11.orig/src/ap/ieee802_11_ht.c	2024-07-20 20:04:37.000000000 +0200
++++ hostap_2_11/src/ap/ieee802_11_ht.c	2024-08-06 13:00:31.237899938 +0200
+@@ -230,6 +230,9 @@
  		return;
  	}
  
@@ -46,7 +50,7 @@
  	if (len < IEEE80211_HDRLEN + 2 + sizeof(*bc_ie)) {
  		wpa_printf(MSG_DEBUG,
  			   "Ignore too short 20/40 BSS Coexistence Management frame");
-@@ -390,6 +393,9 @@ void ht40_intolerant_add(struct hostapd_
+@@ -390,6 +393,9 @@
  	if (iface->current_mode->mode != HOSTAPD_MODE_IEEE80211G)
  		return;
  
