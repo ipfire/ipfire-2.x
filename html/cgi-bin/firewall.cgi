@@ -2498,23 +2498,22 @@ sub viewtablenew
 
 		print <<END;
 				<tr>
-					<th align='right' width='3%'>
+					<th width='3%'>
 						#
 					</th>
-					<th width='2%'></th>
-					<th align='center'>
+					<th>
 						<b>$Lang::tr{'protocol'}</b>
 					</th>
-					<th align='center' width='30%'>
+					<th width='30%'>
 						<b>$Lang::tr{'fwdfw source'}</b>
 					</th>
-					<th align='center'>
+					<th>
 						<b>$Lang::tr{'fwdfw log'}</b>
 					</th>
-					<th align='center' width='30%'>
+					<th width='30%'>
 						<b>$Lang::tr{'fwdfw target'}</b>
 					</th>
-					<th align='center' colspan='6' width='18%'>
+					<th colspan='6' width='18%'>
 						<b>$Lang::tr{'fwdfw action'}</b>
 					</th>
 				</tr>
@@ -2595,9 +2594,6 @@ END
 			}
 			print<<END;
 				<tr bgcolor='$color'>
-					<td align='right' width='3%'>
-						<b>$key&nbsp;</b>
-					</td>
 END
 
 			#RULETYPE (A,R,D)
@@ -2616,8 +2612,8 @@ END
 			}
 
 			print <<END;
-					<td class='$rulecolor' width='2%'>
-						<span title='$tooltip'>&nbsp;&nbsp;</span>
+					<td class='$rulecolor'>
+						<span title='$tooltip'>$key</span>
 					</td>
 END
 
