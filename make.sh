@@ -2463,7 +2463,7 @@ update-contributors)
 	;;
 find-dependencies)
 	shift
-	exec "${BASEDIR}/tools/find-dependencies" "${BASEDIR}/build" "$@"
+	exec "${BASEDIR}/tools/find-dependencies" "${BUILD_DIR}" "$@"
 	;;
 check-manualpages)
 	echo "Checking the manual pages for broken links..."
