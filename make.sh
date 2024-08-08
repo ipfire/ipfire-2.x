@@ -2368,8 +2368,7 @@ clean)
 	# Cleanup build files
 	rm -rf \
 		"${BUILD_DIR}" \
-		"${BASEDIR}/cdrom" \
-		"${BASEDIR}/packages" \
+		"${IMAGES_DIR}" \
 		"${LOG_DIR}"
 
 	# Remove the /tools symlink
