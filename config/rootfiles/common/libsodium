@@ -69,5 +69,5 @@
 #usr/lib/libsodium.la
 #usr/lib/libsodium.so
 usr/lib/libsodium.so.26
-usr/lib/libsodium.so.26.1.0
+usr/lib/libsodium.so.26.2.0
 #usr/lib/pkgconfig/libsodium.pc
