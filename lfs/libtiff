@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The Tiff Library (with JPEG and compression support)
 
-VER        = 4.5.1
+VER        = 4.6.0
 
 THISAPP    = tiff-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 793c03593c46d6f804f622f5ff7e799751ee79e87ec1575801d2238fbcd2e89ed657a5081d3651e337f1bb14603ff94a15aad878e7fdf2cf75ada38eed64d9d2
+$(DL_FILE)_BLAKE2 = 3b508b02b0a536c5bc8e67fe4c1b09ae9c830252786ef4764202c14d673d1ef9634694de7a5893a3551dec684d00bad9d0442c7fea7bcd09238b9960d443cf62
 
 install : $(TARGET)
 
@@ -78,7 +78,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr \
+				--disable-static \
+				--disable-docs
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
