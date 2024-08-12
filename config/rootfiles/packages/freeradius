@@ -9,6 +9,8 @@ etc/raddb
 #etc/raddb/certs/client.cnf
 #etc/raddb/certs/inner-server.cnf
 #etc/raddb/certs/passwords.mk
+#etc/raddb/certs/realms
+#etc/raddb/certs/realms/README.md
 #etc/raddb/certs/server.cnf
 #etc/raddb/certs/xpextensions
 #etc/raddb/clients.conf
@@ -34,6 +36,7 @@ etc/raddb
 #etc/raddb/mods-available/dhcp_sql
 #etc/raddb/mods-available/dhcp_sqlippool
 #etc/raddb/mods-available/digest
+#etc/raddb/mods-available/dpsk
 #etc/raddb/mods-available/dynamic_clients
 #etc/raddb/mods-available/eap
 #etc/raddb/mods-available/echo
@@ -325,6 +328,7 @@ usr/bin/radclient
 usr/bin/radcrypt
 usr/bin/radeapclient
 usr/bin/radlast
+usr/bin/radsecret
 usr/bin/radsniff
 usr/bin/radsqlrelay
 usr/bin/radtest
@@ -453,6 +457,9 @@ usr/lib/freeradius/rlm_dhcp.so
 #usr/lib/freeradius/rlm_digest.a
 #usr/lib/freeradius/rlm_digest.la
 usr/lib/freeradius/rlm_digest.so
+#usr/lib/freeradius/rlm_dpsk.a
+#usr/lib/freeradius/rlm_dpsk.la
+usr/lib/freeradius/rlm_dpsk.so
 #usr/lib/freeradius/rlm_dynamic_clients.a
 #usr/lib/freeradius/rlm_dynamic_clients.la
 usr/lib/freeradius/rlm_dynamic_clients.so
@@ -480,6 +487,9 @@ usr/lib/freeradius/rlm_eap_pwd.so
 #usr/lib/freeradius/rlm_eap_sim.a
 #usr/lib/freeradius/rlm_eap_sim.la
 usr/lib/freeradius/rlm_eap_sim.so
+#usr/lib/freeradius/rlm_eap_teap.a
+#usr/lib/freeradius/rlm_eap_teap.la
+usr/lib/freeradius/rlm_eap_teap.so
 #usr/lib/freeradius/rlm_eap_tls.a
 #usr/lib/freeradius/rlm_eap_tls.la
 usr/lib/freeradius/rlm_eap_tls.so
@@ -614,10 +624,31 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/antora/modules/ROOT/pages
 #usr/share/doc/freeradius/antora/modules/ROOT/pages/directories.adoc
 #usr/share/doc/freeradius/antora/modules/ROOT/pages/index.adoc
+#usr/share/doc/freeradius/antora/modules/concepts
+#usr/share/doc/freeradius/antora/modules/concepts/nav.adoc
+#usr/share/doc/freeradius/antora/modules/concepts/pages
+#usr/share/doc/freeradius/antora/modules/concepts/pages/aaa.adoc
+#usr/share/doc/freeradius/antora/modules/concepts/pages/index.adoc
+#usr/share/doc/freeradius/antora/modules/concepts/pages/modules
+#usr/share/doc/freeradius/antora/modules/concepts/pages/modules/ldap
+#usr/share/doc/freeradius/antora/modules/concepts/pages/modules/ldap/authentication.adoc
+#usr/share/doc/freeradius/antora/modules/developers
+#usr/share/doc/freeradius/antora/modules/developers/nav.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages
+#usr/share/doc/freeradius/antora/modules/developers/pages/bugs.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages/coding-methods.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages/contributing.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages/coverage.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages/index.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages/profile.adoc
+#usr/share/doc/freeradius/antora/modules/developers/pages/release-method.adoc
 #usr/share/doc/freeradius/antora/modules/howto
 #usr/share/doc/freeradius/antora/modules/howto/nav.adoc
 #usr/share/doc/freeradius/antora/modules/howto/pages
 #usr/share/doc/freeradius/antora/modules/howto/pages/index.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/monitoring
+#usr/share/doc/freeradius/antora/modules/howto/pages/monitoring/index.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/monitoring/statistics.adoc
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/dhcp
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/dhcp/enable.adoc
@@ -638,6 +669,7 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/radsec_client.adoc
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/radsec_with_haproxy.adoc
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/radsec_with_traefik.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/simultaneous_use.adoc
 #usr/share/doc/freeradius/antora/modules/installation
 #usr/share/doc/freeradius/antora/modules/installation/nav.adoc
 #usr/share/doc/freeradius/antora/modules/installation/pages
@@ -873,6 +905,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.alcatel-lucent.aaa
 #usr/share/freeradius/dictionary.alcatel.esam
 #usr/share/freeradius/dictionary.alcatel.sr
+#usr/share/freeradius/dictionary.alphion
 #usr/share/freeradius/dictionary.alteon
 #usr/share/freeradius/dictionary.altiga
 #usr/share/freeradius/dictionary.alvarion
@@ -914,6 +947,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.cisco.vpn3000
 #usr/share/freeradius/dictionary.cisco.vpn5000
 #usr/share/freeradius/dictionary.citrix
+#usr/share/freeradius/dictionary.ckey
 #usr/share/freeradius/dictionary.clavister
 #usr/share/freeradius/dictionary.cnergee
 #usr/share/freeradius/dictionary.colubris
@@ -997,6 +1031,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.nortel
 #usr/share/freeradius/dictionary.ntua
 #usr/share/freeradius/dictionary.openser
+#usr/share/freeradius/dictionary.openwifi
 #usr/share/freeradius/dictionary.packeteer
 #usr/share/freeradius/dictionary.paloalto
 #usr/share/freeradius/dictionary.patton
@@ -1056,6 +1091,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.shiva
 #usr/share/freeradius/dictionary.siemens
 #usr/share/freeradius/dictionary.slipstream
+#usr/share/freeradius/dictionary.smartsharesystems
 #usr/share/freeradius/dictionary.sofaware
 #usr/share/freeradius/dictionary.softbank
 #usr/share/freeradius/dictionary.sonicwall
@@ -1069,6 +1105,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.telkom
 #usr/share/freeradius/dictionary.telrad
 #usr/share/freeradius/dictionary.terena
+#usr/share/freeradius/dictionary.tplink
 #usr/share/freeradius/dictionary.trapeze
 #usr/share/freeradius/dictionary.travelping
 #usr/share/freeradius/dictionary.tripplite
