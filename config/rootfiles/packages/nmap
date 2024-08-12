@@ -1,7 +1,6 @@
 usr/bin/nmap
 usr/bin/nping
 #usr/share/man/de/man1/nmap.1
-#usr/share/man/es
 #usr/share/man/es/man1
 #usr/share/man/es/man1/nmap.1
 #usr/share/man/fr/man1/nmap.1
@@ -15,7 +14,6 @@ usr/bin/nping
 #usr/share/man/ja/man1/nmap.1
 #usr/share/man/man1/nmap.1
 #usr/share/man/man1/nping.1
-#usr/share/man/pl
 #usr/share/man/pl/man1
 #usr/share/man/pl/man1/nmap.1
 #usr/share/man/pt_BR/man1/nmap.1
@@ -130,6 +128,7 @@ usr/share/nmap/nselib/http.lua
 usr/share/nmap/nselib/httpspider.lua
 usr/share/nmap/nselib/iax2.lua
 usr/share/nmap/nselib/idna.lua
+usr/share/nmap/nselib/iec61850mms.lua
 usr/share/nmap/nselib/ike.lua
 usr/share/nmap/nselib/imap.lua
 usr/share/nmap/nselib/informix.lua
@@ -175,7 +174,6 @@ usr/share/nmap/nselib/openssl.luadoc
 usr/share/nmap/nselib/ospf.lua
 usr/share/nmap/nselib/outlib.lua
 usr/share/nmap/nselib/packet.lua
-usr/share/nmap/nselib/pcre.luadoc
 usr/share/nmap/nselib/pgsql.lua
 usr/share/nmap/nselib/pop3.lua
 usr/share/nmap/nselib/pppoe.lua
@@ -378,6 +376,7 @@ usr/share/nmap/scripts/hadoop-jobtracker-info.nse
 usr/share/nmap/scripts/hadoop-namenode-info.nse
 usr/share/nmap/scripts/hadoop-secondary-namenode-info.nse
 usr/share/nmap/scripts/hadoop-tasktracker-info.nse
+usr/share/nmap/scripts/hartip-info.nse
 usr/share/nmap/scripts/hbase-master-info.nse
 usr/share/nmap/scripts/hbase-region-info.nse
 usr/share/nmap/scripts/hddtemp-info.nse
@@ -524,6 +523,7 @@ usr/share/nmap/scripts/iax2-brute.nse
 usr/share/nmap/scripts/iax2-version.nse
 usr/share/nmap/scripts/icap-info.nse
 usr/share/nmap/scripts/iec-identify.nse
+usr/share/nmap/scripts/iec61850-mms.nse
 usr/share/nmap/scripts/ike-version.nse
 usr/share/nmap/scripts/imap-brute.nse
 usr/share/nmap/scripts/imap-capabilities.nse
@@ -600,6 +600,7 @@ usr/share/nmap/scripts/ms-sql-tables.nse
 usr/share/nmap/scripts/ms-sql-xp-cmdshell.nse
 usr/share/nmap/scripts/msrpc-enum.nse
 usr/share/nmap/scripts/mtrace.nse
+usr/share/nmap/scripts/multicast-profinet-discovery.nse
 usr/share/nmap/scripts/murmur-version.nse
 usr/share/nmap/scripts/mysql-audit.nse
 usr/share/nmap/scripts/mysql-brute.nse
@@ -662,6 +663,7 @@ usr/share/nmap/scripts/pop3-capabilities.nse
 usr/share/nmap/scripts/pop3-ntlm-info.nse
 usr/share/nmap/scripts/port-states.nse
 usr/share/nmap/scripts/pptp-version.nse
+usr/share/nmap/scripts/profinet-cm-lookup.nse
 usr/share/nmap/scripts/puppet-naivesigning.nse
 usr/share/nmap/scripts/qconn-exec.nse
 usr/share/nmap/scripts/qscan.nse
