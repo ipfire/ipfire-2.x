@@ -91,7 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-3.2-ssh_source_bash.patch
 	
-	for i in $$(seq 1 26); do \
+	for i in $$(seq 1 32); do \
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash52-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
