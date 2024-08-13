@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3.5
+VER        = 3.3.8
 
 THISAPP    = knot-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 201da56486eb551560b5f8a32cf54b9367a15347e3da9ff743c0fc41696b12d2de4091ceb575070e61d83f1c06542f7d08fc88d8e2ce6da8e8f69c2ab4b68df3
+$(DL_FILE)_BLAKE2 = a51e756f34d8641b2bc8ce32cb37c68c19ce1b5e13e981647e165634644ee005bb0a31b869148d50b3cd0a040f6952857df726e8ff67c5a46204270fa02396c5
 
 install : $(TARGET)
 
@@ -81,10 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-modules \
 		--enable-maxminddb=no \
 		--disable-documentation
-
 	cd $(DIR_APP)/src && make $(MAKETUNING) kdig
 	cd $(DIR_APP)/src/.libs && cp -av kdig /usr/bin
 	cd $(DIR_APP)/src/.libs && cp -av lib* /usr/lib
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
