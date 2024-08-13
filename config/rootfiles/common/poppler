@@ -43,6 +43,7 @@ usr/bin/pdfunite
 #usr/include/poppler/GfxState.h
 #usr/include/poppler/GfxState_helpers.h
 #usr/include/poppler/GlobalParams.h
+#usr/include/poppler/HashAlgorithm.h
 #usr/include/poppler/Hints.h
 #usr/include/poppler/JArithmeticDecoder.h
 #usr/include/poppler/JBIG2Stream.h
@@ -74,6 +75,7 @@ usr/bin/pdfunite
 #usr/include/poppler/ProfileData.h
 #usr/include/poppler/Rendition.h
 #usr/include/poppler/SecurityHandler.h
+#usr/include/poppler/SignatureInfo.h
 #usr/include/poppler/Sound.h
 #usr/include/poppler/SplashOutputDev.h
 #usr/include/poppler/Stream-CCITT.h
@@ -167,14 +169,14 @@ usr/bin/pdfunite
 #usr/include/poppler/splash/SplashXPath.h
 #usr/include/poppler/splash/SplashXPathScanner.h
 #usr/lib/libpoppler-cpp.so
-usr/lib/libpoppler-cpp.so.0
-usr/lib/libpoppler-cpp.so.0.11.0
+usr/lib/libpoppler-cpp.so.1
+usr/lib/libpoppler-cpp.so.1.0.0
 #usr/lib/libpoppler-glib.so
 usr/lib/libpoppler-glib.so.8
 usr/lib/libpoppler-glib.so.8.26.0
 #usr/lib/libpoppler.so
-usr/lib/libpoppler.so.135
-usr/lib/libpoppler.so.135.0.0
+usr/lib/libpoppler.so.140
+usr/lib/libpoppler.so.140.0.0
 #usr/lib/pkgconfig/poppler-cpp.pc
 #usr/lib/pkgconfig/poppler-glib.pc
 #usr/lib/pkgconfig/poppler.pc
