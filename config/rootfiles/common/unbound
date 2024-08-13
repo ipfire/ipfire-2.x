@@ -19,6 +19,7 @@ usr/sbin/unbound-checkconf
 usr/sbin/unbound-control
 usr/sbin/unbound-control-setup
 usr/sbin/unbound-dhcp-leases-bridge
+usr/sbin/unbound-dhcp-leases-client
 usr/sbin/unbound-host
 #usr/share/man/man1/unbound-host.1
 #usr/share/man/man3/libunbound.3

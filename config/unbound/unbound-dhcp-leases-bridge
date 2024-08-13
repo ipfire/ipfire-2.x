@@ -28,15 +28,15 @@ import ipaddress
 import logging
 import logging.handlers
 import os
+import queue
 import re
 import signal
+import socket
 import stat
 import subprocess
 import sys
 import tempfile
-import time
-
-import inotify.adapters
+import threading
 
 LOCAL_TTL = 60
 
@@ -65,121 +65,248 @@ def setup_logging(daemon=True, loglevel=logging.INFO):
 
 	return log
 
-def ip_address_to_reverse_pointer(address):
-	parts = address.split(".")
-	parts.reverse()
-
-	return "%s.in-addr.arpa" % ".".join(parts)
-
-def reverse_pointer_to_ip_address(rr):
-	parts = rr.split(".")
-
-	# Only take IP address part
-	parts = reversed(parts[0:4])
-
-	return ".".join(parts)
-
 class UnboundDHCPLeasesBridge(object):
-	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file, hosts_file):
+	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file, hosts_file, socket_path):
 		self.leases_file = dhcp_leases_file
 		self.fix_leases_file = fix_leases_file
 		self.hosts_file = hosts_file
+		self.socket_path = socket_path
 
-		self.watches = {
-			self.leases_file     : inotify.constants.IN_MODIFY,
-			self.fix_leases_file : 0,
-			self.hosts_file      : 0,
-		}
+		self.socket = None
+
+		# Store all known leases
+		self.leases = set()
+
+		# Create a queue for all received events
+		self.queue = queue.Queue()
+
+		# Initialize the worker
+		self.worker = Worker(self.queue, callback=self._handle_message)
 
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
-		self.running = False
+
+		# Load all required data
+		self.reload()
 
 	def run(self):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
-		self.running = True
 
-		i = inotify.adapters.Inotify()
+		# Launch the worker
+		self.worker.start()
 
-		# Add watches for the directories of every relevant file
-		for f, mask in self.watches.items():
-			i.add_watch(
-				os.path.dirname(f),
-				mask | inotify.constants.IN_CLOSE_WRITE | inotify.constants.IN_MOVED_TO,
-			)
+		# Open the server socket
+		self.socket = self._open_socket(self.socket_path)
 
-		# Enabled so that we update hosts and leases on startup
-		update_hosts = update_leases = True
+		while True:
+			# Accept any incoming connections
+			try:
+				conn, peer = self.socket.accept()
+			except OSError as e:
+				break
 
-		while self.running:
-			log.debug("Wakeup of main loop")
+			try:
+				# Receive what the client is sending
+				data, ancillary_data, flags, address = conn.recvmsg(4096)
 
-			# Process the entire inotify queue and identify what we need to do
-			for event in i.event_gen():
-				# Nothing to do
-				if event is None:
-					break
+				# Log that we have received some data
+				log.debug("Received message of %s byte(s)" % len(data))
 
-				# Decode the event
-				header, type_names, path, filename = event
+				# Decode the data
+				message = self._decode_message(data)
 
-				file = os.path.join(path, filename)
+				# Add the message to the queue
+				self.queue.put(message)
 
-				log.debug("inotify event received for %s: %s", file, " ".join(type_names))
+				conn.send(b"OK\n")
 
-				# Did the hosts file change?
-				if self.hosts_file == file:
-					update_hosts = True
+			# Send ERROR to the client if something went wrong
+			except Exception as e:
+				log.error("Could not handle message: %s" % e)
 
-				# We will need to update the leases on any change
-				update_leases = True
+				conn.send(b"ERROR\n")
+				continue
 
-			# Update hosts (if needed)
-			if update_hosts:
-				self.hosts = self.read_static_hosts()
+			# Close the connection
+			finally:
+				conn.close()
 
-			# Update leases (if needed)
-			if update_leases:
-				self.update_dhcp_leases()
-
-			# Reset
-			update_hosts = update_leases = False
-
-			# Wait a moment before we start the next iteration
-			time.sleep(5)
+		# Terminate the worker
+		self.queue.put(None)
+		self.worker.join()
 
 		log.info("Unbound DHCP Leases Bridge terminated")
 
-	def update_dhcp_leases(self):
-		leases = []
+	def _open_socket(self, path):
+		# Allocate a new socket
+		s = socket.socket(family=socket.AF_UNIX, type=socket.SOCK_STREAM)
 
-		for lease in DHCPLeases(self.leases_file):
-			# Don't bother with any leases that don't have a hostname
-			if not lease.fqdn:
+		# Unlink any old sockets
+		try:
+			os.unlink(path)
+		except FileNotFoundError as e:
+			pass
+
+		# Bind the socket
+		try:
+			s.bind(self.socket_path)
+		except OSError as e:
+			log.error("Could not open socket at %s: %s" % (path, e))
+
+			raise SystemExit(1) from e
+
+		# Listen
+		s.listen(128)
+
+		return s
+
+	def _decode_message(self, data):
+		message = {}
+
+		for line in data.splitlines():
+			# Skip empty lines
+			if not line:
 				continue
 
-			leases.append(lease)
+			# Try to decode the line
+			try:
+				line = line.decode()
+			except UnicodeError as e:
+				log.error("Could not decode %r: %s" % (line, e))
 
+				raise e
+
+			# Split the line
+			key, _, value = line.partition("=")
+
+			# Skip the line if it does not have a value
+			if not _:
+				raise ValueError("No value given")
+
+			# Store the attributes
+			message[key] = value
+
+		return message
+
+	def _handle_message(self, message):
+		log.debug("Handling message:")
+		for key in message:
+			log.debug("  %-20s = %s" % (key, message[key]))
+
+		# Extract the event type
+		event = message.get("EVENT")
+
+		# Check if event is set
+		if not event:
+			raise ValueError("The message does not have EVENT set")
+
+		# COMMIT
+		elif event == "commit":
+			address = message.get("ADDRESS")
+			name    = message.get("NAME")
+
+			# Find the old lease
+			old_lease = self._find_lease(address)
+
+			# Create a new lease
+			lease = Lease(address, {
+				"client-hostname" : name,
+			})
+			self._add_lease(lease)
+
+			# Can we skip the update?
+			if old_lease:
+				if lease.rrset == old_lease.rrset:
+					log.debug("Won't update %s as nothing has changed" % lease)
+					return
+
+				# Remove the old lease first
+				self.unbound.remove_lease(old_lease)
+				self._remove_lease(old_lease)
+
+			# Apply the lease
+			self.unbound.apply_lease(lease)
+
+		# RELEASE/EXPIRY
+		elif event in ("release", "expiry"):
+			address = message.get("ADDRESS")
+
+			# Find the lease
+			lease = self._find_lease(address)
+
+			if not lease:
+				log.warning("Could not find lease for %s" % address)
+				return
+
+			# Remove the lease
+			self.unbound.remove_lease(lease)
+			self._remove_lease(lease)
+
+		# Raise an error if the event is not supported
+		else:
+			raise ValueError("Unsupported event: %s" % event)
+
+	def update_dhcp_leases(self):
+		# Drop all known leases
+		self.leases.clear()
+
+		# Add all dynamic leases
+		for lease in DHCPLeases(self.leases_file):
+			self._add_lease(lease)
+
+		# Add all static leases
 		for lease in FixLeases(self.fix_leases_file):
-			leases.append(lease)
-
-		# Skip any leases that also are a static host
-		leases = [l for l in leases if not l.fqdn in self.hosts]
-
-		# Remove any inactive or expired leases
-		leases = [l for l in leases if l.active and not l.expired]
+			self._add_lease(lease)
 
 		# Dump leases
-		if leases:
+		if self.leases:
 			log.debug("DHCP Leases:")
-			for lease in leases:
+			for lease in self.leases:
 				log.debug("  %s:" % lease.fqdn)
-				log.debug("    State: %s" % lease.binding_state)
 				log.debug("    Start: %s" % lease.time_starts)
 				log.debug("    End  : %s" % lease.time_ends)
-				if lease.expired:
+				if lease.has_expired():
 					log.debug("    Expired")
 
-		self.unbound.update_dhcp_leases(leases)
+		self.unbound.update_dhcp_leases(self.leases)
+
+	def _add_lease(self, lease):
+		# Skip leases without an FQDN
+		if not lease.fqdn:
+			log.debug("Skipping lease without an FQDN: %s" % lease)
+			return
+
+		# Skip any leases that also are a static host
+		elif lease.fqdn in self.hosts:
+			log.debug("Skipping lease for which a static host exists: %s" % lease)
+			return
+
+		# Don't add expired leases
+		elif lease.has_expired():
+			log.debug("Skipping expired lease: %s" % lease)
+			return
+
+		# Remove any previous leases
+		self._remove_lease(lease)
+
+		# Store the lease
+		self.leases.add(lease)
+
+	def _find_lease(self, ipaddr):
+		"""
+			Returns the lease with the specified IP address
+		"""
+		if not isinstance(ipaddr, ipaddress.IPv4Address):
+			ipaddr = ipaddress.IPv4Address(ipaddr)
+
+		for lease in self.leases:
+			if lease.ipaddr == ipaddr:
+				return lease
+
+	def _remove_lease(self, lease):
+		try:
+			self.leases.remove(lease)
+		except KeyError:
+			pass
 
 	def read_static_hosts(self):
 		log.info("Reading static hosts from %s" % self.hosts_file)
@@ -219,8 +346,47 @@ class UnboundDHCPLeasesBridge(object):
 
 		return hosts
 
-	def terminate(self):
-		self.running = False
+	def reload(self, *args, **kwargs):
+		# Read all static hosts
+		self.hosts = self.read_static_hosts()
+
+		# Unconditionally update all leases and reload Unbound
+		self.update_dhcp_leases()
+
+	def terminate(self, *args, **kwargs):
+		# Close the socket
+		if self.socket:
+			self.socket.close()
+
+
+class Worker(threading.Thread):
+	"""
+		The worker is launched in a separate thread
+		which allows us to perform some tasks asynchronously.
+	"""
+	def __init__(self, queue, callback):
+		super().__init__()
+
+		self.queue = queue
+		self.callback = callback
+
+	def run(self):
+		log.debug("Worker %s launched" % self.native_id)
+
+		while True:
+			message = self.queue.get()
+
+			# If the message is None, we have to quit
+			if message is None:
+				break
+
+			# Call the callback
+			try:
+				self.callback(message)
+			except Exception as e:
+				log.error("Callback failed: %s" % e, exc_info=True)
+
+		log.debug("Worker %s terminated" % self.native_id)
 
 
 class DHCPLeases(object):
@@ -255,18 +421,12 @@ class DHCPLeases(object):
 				if not "hardware" in properties:
 					continue
 
+				# Skip inactive leases
+				elif not properties.get("binding", "state active"):
+					continue
+
 				lease = Lease(ipaddr, properties)
-
-				# Check if a lease for this Ethernet address already
-				# exists in the list of known leases. If so replace
-				# if with the most recent lease
-				for i, l in enumerate(leases):
-					if l.ipaddr == lease.ipaddr:
-						leases[i] = max(lease, l)
-						break
-
-				else:
-					leases.append(lease)
+				leases.append(lease)
 
 		return leases
 
@@ -300,12 +460,10 @@ class DHCPLeases(object):
 
 
 class FixLeases(object):
-	cache = {}
-
 	def __init__(self, path):
 		self.path = path
 
-		self._leases = self.cache[self.path] = self._parse()
+		self._leases = self._parse()
 
 	def __iter__(self):
 		return iter(self._leases)
@@ -313,8 +471,9 @@ class FixLeases(object):
 	def _parse(self):
 		log.info("Reading fix leases from %s" % self.path)
 
-		leases = []
 		now = datetime.datetime.utcnow()
+
+		leases = []
 
 		with open(self.path) as f:
 			for line in f.readlines():
@@ -333,72 +492,42 @@ class FixLeases(object):
 				l = Lease(ipaddr, {
 					"binding"         : "state active",
 					"client-hostname" : hostname,
-					"hardware"        : "ethernet %s" % hwaddr,
 					"starts"          : now.strftime("%w %Y/%m/%d %H:%M:%S"),
 					"ends"            : "never",
 				})
 				leases.append(l)
-
-		# Try finding any deleted leases
-		for lease in self.cache.get(self.path, []):
-			if lease in leases:
-				continue
-
-			# Free the deleted lease
-			lease.free()
-			leases.append(lease)
 
 		return leases
 
 
 class Lease(object):
 	def __init__(self, ipaddr, properties):
+		if not isinstance(ipaddr, ipaddress.IPv4Address):
+			ipaddr = ipaddress.IPv4Address(ipaddr)
+
 		self.ipaddr = ipaddr
 		self._properties = properties
 
 	def __repr__(self):
-		return "<%s %s for %s (%s)>" % (self.__class__.__name__,
-			self.ipaddr, self.hwaddr, self.hostname)
+		return "<%s for %s (%s)>" % (self.__class__.__name__, self.ipaddr, self.hostname)
 
 	def __eq__(self, other):
-		return self.ipaddr == other.ipaddr and self.hwaddr == other.hwaddr
+		if isinstance(other, self.__class__):
+			return self.ipaddr == other.ipaddr
+
+		return NotImplemented
 
 	def __gt__(self, other):
-		if not self.ipaddr == other.ipaddr:
-			return
+		if isinstance(other, self.__class__):
+			if not self.ipaddr == other.ipaddr:
+				return NotImplemented
 
-		if not self.hwaddr == other.hwaddr:
-			return
+			return self.time_starts > other.time_starts
 
-		return self.time_starts > other.time_starts
+		return NotImplemented
 
-	@property
-	def binding_state(self):
-		state = self._properties.get("binding")
-
-		if state:
-			state = state.split(" ", 1)
-			return state[1]
-
-	def free(self):
-		self._properties.update({
-			"binding" : "state free",
-		})
-
-	@property
-	def active(self):
-		return self.binding_state == "active"
-
-	@property
-	def hwaddr(self):
-		hardware = self._properties.get("hardware")
-
-		if not hardware:
-			return
-
-		ethernet, address = hardware.split(" ", 1)
-
-		return address
+	def __hash__(self):
+		return hash(self.ipaddr)
 
 	@property
 	def hostname(self):
@@ -488,8 +617,10 @@ class Lease(object):
 
 		return self._parse_time(ends)
 
-	@property
-	def expired(self):
+	def has_expired(self):
+		if not self.time_starts:
+			return
+
 		if not self.time_ends:
 			return self.time_starts > datetime.datetime.utcnow()
 
@@ -503,10 +634,10 @@ class Lease(object):
 
 		return [
 			# Forward record
-			(self.fqdn, "%s" % LOCAL_TTL, "IN A", self.ipaddr),
+			(self.fqdn, "%s" % LOCAL_TTL, "IN A", "%s" % self.ipaddr),
 
 			# Reverse record
-			(ip_address_to_reverse_pointer(self.ipaddr), "%s" % LOCAL_TTL,
+			(self.ipaddr.reverse_pointer, "%s" % LOCAL_TTL,
 				"IN PTR", self.fqdn),
 		]
 
@@ -560,6 +691,9 @@ class UnboundConfigWriter(object):
 		command = ["unbound-control"]
 		command.extend(args)
 
+		# Log what we are doing
+		log.debug("Running %s" % " ".join(command))
+
 		try:
 			subprocess.check_output(command)
 
@@ -569,6 +703,28 @@ class UnboundConfigWriter(object):
 				" ".join(command), e.returncode, e.output))
 
 			raise e
+
+	def apply_lease(self, lease):
+		"""
+			This method takes a lease and updates Unbound at runtime.
+		"""
+		log.debug("Applying lease %s" % lease)
+
+		for rr in lease.rrset:
+			log.debug("Adding new record %s" % " ".join(rr))
+
+			self._control("local_data", *rr)
+
+	def remove_lease(self, lease):
+		"""
+			This method takes a lease and removes it from Unbound at runtime.
+		"""
+		log.debug("Removing lease %s" % lease)
+
+		for name, ttl, type, content in lease.rrset:
+			log.debug("Removing records for %s" % name)
+
+			self._control("local_data_remove", name)
 
 
 if __name__ == "__main__":
@@ -588,6 +744,9 @@ if __name__ == "__main__":
 		metavar="PATH", help="Path to the fix leases file")
 	parser.add_argument("--hosts", default="/var/ipfire/main/hosts",
 		metavar="PATH", help="Path to static hosts file")
+	parser.add_argument("--socket-path", default="/var/run/unbound-dhcp-leases-bridge.sock",
+		metavar="PATH", help="Socket Path",
+	)
 
 	# Parse command line arguments
 	args = parser.parse_args()
@@ -602,13 +761,14 @@ if __name__ == "__main__":
 			loglevel = logging.DEBUG
 
 	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases,
-		args.unbound_leases, args.hosts)
+		args.unbound_leases, args.hosts, socket_path=args.socket_path)
 
 	with daemon.DaemonContext(
 		detach_process=args.daemon,
 		stderr=None if args.daemon else sys.stderr,
 		signal_map = {
-			signal.SIGHUP  : bridge.update_dhcp_leases,
+			signal.SIGHUP  : bridge.reload,
+			signal.SIGINT  : bridge.terminate,
 			signal.SIGTERM : bridge.terminate,
 		},
 	) as daemon:
