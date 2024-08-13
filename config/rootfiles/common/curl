@@ -19,6 +19,7 @@ usr/lib/libcurl.so.4
 usr/lib/libcurl.so.4.8.0
 #usr/lib/pkgconfig/libcurl.pc
 #usr/share/aclocal/libcurl.m4
+#usr/share/man/man1/curl-config.1
 #usr/share/man/man1/curl.1
 #usr/share/man/man3/CURLINFO_ACTIVESOCKET.3
 #usr/share/man/man3/CURLINFO_APPCONNECT_TIME.3
@@ -378,6 +379,7 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_SUPPRESS_CONNECT_HEADERS.3
 #usr/share/man/man3/CURLOPT_TCP_FASTOPEN.3
 #usr/share/man/man3/CURLOPT_TCP_KEEPALIVE.3
+#usr/share/man/man3/CURLOPT_TCP_KEEPCNT.3
 #usr/share/man/man3/CURLOPT_TCP_KEEPIDLE.3
 #usr/share/man/man3/CURLOPT_TCP_KEEPINTVL.3
 #usr/share/man/man3/CURLOPT_TCP_NODELAY.3
