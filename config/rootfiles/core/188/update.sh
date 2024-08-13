@@ -41,6 +41,19 @@ rm -vrf \
 	/srv/web/ipfire/cgi-bin/gpl.cgi \
 	/srv/web/ipfire/html/themes/ipfire/include/functions.pl \
 	/usr/bin/br2684ctl \
+	/usr/bin/fax2ps \
+	/usr/bin/fax2tiff \
+	/usr/bin/pal2rgb \
+	/usr/bin/ppm2tiff \
+	/usr/bin/raw2tiff \
+	/usr/bin/tiff2bw \
+	/usr/bin/tiff2pdf \
+	/usr/bin/tiff2ps \
+	/usr/bin/tiff2rgba \
+	/usr/bin/tiffcmp \
+	/usr/bin/tiffcrop \
+	/usr/bin/tiffdither \
+	/usr/bin/tiffmedian \
 	/usr/share/doc/licenses
 
 # update linker config
