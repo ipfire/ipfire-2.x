@@ -320,6 +320,30 @@ table {
 	border-spacing: 0;
 }
 
+/*
+	Form Tables
+*/
+table.form {
+	width: 100%;
+
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+table.form:last-child {
+	margin-bottom: 0;
+}
+
+table.form tr td:first-child {
+	width: 30%;
+}
+
+table.form tr.action td {
+	padding-top: 1rem;
+
+	text-align: right;
+}
+
 .tbl {
 	width: 100%;
 }
