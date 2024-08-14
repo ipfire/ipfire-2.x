@@ -90,6 +90,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--sysconfdir=/etc \
 				--localstatedir=/var/state \
 				-Dwith-pam-config-path=/etc/pam.d \
+				-Dwith-embedded-ssl=false \
 				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
