@@ -335,7 +335,14 @@ table.form:last-child {
 }
 
 table.form tr td:first-child {
-	width: 30%;
+	width: 25%;
+}
+
+table.form tr td input[type=text],
+table.form tr td input[type=number],
+table.form tr td select,
+table.form tr td textarea {
+	width: 100%;
 }
 
 table.form tr.action td {
