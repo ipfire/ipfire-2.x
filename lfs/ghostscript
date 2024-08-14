@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The Ghostscript interpreter for PostScript and PDF
 
-VER        = 10.03.0
+VER        = 10.03.1
 
 THISAPP    = ghostscript-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       = cups dbus
 
@@ -52,7 +52,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ghostscript-fonts-std-8.11.tar.gz = $(URL_IPFIRE)/ghostscript-fonts-std-8.11.tar.gz
 gnu-gs-fonts-other-6.0.tar.gz = $(URL_IPFIRE)/gnu-gs-fonts-other-6.0.tar.gz
 
-$(DL_FILE)_BLAKE2 = c64e0fc9dd290b81e61793671e8645f16b04070685f6ab9d35a60cb910d7504e1e686525af8b74121ae31a5b344e2332efd8bdf99f2a4c5586bff747b8df78d7
+$(DL_FILE)_BLAKE2 = 991e81c4a9f8459220f6af988fb533cc3c2393fef0c57b35da5685fb6f8b0e76af00457f9b0e552ea241b272cdfaa90cf4a06d6cb1008b55efe782faa14c90da
 ghostscript-fonts-std-8.11.tar.gz_BLAKE2 = 1d8ae8f7813623a36e160bdd0ca9ccf33c67b945dd96952eb0e37e9bb5bb4ba5daf7df4da5ba53c1d25d6598a0576990ba7e094b8c395778cb9cdfd32761454c
 gnu-gs-fonts-other-6.0.tar.gz_BLAKE2 = 001709983161519365bcef23fef3705071b67253ff3b557c45d2ec892987815444d8dd1d213e94bc02e361917c061c723043bf04c98b0a1e38c9cd1f265d1312
 
