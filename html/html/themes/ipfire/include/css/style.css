@@ -96,8 +96,12 @@ body {
 	color: #363636;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5 {
 	font-size: 20px;
+}
+
+h6 {
+	font-size: 1em;
 }
 
 br.clear {
@@ -343,6 +347,12 @@ table.form tr td input[type=number],
 table.form tr td select,
 table.form tr td textarea {
 	width: 100%;
+}
+
+table.form tr.header td {
+	font-weight: bold;
+
+	margin-top: 1rem;
 }
 
 table.form tr.action td {
