@@ -682,19 +682,36 @@ ADD:
 	# Open a new box
 	&Header::openbox('100%', '', $Lang::tr{'connection type'});
 
+	my %disabled = (
+		"host" => "",
+	);
+
+	# If there is no CLIENT_POOL configured, we disable the option
+	if ($settings{'CLIENT_POOL'} eq "") {
+		$disabled{"host"} = "disabled";
+
+	# If the client pool is out of addresses, we do the same
+	} else {
+		my @free_addresses = &free_pool_addresses($settings{'CLIENT_POOL'}, 1);
+
+		if (scalar @free_addresses == 0) {
+			$disabled{"host"} = "disabled";
+		}
+	}
+
 	print <<END;
 		<form method="POST" ENCTYPE="multipart/form-data">
 			<ul>
 				<li>
 					<label>
-						<input type='radio' name='TYPE' value='host' checked />
+						<input type='radio' name='TYPE' value='host' $disabled{'host'} />
 						$Lang::tr{'host to net vpn'}
 					</label>
 				</li>
 
 				<li>
 					<label>
-						<input type='radio' name='TYPE' value='net' />
+						<input type='radio' name='TYPE' value='net' checked />
 						$Lang::tr{'net to net vpn'}
 					</label>
 				</li>
