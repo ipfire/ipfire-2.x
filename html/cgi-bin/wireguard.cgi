@@ -515,142 +515,144 @@ END
 	# Show a list with all peers
 	&Header::opensection();
 
-	# Fetch the dump
-	my %dump = &dump($INTF);
-
-	print <<END;
-		<table class='tbl'>
-			<tr>
-				<th width='15%'>
-					$Lang::tr{'name'}
-				</th>
-
-				<th width='20%' colspan='2'>
-					$Lang::tr{'status'}
-				</th>
-
-				<th>
-					$Lang::tr{'remark'}
-				</th>
-
-				<th width='10%' colspan='3'>
-					$Lang::tr{'action'}
-				</th>
-			</tr>
-END
-
-	# Iterate through all peers...
-	foreach my $key (sort { $peers{$a}[2] cmp $peers{$b}[2] } keys %peers) {
-		my $enabled  = $peers{$key}[0];
-		my $type     = $peers{$key}[1];
-		my $name     = $peers{$key}[2];
-		my $pubkey   = $peers{$key}[3];
-		my $endpoint = $peers{$key}[4];
-		my $port     = $peers{$key}[5];
-		my $routes   = $peers{$key}[6];
-		my $remarks  = &decode_remarks($peers{$key}[7]);
-
-		my $connected = $Lang::tr{'capsclosed'};
-		my $country   = "ZZ";
-		my $location  = "";
-
-		my $gif = ($enabled eq "on") ? "on.gif" : "off.gif";
-		my @status = ("status");
-
-		# Fetch the status of the peer (if possible)
-		my $status = $dump{$pubkey} || ();
-
-		# Fetch the actual endpoint
-		my ($actual_endpoint, $actual_port) = split(/:/, $status->{"endpoint"}, 2);
-
-		# WireGuard performs a handshake very two minutes, so we should be considered online then
-		my $is_connected = (time - $status->{"latest-handshake"}) <= 120;
-
-		# We are connected!
-		if ($is_connected) {
-			push(@status, "is-connected");
-
-			$connected = $Lang::tr{'capsopen'};
-
-			# If we have an endpoint lets lookup the country
-			if ($actual_endpoint) {
-				$country = &Location::Functions::lookup_country_code($actual_endpoint);
-
-				# If we found a country, let's show it
-				if ($country) {
-					my $icon = &Location::Functions::get_flag_icon($country);
-
-					$location = <<EOF;
-						<a href="country.cgi#$country">
-							<img src="$icon" border='0' align='absmiddle'
-								alt='$country' title='$actual_endpoint:$actual_port - $country' />
-						</a>
-EOF
-				}
-			}
-
-		# We are not connected...
-		} else {
-			push(@status, "is-disconnected");
-		}
-
-		# Escape remarks
-		if ($remarks) {
-			$remarks = &Header::escape($remarks);
-		}
+	if (%peers) {
+		# Fetch the dump
+		my %dump = &dump($INTF);
 
 		print <<END;
-			<tr>
-				<th scope="row">
-					$name
-				</th>
+			<table class='tbl'>
+				<tr>
+					<th width='15%'>
+						$Lang::tr{'name'}
+					</th>
 
-				<td class="@status">
-					$connected
-				</td>
+					<th width='20%' colspan='2'>
+						$Lang::tr{'status'}
+					</th>
 
-				<td class="@status">
-					$location
-				</td>
+					<th>
+						$Lang::tr{'remark'}
+					</th>
 
-				<td>
-					$remarks
-				</td>
-
-				<td class="text-center">
-					<form method='post'>
-						<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
-							alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
-						<input type='hidden' name='ACTION' value='TOGGLE-ENABLE-DISABLE' />
-						<input type='hidden' name='KEY' value='$key' />
-					</form>
-				</td>
-
-				<td class="text-center">
-					<form method='post'>
-						<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
-						<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif'
-							alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
-						<input type='hidden' name='KEY' value='$key' />
-					</form>
-				</td>
-
-				<td class="text-center">
-					<form method='post'>
-						<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
-						<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif'
-							alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
-						<input type='hidden' name='KEY' value='$key' />
-					</form>
-				</td>
-			</tr>
+					<th width='10%' colspan='3'>
+						$Lang::tr{'action'}
+					</th>
+				</tr>
 END
+
+		# Iterate through all peers...
+		foreach my $key (sort { $peers{$a}[2] cmp $peers{$b}[2] } keys %peers) {
+			my $enabled  = $peers{$key}[0];
+			my $type     = $peers{$key}[1];
+			my $name     = $peers{$key}[2];
+			my $pubkey   = $peers{$key}[3];
+			my $endpoint = $peers{$key}[4];
+			my $port     = $peers{$key}[5];
+			my $routes   = $peers{$key}[6];
+			my $remarks  = &decode_remarks($peers{$key}[7]);
+
+			my $connected = $Lang::tr{'capsclosed'};
+			my $country   = "ZZ";
+			my $location  = "";
+
+			my $gif = ($enabled eq "on") ? "on.gif" : "off.gif";
+			my @status = ("status");
+
+			# Fetch the status of the peer (if possible)
+			my $status = $dump{$pubkey} || ();
+
+			# Fetch the actual endpoint
+			my ($actual_endpoint, $actual_port) = split(/:/, $status->{"endpoint"}, 2);
+
+			# WireGuard performs a handshake very two minutes, so we should be considered online then
+			my $is_connected = (time - $status->{"latest-handshake"}) <= 120;
+
+			# We are connected!
+			if ($is_connected) {
+				push(@status, "is-connected");
+
+				$connected = $Lang::tr{'capsopen'};
+
+				# If we have an endpoint lets lookup the country
+				if ($actual_endpoint) {
+					$country = &Location::Functions::lookup_country_code($actual_endpoint);
+
+					# If we found a country, let's show it
+					if ($country) {
+						my $icon = &Location::Functions::get_flag_icon($country);
+
+						$location = <<EOF;
+							<a href="country.cgi#$country">
+								<img src="$icon" border='0' align='absmiddle'
+									alt='$country' title='$actual_endpoint:$actual_port - $country' />
+							</a>
+EOF
+					}
+				}
+
+			# We are not connected...
+			} else {
+				push(@status, "is-disconnected");
+			}
+
+			# Escape remarks
+			if ($remarks) {
+				$remarks = &Header::escape($remarks);
+			}
+
+			print <<END;
+				<tr>
+					<th scope="row">
+						$name
+					</th>
+
+					<td class="@status">
+						$connected
+					</td>
+
+					<td class="@status">
+						$location
+					</td>
+
+					<td>
+						$remarks
+					</td>
+
+					<td class="text-center">
+						<form method='post'>
+							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
+								alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
+							<input type='hidden' name='ACTION' value='TOGGLE-ENABLE-DISABLE' />
+							<input type='hidden' name='KEY' value='$key' />
+						</form>
+					</td>
+
+					<td class="text-center">
+						<form method='post'>
+							<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+							<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif'
+								alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+							<input type='hidden' name='KEY' value='$key' />
+						</form>
+					</td>
+
+					<td class="text-center">
+						<form method='post'>
+							<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
+							<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif'
+								alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
+							<input type='hidden' name='KEY' value='$key' />
+						</form>
+					</td>
+				</tr>
+END
+		}
+
+		print"</table>";
 	}
 
-	print"</table>";
-
 	# Show controls
-    print <<END;
+	print <<END;
 		<table class="form">
 			<tr class="action">
 				<td>
@@ -661,6 +663,7 @@ END
 			</tr>
 		</table>
 END
+
 	&Header::closesection();
 	&Header::closepage();
 
