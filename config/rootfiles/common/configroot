@@ -199,6 +199,9 @@ var/ipfire/vpn
 #var/ipfire/vpn/settings
 var/ipfire/wakeonlan
 #var/ipfire/wakeonlan/clients.conf
+var/ipfire/wireguard
+#var/ipfire/wireguard/peers
+#var/ipfire/wireguard/settings
 var/ipfire/wireless
 #var/ipfire/wireless/config
 #var/ipfire/wireless/settings
