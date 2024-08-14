@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Open-source formatting library for C++
 
-VER        = 11.0.1
+VER        = 11.0.2
 
 THISAPP    = fmt-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fmt
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 96f3205afb6ac61549ca57b2ba1c8dca5ab523eebd08663ae9b352784fba7994ffa9ffc9be8a37977962175861a43082d4127a293a2e3d4219b5532b57d32693
+$(DL_FILE)_BLAKE2 = c1f7998e68770bbb93ab7211a18b4930727699b340b2f2e15dedc83e55ff02400cfd363abaec1bf63a0165f8c21cc515a4aa23c4f3bc2e65b6fbc041781f0379
 
 install : $(TARGET)
 
