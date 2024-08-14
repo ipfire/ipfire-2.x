@@ -34,11 +34,14 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = telnet
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
 SERVICES   =
+
+# Fixes build with GCC 14
+CFLAGS += -Wno-error=implicit-function-declaration -Wno-error=int-conversion
 
 ###############################################################################
 # Top-level Rules
