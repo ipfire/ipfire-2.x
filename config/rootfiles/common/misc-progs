@@ -25,8 +25,8 @@ usr/local/bin/redctrl
 usr/local/bin/setaliases
 usr/local/bin/smartctrl
 usr/local/bin/squidctrl
-usr/local/bin/suricatactrl
 usr/local/bin/sshctrl
+usr/local/bin/suricatactrl
 usr/local/bin/syslogdctrl
 usr/local/bin/timectrl
 #usr/local/bin/torctrl
@@ -35,6 +35,7 @@ usr/local/bin/updxlratorctrl
 usr/local/bin/urlfilterctrl
 #usr/local/bin/wiohelper
 #usr/local/bin/wioscan
+usr/local/bin/wireguardctrl
 usr/local/bin/wirelessclient
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl
