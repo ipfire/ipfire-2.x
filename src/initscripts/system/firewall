@@ -216,7 +216,7 @@ iptables_init() {
 	iptables -A OUTPUT  -m policy --dir out --pol none -j IPSECBLOCK
 
 	# Block unauthorized WireGuard traffic
-	ipatbles -N WGBLOCK
+	iptables -N WGBLOCK
 	iptables -A INPUT   -i wg+ -j WGBLOCK
 	iptables -A FORWARD -i wg+ -j WGBLOCK
 
