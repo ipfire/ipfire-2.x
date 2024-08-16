@@ -361,6 +361,10 @@ table.form tr.action td {
 	text-align: right;
 }
 
+table.form tr.action td form {
+	display: inline;
+}
+
 .tbl {
 	width: 100%;
 }

@@ -528,6 +528,7 @@ WARNING: translation string unused: ls_pam_unix
 WARNING: translation string unused: ls_sshd
 WARNING: translation string unused: ls_syslogd
 WARNING: translation string unused: mac address error not 00
+WARNING: translation string unused: mac filter
 WARNING: translation string unused: mailmethod
 WARNING: translation string unused: mailprogramm
 WARNING: translation string unused: manage ovpn
@@ -937,9 +938,19 @@ WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
 WARNING: translation string unused: wlan clients
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap debugging
+WARNING: translation string unused: wlanap del interface
+WARNING: translation string unused: wlanap informations
 WARNING: translation string unused: wlanap link dhcp
 WARNING: translation string unused: wlanap link wireless
+WARNING: translation string unused: wlanap no interface
+WARNING: translation string unused: wlanap notifications
+WARNING: translation string unused: wlanap select interface
+WARNING: translation string unused: wlanap verbose
+WARNING: translation string unused: wlanap warnings
+WARNING: translation string unused: wlanap wlan card
 WARNING: translation string unused: wlanap wlan services
+WARNING: translation string unused: wlanap wlan settings
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
@@ -1175,4 +1186,7 @@ WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
 WARNING: untranslated string: wireguard = WireGuard
 WARNING: untranslated string: wlan client configuration = Wireless Client Configuration
-WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap = Wireless Access Point
+WARNING: untranslated string: wlanap clients = unknown string
+WARNING: untranslated string: wlanap psk = Pre-Shared Key
+WARNING: untranslated string: wlanap wireless mode = Wireless Mode

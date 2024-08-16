@@ -108,6 +108,9 @@
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client encryption wpa3
 < wlan client management frame protection
 ############################################################################
@@ -154,6 +157,9 @@
 < transport mode does not support vti
 < wireguard
 < wlanap
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client configuration
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
@@ -178,6 +184,9 @@
 < timeformat
 < upload fcdsl.o
 < wireguard
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -671,7 +680,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1228,7 +1240,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -2201,7 +2216,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3210,7 +3228,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3592,7 +3613,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client encryption wpa3
 < wlan client management frame protection
 < working

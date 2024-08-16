@@ -18,65 +18,39 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-#
-# WLAN AP cgi based on wlanap.cgi written by Markus Hoffmann & Olaf Westrik
-#
 
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/lang.pl';
 require '/var/ipfire/header.pl';
 
-my $debug = 0;
-my $status = '';
 my $errormessage = '';
-my $status_started = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>";
-my $status_stopped = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>";
-my $count=0;
-my $col='';
-# get rid of used only once warnings
-my @onlyonce = ( $Header::colourgreen, $Header::colourred );
-undef @onlyonce;
-
 my %selected=();
 my %checked=();
-my %color = ();
-my %mainsettings = ();
-my %netsettings=();
 my %wlanapsettings=();
-my $channel = '';
-my $country = '';
-my $txpower = '';
 
-&General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
-&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
-
-$wlanapsettings{'APMODE'} = 'on';
-$wlanapsettings{'ACTION'} = '';
-$wlanapsettings{'MACMODE'} = '0';
-$wlanapsettings{'INTERFACE'} = '';
-$wlanapsettings{'SSID'} = 'IPFire';
-$wlanapsettings{'HIDESSID'} = 'off';
-$wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
-$wlanapsettings{'TXPOWER'} = 'auto';
-$wlanapsettings{'CHANNEL'} = '6';
-$wlanapsettings{'COUNTRY'} = '00';
-$wlanapsettings{'HW_MODE'} = 'g';
-$wlanapsettings{'PWD'} = 'IPFire-2.x';
-$wlanapsettings{'SYSLOGLEVEL'} = '0';
-$wlanapsettings{'DEBUG'} = '4';
-$wlanapsettings{'DRIVER'} = 'NL80211';
-$wlanapsettings{'HTCAPS'} = '';
-$wlanapsettings{'VHTCAPS'} = '';
-$wlanapsettings{'NOSCAN'} = 'off';
-$wlanapsettings{'CLIENTISOLATION'} = 'off';
-$wlanapsettings{'IEEE80211W'} = 'off';
+# Set defaults
+&General::set_defaults(\%wlanapsettings, {
+	"APMODE" => "on",
+	"SSID" => "IPFire",
+	"HIDESSID" => "off",
+	"ENC" => "wpa2",
+	"TXPOWER" => "auto",
+	"CHANNEL" => "6",
+	"COUNTRY" => "00",
+	"HW_MODE" => "g",
+	"PWD" => "",
+	"HTCAPS" => "",
+	"VHTCAPS" => "",
+	"NOSCAN" => "off",
+	"CLIENTISOLATION" => "off",
+	"IEEE80211W" => "off",
+});
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 &Header::getcgihash(\%wlanapsettings);
@@ -84,116 +58,51 @@ $wlanapsettings{'IEEE80211W'} = 'off';
 # Find the selected interface
 my $INTF = &Network::get_intf_by_address($wlanapsettings{'INTERFACE'});
 
-my @macs = $wlanapsettings{'MACS'};
-
 delete $wlanapsettings{'__CGI__'};
 delete $wlanapsettings{'x'};
 delete $wlanapsettings{'y'};
-delete $wlanapsettings{'MACS'};
-delete $wlanapsettings{'ACCEPT_MACS'};
-delete $wlanapsettings{'DENY_MACS'};
 
 &Header::showhttpheaders();
 
-my $string=();
-my $status=();
-my $errormessage = '';
-my $memory = 0;
-my @memory=();
-my @pid=();
-my @hostapd=();
-sub pid
-{
-# for pid and memory
-	open(FILE, '/usr/local/bin/addonctrl hostapd status | ');
-	@hostapd = <FILE>;
-	close(FILE);
-	$string = join("", @hostapd);
-	$string =~ s/[a-z_]//gi;
-	$string =~ s/\[[0-1]\;[0-9]+//gi;
-	$string =~ s/[\(\)\.]//gi;
-	$string =~ s/  //gi;
-	$string =~ s///gi;
-	@pid = split(/\s/,$string);
-	if (open(FILE, "/proc/$pid[0]/statm")){
-		my $temp = <FILE>;
-		@memory = split(/ /,$temp);
-		close(FILE);
-		}
-	$memory+=$memory[0];
-}
-pid();
-
-
-
-if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap del interface'}" ){
-	delete $wlanapsettings{'INTERFACE'};
-	&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
-}
-
-if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
+if ($wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}") {
 	# verify WPA Passphrase - only with enabled enc
 	if ($wlanapsettings{'ENC'} ne "none") {
 		# must be 8 .. 63 characters
-		if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63)){
+		if ((length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63)) {
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
 		}
+
 		# only ASCII alowed
-		if ( !($wlanapsettings{'PWD'} !~ /[^\x00-\x7f]/) ){
+		if (!($wlanapsettings{'PWD'} !~ /[^\x00-\x7f]/)) {
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
 		}
 	}
 
-	if ( $errormessage eq '' ){
+	if ($errormessage eq '') {
 		&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 		&WriteConfig_hostapd();
 
 		&General::system("/usr/local/bin/wlanapctrl", "restart");
-		pid();
 	}
-}elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap interface'}" ){
-	&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
-}elsif ( ($wlanapsettings{'ACTION'} eq "$Lang::tr{'start'}") && ($memory == 0) ){
+
+# Start
+} elsif ($wlanapsettings{'ACTION'} eq "$Lang::tr{'start'}") {
 	&General::system("/usr/local/bin/wlanapctrl", "start");
-	pid();
-}elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'stop'}" ){
+
+# Stop
+} elsif ($wlanapsettings{'ACTION'} eq "$Lang::tr{'stop'}") {
 	&General::system("/usr/local/bin/wlanapctrl", "stop");
-	$memory=0;
 }
 
 &Header::openpage($Lang::tr{'wlanap configuration'}, 1, '', '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ( $errormessage ){
-	&Header::openbox('100%', 'center', $Lang::tr{'error messages'});
-	print "<class name='base'>$errormessage\n";
-	print "&nbsp;</class>\n";
-	&Header::closebox();
-}
-
-
-# Found this usefull piece of code in BlockOutTraffic AddOn  8-)
-#   fwrules.cgi
-###############
-# DEBUG DEBUG
-if ( $debug ){
-	&Header::openbox('100%', 'center', 'DEBUG');
-	my $debugCount = 0;
-	foreach my $line (sort keys %wlanapsettings) {
-		print "$line = '$wlanapsettings{$line}'<br />\n";
-		$debugCount++;
-	}
-	print "&nbsp;Count: $debugCount\n";
-	&Header::closebox();
-}
-# DEBUG DEBUG
-###############
+# Show any errors
+&Header::errorbox($errormessage);
 
 #
 # Driver and status detection
 #
-my $wlan_card_status = 'dummy';
-my $wlan_ap_status = '';
 my $message = "";
 
 my %INTERFACES = &Network::list_wireless_interfaces();
@@ -201,52 +110,7 @@ my %INTERFACES = &Network::list_wireless_interfaces();
 foreach my $intf (keys %INTERFACES) {
 	$selected{'INTERFACE'}{$intf} = '';
 }
-$selected{'ENC'}{$wlanapsettings{'INTERFACE'}} = "selected='selected'";
-
-if ( ($wlanapsettings{'INTERFACE'} eq '') ){
-	$message = $Lang::tr{'wlanap select interface'};
-	&Header::openbox('100%', 'center', "WLAN AP");
-print <<END
-$message<br />
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<select name='INTERFACE'>
-END
-;
-
-	foreach my $intf (sort keys %INTERFACES) {
-		print "<option value='${intf}' $selected{'INTERFACE'}{$intf}>$INTERFACES{$intf}</option>";
-	}
-
-print <<END
-</select>
-<br /><br />
-<hr size='1'>
-	<input type='submit' name='ACTION' value='$Lang::tr{'wlanap interface'}' /></form>
-END
-;
-	&Header::closebox();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit;
-}else{
-	my $cmd_out = `/usr/sbin/iwconfig $INTF 2>/dev/null`;
-
-	if ( $cmd_out eq '' ){
-		$message = "$Lang::tr{'wlanap no interface'}";
-		$wlan_card_status = '';
-	}else{
-		$cmd_out = `/sbin/ifconfig $INTF`;
-		if ( $cmd_out eq '' ){
-			$wlan_card_status = 'down';
-		}else{
-			$wlan_card_status = 'up';
-			$cmd_out = `/usr/sbin/iwconfig $INTF | /bin/grep "Mode:Master"`;
-			if ( $cmd_out ne '' ){
-				$wlan_ap_status = 'up';
-			}
-		}
-	}
-}
+$selected{'INTERFACE'}{$wlanapsettings{'INTERFACE'}} = "selected='selected'";
 
 # Change old "n" to "gn"
 if ( $wlanapsettings{'HW_MODE'} eq 'n' ) {
@@ -275,317 +139,251 @@ $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'COUNTRY'}{$wlanapsettings{'COUNTRY'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
 $selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
-$selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
-my $monwlaninterface = $INTF;
-if ( -d '/sys/class/net/mon.' . $INTF) {
-	$monwlaninterface =  'mon.' . $INTF;
-}
+# Fetch all available channels
+my @channellist = &get_channellist($INTF);
 
-my @channellist_cmd;
-my @channellist = (0);
+# Fetch countries
+my @countrylist = &get_countrylist();
 
-if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-my $wiphy = `iw dev $INTF info | grep wiphy | cut -d" " -f2`;
-chomp $wiphy;
+# Show status
+&Header::opensection();
 
-@channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS" | grep -v "no IR" | grep -v "passive scanning" 2>/dev/null`;
-# get available channels
+&Header::ServiceStatus({
+	"$Lang::tr{'wlanap'}" => {
+		"process" => "hostapd",
+	}
+});
 
-my @temp;
-foreach (@channellist_cmd){
-$_ =~ /(.*) \[(\d+)(.*)\]/;
-$channel = $2;chomp $channel;
-if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
-}
-push(@channellist, @temp);
-} else {
-@channellist_cmd = `iwlist $monwlaninterface channel|tail -n +2 2>/dev/null`;
-# get available channels
+print <<EOF;
+	<table class="form">
+		<tr class="action">
+			<td>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<input type='submit' name='ACTION' value='$Lang::tr{'start'}' />
+				</form>
 
-my @temp;
-foreach (@channellist_cmd){
-$_ =~ /(.*)Channel (\d+)(.*):/;
-$channel = $2;chomp $channel;
-if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
-}
-push(@channellist, @temp);
-}
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<input type='submit' name='ACTION' value='$Lang::tr{'stop'}' />
+				</form>
+			</td>
+		</tr>
+	</table>
+EOF
 
-# get available country codes
-open(FILE, "</lib/firmware/regulatorydb.txt");
-my @countrylist_cmd = <FILE>;
-close(FILE);
-
-
-my @temp = "00";
-foreach (@countrylist_cmd){
-$_ =~ /country (.*):/;
-$country = $1;chomp $country;
-if ( $country =~ /[0,A-Z][0,A-Z]/ ) {push(@temp,$country);}
-}
-my @countrylist = @temp;
-
-my @txpower_cmd = `iwlist $monwlaninterface txpower 2>/dev/null`;
-if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-	# There is a bug with NL80211 only all devices can displaye
-	@txpower_cmd = `iwlist txpower 2>/dev/null | sed -e "s|unknown transmit-power information.||g"`;
-}
-# get available power
-
-$selected{'SYSLOGLEVEL'}{$wlanapsettings{'SYSLOGLEVEL'}} = "selected='selected'";
-$selected{'DEBUG'}{$wlanapsettings{'DEBUG'}} = "selected='selected'";
+&Header::closesection();
 
 #
-# Status box
+# Configuration
 #
-&Header::openbox('100%', 'center', "WLAN AP");
-print <<END
-<table width='80%' cellspacing='1' class='tbl'>
-END
-;
+&Header::openbox("100%", "center", $Lang::tr{'wlanap configuration'});
 
-if ( $wlan_card_status ne '' ){
-	print "<tr><th align='left' width='50%'><strong>$Lang::tr{'service'}</strong></th><th width='22%'>Status</th><th width='10%'>PID</th><th width='15%'>$Lang::tr{'memory'}</th><th colspan='2'width='5%'>$Lang::tr{'action'}</th></tr>";
-	print "<tr><td class='base'>$Lang::tr{'wlanap wlan card'} ($wlanapsettings{'DRIVER'})</td>";
-	print $wlan_card_status eq 'up' ? $status_started : $status_stopped;
-	print"<td colspan='4'></td></tr>";
-	print "<tr><td class='base' bgcolor='$color{'color22'}'>$Lang::tr{'wlanap'}</td>";
-	print $wlan_ap_status eq 'up' ? $status_started : $status_stopped;
-	if ( ($memory != 0) && (@pid[0] ne "///") ){
-		print "<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>";
-		print "<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>";
-		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'start'}' /><input type='image' alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' /></form></td>";
-		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'stop'}' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' /></form></td>";
-	}else{
-		print"<td colspan='2' bgcolor='$color{'color22'}'></td>";
-		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'start'}' /><input type='image' alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' /></form></td>";
-		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'stop'}' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' /></form></td>";
+print <<END;
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<h6>$Lang::tr{'wlanap configuration'}</h6>
+
+		<table class="form">
+			<tr>
+				<td>$Lang::tr{'wlanap interface'}</td>
+
+				<td>
+					<select name="INTERFACE" required>
+END
+
+foreach my $intf (sort keys %INTERFACES) {
+	print <<END;
+						<option value="$intf" $selected{'INTERFACE'}{$intf}>
+							$INTERFACES{$intf}
+						</option>
+END
+}
+
+print <<END;
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap ssid'}</td>
+				<td>
+					<input type='text' name='SSID' value='$wlanapsettings{'SSID'}' required>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap broadcast ssid'}</td>
+				<td>
+					<input type='checkbox' name='HIDESSID' $checked{'HIDESSID'}{'on'}>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap client isolation'}</td>
+				<td>
+					<input type='checkbox' name='CLIENTISOLATION' $checked{'CLIENTISOLATION'}{'on'}>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap country'}</td>
+				<td>
+					<select name="COUNTRY">
+END
+
+foreach my $country (@countrylist){
+	print "					<option $selected{'COUNTRY'}{$country}>$country</option>";
+}
+
+print <<END;
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap wireless mode'}</td>
+				<td>
+					<select name='HW_MODE'>
+						<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
+						<option value='b' $selected{'HW_MODE'}{'b'}>802.11b</option>
+						<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
+						<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
+						<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
+						<option value='ac' $selected{'HW_MODE'}{'ac'}>802.11ac</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap channel'}</td>
+				<td>
+					<select name='CHANNEL'>
+END
+
+foreach my $channel (@channellist){
+	print "<option $selected{'CHANNEL'}{$channel}>";
+	if ($channel eq 0) {
+		print "- $Lang::tr{'wlanap auto'} -";
+	} else {
+		print $channel;
 	}
-
-}else{
-	print "<tr><td class='base'>$message";
-}
-	print "</table>";
-
-if ( $wlan_card_status eq '' ){
-	print "<br />";
-	print "<table width='80%' cellspacing='0' border='0'>";
-	print "<tr align='center'>";
-	print "<td colspan='4'></td>";
-	print "</tr>";
-	print "<tr align='center'>";
-	print "<td width='40%'>&nbsp;</td>";
-	print "<td width='20%'><form method='post' action='/cgi-bin/wlanap.cgi'><input type='submit' name='ACTION' value='$Lang::tr{'wlanap del interface'}' /></form></td>";
-	print "<td width='20%'></td>";
-	print "<td width='20%'></td>";
-	print "</tr>";
-	print "</table>";
+	print "</option>";
 }
 
-if ( $wlan_card_status eq '' ){
-	&Header::closebox();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit 0;
-}
-print <<END
-<br><br>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='80%' cellspacing='0' class='tbl' border='0'>
-<tr><th bgcolor='$color{'color20'}' colspan='4' align='left'><strong>$Lang::tr{'wlanap wlan settings'}</strong></th></tr>
-<tr><td colspan='4'><br></td></tr>
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap ssid'}:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='30' value='$wlanapsettings{'SSID'}' /></td></tr>
-<!--SSID Broadcast: on => HIDESSID: off -->
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap broadcast ssid'}:&nbsp;</td><td class='base' colspan='3'>$Lang::tr{'on'} <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> $Lang::tr{'off'}</td></tr>
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap client isolation'}:&nbsp;</td><td class='base' colspan='3'>$Lang::tr{'on'} <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> | <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
-	<select name='COUNTRY'>
-END
-;
-foreach $country (@countrylist){
-	print "<option $selected{'COUNTRY'}{$country}>$country</option>";
-}
-print<<END
-</select></td></tr>
-<tr><td width='25%' class='base'>HW Mode:&nbsp;</td><td class='base' colspan='3'>
-	<select name='HW_MODE'>
-		<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
-		<option value='b' $selected{'HW_MODE'}{'b'}>802.11b</option>
-		<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
-		<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
-		<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
-		<option value='ac' $selected{'HW_MODE'}{'ac'}>802.11ac</option>
-	</select>
-</td></tr>
-END
-;
+print <<END;
+					</select>
+				</td>
+			</tr>
 
-if ( scalar @channellist > 0 ){
-	print <<END
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap channel'}:&nbsp;</td><td class='base' colspan='3'>
-	<select name='CHANNEL'>
-END
-;
-	foreach $channel (@channellist){
-		print "<option $selected{'CHANNEL'}{$channel}>";
-		if ($channel eq 0) {
-			print "- $Lang::tr{'wlanap auto'} -";
-		} else {
-			print $channel;
-		}
-		print "</option>";
-	}
-	print "</select></td></tr>"
-} else {
-	print <<END
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap channel'}:&nbsp;</td><td class='base' colspan='3'>
-<input type='text' name='CHANNEL' size='10' value='$wlanapsettings{'CHANNEL'}' />
-</td></tr>
-END
-;
-}
-print<<END
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap neighbor scan'}:&nbsp;</td><td class='base' >$Lang::tr{'on'} <input type='radio' name='NOSCAN' value='off' $checked{'NOSCAN'}{'off'} /> | <input type='radio' name='NOSCAN' value='on' $checked{'NOSCAN'}{'on'} /> $Lang::tr{'off'}</td><td class='base' colspan='2'>$Lang::tr{'wlanap neighbor scan warning'}</td></tr>
-<tr><td colspan='4'><br></td></tr>
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap encryption'}:&nbsp;</td><td class='base' colspan='3'>
-	<select name='ENC'>
-		<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
-		<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
-		<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
-		<option value='wpa3' $selected{'ENC'}{'wpa3'}>WPA3</option>
-		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
-		<option value='wpa2+3' $selected{'ENC'}{'wpa2+3'}>WPA2+3</option>
-	</select>
-</td></tr>
-<tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='30' value='$wlanapsettings{'PWD'}' /></td></tr>
-<tr>
-	<td width='25%' class='base'>$Lang::tr{'wlanap management frame protection'}:&nbsp;</td>
-	<td class='base' colspan="3">
-		<select name="IEEE80211W">
-			<option value="off" $selected{'IEEE80211W'}{'off'}>$Lang::tr{'wlanap 802.11w disabled'}</option>
-			<option value="optional" $selected{'IEEE80211W'}{'optional'}>$Lang::tr{'wlanap 802.11w optional'}</option>
-			<option value="on" $selected{'IEEE80211W'}{'on'}>$Lang::tr{'wlanap 802.11w enforced'}</option>
-		</select>
-	</td>
-</tr>
-<tr><td colspan='4'><br></td></tr>
-END
-;
-print <<END
-<tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='30' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
-<tr><td width='25%' class='base'>VHT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='VHTCAPS' size='30' value='$wlanapsettings{'VHTCAPS'}' /></td></tr>
-<tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'><input type='text' name='TXPOWER' size='10' value='$wlanapsettings{'TXPOWER'}' /></td></tr>
-<tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
-	<select name='SYSLOGLEVEL'>
-		<option value='0' $selected{'SYSLOGLEVEL'}{'0'}>0 ($Lang::tr{'wlanap verbose'})</option>
-		<option value='1' $selected{'SYSLOGLEVEL'}{'1'}>1 ($Lang::tr{'wlanap debugging'})</option>
-		<option value='2' $selected{'SYSLOGLEVEL'}{'2'}>2 ($Lang::tr{'wlanap informations'})</option>
-		<option value='3' $selected{'SYSLOGLEVEL'}{'3'}>3 ($Lang::tr{'wlanap notifications'})</option>
-		<option value='4' $selected{'SYSLOGLEVEL'}{'4'}>4 ($Lang::tr{'wlanap warnings'})</option>
-	</select>
-</td>
-<td width='25%' class='base'>Debuglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
-	<select name='DEBUG'>
-		<option value='0' $selected{'DEBUG'}{'0'}>0 ($Lang::tr{'wlanap verbose'})</option>
-		<option value='1' $selected{'DEBUG'}{'1'}>1 ($Lang::tr{'wlanap debugging'})</option>
-		<option value='2' $selected{'DEBUG'}{'2'}>2 ($Lang::tr{'wlanap informations'})</option>
-		<option value='3' $selected{'DEBUG'}{'3'}>3 ($Lang::tr{'wlanap notifications'})</option>
-		<option value='4' $selected{'DEBUG'}{'4'}>4 ($Lang::tr{'wlanap warnings'})</option>
-	</select>
-</td></tr>
-<tr><td colspan='4'><br></td></tr>
-</table>
-END
-;
-if ( $INTF =~ /green0/ ){
-	print <<END
-<br />
-<table width='80%' cellspacing='0' class='tbl' border='1'>
-<tr>
-	<th colspan='3' align='left'>$Lang::tr{'mac filter'}</th>
-</tr>
-<td width='25%' class='base'>Mac Filter:&nbsp;</td><td class='base' width='25%'>
-	<select name='MACMODE'>
-		<option value='0' $selected{'MACMODE'}{'0'}>0 (off)</option>
-		<option value='1' $selected{'MACMODE'}{'1'}>1 (Accept MACs)</option>
-		<option value='2' $selected{'MACMODE'}{'2'}>2 (Deny MACs)</option>
-	</select>
-</td><td colspan='2'>Mac Adress List (one per line)<br /><textarea name='MACS' cols='20' rows='5' wrap='off'>
-END
-;
-	print `cat /var/ipfire/wlanap/macfile`;
-print <<END
-</textarea></td>
-</table>
-END
-;
-}
-print <<END
-<br />
-<table width='80%' cellspacing='0'>
-<tr><td align='center'>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form></td>
-</tr>
-</table>
-END
-;
-my @status;
-if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-	 @status =  `iw dev $INTF info && iw dev $INTF station dump && echo ""`;
-}
-print <<END
-<br />
-<table width='80%' cellspacing='0' class='tbl'>
-<tr><th colspan='3' bgcolor='$color{'color20'}' align='left'><strong>$Lang::tr{'wlanap wlan status'}</strong></th></tr>
+			<tr>
+				<td>$Lang::tr{'wlanap neighbor scan'}</td>
+				<td>
+					<input type='checkbox' name='NOSCAN' $checked{'NOSCAN'}{'on'}>
+
+					$Lang::tr{'wlanap neighbor scan warning'}
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap encryption'}</td>
+				<td>
+					<select name='ENC'>
+						<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
+						<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
+						<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
+						<option value='wpa3' $selected{'ENC'}{'wpa3'}>WPA3</option>
+						<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
+						<option value='wpa2+3' $selected{'ENC'}{'wpa2+3'}>WPA2+3</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap psk'}</td>
+				<td>
+					<input type='text' name='PWD' value='$wlanapsettings{'PWD'}' />
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap management frame protection'}</td>
+				<td>
+					<select name="IEEE80211W">
+						<option value="off" $selected{'IEEE80211W'}{'off'}>
+							$Lang::tr{'wlanap 802.11w disabled'}
+						</option>
+						<option value="optional" $selected{'IEEE80211W'}{'optional'}>
+							$Lang::tr{'wlanap 802.11w optional'}
+						</option>
+						<option value="on" $selected{'IEEE80211W'}{'on'}>
+							$Lang::tr{'wlanap 802.11w enforced'}
+						</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>HT Caps</td>
+				<td>
+					<input type='text' name='HTCAPS' value='$wlanapsettings{'HTCAPS'}' />
+				</td>
+			</tr>
+
+			<tr>
+				<td>VHT Caps</td>
+				<td>
+					<input type='text' name='VHTCAPS' value='$wlanapsettings{'VHTCAPS'}' />
+				</td>
+			</tr>
+
+			<tr>
+				<td>Tx Power</td>
+				<td>
+					<input type='text' name='TXPOWER' value='$wlanapsettings{'TXPOWER'}' />
+				</td>
+			</tr>
+
+			<tr class="action">
+				<td colspan="2">
+					<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+				</td>
+			</tr>
+		</table>
+	</form>
 END
 ;
 
-for (my $i=0;$i<$#status;$i++){
-
-if (@status[$i]=~"^Station ") { $count++; }
-if ($count % 2){
-		$col="bgcolor='$color{'color20'}'";
-	}else{
-		$col="bgcolor='$color{'color22'}'";
-	}
-	print"<tr><td colspan='3' $col><pre>@status[$i]</pre></td></tr>";
-	if (! @status[$i]=~"^/t" ) { $count++; }
-}
-	$count++;
-
-foreach my $nr (@channellist_cmd){
-	if ($count % 2){
-		$col="bgcolor='$color{'color20'}'";
-	}else{
-		$col="bgcolor='$color{'color22'}'";
-	}
-	print"<tr><td colspan='3' $col>$nr</td></tr>";
-	$count++;
-}
-
-for (my $i=0;$i<$#txpower_cmd;$i=$i+2){
-	if ($count % 2){
-		$col="bgcolor='$color{'color20'}'";
-	}else{
-		$col="bgcolor='$color{'color22'}'";
-	}
-	print "<tr><td $col>@txpower_cmd[$i]</td></tr>";
-	$count++;
-}
-print "</table>";
 &Header::closebox();
-print "</form>";
+
+&Header::opensection();
+
+my @status = `iw dev $INTF info`;
+
+if (@status) {
+	print <<END;
+		<h6>$Lang::tr{'wlanap wlan status'}</h6>
+
+		<pre>@status</pre>
+END
+}
+
+my @status = `iw dev $INTF station dump`;
+
+if (@status) {
+	print <<END;
+		<h6>$Lang::tr{'wlanap clients'}</h6>
+
+		<pre>@status</pre>
+END
+}
+
+&Header::closesection();
 &Header::closebigbox();
 &Header::closepage();
 
 sub WriteConfig_hostapd{
-	$wlanapsettings{'DRIVER_HOSTAPD'} = lc($wlanapsettings{'DRIVER'});
-
 	open (CONFIGFILE, ">/var/ipfire/wlanap/hostapd.conf");
 	print CONFIGFILE <<END
-driver=$wlanapsettings{'DRIVER_HOSTAPD'}
+driver=nl80211
 ######################### basic hostapd configuration ##########################
 #
 country_code=$wlanapsettings{'COUNTRY'}
@@ -633,10 +431,9 @@ END
  }
 
 print CONFIGFILE <<END
+# Enable logging
 logger_syslog=-1
-logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
-logger_stdout=-1
-logger_stdout_level=$wlanapsettings{'DEBUG'}
+logger_syslog_level=4
 auth_algs=1
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
@@ -743,12 +540,68 @@ END
 ;
  }
 	close CONFIGFILE;
+}
 
-	open (MACFILE, ">/var/ipfire/wlanap/macfile");
-	foreach(@macs){
-		$_ =~ s/\r//gi;
-		chomp($_);
-		if ( $_ ne "" ){print MACFILE $_;}
+sub get_phy($) {
+	my $intf = shift;
+	my $phy;
+
+	open(my $file, "/sys/class/net/$intf/phy80211/index") or return undef;
+
+	while (<$file>) {
+		chomp $_;
+
+		$phy = $_;
+		last;
 	}
-	close MACFILE;
+
+	close($file);
+
+	return $phy;
+}
+
+sub get_channellist($) {
+	my $intf = shift;
+
+	# Fetch the PHY ID
+	my $phy = &get_phy($intf);
+
+	my @channels = (0);
+
+	open(my $command, "iw phy phy$phy info |");
+
+	while (<$command>) {
+		# Skip everything we are not interested in
+		next unless ($_ =~ m/MHz \[(\d+)\]/);
+
+		my $channel = $1;
+
+		# Skip disabled and otherwise unusable channels
+		next if ($_ =~ m/disabled/);
+		next if ($_ =~ m/no IBSS/);
+		next if ($_ =~ m/no IR/);
+		next if ($_ =~ m/passive scanning/);
+
+		push(@channels, $channel);
+	}
+
+	close($command);
+
+	return @channels;
+}
+
+sub get_countrylist() {
+	open(my $file, "</lib/firmware/regulatorydb.txt");
+
+	my @countries = ();
+
+	while (<$file>)	{
+		if ($_ =~ m/^country ([A-Z0-9]{2}):/) {
+			push(@countries, $1);
+		}
+	}
+
+	close($file);
+
+	return @countries;
 }

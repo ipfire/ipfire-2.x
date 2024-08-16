@@ -773,9 +773,19 @@ WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap debugging
+WARNING: translation string unused: wlanap del interface
+WARNING: translation string unused: wlanap informations
 WARNING: translation string unused: wlanap link dhcp
 WARNING: translation string unused: wlanap link wireless
+WARNING: translation string unused: wlanap no interface
+WARNING: translation string unused: wlanap notifications
+WARNING: translation string unused: wlanap select interface
+WARNING: translation string unused: wlanap verbose
+WARNING: translation string unused: wlanap warnings
+WARNING: translation string unused: wlanap wlan card
 WARNING: translation string unused: wlanap wlan services
+WARNING: translation string unused: wlanap wlan settings
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
@@ -1344,7 +1354,6 @@ WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hos
 WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: log server protocol = protocol:
-WARNING: untranslated string: mac filter = MAC filter
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN
 WARNING: untranslated string: masquerade orange = Masquerade ORANGE
@@ -1776,19 +1785,22 @@ WARNING: untranslated string: wlan client wpa mode all = Auto
 WARNING: untranslated string: wlan client wpa mode ccmp ccmp = CCMP-CCMP
 WARNING: untranslated string: wlan client wpa mode ccmp tkip = CCMP-TKIP
 WARNING: untranslated string: wlan client wpa mode tkip tkip = TKIP-TKIP
-WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap = Wireless Access Point
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced
 WARNING: untranslated string: wlanap 802.11w optional = Optional
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
 WARNING: untranslated string: wlanap client isolation = Client Isolation
-WARNING: untranslated string: wlanap configuration = Access Point Configuration
+WARNING: untranslated string: wlanap clients = unknown string
+WARNING: untranslated string: wlanap configuration = Wireless Access Point Configuration
 WARNING: untranslated string: wlanap country = Country Code
 WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
-WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
-WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
+WARNING: untranslated string: wlanap neighbor scan = Neighborhood Scan
+WARNING: untranslated string: wlanap neighbor scan warning = Warning: Disabling may violate regulatory rules
+WARNING: untranslated string: wlanap psk = Pre-Shared Key
 WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: wlanap wireless mode = Wireless Mode
 WARNING: untranslated string: working = Working
 WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
 WARNING: untranslated string: zoneconf title = Zone Configuration
