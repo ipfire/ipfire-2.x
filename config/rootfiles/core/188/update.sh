@@ -67,6 +67,7 @@ ldconfig
 
 # Start services
 /etc/init.d/apache restart
+/etc/init.d/unbound restart
 
 # Build initial ramdisks (for intel-microcode)
 dracut --regenerate-all --force
