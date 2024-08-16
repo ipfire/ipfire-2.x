@@ -870,6 +870,11 @@ execute() {
 						# Go back and wait
 						continue
 						;;
+
+					# Ignore SIGWINCH
+					156)
+						continue
+						;;
 				esac
 
 				break
