@@ -387,9 +387,14 @@ driver=nl80211
 ######################### basic hostapd configuration ##########################
 #
 country_code=$wlanapsettings{'COUNTRY'}
+country3=0x49 # indoor
 ieee80211d=1
 ieee80211h=1
 channel=$wlanapsettings{'CHANNEL'}
+
+# Always advertise TPC
+local_pwr_constraint=3
+spectrum_mgmt_required=1
 END
 ;
  if ( $wlanapsettings{'HW_MODE'} eq 'an' ){
@@ -430,7 +435,7 @@ END
 
  }
 
-print CONFIGFILE <<END
+print CONFIGFILE <<END;
 # Enable logging
 logger_syslog=-1
 logger_syslog_level=4
@@ -438,22 +443,18 @@ auth_algs=1
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
 disassoc_low_ack=1
+
+# SSID
+ssid2=\"$wlanapsettings{'SSID'}\"
+utf8_ssid=1
+
 END
-;
- if ( $wlanapsettings{'HIDESSID'} eq 'on' ){
+
+if ( $wlanapsettings{'HIDESSID'} eq 'on' ){
 	print CONFIGFILE <<END
-ssid=$wlanapsettings{'SSID'}
 ignore_broadcast_ssid=2
 END
 ;
-
- }else{
- 	print CONFIGFILE <<END
-ssid=$wlanapsettings{'SSID'}
-ignore_broadcast_ssid=0
-END
-;
-
  }
 
  # https://forum.ipfire.org/viewtopic.php?f=22&t=12274&p=79070#p79070
