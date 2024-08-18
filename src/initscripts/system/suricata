@@ -86,7 +86,7 @@ function generate_fw_rules {
 		# Check if the IDS is enabled for this network zone.
 		if [ "${!enable_ids_zone}" == "on" ]; then
 			# Check if the current processed zone is "red" and the configured type is PPPoE dialin.
-			if [ "$zone" == "red" ] && [ "$RED_TYPE" == "PPPOE" ]; then
+			if [ "$zone" == "red" ] && [ "$RED_TYPE" == "PPPOE" ] && [ "$RED_DRIVER" != "qmi_wwan" ]; then
 				# Set device name to ppp0.
 				network_device="ppp0"
 			elif [ "$zone" == "ovpn" ]; then
