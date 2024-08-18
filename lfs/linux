@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.6.32
+VER         = 6.6.46
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -72,7 +72,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6456fcafe10eae6c0cf962b651aa567ba9ad522c4df0c87301ab0060313b8179a818a1d305e0af21599bc5b7bf42e2f61121a2ee0658a065524d098eb2947f0e
+$(DL_FILE)_BLAKE2 = 583fd214fdf23b8ac90d3efd6311db06b254f57813a4193270d8f5ca5f7dcf7be80c228f47ca52ac60d43a20b6d2c6e55768e5cf3ff74d67f0dc56ca4719fe2b
 
 install : $(TARGET)
 
@@ -132,9 +132,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
-
-	# reset ax88179 twice like in older kernels
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.32-asix88179_reset.patch
 
 	# Fix external module compile
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
