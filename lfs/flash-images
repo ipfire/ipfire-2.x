@@ -175,7 +175,7 @@ ifeq "$(BOOTLOADER)" "grub"
 
 	# Create configuration
 	mkdir -pv $(MNThdd)/boot/grub
-	GRUB_FIRST_BOOT=true KERNEL_RELEASE="$(KVER)-ipfire" chroot $(MNThdd) \
+	GRUB_FIRST_BOOT=true KERNEL_RELEASE="$(KVER)" chroot $(MNThdd) \
 		grub-mkconfig -o /boot/grub/grub.cfg
 
 	# Boot the first kernel by default

@@ -26,7 +26,6 @@ VERSION="2.29"							# Version number
 CORE="188"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
-KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 
 # Information from Git
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
@@ -34,6 +33,12 @@ GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
 TOOLCHAINVER=20240521
+
+KVER_SUFFIX="-${SNAME}"
+
+# Kernel Version
+KVER="$(grep --max-count=1 VER lfs/linux | awk '{ print $3 }')"
+KVER="${KVER/-rc/.0-rc}${KVER_SUFFIX}"
 
 ###############################################################################
 #
@@ -672,6 +677,7 @@ execute() {
 
 		# Kernel Version
 		[KVER]="${KVER}"
+		[KVER_SUFFIX]="${KVER_SUFFIX}"
 
 		# Compiler flags
 		[CFLAGS]="${CFLAGS[@]}"
@@ -779,7 +785,7 @@ execute() {
 
 						# Fake kernel version, because some of the packages do not
 						# compile with kernel 3.0 and later
-						[UTS_RELEASE]="${KVER}-${SNAME}"
+						[UTS_RELEASE]="${KVER}"
 
 						# Fake machine
 						[UTS_MACHINE]="${BUILD_ARCH}"
@@ -1432,7 +1438,7 @@ build_toolchain() {
 	lfsmake1 stage1
 	lfsmake1 binutils			PASS=1
 	lfsmake1 gcc			PASS=1
-	lfsmake1 linux			KCFG="-headers"
+	lfsmake1 linux			HEADERS=1
 	lfsmake1 glibc
 	lfsmake1 libxcrypt
 	lfsmake1 gcc			PASS=L
@@ -1476,7 +1482,7 @@ build_system() {
 	local LOGFILE="${LOG_DIR}/_build.${SNAME}.log"
 
 	lfsmake2 stage2
-	lfsmake2 linux			KCFG="-headers"
+	lfsmake2 linux			HEADERS=1
 	lfsmake2 man-pages
 	lfsmake2 glibc
 	lfsmake2 tzdata

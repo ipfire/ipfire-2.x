@@ -33,7 +33,7 @@
 # Cleanup environment from any variables
 unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN
 unexport NAME SNAME VERSION CORE SLOGAN SYSTEM_RELEASE PAKFIRE_TREE CONFIG_ROOT
-unexport KVER
+unexport KVER KVER_SUFFIX
 unexport SYSTEM_PROCESSOR SYSTEM_MEMORY
 unexport DEFAULT_PARALLELISM
 unexport LFS_BASEDIR
@@ -254,12 +254,6 @@ define PREBUILD
 	echo "====================================== Installing $(THISAPP) ..."
 	@echo "Install started; saving file list to $(DIR_SRC)/lsalr ..."
 	@if [ ! -f $(DIR_SRC)/lsalr ]; then $(FIND_FILES) > $(DIR_SRC)/lsalr; fi
-	# Fix installation on partial rebuild, so modules install where they should
-	# and not everytime on the last compiled kernel
-	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
-		cd $(DIR_SRC)/linux-$(KVER) && \
-			sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire$(KCFG)+' Makefile; \
-	fi
 endef
 else
 define PREBUILD
