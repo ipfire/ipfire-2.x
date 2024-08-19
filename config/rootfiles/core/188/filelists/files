@@ -8,6 +8,7 @@ srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+var/ipfire/backup/bin/backup.pl
 var/ipfire/general-functions.pl
 var/ipfire/graphs.pl
 var/ipfire/header.pl
