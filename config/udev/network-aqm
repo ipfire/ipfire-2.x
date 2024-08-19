@@ -39,6 +39,10 @@ case "${ACTION}" in
 		# Detect bridges
 		if [ -d "/sys/class/net/${INTERFACE}/bridge" ]; then
 			TYPE="bridge"
+
+		# Detect wireless interfaces
+		elif [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
+			TYPE="wireless"
 		fi
 
 		args=()
@@ -65,6 +69,11 @@ case "${ACTION}" in
 				exit 0
 				;;
 
+			# Ignore wireless interfaces
+			*,wireless)
+				exit 0
+				;;
+
 			# Ignore IMQ/IFB
 			imq*,*|ifb*,*)
 				exit 0
@@ -75,14 +84,9 @@ case "${ACTION}" in
 				args+=( "cake" "internet" "conservative" "ack-filter" )
 				;;
 
-			# Treat any other interfaces as "Ethernet"
-			red*,*)
-				args+=( "cake" "internet" "ethernet" )
-				;;
-
 			# All other interfaces are locally connected
 			*)
-				args+=( "cake" "ethernet" "metro" )
+				args+=( "fq_codel" )
 				;;
 		esac
 
