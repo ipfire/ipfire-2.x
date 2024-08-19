@@ -21,7 +21,7 @@
 
 shopt -s nullglob
 
-NOW="$(date "+%Y-%m-%d_%H-%M")"
+NOW="$(date "+%Y-%m-%d-%H%M")"
 
 list_addons() {
 	local file
