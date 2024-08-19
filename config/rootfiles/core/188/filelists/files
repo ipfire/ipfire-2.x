@@ -3,6 +3,7 @@ etc/rc.d/init.d/functions
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/suricata
+lib/udev/network-aqm
 lib/udev/network-hotplug-vlan
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/services.cgi
