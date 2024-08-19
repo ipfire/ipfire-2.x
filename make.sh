@@ -42,6 +42,7 @@ TOOLCHAINVER=20240521
 ###############################################################################
 
 HOST_ARCH="${HOSTTYPE}"
+HOST_KERNEL="$(uname -r)"
 LC_ALL=POSIX
 PS1='\u:\w$ '
 
@@ -287,6 +288,76 @@ __timer() {
 # Called when the timer triggers
 # This function does nothing, but is needed interrupt the wait call
 __timer_event() {
+	return 0
+}
+
+version_compare() {
+	local v1="${1}"
+	local op="${2}"
+	local v2="${3}"
+
+	# Split both versions by .
+	v1=( ${v1//./ } )
+	v2=( ${v2//./ } )
+
+	# Run for as long as both versions have not been fully processed
+	while [ "${#v1[@]}" -gt 0 ] && [ "${#v2[@]}" -gt 0 ]; do
+		# Fetch the first element from each version
+		local f1="${v1[@]:0:1}"
+		local f2="${v2[@]:0:1}"
+
+		# Shift the array
+		v1=( ${v1[@]:1} )
+		v2=( ${v2[@]:1} )
+
+		local n1
+		local n2
+
+		# Split off any numeric parts
+		if [[ ${f1} =~ ^([0-9]+) ]]; then
+			n1="${BASH_REMATCH[1]}"
+		fi
+
+		if [[ ${f2} =~ ^([0-9]+) ]]; then
+			n2="${BASH_REMATCH[1]}"
+		fi
+
+		# Remove the numeric parts from each field
+		f1="${f1#${n1}}"
+		f2="${f2#${n2}}"
+
+		# Check the numeric parts first
+		if [ -n "${n1}" ] && [ -n "${n2}" ]; then
+			case "${op}" in
+				ge)
+					if [ "${n1}" -ge "${n2}" ]; then
+						return 1
+					fi
+					;;
+			esac
+
+		# If we only have a numeric part in the first version...
+		elif [ -n "${n1}" ]; then
+			case "${op}" in
+				ge)
+					return 1
+					;;
+			esac
+
+		# If we only have a numeric part in the second version...
+		elif [ -n "${n2}" ]; then
+			case "${op}" in
+				ge)
+					return 0
+					;;
+			esac
+		fi
+
+		# I don't know how to handle the non-numeric part here, and we should not need it
+		# as we are only using this for kernel versions which should all lead with numbers.
+	done
+
+	# Don't know
 	return 0
 }
 
@@ -662,13 +733,19 @@ execute() {
 			# Create a new UTS namespace
 			"--uts"
 
-			# Mount /proc so that the build environment does not see
-			# any foreign processes.
-			"--mount-proc=${BUILD_DIR}/proc"
-
 			# If unshare is asked to terminate, terminate all child processes
 			"--kill-child"
 		)
+
+		# Mount /proc so that the build environment does not see
+		# any foreign processes.
+		# This does not work on kernels < 6.0.0, and we will mount /proc
+		# in the execute.sh script instead.
+		if version_compare "${HOST_KERNEL}" ge "6.0.0"; then
+			unshare+=(
+				"--mount-proc=${BUILD_DIR}/proc"
+			)
+		fi
 	fi
 
 	while [ $# -gt 0 ]; do

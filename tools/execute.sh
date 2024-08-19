@@ -22,6 +22,11 @@
 # This is a helper script that is called after we have created the new
 # namespaces to perform further setup. This will be executed on the host.
 
+# Mount /proc if it has not been mounted, yet
+if ! mountpoint /proc; then
+	mount -t procfs none /proc -o nosuid,noexec,nodev
+fi
+
 # Bring up the loopback interface
 ip link set lo up &>/dev/null
 
