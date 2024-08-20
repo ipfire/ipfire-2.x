@@ -282,7 +282,7 @@ define POSTBUILD
 	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
 	# $(TARGET) : log result with {commented|include|added} files
 	@if [ -s "$(TARGET)_diff" ]; then \
-		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
+		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
 		echo $(LFS_SCRIPT); \
 		ROOTFILE=$$(find -L $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \

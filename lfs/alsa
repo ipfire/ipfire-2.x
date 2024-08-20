@@ -31,8 +31,6 @@ UVER       = 1.2.10
 CVER       = 1.2.10
 FVER       = 1.2.4
 
-VERSUFIX   = ipfire$(KCFG)
-
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)

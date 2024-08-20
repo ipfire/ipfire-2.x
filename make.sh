@@ -2096,11 +2096,9 @@ build_system() {
 	lfsmake2 inotify-tools
 	lfsmake2 grub-btrfs
 
-	# Kernelbuild ... current we have no platform that need
-	# multi kernel builds so KCFG is empty
-	lfsmake2 linux		KCFG=""
-	lfsmake2 rtl8812au		KCFG=""
-	lfsmake2 linux-initrd		KCFG=""
+	lfsmake2 linux
+	lfsmake2 rtl8812au
+	lfsmake2 linux-initrd
 
 	lfsmake2 memtest
 
