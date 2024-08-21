@@ -180,35 +180,23 @@ $selected{'MAPTOGUEST'}{$sambasettings{'MAPTOGUEST'}} = "selected='selected'";
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ###################################
 
-&Header::openbox('100%', 'center', $Lang::tr{'samba'});
+&Header::opensection();
 
-my %servicenames = (
-	"nmbd"     => $Lang::tr{'netbios nameserver daemon'},
-	"smbd"     => $Lang::tr{'smb daemon'},
-	"winbindd" => $Lang::tr{'winbind daemon'},
-);
+&Header::ServiceStatus({
+	$Lang::tr{'netbios nameserver daemon'} => {
+		"process" => "nmbd",
+	},
+
+	$Lang::tr{'smb daemon'} => {
+		"process" => "smbd",
+	},
+
+	$Lang::tr{'winbind daemon'} => {
+		"process" => "winbindd",
+	},
+});
 
 print <<END;
-	<table class="tbl" width='100%' cellspacing='0'>
-		<tr bgcolor='$color{'color20'}'>
-			<td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td>
-		</tr>
-END
-
-foreach my $service (sort keys %servicenames) {
-	my $status = &isrunning($service);
-
-	print <<END;
-		<tr>
-			<td align='left' width='40%'>$servicenames{$service}</td>
-			$status
-		</tr>
-END
-}
-
-print <<END
-	</table>
-
 	<br>
 
 	<table width="100%">
@@ -233,9 +221,13 @@ print <<END
 			</form>
 		</td>
 	</table>
+END
 
-	<br>
+&Header::closesection();
 
+&Header::openbox('100%', 'center', $Lang::tr{'samba'});
+
+print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table class="tbl" width='100%' cellspacing='0'>
 			<tr bgcolor='$color{'color20'}'>
@@ -737,40 +729,6 @@ close FILE;
 &General::system("/usr/local/bin/sambactrl", "smbsafeconf");
 &General::system("/usr/local/bin/sambactrl", "smbreload");
 }
-
-sub isrunning
-	{
-	my $cmd = $_[0];
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
-	my $pid = '';
-	my $testcmd = '';
-	my $exename;
-
-	$cmd =~ /(^[a-z]+)/;
-	$exename = $1;
-
-	if (open(FILE, "/var/run/${cmd}.pid"))
-		{
-		$pid = <FILE>; chomp $pid;
-		close FILE;
-		if (open(FILE, "/proc/${pid}/status"))
-			{
-			while (<FILE>)
-				{
-				if (/^Name:\W+(.*)/)
-					{
-					$testcmd = $1;
-					}
-				}
-			close FILE;
-			if ($testcmd =~ /$exename/)
-				{
-				$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
-				}
-			}
-		}
-	return $status;
-	}
 
 sub writeconfiguration() {
 	open (FILE, ">${General::swroot}/samba/global") or die "Can't save the global settings: $!";
