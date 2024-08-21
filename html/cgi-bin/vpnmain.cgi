@@ -3393,11 +3393,11 @@ END
 		print "<td align='left' $col>&nbsp;</td>";
 	}
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
-	my $col1="bgcolor='${Header::colourred}'";
-	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+	my $col1="class='status is-disconnected'";
+	my $active = "$Lang::tr{'capsclosed'}";
 	if ($confighash{$key}[33] eq "add") {
-		$col1="bgcolor='${Header::colourorange}'";
-		$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn wait'}</font></b>";
+		$col1="class='status is-connecting'";
+		$active = "$Lang::tr{'vpn wait'}";
 	}
 	foreach my $line (@status) {
 		if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
