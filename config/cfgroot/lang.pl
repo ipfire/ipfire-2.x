@@ -9,7 +9,7 @@
 #
 
 package Lang;
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 use strict;
 
 ### A cache file to avoid long recalculation
