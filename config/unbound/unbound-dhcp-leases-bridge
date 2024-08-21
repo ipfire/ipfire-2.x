@@ -83,16 +83,19 @@ class UnboundDHCPLeasesBridge(object):
 		# Initialize the worker
 		self.worker = Worker(self.queue, callback=self._handle_message)
 
-		self.unbound = UnboundConfigWriter(unbound_leases_file)
+		# Initialize the watcher
+		self.watcher = Watcher(reload=self.reload)
 
-		# Load all required data
-		self.reload()
+		self.unbound = UnboundConfigWriter(unbound_leases_file)
 
 	def run(self):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
 
 		# Launch the worker
 		self.worker.start()
+
+		# Launch the watcher
+		self.watcher.start()
 
 		# Open the server socket
 		self.socket = self._open_socket(self.socket_path)
@@ -132,7 +135,13 @@ class UnboundDHCPLeasesBridge(object):
 
 		# Terminate the worker
 		self.queue.put(None)
+
+		# Terminate the watcher
+		self.watcher.terminate()
+
+		# Wait for the worker and watcher to finish
 		self.worker.join()
+		self.watcher.join()
 
 		log.info("Unbound DHCP Leases Bridge terminated")
 
@@ -357,6 +366,84 @@ class UnboundDHCPLeasesBridge(object):
 		# Close the socket
 		if self.socket:
 			self.socket.close()
+
+
+class Watcher(threading.Thread):
+	"""
+		Watches if Unbound is still running.
+	"""
+	def __init__(self, reload, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+
+		self.reload = reload
+
+		# Set to true if this thread should be terminated
+		self._terminated = threading.Event()
+
+	def run(self):
+		log.debug("Watcher launched")
+
+		pidfd = None
+
+		while True:
+			# One iteration takes 30 seconds unless we don't know the process
+			# when we try to find it once a second.
+			if self._terminated.wait(30 if pidfd else 1):
+				break
+
+			# Fetch a PIDFD for Unbound
+			if pidfd is None:
+				pidfd = self._get_pidfd()
+
+				# If we could not acquire a PIDFD, we will try again soon...
+				if not pidfd:
+					log.warning("Cannot find Unbound...")
+					continue
+
+				# Since Unbound has been restarted, we need to reload it all...
+				self.reload()
+
+			log.debug("Checking if Unbound is still alive...")
+
+			# Send the process a signal
+			try:
+				signal.pidfd_send_signal(pidfd, signal.SIG_DFL)
+
+			# If the process has died, we land here and will have to wait until Unbound
+			# has come back and reload it...
+			except ProcessLookupError as e:
+				log.error("Unbound has died")
+
+				# Reset the PIDFD
+				pidfd = None
+
+			else:
+				log.debug("Unbound is alive")
+
+		log.debug("Watcher terminated")
+
+	def terminate(self):
+		"""
+			Called to signal this thread to terminate
+		"""
+		self._terminated.set()
+
+	def _get_pidfd(self):
+		"""
+			Returns a PIDFD for unbound if it is running, otherwise None.
+		"""
+		# Try to find the PID
+		pid = pidof("unbound")
+
+		if pid:
+			log.debug("Unbound is running as PID %s" % pid)
+
+			# Open a PIDFD
+			pidfd = os.pidfd_open(pid)
+
+			log.debug("Acquired PIDFD %s for PID %s" % (pidfd, pid))
+
+			return pidfd
 
 
 class Worker(threading.Thread):
@@ -725,6 +812,28 @@ class UnboundConfigWriter(object):
 			log.debug("Removing records for %s" % name)
 
 			self._control("local_data_remove", name)
+
+
+def pidof(program):
+	"""
+		Returns the first PID of the given program.
+	"""
+	try:
+		output = subprocess.check_output(["pidof", program])
+	except subprocess.CalledProcessError as e:
+		return
+
+	# Convert to string
+	output = output.decode()
+
+	# Return the first PID
+	for pid in output.split():
+		try:
+			pid = int(pid)
+		except ValueError:
+			continue
+
+		return pid
 
 
 if __name__ == "__main__":
