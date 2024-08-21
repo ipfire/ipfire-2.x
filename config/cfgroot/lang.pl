@@ -37,13 +37,14 @@ $Lang::CacheLang = '/var/ipfire/langs/cache-lang.pl';
 
 ### Initialize language
 %Lang::tr = ();
+
 my %settings = ();
 &General::readhash("${General::swroot}/main/settings", \%settings);
+
+# Load the selected language
 reload($settings{'LANGUAGE'});
 
-# language variable used by makegraphs script
-our $language;
-$language = $settings{'LANGUAGE'};
+our $language = $settings{'LANGUAGE'};
 
 #
 # Load requested language file from cachefile. If cachefile doesn't exist, build on the fly.

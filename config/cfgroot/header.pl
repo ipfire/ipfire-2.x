@@ -107,40 +107,10 @@ $hostname = $settings{'HOSTNAME'};
 
 ### Initialize language
 require "${swroot}/lang.pl";
-$language = &Lang::FindWebLanguage($settings{"LANGUAGE"});
-
-### Read English Files
-if ( -d "/var/ipfire/langs/en/" ) {
-    opendir(DIR, "/var/ipfire/langs/en/");
-    @names = readdir(DIR) or die "Cannot Read Directory: $!\n";
-    foreach $name(@names) {
-        next if ($name eq ".");
-        next if ($name eq "..");
-        next if (!($name =~ /\.pl$/));
-        require "${swroot}/langs/en/${name}";
-    };
-};
-
-
-### Enable Language Files
-if ( -d "/var/ipfire/langs/${language}/" ) {
-    opendir(DIR, "/var/ipfire/langs/${language}/");
-    @names = readdir(DIR) or die "Cannot Read Directory: $!\n";
-    foreach $name(@names) {
-        next if ($name eq ".");
-        next if ($name eq "..");
-        next if (!($name =~ /\.pl$/));
-        require "${swroot}/langs/${language}/${name}";
-    };
-};
 
 ### Initialize user manual
 my %manualpages = ();
 &_read_manualpage_hash("${General::swroot}/main/manualpages");
-
-### Load selected language and theme functions
-require "${swroot}/langs/en.pl";
-require "${swroot}/langs/${language}.pl";
 
 ###############################################################################
 #
@@ -219,7 +189,7 @@ sub openpage {
 
 print <<END;
 <!DOCTYPE html>
-<html lang="$language">
+<html lang="$Lang::language">
 	<head>
 	<title>$headline - $title</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
