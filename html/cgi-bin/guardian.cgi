@@ -93,10 +93,6 @@ my $errormessage = '';
 # Get GUI values.
 &Header::getcgihash(\%settings);
 
-# Check if guardian is running and grab some stats.
-&daemonstats();
-my $pid = $pid[0];
-
 ## Perform input checks and save settings.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
@@ -191,11 +187,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		&GenerateIgnoreFile();
 	}
 
-	# Check if guardian is running.
-	if ($pid > 0) {
-		# Send reload command through socket connection.
-		&Guardian::Socket::Client("reload-ignore-list");
-	}
+	# Send reload command through socket connection.
+	&Guardian::Socket::Client("reload-ignore-list");
 
 ## Toggle Enabled/Disabled for an existing entry on the ignore list.
 #
@@ -233,11 +226,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		# Regenerate the ignore file.
 		&GenerateIgnoreFile();
 
-		# Check if guardian is running.
-		if ($pid > 0) {
-			# Send reload command through socket connection.
-			&Guardian::Socket::Client("reload-ignore-list");
-		}
+		# Send reload command through socket connection.
+		&Guardian::Socket::Client("reload-ignore-list");
 	}
 
 ## Remove entry from ignore list.
@@ -260,11 +250,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Regenerate the ignore file.
 	&GenerateIgnoreFile();
 
-	# Check if guardian is running.
-	if ($pid > 0) {
-		# Send reload command through socket connection.
-		&Guardian::Socket::Client("reload-ignore-list");
-	}
+	# Send reload command through socket connection.
+	&Guardian::Socket::Client("reload-ignore-list");
 
 ## Block a user given address or subnet.
 #
@@ -355,11 +342,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 # Call functions to generate whole page.
 &showMainBox();
 &showIgnoreBox();
-
-# Display area only if guardian is running.
-if ( ($memory != 0) && ($pid > 0) ) {
-	&showBlockedBox();
-}
+&showBlockedBox();
 
 # Function to display the status of guardian and allow base configuration.
 sub showMainBox() {
@@ -437,54 +420,15 @@ sub showMainBox() {
 	</script>
 END
 
+	&Header::opensection();
 
+	&Header::ServiceStatus({
+		$Lang::tr{'guardian service'} => {
+			"process" => "guardian",
+		}
+	});
 
-	# Draw current guardian state.
-	&Header::openbox('100%', 'center', $Lang::tr{'guardian'});
-
-	# Get current status of guardian.
-	&daemonstats();
-	$pid = $pid[0];
-
-	# Display some useful information related to guardian, if daemon is running.
-	if ( ($memory != 0) && ($pid > 0) ){
-		print <<END;
-			<table width='95%' cellspacing='0' class='tbl'>
-				<tr>
-					<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'guardian service'}</strong></th>
-				</tr>
-				<tr>
-					<td class='base'>$Lang::tr{'guardian daemon'}</td>
-					<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>
-				</tr>
-				<tr>
-					<td class='base'></td>
-					<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>
-					<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>
-				</tr>
-				<tr>
-					<td class='base'></td>
-					<td bgcolor='$color{'color22'}' align='center'>$pid</td>
-					<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
-				</tr>
-			</table>
-END
-	} else {
-		# Otherwise display a hint that the service is not launched.
-		print <<END;
-			<table width='95%' cellspacing='0' class='tbl'>
-				<tr>
-					<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'guardian service'}</strong></th>
-				</tr>
-				<tr>
-					<td class='base'>$Lang::tr{'guardian daemon'}</td>
-					<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
-				</tr>
-			</table>
-END
-	}
-
-	&Header::closebox();
+	&Header::closesection();
 
 	# Draw elements for guardian configuration.
 	&Header::openbox('100%', 'center', $Lang::tr{'guardian configuration'});
@@ -801,29 +745,6 @@ END
 &Header::closebigbox();
 &Header::closepage();
 
-# Function to check if guardian has been started.
-# Grab process id and consumed memory if the daemon is running.
-sub daemonstats() {
-        $memory = 0;
-        # for pid and memory
-        open(FILE, '/usr/local/bin/addonctrl guardian status | ');
-        @guardian = <FILE>;
-        close(FILE);
-        $string = join("", @guardian);
-        $string =~ s/[a-z_]//gi;
-        $string =~ s/\[[0-1]\;[0-9]+//gi;
-        $string =~ s/[\(\)\.]//gi;
-        $string =~ s/  //gi;
-        $string =~ s/\e//gi;
-        @pid = split(/\s/,$string);
-        if (open(FILE, "/proc/$pid[0]/statm")){
-                my $temp = <FILE>;
-                @memory = split(/ /,$temp);
-                close(FILE);
-        }
-        $memory+=$memory[0];
-}
-
 sub GetBlockedHosts() {
 	# Create new, empty array.
 	my @hosts;
@@ -935,13 +856,7 @@ sub BuildConfiguration() {
 
 	# Check if guardian should be started or stopped.
 	if($settings{'GUARDIAN_ENABLED'} eq 'on') {
-		if($pid > 0) {
-			# Send reload command through socket connection.
-			&Guardian::Socket::Client("reload");
-		} else {
-			# Launch guardian.
-			&General::system("/usr/local/bin/addonctrl", "guardian", "start");
-		}
+		&General::system("/usr/local/bin/addonctrl", "guardian", "restart");
 	} else {
 		# Stop the daemon.
 		&General::system("/usr/local/bin/addonctrl", "guardian", "stop");
