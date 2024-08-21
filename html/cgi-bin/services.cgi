@@ -108,7 +108,7 @@ $querry[1] = 'hour' unless defined $querry[1];
 
 		# IPS
 		$Lang::tr{'intrusion prevention system'} => {
-			"process" => "suricata",
+			"pidfile" => "/var/run/suricata.pid",
 		},
 
 		# OpenVPN Roadwarrior
