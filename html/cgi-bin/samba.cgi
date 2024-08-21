@@ -229,36 +229,33 @@ END
 
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table class="tbl" width='100%' cellspacing='0'>
-			<tr bgcolor='$color{'color20'}'>
-				<td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td>
-			</tr>
+		<h6>$Lang::tr{'basic options'}</h6>
+
+		<table class="form">
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'workgroup'}</td>
-				<td align='left'>
+				<td>$Lang::tr{'workgroup'}</td>
+				<td>
 					<input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" />
 				</td>
 			</tr>
+		</table>
+
+		<h6>$Lang::tr{'security options'}</h6>
+
+		<table class="form">
 			<tr>
-				<td align='left'><br /></td>
-				<td></td>
-			</tr>
-			<tr bgcolor='$color{'color20'}'>
-				<td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td>
-			</tr>
-			<tr>
-				<td align='left' width='40%'>$Lang::tr{'security'}</td>
-				<td align='left'>
-					<select name='ROLE' style="width: 165px">
+				<td>$Lang::tr{'security'}</td>
+				<td>
+					<select name='ROLE'>
 						<option value='standalone' $selected{'ROLE'}{'standalone'}>$Lang::tr{'samba server role standalone'}</option>
 						<option value='member' $selected{'ROLE'}{'member'}>$Lang::tr{'samba server role member'}</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'encryption'}</td>
-				<td align='left'>
-					<select name='ENCRYPTION' style="width: 165px">
+				<td>$Lang::tr{'encryption'}</td>
+				<td>
+					<select name='ENCRYPTION'>
 						<option value='optional' $selected{'ENCRYPTION'}{'optional'}>$Lang::tr{'optional'}</option>
 						<option value='desired' $selected{'ENCRYPTION'}{'desired'}>$Lang::tr{'desired'}</option>
 						<option value='required' $selected{'ENCRYPTION'}{'required'}>$Lang::tr{'required'}</option>
@@ -266,44 +263,36 @@ print <<END
 				</td>
 			</tr>
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'map to guest'}</td>
-				<td align='left'>
-					<select name='MAPTOGUEST' style="width: 165px">
+				<td>$Lang::tr{'map to guest'}</td>
+				<td>
+					<select name='MAPTOGUEST'>
 						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
 						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
 					</select>
 				</td>
 			</tr>
+		</table>
+
+		<h6>$Lang::tr{'network options'}</h6>
+
+		<table class="form">
 			<tr>
-				<td align='left'><br /></td>
-				<td></td>
-			</tr>
-			<tr bgcolor='$color{'color20'}'>
-				<td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td>
-			</tr>
-			<tr>
-				<td align='left' width='40%'>$Lang::tr{'remote announce'}</td>
-				<td align='left'>
+				<td>$Lang::tr{'remote announce'}</td>
+				<td>
 					<input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" />
 				</td>
 			</tr>
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td>
-				<td align='left'>
+				<td>$Lang::tr{'remote browse sync'}</td>
+				<td>
 					<input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" />
 				</td>
 			</tr>
-		</table>
 
-		<br>
-
-		<table width='100%' cellspacing='0'>
-			<tr>
-				<td align='center'>
-					<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='ACTION' value="$Lang::tr{'save'}">
-						<input type='submit' value="$Lang::tr{'save'}">
-					</form>
+			<tr class="action">
+				<td colspan="2">
+					<input type='hidden' name='ACTION' value="$Lang::tr{'save'}">
+					<input type='submit' value="$Lang::tr{'save'}">
 				</td>
 			</tr>
 		</table>
