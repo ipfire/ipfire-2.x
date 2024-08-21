@@ -104,7 +104,6 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 ### Initialize environment
 &General::readhash("${swroot}/main/settings", \%settings);
 $hostname = $settings{'HOSTNAME'};
-$hostnameintitle = 0;
 
 ### Initialize language
 require "${swroot}/lang.pl";
