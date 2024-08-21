@@ -192,7 +192,7 @@ print_package() {
 
 	# Add the options
 	if [ -n "${options}" ]; then
-		string="${string} (${options[@]})"
+		string="${string} ${options[@]}"
 	fi
 
 	# Print the string
