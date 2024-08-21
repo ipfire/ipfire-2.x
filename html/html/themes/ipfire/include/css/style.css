@@ -7,7 +7,7 @@
 	--color-blue-invert    : #ffffff;
 	--color-orange         : #ff9933;
 	--color-orange-invert  : #ffffff;
-	--color-yellow         : #ffd700;
+	--color-yellow         : #ffbe00;
 	--color-yellow-invert  : #ffffff;
 	--color-black          : #363636;
 	--color-black-invert   : #ffffff;
@@ -205,13 +205,35 @@ section.is-error {
 	border: 1px solid var(--color-red);
 }
 
-section.is-error ul {
+section.is-warning {
+	color: var(--color-yellow);
+	border: 1px solid var(--color-yellow);
+}
+
+section.is-error a, section.is-warning a {
+	color: inherit;
+}
+
+section.is-error ul, section.is-warning ul {
+	padding: 0;
 	margin-bottom: 0 !important;
+}
+
+section.is-error ul li, section.is-warning ul li {
+	list-style-type: none
 }
 
 section .title {
 	margin-bottom: 1rem;
 	border-bottom: 1px solid var(--color-grey);
+}
+
+section.is-error .title {
+	border-bottom: 1px solid var(--color-red);
+}
+
+section.is-warning .title {
+	border-bottom: 1px solid var(--color-yellow);
 }
 
 #main_inner {
@@ -539,16 +561,6 @@ table.form tr.action td form {
 .tbl .policy.is-rejected {
 	background-color: var(--color-black);
 	color: var(--color-black-invert);
-}
-
-/* Notes */
-
-.notes .is-warning {
-	color: var(--color-yellow);
-}
-
-.notes a {
-	color: inherit;
 }
 
 table.fw-nat tbody tr td {

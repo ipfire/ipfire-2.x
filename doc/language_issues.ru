@@ -83,6 +83,7 @@ WARNING: translation string unused: again
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
 WARNING: translation string unused: all interfaces
+WARNING: translation string unused: all services
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: allmsg
 WARNING: translation string unused: alt information
@@ -1598,6 +1599,7 @@ WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: warning = Warning
 WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wio = unknown string

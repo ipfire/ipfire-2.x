@@ -588,19 +588,7 @@ if ( `/bin/grep -c "reiserfs" /proc/self/mounts`  > 0 ) {
 }
 
 # Show any warnings
-if (@warnings) {
-	&Header::opensection();
-
-	print "<ul class=\"notes\">\n";
-
-	foreach my $warning (@warnings) {
-		print "<li class=\"is-warning\">$warning</li>\n";
-	}
-
-	print "</ul>\n";
-
-	&Header::closesection();
-}
+&Header::warningbox(@warnings);
 
 &Header::closebigbox();
 &Header::closepage();

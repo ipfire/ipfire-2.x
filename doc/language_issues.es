@@ -115,6 +115,7 @@ WARNING: translation string unused: age ssecond
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
 WARNING: translation string unused: all interfaces
+WARNING: translation string unused: all services
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: allmsg
 WARNING: translation string unused: alt information
@@ -1053,6 +1054,7 @@ WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Ov
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
+WARNING: untranslated string: warning = Warning
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string

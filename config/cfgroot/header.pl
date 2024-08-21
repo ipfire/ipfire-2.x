@@ -405,6 +405,26 @@ sub errorbox($) {
 	&closebox();
 }
 
+sub warningbox($) {
+	my @warnings = grep { $_ ne "" } @_;
+
+	# Do nothing if there are no errors
+	return unless (@warnings);
+
+	# Open a new box
+	&openbox('100%', 'left', $Lang::tr{'warning'}, "is-warning");
+
+	# Print all warning messages
+	print "<ul>\n";
+	foreach my $warning (@warnings) {
+		print "<li>$warning</li>\n";
+	}
+	print "</ul>\n";
+
+	# Close the box again
+	&closebox();
+}
+
 sub graph($) {
 	my $title = shift;
 

@@ -3006,6 +3006,7 @@
 'vulnerable' => 'Vulnerable',
 'waiting to synchronize clock' => 'Waiting to synchronize clock',
 'warn when traffic reaches' => 'Warn when traffic reaches x %',
+'warning' => 'Warning',
 'warning messages' => 'Warning messages',
 'was deleted' => 'was deleted',
 'web hits' => 'Total number of websites matching selected criteria for',

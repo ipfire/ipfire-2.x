@@ -155,6 +155,7 @@
 < system time
 < timeformat
 < transport mode does not support vti
+< warning
 < wireguard
 < wlanap
 < wlanap psk
@@ -183,6 +184,7 @@
 < system time
 < timeformat
 < upload fcdsl.o
+< warning
 < wireguard
 < wlanap psk
 < wlanap wireless mode
@@ -664,6 +666,7 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
@@ -1224,6 +1227,7 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
@@ -2199,6 +2203,7 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
@@ -3210,6 +3215,7 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < week-graph
 < Weekly
 < whois results from
@@ -3600,6 +3606,7 @@
 < vpn wait
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon

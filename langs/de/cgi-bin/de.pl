@@ -2922,6 +2922,7 @@
 'vulnerable' => 'Verwundbar',
 'waiting to synchronize clock' => 'Bitte warten, die Uhr wird synchronisiert',
 'warn when traffic reaches' => 'Warnen wenn Traffic x % erreicht',
+'warning' => 'Warning',
 'warning messages' => 'Warnhinweise',
 'was deleted' => 'wurde gelöscht',
 'web hits' => 'Gesamtanzahl der Websites zum ausgewählten Kriterium',
