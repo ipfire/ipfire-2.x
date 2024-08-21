@@ -656,7 +656,7 @@ execute() {
 
 			# Create a new mount namespace
 			"--mount"
-			"--propagation=private"
+			"--propagation=slave"
 
 			# Create a new PID namespace and fork
 			"--pid"
@@ -2154,7 +2154,7 @@ exec_in_namespace() {
 	IN_NAMESPACE=1 \
 	exec unshare \
 		--mount \
-		--propagation=slave \
+		--propagation=private \
 		"${0}" "${args[@]}" "$@"
 }
 
