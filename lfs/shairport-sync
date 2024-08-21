@@ -1,14 +1,14 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
 # the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# This program is distribubed3228874e7ca1bf6e7d8cc21d6d750533d0bdd103bbd1f49412bab06da099adbecfa689d8f733084a1a5519391a01b5b47a527597e1dbf6ab151badda18284ted in the hope that it will be useful,             #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = shairport-sync
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       = alac alsa avahi ffmpeg libdaemon libplist nqptp soxr
 
