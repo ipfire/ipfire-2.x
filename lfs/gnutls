@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.8.5
+VER        = 3.8.7
 
 THISAPP    = gnutls-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 30ea0e213b426df896af7cddfc39a7c50fd3130f99ced8386dc55e851122a37f6171722d2cb4abb68b9d2523cd3ba044b01248d740571a3bdd0cadf555894cdf
+$(DL_FILE)_BLAKE2 = 900019c5f53d6c81c2761d02008a1bd7651bf4e70043d2a74f1fca0c3cda3c3c8c87a1f9dfc090517e875e9861b6ad9dd251f8121135aeaee209b54c2538ade0
 
 install : $(TARGET)
 
