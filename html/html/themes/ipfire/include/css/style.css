@@ -7,6 +7,8 @@
 	--color-blue-invert    : #ffffff;
 	--color-orange         : #ff9933;
 	--color-orange-invert  : #ffffff;
+	--color-yellow         : #ffd700;
+	--color-yellow-invert  : #ffffff;
 	--color-black          : #363636;
 	--color-black-invert   : #ffffff;
 	--color-grey           : #d6d6d6;
@@ -388,6 +390,21 @@ table.form tr.action td form {
 
 .tbl tr:nth-child(even) td {
 	background-color: var(--color-light-grey);
+}
+
+/*
+	Classes to overwrite the automatic colouring
+*/
+.tbl tr.is-odd td {
+	background-color: var(--color-grey);
+}
+
+.tbl tr.is-even td {
+	background-color: var(--color-light-grey);
+}
+
+.tbl tr.is-warning td {
+	background-color: var(--color-yellow);
 }
 
 .tbl th:first-child {

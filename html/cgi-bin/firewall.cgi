@@ -2484,7 +2484,8 @@ sub viewtablenew
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
 
 	&Header::openbox('100%', 'left', $title);
-	print "<table width='100%' cellspacing='0' class='tbl'>";
+
+	print "<table class='tbl'>";
 
 	if (! -z $config) {
 		my $count=0;
@@ -2581,19 +2582,20 @@ END
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
 			$count++;
-			if($coloryellow eq 'on'){
-				$color="$color{'color14'}";
+
+			if ($coloryellow eq 'on') {
+				$color="is-warning";
 				$coloryellow='';
-			}elsif($coloryellow eq ''){
-				if ($count % 2){
-					$color="$color{'color22'}";
-				}
-				else{
-					$color="$color{'color20'}";
+			} elsif($coloryellow eq '') {
+				if ($count % 2) {
+					$color="is-even";
+				} else {
+					$color="is-odd";
 				}
 			}
+
 			print<<END;
-				<tr bgcolor='$color'>
+				<tr class="$color">
 END
 
 			#RULETYPE (A,R,D)
@@ -2851,9 +2853,8 @@ END
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne ''){
 				print <<END;
-					<tr bgcolor='$color'>
-						<td>&nbsp;</td>
-						<td bgcolor='$rulecolor'></td>
+					<tr class="$color">
+						<td class='$rulecolor'></td>
 						<td colspan='10'>
 							&nbsp; <em>$$hash{$key}[16]</em>
 						</td>
@@ -2874,7 +2875,7 @@ END
 					if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 					my $weekdays=join(",",@days);
 					if (@days){
-						print"<tr bgcolor='$color'>";
+						print"<tr class='$color'>";
 						print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp; $weekdays &nbsp; $$hash{$key}[26] - $$hash{$key}[27]</td></tr>";
 					}
 				}
