@@ -2159,6 +2159,21 @@ exec_in_namespace() {
 		"${0}" "${args[@]}" "$@"
 }
 
+check_logfiles() {
+	print_headline "Checking Log Files..."
+
+	local file
+	for file in ${LOG_DIR}/*_missing_rootfile; do
+		file="${file##*/}"
+		file="${file/_missing_rootfile/}";
+
+		print_line "${file} is missing a rootfile"
+		print_status FAIL
+	done
+
+	return 0
+}
+
 # Set BASEDIR
 readonly BASEDIR="$(find_base)"
 
@@ -2354,10 +2369,12 @@ build)
 	# Build all packages
 	build_packages
 
+	# Check log files
+	check_logfiles
+
 	print_headline "Checking Logfiles for new Files"
 
 	pushd "${BASEDIR}" &>/dev/null
-	tools/checknewlog.pl
 	tools/checkrootfiles
 	popd &>/dev/null
 
