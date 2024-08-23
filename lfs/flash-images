@@ -36,7 +36,7 @@ ifeq "$(EFI)" "1"
 endif
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-IMAGE_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
+IMAGE_FILE = $(IMAGES_DIR)/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -78,9 +78,9 @@ else
 endif
 
 # /boot:  512 MB - OFFSET
-# /    : 1800 MB
+# /    : 2048 MB
 S_BOOT := $(shell echo $$(( 1048576 - $(S_OFFSET) )))
-S_ROOT := 3773292
+S_ROOT := 4194304
 
 ifeq "$(EFI)" "1"
  S_EFI = 65536 # 32 MB
@@ -101,13 +101,10 @@ SFDISK_EFI  = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) ))),$(S_EFI),U\n
 SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) ))),$(S_ROOT),L\n
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	# Stop if $(MNThdd) is still mounted
-	mountpoint $(MNThdd) && exit 1 || exit 0
-
 	rm -rf $(IMG) $(MNThdd) && mkdir -p $(MNThdd)
 
 	# Allocate image on disk
-	dd if=/dev/zero of=$(IMG) bs=512 count=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
+	dd if=/dev/zero of=$(IMG) bs=512 count=0 seek=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
 	losetup $(DEVICE) $(IMG)
 
 	# Write Partition table
@@ -142,14 +139,12 @@ ifeq "$(EFI)" "1"
 	mount $(PART_EFI) $(MNThdd)/boot/efi
 endif
 
-	# Install IPFire
-ifneq "$(BUILD_PLATFORM)" "arm"
-	tar $(TAR_OPTIONS) -x --zstd -C $(MNThdd)/ -f $(DIR_TMP)/cdrom/distro.img
-else
-	tar $(TAR_OPTIONS) -x -C $(MNThdd)/ -f $(DIR_TMP)/cdrom/distro.img
-endif
-	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
-	mkdir $(MNThdd)/proc
+	# Copy all files
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(MNThdd))
+
+	# Create mount points
+	$(call CREATE_MOUNTPOINTS,$(MNThdd))
+
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
@@ -180,7 +175,7 @@ ifeq "$(BOOTLOADER)" "grub"
 
 	# Create configuration
 	mkdir -pv $(MNThdd)/boot/grub
-	GRUB_FIRST_BOOT=true KERNEL_RELEASE="$(KVER)-ipfire" chroot $(MNThdd) \
+	GRUB_FIRST_BOOT=true KERNEL_RELEASE="$(KVER)" chroot $(MNThdd) \
 		grub-mkconfig -o /boot/grub/grub.cfg
 
 	# Boot the first kernel by default
@@ -240,7 +235,6 @@ endif
 	-fsck.ext4 -f -y $(PART_ROOT)
 	fsck.ext4 -f -y $(PART_ROOT)
 
-	sleep 10     #Ubuntu compiling: allow time to automount/dismount
 	kpartx -d -v $(DEVICE)
 	losetup -d $(DEVICE)
 
@@ -256,3 +250,6 @@ endif
 	# Compress Image
 	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
 	rm -rf $(IMG) $(MNThdd) $(DIR_TMP)/cdrom
+
+	# Create checksum file
+	cd $(IMAGES_DIR) && b2sum "$(notdir $(IMAGE_FILE))" > "$(notdir $(IMAGE_FILE)).b2"

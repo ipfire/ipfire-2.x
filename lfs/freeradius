@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = RADIUS Server
 
-VER        = 3.2.3
+VER        = 3.2.5
 
 THISAPP    = freeradius-server-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = freeradius
-PAK_VER    = 20
+PAK_VER    = 21
 
 DEPS       = libtalloc samba
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 525204331a5b123dac7457c6adb755cbe9794dbff4a536ea665fc7d1cac97553e392b7b598741c2a9dd00c81decd00608499d6f25208e389b9f213f54977de84
+$(DL_FILE)_BLAKE2 = 169dccd6f04b4503869912dec9423279cc18fc22fa3babf324747bdf0d80d3b4fa5460ac07f89f8d845bf664283a9772b483b8fcec990364fcaf71b673b6917c
 
 install : $(TARGET)
 
@@ -89,19 +89,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc \
 			--libdir=/usr/lib/freeradius \
 			--localstatedir=/var \
-			--with-system-libtool \
 			--with-threads \
-			--with-thread-pool \
-			--disable-ltdl-install \
 			--disable-openssl-version-check \
-			--without-rlm_eap_ikev2 \
-			--without-rlm_sql_iodbc \
-			--without-rlm_sql_firebird \
-			--without-rlm_sql_db2 \
-			--without-rlm_sql_oracle \
-			--without-rlm_sql_sqlite \
-			--without-rlm_sql_mysql \
-			--without-rlm_python \
 			LDFLAGS="$(LDFLAGS)"
 
 	cd $(DIR_APP) && make $(MAKETUNING)

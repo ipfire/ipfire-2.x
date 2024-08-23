@@ -432,7 +432,8 @@ sub addrule
 {
 	&error;
 
-	&Header::openbox('100%', 'left', "");
+	&Header::opensection();
+
 	print <<END;
 		<form method="POST" action="">
 			<table border='0' width="100%">
@@ -452,11 +453,9 @@ END
 				</tr>
 			</table>
 		</form>
-
-		<br>
 END
 
-	&Header::closebox();
+	&Header::closesection();
 	&viewtablerule;
 }
 sub base
@@ -1987,41 +1986,28 @@ END
 		&Header::closebox;
 		$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 		print <<END;
-			<center>
-				<table width="80%" class='tbl' id='actions'>
-					<tr>
-						<td width="33%" align="center" bgcolor="$color{'color17'}">
-							&nbsp;<br>&nbsp;
-						</td>
-						<td width="33%" align="center" bgcolor="$color{'color25'}">
-							&nbsp;<br>&nbsp;
-						</td>
-						<td width="33%" align="center" bgcolor="$color{'color16'}">
-							&nbsp;<br>&nbsp;
-						</td>
-					</tr>
-					<tr>
-						<td width="33%" align="center">
-							<label>
-								<input type="radio" name="RULE_ACTION" value="ACCEPT" $checked{"RULE_ACTION"}{"ACCEPT"}>
-								<strong>$Lang::tr{'fwdfw ACCEPT'}</strong>
-							</label>
-						</td>
-						<td width="33%" align="center">
-							<label>
-								<input type="radio" name="RULE_ACTION" value="DROP" $checked{"RULE_ACTION"}{"DROP"}>
-								<strong>$Lang::tr{'fwdfw DROP'}</strong>
-							</label>
-						</td>
-						<td width="33%" align="center">
-							<label>
-								<input type="radio" name="RULE_ACTION" value="REJECT" $checked{"RULE_ACTION"}{"REJECT"}>
-								<strong>$Lang::tr{'fwdfw REJECT'}</strong>
-							</label>
-						</td>
-					</tr>
-				</table>
-			</center>
+			<table class='tbl' id='actions'>
+				<tr>
+					<td width="33%" class="policy is-allowed">
+						<label>
+							<input type="radio" name="RULE_ACTION" value="ACCEPT" $checked{"RULE_ACTION"}{"ACCEPT"}>
+							<strong>$Lang::tr{'fwdfw ACCEPT'}</strong>
+						</label>
+					</td>
+					<td width="33%" class="policy is-blocked">
+						<label>
+							<input type="radio" name="RULE_ACTION" value="DROP" $checked{"RULE_ACTION"}{"DROP"}>
+							<strong>$Lang::tr{'fwdfw DROP'}</strong>
+						</label>
+					</td>
+					<td width="33%" class="policy is-rejected">
+						<label>
+							<input type="radio" name="RULE_ACTION" value="REJECT" $checked{"RULE_ACTION"}{"REJECT"}>
+							<strong>$Lang::tr{'fwdfw REJECT'}</strong>
+						</label>
+					</td>
+				</tr>
+			</table>
 
 			<br>
 END
@@ -2498,7 +2484,8 @@ sub viewtablenew
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
 
 	&Header::openbox('100%', 'left', $title);
-	print "<table width='100%' cellspacing='0' class='tbl'>";
+
+	print "<table class='tbl'>";
 
 	if (! -z $config) {
 		my $count=0;
@@ -2512,23 +2499,22 @@ sub viewtablenew
 
 		print <<END;
 				<tr>
-					<th align='right' width='3%'>
+					<th width='3%'>
 						#
 					</th>
-					<th width='2%'></th>
-					<th align='center'>
+					<th>
 						<b>$Lang::tr{'protocol'}</b>
 					</th>
-					<th align='center' width='30%'>
+					<th width='30%'>
 						<b>$Lang::tr{'fwdfw source'}</b>
 					</th>
-					<th align='center'>
+					<th>
 						<b>$Lang::tr{'fwdfw log'}</b>
 					</th>
-					<th align='center' width='30%'>
+					<th width='30%'>
 						<b>$Lang::tr{'fwdfw target'}</b>
 					</th>
-					<th align='center' colspan='6' width='18%'>
+					<th colspan='6' width='18%'>
 						<b>$Lang::tr{'fwdfw action'}</b>
 					</th>
 				</tr>
@@ -2596,42 +2582,40 @@ END
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
 			$count++;
-			if($coloryellow eq 'on'){
-				$color="$color{'color14'}";
+
+			if ($coloryellow eq 'on') {
+				$color="is-warning";
 				$coloryellow='';
-			}elsif($coloryellow eq ''){
-				if ($count % 2){
-					$color="$color{'color22'}";
-				}
-				else{
-					$color="$color{'color20'}";
+			} elsif($coloryellow eq '') {
+				if ($count % 2) {
+					$color="is-even";
+				} else {
+					$color="is-odd";
 				}
 			}
+
 			print<<END;
-				<tr bgcolor='$color'>
-					<td align='right' width='3%'>
-						<b>$key&nbsp;</b>
-					</td>
+				<tr class="$color">
 END
 
 			#RULETYPE (A,R,D)
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
 				$tooltip='ACCEPT';
-				$rulecolor=$color{'color17'};
+				$rulecolor="policy is-allowed";
 			}elsif($$hash{$key}[0] eq 'DROP'){
 				$ruletype='D';
 				$tooltip='DROP';
-				$rulecolor=$color{'color25'};
+				$rulecolor="policy is-blocked";
 			}elsif($$hash{$key}[0] eq 'REJECT'){
 				$ruletype='R';
 				$tooltip='REJECT';
-				$rulecolor=$color{'color16'};
+				$rulecolor="policy is-rejected";
 			}
 
 			print <<END;
-					<td bgcolor='$rulecolor' align='center' width='2%'>
-						<span title='$tooltip'>&nbsp;&nbsp;</span>
+					<td class='$rulecolor'>
+						<span title='$tooltip'>$key</span>
 					</td>
 END
 
@@ -2869,9 +2853,8 @@ END
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne ''){
 				print <<END;
-					<tr bgcolor='$color'>
-						<td>&nbsp;</td>
-						<td bgcolor='$rulecolor'></td>
+					<tr class="$color">
+						<td class='$rulecolor'></td>
 						<td colspan='10'>
 							&nbsp; <em>$$hash{$key}[16]</em>
 						</td>
@@ -2892,12 +2875,11 @@ END
 					if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 					my $weekdays=join(",",@days);
 					if (@days){
-						print"<tr bgcolor='$color'>";
+						print"<tr class='$color'>";
 						print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp; $weekdays &nbsp; $$hash{$key}[26] - $$hash{$key}[27]</td></tr>";
 					}
 				}
 			}
-			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
 	} elsif ($optionsfw{'SHOWTABLES'} eq 'on') {
 		print <<END;
@@ -2907,40 +2889,36 @@ END
 END
 	}
 
+	print "</table>";
+	print "<br>";
+
 	#SHOW FINAL RULE
 	my $policy = 'fwdfw ' . $fwdfwsettings{'POLICY'};
-	my $colour = "bgcolor='green'";
+	my $colour = "class='policy is-allowed'";
 	if ($fwdfwsettings{'POLICY'} eq 'MODE1') {
-		$colour = "bgcolor='darkred'";
+		$colour = "class='policy is-blocked'";
 	}
+
+	print "<table class='tbl'>\n";
 
 	my $message;
 	if (($config eq '/var/ipfire/firewall/config') && ($fwdfwsettings{'POLICY'} ne 'MODE1')) {
-		print <<END;
-			<tr>
-				<td colspan='13'>&nbsp;</td>
-			</tr>
-			<tr>
-				<td colspan='13' style="padding-left:0px;padding-right:0px">
-					<table width="100%" border='1' rules="cols" cellspacing='0'>
-END
-
 		# GREEN
 		print <<END;
 			<tr>
-				<td align='center'>
-					<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+				<td class="intf green">
+					$Lang::tr{'green'} &gt;
 				</td>
-				<td align='center'>
-					<font color="$Header::colourred">$Lang::tr{'red'}</font>
+				<td class="intf red">
+					$Lang::tr{'red'}
 					($Lang::tr{'fwdfw pol allow'})
 				</td>
 END
 
 		if (&Header::orange_used()) {
 			print <<END;
-				<td align='center'>
-					<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+				<td class="intf orange">
+					$Lang::tr{'orange'}
 					($Lang::tr{'fwdfw pol allow'})
 				</td>
 END
@@ -2948,8 +2926,8 @@ END
 
 		if (&Header::blue_used()) {
 			print <<END;
-				<td align='center'>
-					<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+				<td class='intf blue'>
+					$Lang::tr{'blue'}
 					($Lang::tr{'fwdfw pol allow'})
 				</td>
 END
@@ -2961,23 +2939,23 @@ END
 		if (&Header::orange_used()) {
 			print <<END;
 				<tr>
-					<td align='center' width='20%'>
-						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+					<td class='intf orange'>
+						$Lang::tr{'orange'} &gt;
 					</td>
-					<td align='center'>
-						<font color="$Header::colourred">$Lang::tr{'red'}</font>
+					<td class='intf red'>
+						$Lang::tr{'red'}
 						($Lang::tr{'fwdfw pol allow'})
 					</td>
-					<td align='center'>
-						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+					<td class='intf green'>
+						$Lang::tr{'green'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 END
 
 			if (&Header::blue_used()) {
 				print <<END;
-					<td align='center'>
-						<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+					<td class='intf blue'>
+						$Lang::tr{'blue'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 END
@@ -2989,27 +2967,27 @@ END
 		if (&Header::blue_used()) {
 			print <<END;
 				<tr>
-					<td align='center'>
-						<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+					<td class='intf blue'>
+						$Lang::tr{'blue'} &gt;
 					</td>
-					<td align='center'>
-						<font color="$Header::colourred">$Lang::tr{'red'}</font>
+					<td class='intf red'>
+						$Lang::tr{'red'}
 						($Lang::tr{'fwdfw pol allow'})
 					</td>
 END
 
 			if (&Header::orange_used()) {
 				print <<END;
-					<td align='center'>
-						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+					<td class='intf orange'>
+						$Lang::tr{'orange'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 END
 			}
 
 			print <<END;
-					<td align='center'>
-						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+					<td class='intf green'>
+						$Lang::tr{'green'}
 						($Lang::tr{'fwdfw pol block'})
 					</td>
 				</tr>
@@ -3017,7 +2995,6 @@ END
 		}
 
 		print <<END;
-					</table>
 				</td>
 			</tr>
 END
@@ -3026,24 +3003,27 @@ END
 
 	} elsif ($config eq '/var/ipfire/firewall/outgoing' && ($fwdfwsettings{'POLICY1'} ne 'MODE1')) {
 		$message = $Lang::tr{'fwdfw pol allow'};
-		$colour = "bgcolor='green'";
+		$colour = "class='policy is-allowed'";
 	} else {
 		$message = $Lang::tr{'fwdfw pol block'};
-		$colour = "bgcolor='darkred'";
+		$colour = "class='policy is-blocked'";
 	}
 
 	if ($message) {
+		my @available_zones = &Network::get_available_network_zones();
+
+		my $colspan = scalar @available_zones;
+
 		print <<END;
 			<tr>
-				<td $colour align='center' colspan='13'>
-					<font color='#FFFFFF'>$Lang::tr{'policy'}: $message</font>
+				<td $colour colspan='$colspan'>
+					$Lang::tr{'policy'}: $message
 				</td>
 			</tr>
 END
 	}
 
 	print "</table>";
-	print "<br>";
 
 	&Header::closebox();
 }

@@ -55,13 +55,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 
 	# rebuild module deps
-	depmod -a $(KVER)-$(VERSUFIX)
+	depmod -a $(KVER)
 
 	# Create initramfs images
-	dracut --force --verbose --strip /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
+	dracut --force --verbose --strip /boot/initramfs-$(KVER).img $(KVER)
 
 ifeq "$(BUILD_ARCH)" "aarch64"
-	cd /boot && mkimage -A arm64 -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
+	cd /boot && mkimage -A arm64 -T ramdisk -C lzma -d initramfs-$(KVER).img uInit-$(KVER)
 	# dont remove initramfs because grub need this to boot.
 endif
 

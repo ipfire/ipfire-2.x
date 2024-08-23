@@ -1,5 +1,6 @@
 #usr/include/fmt
 #usr/include/fmt/args.h
+#usr/include/fmt/base.h
 #usr/include/fmt/chrono.h
 #usr/include/fmt/color.h
 #usr/include/fmt/compile.h
@@ -18,6 +19,6 @@
 #usr/lib/cmake/fmt/fmt-targets-release.cmake
 #usr/lib/cmake/fmt/fmt-targets.cmake
 #usr/lib/libfmt.so
-usr/lib/libfmt.so.10
-usr/lib/libfmt.so.10.2.1
+usr/lib/libfmt.so.11
+usr/lib/libfmt.so.11.0.2
 #usr/lib/pkgconfig/fmt.pc

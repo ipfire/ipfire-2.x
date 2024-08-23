@@ -1931,12 +1931,10 @@ END
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
-	if ($errormessage) {
-	    &Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	    print "<class name='base'>$errormessage";
-	    print "&nbsp;</class>";
-	    &Header::closebox();
-	}
+
+	# Show any errors
+	&Header::errorbox($errormessage);
+
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'generate root/host certificates'}:");
 	print <<END;
 	<form method='post' enctype='multipart/form-data'>
@@ -2699,13 +2697,12 @@ ADV_ERROR:
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
-    if ($errormessage) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	print "<class name='base'>$errormessage\n";
-	print "&nbsp;</class>\n";
-	&Header::closebox();
-    }
-    &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
+
+	# Show any errors
+	&Header::errorbox($errormessage);
+
+    &Header::opensection();
+
     print <<END;
     <form method='post' enctype='multipart/form-data'>
 <table width='100%' border=0>
@@ -5205,12 +5202,8 @@ END
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
 
-    if ($errormessage) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	print "<class name='base'>$errormessage\n";
-	print "&nbsp;</class>\n";
-	&Header::closebox();
-    }
+	# Show any errors and warnings
+	&Header::errorbox($errormessage);
 
 	if ($cryptoerror) {
 		&Header::openbox('100%', 'LEFT', $Lang::tr{'crypto error'});
@@ -5247,6 +5240,15 @@ END
 	$activeonrun = "disabled='disabled'";
     }
     &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});
+
+	# Show the service status
+	&Header::ServiceStatus({
+		$Lang::tr{'ovpn roadwarrior server'} => {
+			"process" => "openvpn",
+			"pidfile" => "/var/run/openvpn.pid",
+		}
+	});
+
 	print <<END;
     <table width='100%' border='0'>
     <form method='post'>
@@ -5453,12 +5455,12 @@ END
 	print "</td>";
 	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
-	$col1="bgcolor='${Header::colourred}'";
-	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+	$col1="class='status is-disconnected'";
+	my $active = "$Lang::tr{'capsclosed'}";
 
 	if ($confighash{$key}[0] eq 'off') {
-		$col1="bgcolor='${Header::colourblue}'";
-		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+		$col1="class='status is-disabled'";
+		$active = "$Lang::tr{'capsclosed'}";
 	} else {
 
 ###
@@ -5489,11 +5491,11 @@ END
 ####
 
 		if (($tustate[1] eq 'CONNECTED') || ($tustate[1] eq 'WAIT')) {
-			$col1="bgcolor='${Header::colourgreen}'";
-			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+			$col1="class='status is-connected'";
+			$active = "$Lang::tr{'capsopen'}";
 		}else {
-			$col1="bgcolor='${Header::colourred}'";
-			$active = "<b><font color='#FFFFFF'>$tustate[1]</font></b>";
+			$col1="class='status is-disconnected'";
+			$active = "$tustate[1]";
 		}
            }
            }
@@ -5509,8 +5511,8 @@ END
 					$cn = $match[1];
 				}
 				if ($cn eq "$confighash{$key}[2]") {
-					$col1="bgcolor='${Header::colourgreen}'";
-					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+					$col1="class='status is-connected'";
+					$active = "$Lang::tr{'capsopen'}";
 				}
 			}
 		}

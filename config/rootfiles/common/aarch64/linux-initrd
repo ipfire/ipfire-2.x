@@ -1,2 +1,2 @@
-boot/uInit-KVER-ipfire
-boot/initramfs-KVER-ipfire.img
+boot/uInit-KVER
+boot/initramfs-KVER.img

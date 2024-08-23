@@ -1,0 +1,15 @@
+--- netatalk-3.2.5/meson.build.orig	2024-08-01 12:16:47.000000000 +0200
++++ netatalk-3.2.5/meson.build	2024-08-08 16:07:31.337732788 +0200
+@@ -39,10 +39,10 @@
+ datadir = prefix / get_option('datadir')
+ includedir = prefix / get_option('includedir')
+ libdir = prefix / get_option('libdir')
+-localstatedir = prefix / get_option('localstatedir')
++localstatedir = get_option('localstatedir')
+ mandir = prefix / get_option('mandir')
+ sbindir = prefix / get_option('sbindir')
+-sysconfdir = prefix / get_option('sysconfdir')
++sysconfdir = get_option('sysconfdir')
+ 
+ pkgconfdir = get_option('with-pkgconfdir-path')
+ if pkgconfdir == ''

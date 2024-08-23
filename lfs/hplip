@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = HP's Printing, Scanning, and Faxing Software
 
-VER        = 3.23.12
+VER        = 3.24.4
 
 THISAPP    = hplip-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hplip
-PAK_VER    = 11
+PAK_VER    = 12
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 752a5b75855677e4f8b5b8738181d40c426268be4e393e5df7565c78efca68389e86d92f21002a733c0b2d5d62913bef3986e4bedd36a9f35f205c11e6027e7a
+$(DL_FILE)_BLAKE2 = 0b5c93465f6d9e30916bf57fd7f2d490d2f04ef80ed1654a7d2c6adc57a5293e358720a71bbb76757a1496d9f7ca05f077f6e9ea62cfa243319fe9d551440710
 
 install : $(TARGET)
 
@@ -82,12 +82,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure		\
-		--prefix=/usr			\
-		--enable-hpijs-only-build	\
-		--disable-network-build		\
-		--disable-scan-build
-
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr	\
+				--enable-hpijs-only-build \
+				--disable-network-build \
+				--disable-scan-build
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

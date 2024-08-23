@@ -1,11 +1,12 @@
 /.DS_Store
 /.config
 /build
+/build_*
 /cache
 /ccache
-/doc/ChangeLog
-/doc/packages-list.txt
+/images_*
 /log
+/log_*
 /packages
 /tmp
 /*.diff

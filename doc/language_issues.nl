@@ -12,6 +12,7 @@ WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
 WARNING: translation string unused: Subclass
 WARNING: translation string unused: TOS Bits
+WARNING: translation string unused: Utilization on
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
@@ -87,6 +88,7 @@ WARNING: translation string unused: age ssecond
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
 WARNING: translation string unused: all interfaces
+WARNING: translation string unused: all services
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: allmsg
 WARNING: translation string unused: alt information
@@ -163,6 +165,8 @@ WARNING: translation string unused: could not download the available updates lis
 WARNING: translation string unused: could not open available updates file
 WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
+WARNING: translation string unused: cpu frequency per
+WARNING: translation string unused: cpu usage per
 WARNING: translation string unused: create
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
@@ -212,6 +216,7 @@ WARNING: translation string unused: directory mask
 WARNING: translation string unused: directory writeable
 WARNING: translation string unused: disconnect
 WARNING: translation string unused: disconnects
+WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
@@ -296,6 +301,7 @@ WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
+WARNING: translation string unused: firewall hits per
 WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
@@ -363,11 +369,18 @@ WARNING: translation string unused: generatekeys
 WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
+WARNING: translation string unused: gpl i accept these terms and conditions
+WARNING: translation string unused: gpl license agreement
+WARNING: translation string unused: gpl please read carefully the general public license and accept it below
+WARNING: translation string unused: gpl unofficial translation of the general public license v3
+WARNING: translation string unused: graph per
 WARNING: translation string unused: green interface
 WARNING: translation string unused: guest ok
 WARNING: translation string unused: gz with key
+WARNING: translation string unused: harddisk temperature
 WARNING: translation string unused: harddisk temperature graphs
 WARNING: translation string unused: hardware support
+WARNING: translation string unused: high memory usage
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host allow
@@ -430,6 +443,7 @@ WARNING: translation string unused: lang
 WARNING: translation string unused: lateprompting
 WARNING: translation string unused: length
 WARNING: translation string unused: line
+WARNING: translation string unused: linkq
 WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
@@ -454,6 +468,7 @@ WARNING: translation string unused: ls_pam_unix
 WARNING: translation string unused: ls_sshd
 WARNING: translation string unused: ls_syslogd
 WARNING: translation string unused: mac address error not 00
+WARNING: translation string unused: mac filter
 WARNING: translation string unused: mailmethod
 WARNING: translation string unused: mailprogramm
 WARNING: translation string unused: manage ovpn
@@ -464,11 +479,15 @@ WARNING: translation string unused: marked
 WARNING: translation string unused: max incoming size
 WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
+WARNING: translation string unused: mbmon fan
 WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
+WARNING: translation string unused: mbmon temp
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
+WARNING: translation string unused: mbmon volt
 WARNING: translation string unused: meaning
+WARNING: translation string unused: memory usage per
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
@@ -686,6 +705,8 @@ WARNING: translation string unused: smtpport
 WARNING: translation string unused: snort hits
 WARNING: translation string unused: snort working
 WARNING: translation string unused: socket options
+WARNING: translation string unused: sort ascending
+WARNING: translation string unused: sort descending
 WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
@@ -715,6 +736,7 @@ WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
 WARNING: translation string unused: subscripted user rules
 WARNING: translation string unused: successfully refreshed updates list
+WARNING: translation string unused: swap usage per
 WARNING: translation string unused: system graphs
 WARNING: translation string unused: system has hwrng
 WARNING: translation string unused: system has rdrand
@@ -750,6 +772,7 @@ WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
 WARNING: translation string unused: traffic info messages
 WARNING: translation string unused: traffic monitor
+WARNING: translation string unused: traffic on
 WARNING: translation string unused: traffic shaping
 WARNING: translation string unused: traffic shaping settings
 WARNING: translation string unused: traffic warn level bad
@@ -806,6 +829,7 @@ WARNING: translation string unused: upstream proxy host:port
 WARNING: translation string unused: upstream username
 WARNING: translation string unused: uptime
 WARNING: translation string unused: uptime and users
+WARNING: translation string unused: uptime load average
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter enable jpeg
@@ -840,9 +864,19 @@ WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
 WARNING: translation string unused: wlan clients
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap debugging
+WARNING: translation string unused: wlanap del interface
+WARNING: translation string unused: wlanap informations
 WARNING: translation string unused: wlanap link dhcp
 WARNING: translation string unused: wlanap link wireless
+WARNING: translation string unused: wlanap no interface
+WARNING: translation string unused: wlanap notifications
+WARNING: translation string unused: wlanap select interface
+WARNING: translation string unused: wlanap verbose
+WARNING: translation string unused: wlanap warnings
+WARNING: translation string unused: wlanap wlan card
 WARNING: translation string unused: wlanap wlan services
+WARNING: translation string unused: wlanap wlan settings
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
@@ -888,7 +922,6 @@ WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
-WARNING: untranslated string: acpitemp = ACPI - Temperatures
 WARNING: untranslated string: administrator password = Administrator password
 WARNING: untranslated string: administrator username = Administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
@@ -917,7 +950,6 @@ WARNING: untranslated string: autonomous system = Autonomous System
 WARNING: untranslated string: available = available
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
-WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
 WARNING: untranslated string: cake profile bridged-vcmux 24 = Bridged VC-MUX (24 bytes)
@@ -940,6 +972,7 @@ WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: daemon login script = Daemon login script
 WARNING: untranslated string: dangerous = Dangerous
+WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
@@ -1005,7 +1038,6 @@ WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: enable otp = Enable OTP
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
-WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
@@ -1053,7 +1085,6 @@ WARNING: untranslated string: guardian blocking of this address is not allowed =
 WARNING: untranslated string: guardian blocktime = unknown string
 WARNING: untranslated string: guardian common settings = unknown string
 WARNING: untranslated string: guardian configuration = unknown string
-WARNING: untranslated string: guardian daemon = unknown string
 WARNING: untranslated string: guardian empty input = unknown string
 WARNING: untranslated string: guardian enabled = unknown string
 WARNING: untranslated string: guardian firewallaction = unknown string
@@ -1121,6 +1152,7 @@ WARNING: untranslated string: incoming overhead in bytes per second = Incoming O
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: interface mode = Interface
+WARNING: untranslated string: intrusion prevention system = Intrusion Prevention System
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
 WARNING: untranslated string: invalid input for interface address = Invalid input for interface address
 WARNING: untranslated string: invalid input for interface mode = Invalid input for interface mode
@@ -1162,6 +1194,7 @@ WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table 
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
+WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: location = Location
 WARNING: untranslated string: locationblock = Location Block
@@ -1211,6 +1244,7 @@ WARNING: untranslated string: one hour = One Hour
 WARNING: untranslated string: one month = One Month
 WARNING: untranslated string: one week = One Week
 WARNING: untranslated string: one year = One Year
+WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: open connections = Open Connections
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon
 WARNING: untranslated string: openvpn cert has expired = Expired
@@ -1223,6 +1257,7 @@ WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn crypt options = Cryptographic options
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: ovpn ha = Hash algorithm
+WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
@@ -1240,6 +1275,7 @@ WARNING: untranslated string: pptp netconfig = My Net Config
 WARNING: untranslated string: pptp peer = Peer
 WARNING: untranslated string: pptp route = PPTP Route
 WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
+WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
@@ -1328,6 +1364,7 @@ WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: warning = Warning
 WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wio = unknown string
@@ -1461,6 +1498,7 @@ WARNING: untranslated string: wio_wan_up = unknown string
 WARNING: untranslated string: wio_wanname = unknown string
 WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
+WARNING: untranslated string: wireguard = WireGuard
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client anonymous identity = Anonymous Identity
 WARNING: untranslated string: wlan client auth auto = Auto
@@ -1478,18 +1516,21 @@ WARNING: untranslated string: wlan client method = Method
 WARNING: untranslated string: wlan client password = Password
 WARNING: untranslated string: wlan client tls cipher = TLS Cipher
 WARNING: untranslated string: wlan client tls version = TLS Version
-WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap = Wireless Access Point
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced
 WARNING: untranslated string: wlanap 802.11w optional = Optional
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
 WARNING: untranslated string: wlanap client isolation = Client Isolation
-WARNING: untranslated string: wlanap configuration = Access Point Configuration
+WARNING: untranslated string: wlanap clients = unknown string
+WARNING: untranslated string: wlanap configuration = Wireless Access Point Configuration
 WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
-WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
-WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
+WARNING: untranslated string: wlanap neighbor scan = Neighborhood Scan
+WARNING: untranslated string: wlanap neighbor scan warning = Warning: Disabling may violate regulatory rules
+WARNING: untranslated string: wlanap psk = Pre-Shared Key
 WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: wlanap wireless mode = Wireless Mode
 WARNING: untranslated string: working = Working
 WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
 WARNING: untranslated string: zoneconf title = Zone Configuration

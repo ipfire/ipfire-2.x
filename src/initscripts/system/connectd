@@ -36,10 +36,6 @@ if [ ! $HOLDOFF ]; then
 	HOLDOFF=30
 fi
 
-if [ "$RECONNECTION" = "dialondemand" ]; then
-	exit 0
-fi
-
 msg_log () {
 	logger -t $(basename $0)[$$] $*
 }

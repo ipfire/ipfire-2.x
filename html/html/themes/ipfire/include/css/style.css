@@ -1,3 +1,23 @@
+:root {
+	--color-green          : #339933;
+	--color-green-invert   : #ffffff;
+	--color-red            : #993333;
+	--color-red-invert     : #ffffff;
+	--color-blue           : #333399;
+	--color-blue-invert    : #ffffff;
+	--color-orange         : #ff9933;
+	--color-orange-invert  : #ffffff;
+	--color-yellow         : #ffbe00;
+	--color-yellow-invert  : #ffffff;
+	--color-black          : #363636;
+	--color-black-invert   : #ffffff;
+	--color-grey           : #d6d6d6;
+	--color-light-grey     : #f0f0f0;
+
+	--color-primary        : #ff2e52;
+	--color-primary-invert : #ffffff;
+	--color-text           : #363636;
+}
 
 /* This controls the width of the fixed width layouts */
 
@@ -78,11 +98,12 @@ body {
 	color: #363636;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5 {
 	font-size: 20px;
-	font-weight: normal;
-	letter-spacing: -1px;
-	text-align: left;
+}
+
+h6 {
+	font-size: 1em;
 }
 
 br.clear {
@@ -116,6 +137,22 @@ iframe {
 
 .pull-right {
 	float: right !important;
+}
+
+/*
+	Text Alignment
+*/
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
 }
 
 /* Header */
@@ -154,12 +191,56 @@ iframe {
 	border-radius: 3px 3px 3px 3px;
 }
 
+section {
+	margin-bottom: 2rem;
+}
+
+section.is-box {
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--color-grey);
+}
+
+section.is-error {
+	color: var(--color-red);
+	border: 1px solid var(--color-red);
+}
+
+section.is-warning {
+	color: var(--color-yellow);
+	border: 1px solid var(--color-yellow);
+}
+
+section.is-error a, section.is-warning a {
+	color: inherit;
+}
+
+section.is-error ul, section.is-warning ul {
+	padding: 0;
+	margin-bottom: 0 !important;
+}
+
+section.is-error ul li, section.is-warning ul li {
+	list-style-type: none
+}
+
+section .title {
+	margin-bottom: 1rem;
+	border-bottom: 1px solid var(--color-grey);
+}
+
+section.is-error .title {
+	border-bottom: 1px solid var(--color-red);
+}
+
+section.is-warning .title {
+	border-bottom: 1px solid var(--color-yellow);
+}
+
 #main_inner {
 	padding-bottom: 1.5em;
 }
 
 #main_inner p {
-	text-align: justify;
 	margin-bottom: 2em;
 }
 
@@ -169,19 +250,6 @@ iframe {
 
 #main_inner h1 {
 	font-size: 1.8em;
-	margin-bottom: 1em;
-}
-
-#main_inner .post {
-	border: 1px solid silver;
-	padding: 1em 2em 1em 2em;
-	margin-bottom: 1em;
-	clear: both;
-}
-
-#main_inner .post h2 {
-	border-bottom: dotted 1px #e1e1e1;
-	font-size: 1.6em;
 	margin-bottom: 1em;
 }
 
@@ -280,6 +348,51 @@ table {
 	border-spacing: 0;
 }
 
+/*
+	Form Tables
+*/
+table.form {
+	width: 100%;
+
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+table.form:last-child {
+	margin-bottom: 0;
+}
+
+table.form tr td:first-child {
+	width: 25%;
+}
+
+table.form tr td input[type=text],
+table.form tr td input[type=number],
+table.form tr td select,
+table.form tr td textarea {
+	width: 100%;
+}
+
+table.form tr.header td {
+	font-weight: bold;
+
+	margin-top: 1rem;
+}
+
+table.form tr.action td {
+	padding-top: 1rem;
+
+	text-align: right;
+}
+
+table.form tr.action td form {
+	display: inline;
+}
+
+.tbl {
+	width: 100%;
+}
+
 .tbl th {
 	color: #ffffff;
 	border-top: 1px solid #363636;
@@ -287,6 +400,33 @@ table {
 	background: #363636;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
+}
+
+.tbl th[scope=row] {
+	text-align: left;
+}
+
+.tbl tr:nth-child(odd) td {
+	background-color: var(--color-grey);
+}
+
+.tbl tr:nth-child(even) td {
+	background-color: var(--color-light-grey);
+}
+
+/*
+	Classes to overwrite the automatic colouring
+*/
+.tbl tr.is-odd td {
+	background-color: var(--color-grey);
+}
+
+.tbl tr.is-even td {
+	background-color: var(--color-light-grey);
+}
+
+.tbl tr.is-warning td {
+	background-color: var(--color-yellow);
 }
 
 .tbl th:first-child {
@@ -337,8 +477,139 @@ table {
 	border-bottom: 1px solid #363636;
 }
 
+.tbl .status {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .status.is-running, .tbl .status.is-connected {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .status.is-stopped, .tbl .status.is-disconnected {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+
+	width: 33%;
+}
+
+.tbl .status.is-connecting {
+	background-color: var(--color-orange);
+	color: var(--color-orange-invert);
+}
+
+.tbl .status.is-vulnerable {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .status.is-disabled, .tbl .status.is-mitigation {
+	background-color: var(--color-blue);
+	color: var(--color-blue-invert);
+}
+
+.tbl .status.is-not-affected {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+/* Interfaces */
+
+.tbl .intf {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .intf.red {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .intf.green {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .intf.orange {
+	background-color: var(--color-orange);
+	color: var(--color-orange-invert);
+}
+
+.tbl .intf.blue {
+	background-color: var(--color-blue);
+	color: var(--color-blue-invert);
+}
+
+/* Policies */
+
+.tbl .policy {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .policy.is-blocked {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .policy.is-allowed {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .policy.is-rejected {
+	background-color: var(--color-black);
+	color: var(--color-black-invert);
+}
+
 table.fw-nat tbody tr td {
 	height: 2.25em;
+}
+
+/*
+	Graphs
+*/
+
+.graph {
+	padding: 0.125rem;
+}
+
+.graph img {
+	width: 100%;
+	min-height: 360px;
+
+	margin-bottom: 0.5rem;
+	padding: 0;
+
+	border: 1px solid var(--color-grey);
+}
+
+.graph ul {
+	list-style-type: none;
+
+	display: flex;
+	justify-content: center;
+}
+
+.graph ul li {
+	margin: 0 0.125rem;
+}
+
+.graph ul li button {
+	background: none;
+	border: none;
+	cursor: pointer;
+
+	background-color: var(--color-grey);
+	color: var(--color-text);
+
+	padding: 0.5rem 1rem;
+}
+
+.graph ul li button.selected {
+	background-color: var(--color-primary);
+	color: var(--color-primary-invert);
 }
 
 /* RRD graph images */

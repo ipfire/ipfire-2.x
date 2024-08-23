@@ -26,32 +26,24 @@ use strict;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-require "${General::swroot}/graphs.pl";
 
-my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 &Header::showhttpheaders();
+
 &Header::openpage($Lang::tr{'status information'}, 1, '');
-&Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-&Graphs::makegraphbox("system.cgi","cpu","day");
-&Header::closebox();
+# Processor Graph
+&Header::graph("$Lang::tr{'processors'}", "system.cgi", "cpu", "day");
 
+# CPU Frequency
 if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq/cpufreq-0.rrd"){
-	&Header::openbox('100%', 'center', "$Lang::tr{'cpu frequency'} $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","cpufreq","day");
-	&Header::closebox();
+	&Header::graph("$Lang::tr{'cpu frequency'}", "system.cgi", "cpufreq", "day");
 }
 
-&Header::openbox('100%', 'center', "$Lang::tr{'uptime load average'} $Lang::tr{'graph'}");
-&Graphs::makegraphbox("system.cgi","load","day");
-&Header::closebox();
+# Load Average
+&Header::graph("$Lang::tr{'load average'}", "system.cgi", "load", "day");
 
-&Header::closebigbox();
 &Header::closepage();

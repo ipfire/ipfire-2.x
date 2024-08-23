@@ -24,16 +24,15 @@
 
 include Config
 
-VERSUFIX = ipfire$(KCFG)
-MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/extra/wlan
-
 VER        = 20210629-e6a0d1704ccd31145800ff5eb09ec2435a02f995
 
 THISAPP    = 8812au-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
+
+MODPATH    = /lib/modules/$(KVER)/extra/wlan
 
 ###############################################################################
 # Top-level Rules
@@ -78,17 +77,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/enable_usbmodeswitch.patch
 	cd $(DIR_APP) && CONFIG_RTL8812AU=m make $(MAKETUNING) \
-		-C /lib/modules/$(KVER)-$(VERSUFIX)/build/ M=$(DIR_APP)/ modules
+		-C /lib/modules/$(KVER)/build/ M=$(DIR_APP)/ modules
 
 	# Install the built kernel modules.
 	mkdir -p $(MODPATH)
 	cd $(DIR_APP) && for f in $$(ls *.ko); do \
-		/lib/modules/$$(uname -r)$(KCFG)/build/scripts/sign-file sha512 \
-			/lib/modules/$$(uname -r)$(KCFG)/build/certs/signing_key.pem \
-			/lib/modules/$$(uname -r)$(KCFG)/build/certs/signing_key.x509 \
+		/lib/modules/$(KVER)/build/scripts/sign-file sha512 \
+			/lib/modules/$(KVER)/build/certs/signing_key.pem \
+			/lib/modules/$(KVER)/build/certs/signing_key.x509 \
 			$$f; \
 		xz --check=crc32 --lzma2=dict=512KiB $$f; \
-		install -m 644 $$f.xz $(MODPATH); \
+		install -v -m 644 $$f.xz $(MODPATH); \
 	done
 
 	@rm -rf $(DIR_APP)

@@ -18,6 +18,8 @@ use Socket;
 use Time::Local;
 use Encode;
 
+require "${General::swroot}/graphs.pl";
+
 our %color = ();
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
@@ -38,6 +40,7 @@ $Header::colourblue = '#333399';
 $Header::colourovpn = '#339999';
 $Header::colourfw = '#000000';
 $Header::colourvpn = '#990099';
+$Header::colourwg = '#ff007f';
 $Header::colourerr = '#FF0000';
 $Header::viewsize = 150;
 $Header::errormessage = '';
@@ -54,10 +57,10 @@ $Header::extraHead = <<END
 	}
 	.orange {
 		background-color: orange;
-	}	
+	}
 	.red {
 		background-color: red;
-	}			
+	}
 	.table1colour {
 		background-color: $Header::table1colour;
 	}
@@ -89,8 +92,6 @@ END
 my %menuhash = ();
 my $menu = \%menuhash;
 %settings = ();
-%ethsettings = ();
-%pppsettings = ();
 my @URI = split('\?', $ENV{'REQUEST_URI'});
 
 ### Make sure this is an SSL request
@@ -102,51 +103,311 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 
 ### Initialize environment
 &General::readhash("${swroot}/main/settings", \%settings);
-&General::readhash("${swroot}/ethernet/settings", \%ethsettings);
-&General::readhash("${swroot}/ppp/settings", \%pppsettings);
 $hostname = $settings{'HOSTNAME'};
-$hostnameintitle = 0;
 
 ### Initialize language
 require "${swroot}/lang.pl";
-$language = &Lang::FindWebLanguage($settings{"LANGUAGE"});
-
-### Read English Files
-if ( -d "/var/ipfire/langs/en/" ) {
-    opendir(DIR, "/var/ipfire/langs/en/");
-    @names = readdir(DIR) or die "Cannot Read Directory: $!\n";
-    foreach $name(@names) {
-        next if ($name eq ".");
-        next if ($name eq "..");
-        next if (!($name =~ /\.pl$/));
-        require "${swroot}/langs/en/${name}";
-    };
-};
-
-
-### Enable Language Files
-if ( -d "/var/ipfire/langs/${language}/" ) {
-    opendir(DIR, "/var/ipfire/langs/${language}/");
-    @names = readdir(DIR) or die "Cannot Read Directory: $!\n";
-    foreach $name(@names) {
-        next if ($name eq ".");
-        next if ($name eq "..");
-        next if (!($name =~ /\.pl$/));
-        require "${swroot}/langs/${language}/${name}";
-    };
-};
 
 ### Initialize user manual
 my %manualpages = ();
 &_read_manualpage_hash("${General::swroot}/main/manualpages");
 
-### Load selected language and theme functions
-require "${swroot}/langs/en.pl";
-require "${swroot}/langs/${language}.pl";
-eval `/bin/cat /srv/web/ipfire/html/themes/ipfire/include/functions.pl`;
+###############################################################################
+#
+# print menu html elements for submenu entries
+# @param submenu entries
+sub showsubmenu() {
+	my $submenus = shift;
+
+	print "<ul>";
+	foreach my $item (sort keys %$submenus) {
+		$link = getlink($submenus->{$item});
+		next if (!is_menu_visible($link) or $link eq '');
+
+		my $subsubmenus = $submenus->{$item}->{'subMenu'};
+
+		if ($subsubmenus) {
+			print '<li class="has-sub ">';
+		} else {
+			print '<li>';
+		}
+		print '<a href="'.$link.'">'.$submenus->{$item}->{'caption'}.'</a>';
+
+		&showsubmenu($subsubmenus) if ($subsubmenus);
+		print '</li>';
+	}
+	print "</ul>"
+}
+
+###############################################################################
+#
+# print menu html elements
+sub showmenu() {
+	print '<div id="cssmenu" class="bigbox fixed">';
+
+	if ($settings{'SPEED'} ne 'off') {
+		print <<EOF;
+			<div id='traffic'>
+				<strong>$Lang::tr{'traffic stat title'}:</strong>
+				$Lang::tr{'traffic stat in'} <span id='rx_kbs'>--.-- bit/s</span> &nbsp;
+				$Lang::tr{'traffic stat out'} <span id='tx_kbs'>--.-- bit/s</span>
+			</div>
+EOF
+	}
+
+	print "<ul>";
+	foreach my $k1 ( sort keys %$menu ) {
+		$link = getlink($menu->{$k1});
+		next if (!is_menu_visible($link) or $link eq '');
+		print '<li class="has-sub "><a href="#"><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
+		my $submenus = $menu->{$k1}->{'subMenu'};
+		&showsubmenu($submenus) if ($submenus);
+		print "</li>";
+	}
+
+	print "</ul></div>";
+}
+
+###############################################################################
+#
+# print page opening html layout
+# @param page title
+# @param boh
+# @param extra html code for html head section
+# @param suppress menu option, can be numeric 1 or nothing.
+#		 menu will be suppressed if param is 1
+sub openpage {
+	my $title = shift;
+	my $boh = shift;
+	my $extrahead = shift;
+	my $suppressMenu = shift // 0;
+
+	my $headline = "IPFire";
+	if (($settings{'WINDOWWITHHOSTNAME'} eq 'on') || ($settings{'WINDOWWITHHOSTNAME'} eq '')) {
+		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
+	}
+
+print <<END;
+<!DOCTYPE html>
+<html lang="$Lang::language">
+	<head>
+	<title>$headline - $title</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<script type="text/javascript" src="/include/jquery.js"></script>
+	<script src="/include/rrdimage.js"></script>
+
+	$extrahead
+	<script type="text/javascript">
+		function swapVisibility(id) {
+			\$('#' + id).toggle();
+		}
+	</script>
+END
+
+
+print "<link href=\"/themes/ipfire/include/css/style.css?v=20240806\" rel=\"stylesheet\" type=\"text/css\" />\n";
+
+
+if ($settings{'SPEED'} ne 'off') {
+print <<END
+	<script type="text/javascript" src="/themes/ipfire/include/js/refreshInetInfo.js"></script>
+END
+;
+}
+
+print <<END
+	</head>
+	<body>
+		<div id="header" class="fixed">
+			<div id="logo">
+				<h1>
+					<a href="https://www.ipfire.org">
+						IPFire_
+					</a>
+END
+;
+	if ($settings{'WINDOWWITHHOSTNAME'} ne 'off') {
+		print "&dash; $settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
+	}
+
+print <<END
+				</h1>
+			</div>
+		</div>
+END
+;
+
+unless($suppressMenu) {
+	&genmenu();
+	&showmenu();
+}
+
+print <<END
+	<div class="bigbox fixed">
+		<div id="main_inner" class="fixed">
+			<div id="main_header">
+				<h1>$title</h1>
+END
+;
+
+# Print user manual link
+my $manual_url = &get_manualpage_url();
+if($manual_url) {
+	print <<END
+				<span><a href="$manual_url" title="$Lang::tr{'online help en'}" target="_blank"><img src="/images/help-browser.png" alt="$Lang::tr{'online help en'}"></a></span>
+END
+;
+}
+
+print <<END
+			</div>
+END
+;
+}
+
+###############################################################################
+#
+# print page closing html layout
+
+sub closepage () {
+	open(FILE, "</etc/system-release");
+	my $system_release = <FILE>;
+	$system_release =~ s/core/$Lang::tr{'core update'} /;
+	close(FILE);
+
+print <<END;
+		</div>
+	</div>
+
+	<div id="footer" class='bigbox fixed'>
+		<span class="pull-right">
+			<a href="https://www.ipfire.org/" target="_blank"><strong>IPFire.org</strong></a> &bull;
+			<a href="https://www.ipfire.org/donate" target="_blank">$Lang::tr{'support donation'}</a>
+		</span>
+
+		<strong>$system_release</strong>
+	</div>
+</body>
+</html>
+END
+;
+}
+
+###############################################################################
+#
+# print big box opening html layout
+sub openbigbox {
+}
+
+###############################################################################
+#
+# print big box closing html layout
+sub closebigbox {
+}
+
+# Sections
+
+sub opensection($) {
+	my $title = shift;
+
+	# Open the section
+	print "<section class=\"section\">";
+
+	# Show the title if set
+	if ($title) {
+		print "	<h2 class=\"title\">${title}</h2>\n";
+	}
+}
+
+sub closesection() {
+	print "</section>";
+}
+
+###############################################################################
+#
+# print box opening html layout
+# @param page width
+# @param page align
+# @param page caption
+sub openbox {
+	# The width parameter is ignored and should always be '100%'
+	my $width = shift;
+	my $align = shift;
+
+	my $title = shift;
+
+	my @classes = ("section", "is-box", @_);
+
+	print "<section class=\"@classes\">\n";
+
+	# Show the title
+	if ($title) {
+		print "	<h2 class=\"title\">${title}</h2>\n";
+	}
+}
+
+###############################################################################
+#
+# print box closing html layout
+sub closebox {
+	print "</section>";
+}
+
+sub errorbox($) {
+	my @errors = grep { $_ ne "" } @_;
+
+	# Do nothing if there are no errors
+	return unless (@errors);
+
+	# Open a new box
+	&openbox('100%', 'left', $Lang::tr{'oops something went wrong'}, "is-error");
+
+	# Print all error messages
+	print "<ul>\n";
+	foreach my $error (@errors) {
+		print "<li>$error</li>\n";
+	}
+	print "</ul>\n";
+
+	# Close the box again
+	&closebox();
+}
+
+sub warningbox($) {
+	my @warnings = grep { $_ ne "" } @_;
+
+	# Do nothing if there are no errors
+	return unless (@warnings);
+
+	# Open a new box
+	&openbox('100%', 'left', $Lang::tr{'warning'}, "is-warning");
+
+	# Print all warning messages
+	print "<ul>\n";
+	foreach my $warning (@warnings) {
+		print "<li>$warning</li>\n";
+	}
+	print "</ul>\n";
+
+	# Close the box again
+	&closebox();
+}
+
+sub graph($) {
+	my $title = shift;
+
+	# Open a new section with a title
+	&opensection($title);
+
+	&Graphs::makegraphbox(@_);
+
+	# Close the section
+	&closesection();
+}
 
 sub green_used() {
-    if ($ethsettings{'GREEN_DEV'} && $ethsettings{'GREEN_DEV'} ne "") {
+    if ($Network::ethernet{'GREEN_DEV'} && $Network::ethernet{'GREEN_DEV'} ne "") {
         return 1;
     }
 
@@ -154,21 +415,14 @@ sub green_used() {
 }
 
 sub orange_used () {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[24]$/) {
+    if ($Network::ethernet{'CONFIG_TYPE'} =~ /^[24]$/) {
 	return 1;
     }
     return 0;
 }
 
 sub blue_used () {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[34]$/) {
-	return 1;
-    }
-    return 0;
-}
-
-sub is_modem {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[0]$/) {
+    if ($Network::ethernet{'CONFIG_TYPE'} =~ /^[34]$/) {
 	return 1;
     }
     return 0;
@@ -198,15 +452,13 @@ sub genmenu {
     my %sublogshash = ();
     my $sublogs = \%sublogshash;
 
-  if ( -e "/var/ipfire/main/gpl_accepted") {
-
     eval `/bin/cat /var/ipfire/menu.d/*.menu`;
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
     if (! blue_used()) {
 	$menu->{'05.firewall'}{'subMenu'}->{'60.wireless'}{'enabled'} = 0;
     }
-    if ( $ethsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
+    if ( $Network::ethernet{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $Network::ethernet{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
     }
 
@@ -214,7 +466,7 @@ sub genmenu {
         $menu->{'01.system'}{'subMenu'}->{'21.wlan'}{'enabled'} = 1;
     }
 
-    if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
+    if ( $Network::ethernet{'RED_TYPE'} eq "PPPOE" && $Network::ppp{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
 
@@ -230,13 +482,26 @@ sub genmenu {
         $menu->{'03.network'}{'subMenu'}->{'80.macadressmenu'}{'enabled'} = 0;
         $menu->{'03.network'}{'subMenu'}->{'90.wakeonlan'}{'enabled'} = 0;
     }
-  }
 }
 
-sub showhttpheaders
-{
-	print "Cache-control: private\n";
-	print "Content-type: text/html; charset=UTF-8\n\n";
+sub showhttpheaders($) {
+	my $overwrites = shift;
+
+	my %headers = (
+		"Content-Type"  => "text/html; charset=UTF-8",
+		"Cache-Control" => "private",
+
+		# Overwrite anything passed
+		%$overwrites,
+	);
+
+	# Print all headers
+	foreach my $header (keys %headers) {
+		print "$header: $headers{$header}\n";
+	}
+
+	# End headers
+	print "\n";
 }
 
 sub is_menu_visible($) {
@@ -377,17 +642,11 @@ sub cleanhtml {
 
 sub connectionstatus
 {
-    my %pppsettings = ();
-    my %netsettings = ();
     my $iface='';
 
-    $pppsettings{'PROFILENAME'} = 'None';
-    &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
-    &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
-
     my $profileused='';
-    unless ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
-    	$profileused="- $pppsettings{'PROFILENAME'}";
+    unless ($Network::ethernet{'RED_TYPE'} =~ /^(DHCP|STATIC)$/) {
+		$profileused="- $Network::ppp{'PROFILENAME'}";
     }
 
     my ($timestr, $connstate);
@@ -398,15 +657,13 @@ sub connectionstatus
 			$timestr = &General::age("${General::swroot}/red/active");
 			$connstate = "<span>$Lang::tr{'connected'} - (<span>$timestr</span>) $profileused</span>";
 		} else {
-		  if ((open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) && ($pppsettings{'RECONNECTION'} eq "persistent")) {
+		  if (open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) {
 				$connstate = "<span>$Lang::tr{'connection closed'} $profileused</span>";
-      } elsif (($pppsettings{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
-				$connstate = "<span>$Lang::tr{'dod waiting'} $profileused</span>";
 			} else {
 				$connstate = "<span>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
 			}
 		}
-		
+
     return $connstate;
 }
 
@@ -500,7 +757,7 @@ END
 		if($hostname_print eq "") { #print blank space if no hostname is found
 			$hostname_print = "&nbsp;&nbsp;&nbsp;";
 		}
-		
+
 		# separate active and expired leases with a horizontal line
 		if(($entries{$key}->{expired}) && ($divider_printed == 0)) {
 			$divider_printed = 1;
@@ -511,14 +768,14 @@ END
 			}
 			$id++;
 		}
-		
+
 		print "<form method='post' action='/cgi-bin/dhcp.cgi'><tr>\n";
 		if ($id % 2) {
 			$col="bgcolor='$table1colour'";
 		} else {
 			$col="bgcolor='$table2colour'";
 		}
-		
+
 		if($entries{$key}->{expired}) {
 			print <<END
 <td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' /><strike><i>$entries{$key}->{IPADDR}</i></strike></td>
@@ -599,13 +856,13 @@ sub colorize {
 		return "<font color='".${Header::colourovpn}."'>".$string."</font>";
 	} elsif ( $string =~ "lo" or $string =~ "127.0.0.0" ){
 		return "<font color='".${Header::colourfw}."'>".$string."</font>";
-	} elsif ( $string =~ $ethsettings{'GREEN_DEV'} or &General::IpInSubnet($string2,$ethsettings{'GREEN_NETADDRESS'},$ethsettings{'GREEN_NETMASK'}) ){
+	} elsif ( $string =~ $Network::ethernet{'GREEN_DEV'} or &General::IpInSubnet($string2,$Network::ethernet{'GREEN_NETADDRESS'},$Network::ethernet{'GREEN_NETMASK'}) ){
 		return "<font color='".${Header::colourgreen}."'>".$string."</font>";
-	} elsif (  $string =~ "ppp0" or $string =~ $ethsettings{'RED_DEV'} or $string =~ "0.0.0.0" or $string =~ $ethsettings{'RED_ADDRESS'} ){
+	} elsif (  $string =~ "ppp0" or $string =~ $Network::ethernet{'RED_DEV'} or $string =~ "0.0.0.0" or $string =~ $Network::ethernet{'RED_ADDRESS'} ){
 		return "<font color='".${Header::colourred}."'>".$string."</font>";
-	} elsif ( $ethsettings{'CONFIG_TYPE'}>1 and ( $string =~ $ethsettings{'BLUE_DEV'} or &General::IpInSubnet($string2,$ethsettings{'BLUE_NETADDRESS'},$ethsettings{'BLUE_NETMASK'}) )){
+	} elsif ( $Network::ethernet{'CONFIG_TYPE'}>1 and ( $string =~ $Network::ethernet{'BLUE_DEV'} or &General::IpInSubnet($string2,$Network::ethernet{'BLUE_NETADDRESS'},$Network::ethernet{'BLUE_NETMASK'}) )){
 		return "<font color='".${Header::colourblue}."'>".$string."</font>";
-	} elsif ( $ethsettings{'CONFIG_TYPE'}>2 and ( $string =~ $ethsettings{'ORANGE_DEV'} or &General::IpInSubnet($string2,$ethsettings{'ORANGE_NETADDRESS'},$ethsettings{'ORANGE_NETMASK'}) )){
+	} elsif ( $Network::ethernet{'CONFIG_TYPE'}>2 and ( $string =~ $Network::ethernet{'ORANGE_DEV'} or &General::IpInSubnet($string2,$Network::ethernet{'ORANGE_NETADDRESS'},$Network::ethernet{'ORANGE_NETMASK'}) )){
 		return "<font color='".${Header::colourorange}."'>".$string."</font>";
 	} else {
 		return $string;
@@ -649,6 +906,94 @@ sub _read_manualpage_hash() {
 		}
 	}
 	close($file);
+}
+
+sub ServiceStatus() {
+	my $services = shift;
+	my %services = %{ $services };
+
+	# Write the table header
+	print <<EOF;
+		<table class="tbl">
+			<!-- <thead>
+				<tr>
+					<th>
+						$Lang::tr{'service'}
+					</th>
+
+					<th>
+						$Lang::tr{'status'}
+					</th>
+
+					<th>
+						$Lang::tr{'memory'}
+					</th>
+				</tr>
+			</thead> -->
+
+			<tbody>
+EOF
+
+	foreach my $service (sort keys %services) {
+		my %config = %{ $services{$service} };
+
+		my $pidfile = $config{"pidfile"};
+		my $process = $config{"process"};
+
+		# Collect all pids
+		my @pids = ();
+
+		# Read the PID file or go search...
+		if (defined $pidfile) {
+			@pids = &General::read_pids("${pidfile}");
+		} else {
+			@pids = &General::find_pids("${process}");
+		}
+
+		# Get memory consumption
+		my $mem = &General::get_memory_consumption(@pids);
+
+		print <<EOF;
+				<tr>
+					<th scope="row">
+						$service
+					</th>
+EOF
+
+		# Running?
+		if (scalar @pids) {
+			# Format memory
+			$mem = &General::formatBytes($mem);
+
+			print <<EOF;
+					<td class="status is-running">
+						$Lang::tr{'running'}
+					</td>
+
+					<td class="text-right">
+						${mem}
+					</td>
+EOF
+
+		# Not Running
+		} else {
+			print <<EOF;
+					<td class="status is-stopped" colspan="2">
+						$Lang::tr{'stopped'}
+					</td>
+EOF
+		}
+
+		print <<EOF;
+				</tr>
+EOF
+
+	}
+
+	print <<EOF;
+		</tbody>
+		</table>
+EOF
 }
 
 1; # End of package "Header"

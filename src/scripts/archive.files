@@ -19,44 +19,75 @@
 #                                                                             #
 ###############################################################################
 
-for i in BUILD_ARCH BUILDTARGET KVER; do
-	if [ -z "${!i}" ]; then
-		echo "${i} not set" >&2
-		exit 1
-	fi
-done
+find_rootfile() {
+	local path="${1}"
+	local package="${2}"
 
-FILELIST=
+	local file
 
-for dir in $@; do
-	# Skip all objects that do not exist.
-	[ -e "${dir}" ] || continue
-
-	# Files go directly to the rootfile.
-	if [ -f "${dir}" ]; then
-		FILELIST="${FILELIST} ${dir}"
-		continue
-	fi
-
-	for exclude in ${dir}/${BUILD_ARCH}/*; do
-		[ -f "${exclude}" ] || continue
-		EXCLUDE="$EXCLUDE $exclude"
+	for file in "${path}/${arch}/${package}" "${path}/${package}"; do
+		if [ -f "${file}" ]; then
+			echo "${file}"
+			break
+		fi
 	done
+}
 
-	FILELIST="${FILELIST} ${EXCLUDE}"
+descend() {
+	local path="${1}"
+	shift
 
-	for include in ${dir}/*; do
-		[ -d ${include} ] && continue
-		IN=true
-		for exclude in ${EXCLUDE}; do
-			if [ "$(basename ${exclude})" = "$(basename ${include})" ]; then
-				IN=false
-				break
+	local packages=( "$@" )
+	local package
+	local file
+
+	# Find all packages
+	if [ "${#packages[@]}" -eq 0 ]; then
+		for file in "${path}/"* "${path}/${arch}"/*; do
+			if [ -f "${file}" ]; then
+				packages+=( "${file##*/}" )
 			fi
 		done
-		${IN} && FILELIST="${FILELIST} ${include}"
-	done
-done
+	fi
 
-cat ${FILELIST} 2>/dev/null | grep -v ^# | sort | uniq | \
-	sed -e "s/KVER/${KVER}/g" -e "s/xxxMACHINExxx/${BUILD_ARCH}/g" -e "s/BUILDTARGET/${BUILDTARGET}/g"
+	# Return the correct rootfile
+	for package in ${packages[@]}; do
+		find_rootfile "${path}" "${package}"
+	done
+}
+
+find_rootfiles() {
+	local path="${1}"
+	shift
+
+	# Descend into directories
+	if [ -d "${path}" ]; then
+		descend "${path}" "$@"
+
+	# Or look straight for a file
+	else
+		find_rootfile "${path}" "$@"
+	fi
+}
+
+# This function takes a list of rootfiles from standard input and extracts all files
+read_rootfiles() {
+	xargs -n 64 grep --no-filename -v "^#" | sort -u
+}
+
+substitute_paths() {
+	sed \
+		-e "s/BUILDTARGET/${BUILDTARGET}/g" \
+		-e "s/KVER/${KVER}/g" \
+		-e "s/xxxMACHINExxx/${BUILD_ARCH}/g"
+}
+
+main() {
+	local arch="${1}"
+	shift
+
+	# Find all rootfiles
+	find_rootfiles "$@" | read_rootfiles | substitute_paths
+}
+
+main "$@" || exit $?

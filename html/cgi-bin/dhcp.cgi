@@ -1374,6 +1374,49 @@ sub buildconf {
 	}
     }
 
+	# Add event handlers
+	print FILE <<EOF;
+on commit {
+	set ClientAddress = concat(
+		"ADDRESS=",
+		binary-to-ascii(10, 8, ".", leased-address)
+	);
+	set ClientName = concat(
+		"NAME=",
+		pick-first-value(option host-name, config-option-host-name, client-name, "")
+	);
+
+	if (ClientName != "") {
+		execute("/usr/sbin/unbound-dhcp-leases-client", "commit", ClientAddress, ClientName);
+	}
+}
+
+on release {
+	set ClientAddress = concat(
+		"ADDRESS=",
+		binary-to-ascii(10, 8, ".", leased-address)
+	);
+	set ClientName = concat(
+		"NAME=",
+		pick-first-value(option host-name, config-option-host-name, client-name, "")
+	);
+
+	if (ClientName != "") {
+		execute("/usr/sbin/unbound-dhcp-leases-client", "release", ClientAddress, ClientName);
+	}
+}
+
+on expiry {
+	set ClientAddress = concat(
+		"ADDRESS=",
+		binary-to-ascii(10, 8, ".", leased-address)
+	);
+
+	execute("/usr/sbin/unbound-dhcp-leases-client", "expiry", ClientAddress);
+}
+
+EOF
+
     #write fixed leases if any. Does not handle duplicates to write them elsewhere than the global scope.
     my $key = 0;
     foreach my $line (@current2) {

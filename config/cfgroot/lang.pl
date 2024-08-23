@@ -9,7 +9,7 @@
 #
 
 package Lang;
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 use strict;
 
 ### A cache file to avoid long recalculation
@@ -25,7 +25,7 @@ $Lang::CacheLang = '/var/ipfire/langs/cache-lang.pl';
 # The file content has to start with (of course without the leading #):
 # --------- CODE ---------
 #%tr = (%tr,
-# 'key1' => 'value',				# add all your entries key/values here 
+# 'key1' => 'value',				# add all your entries key/values here
 # 'key2' => 'value'				# and end with (of course without the leading #):
 #);
 # --------- CODE END---------
@@ -37,13 +37,14 @@ $Lang::CacheLang = '/var/ipfire/langs/cache-lang.pl';
 
 ### Initialize language
 %Lang::tr = ();
+
 my %settings = ();
 &General::readhash("${General::swroot}/main/settings", \%settings);
+
+# Load the selected language
 reload($settings{'LANGUAGE'});
 
-# language variable used by makegraphs script
-our $language;
-$language = $settings{'LANGUAGE'};
+our $language = $settings{'LANGUAGE'};
 
 #
 # Load requested language file from cachefile. If cachefile doesn't exist, build on the fly.
@@ -54,35 +55,32 @@ sub reload {
 
     %Lang::tr = ();	# start with a clean array
 
-    # Use CacheLang if present & not empty.
-    if (-s "$Lang::CacheLang.$LG" ) {
-	##fix: need to put a lock_shared on it in case rebuild is active ?
-	do "$Lang::CacheLang.$LG";
-        #&General::log ("cachelang file used [$LG]");	
-	return;
-    }
-    
-    #&General::log("Building on the fly cachelang file for [$LG]");
-    do "${General::swroot}/langs/en.pl";
-    do "${General::swroot}/langs/$LG.pl" if ($LG ne 'en');
+	# Use CacheLang if present & not empty.
+	if (-s "$Lang::CacheLang.$LG" ) {
+		do "$Lang::CacheLang.$LG";
+		return;
+	}
 
-    my $AddonDir = ${General::swroot}.'/addon-lang';
+	do "${General::swroot}/langs/en.pl";
+	do "${General::swroot}/langs/$LG.pl" if ($LG ne 'en');
 
-    opendir (DIR, $AddonDir);
-    my @files = readdir (DIR);
-    closedir (DIR);
+	my $AddonDir = ${General::swroot}.'/addon-lang';
+
+	opendir (DIR, $AddonDir);
+	my @files = readdir (DIR);
+	closedir (DIR);
 
     # default is to load english first
-    foreach my $file ( grep (/.*\.en.pl$/,@files)) {
-    	do "$AddonDir/$file";
-    }
-
-    # read again, overwriting 'en' with choosed lang
-    if ($LG ne 'en') {
-	foreach my $file (grep (/.*\.$LG\.pl$/,@files) ) {
-    	    do "$AddonDir/$file";
+	foreach my $file ( grep (/.*\.en.pl$/,@files)) {
+		do "$AddonDir/$file";
 	}
-    }
+
+	# read again, overwriting 'en' with choosed lang
+	if ($LG ne 'en') {
+		foreach my $file (grep (/.*\.$LG\.pl$/,@files)) {
+			do "$AddonDir/$file";
+		}
+	}
 }
 
 #
@@ -93,7 +91,7 @@ sub reload {
 sub BuildUniqueCacheLang {
 
     my ($LG) = @_;
-    
+
     # Make CacheLang empty so that it won't be used by Lang::reload
     open (FILE, ">$Lang::CacheLang.$LG") or return 1;
     flock (FILE, 2) or return 1;
@@ -101,7 +99,7 @@ sub BuildUniqueCacheLang {
 
     # Load languages files
     &Lang::reload ($LG);
-    
+
     # Write the unique %tr=('key'=>'value') array
     open (FILE, ">$Lang::CacheLang.$LG") or return 1;
     flock (FILE, 2) or return 1;
@@ -112,7 +110,7 @@ sub BuildUniqueCacheLang {
     }
     print FILE ');';
     close (FILE);
-    
+
     # Make nobody:nobody file's owner
     # Will work when called by root/rc.sysinit
     chown (0,0,"$Lang::CacheLang.$LG");
@@ -126,7 +124,7 @@ sub BuildUniqueCacheLang {
 sub BuildCacheLang {
 
     my $AddonDir = ${General::swroot}.'/addon-lang';
-    
+
     # Correct permission in case addon-installer did not do it
     opendir (DIR, $AddonDir);
     my @files = readdir (DIR);
@@ -140,7 +138,7 @@ sub BuildCacheLang {
     my $selected = '';;
     my $missed = '';
     my $error = 0;
-    
+
     open (LANGS, "${General::swroot}/langs/list");
     while (<LANGS>) {
 	($selected) = split (':');
@@ -153,7 +151,7 @@ sub BuildCacheLang {
     if ($missed) { # collision with current cache lang being used ?
 	$error = &BuildUniqueCacheLang ($missed);
     }
-    
+
     &General::log ("WARNING: cannot build cachelang file for [$missed].") if ($error);
     return $error;
 }

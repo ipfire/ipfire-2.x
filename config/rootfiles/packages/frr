@@ -36,9 +36,11 @@ usr/bin/vtysh
 #usr/include/frr/frr_pthread.h
 #usr/include/frr/frratomic.h
 #usr/include/frr/frrcu.h
+#usr/include/frr/frrdistance.h
 #usr/include/frr/frrevent.h
 #usr/include/frr/frrlua.h
 #usr/include/frr/frrscript.h
+#usr/include/frr/frrsendmmsg.h
 #usr/include/frr/frrstr.h
 #usr/include/frr/graph.h
 #usr/include/frr/hash.h
@@ -56,6 +58,7 @@ usr/bin/vtysh
 #usr/include/frr/ldp_sync.h
 #usr/include/frr/lib_errors.h
 #usr/include/frr/lib_vty.h
+#usr/include/frr/libagentx.h
 #usr/include/frr/libfrr.h
 #usr/include/frr/libfrr_trace.h
 #usr/include/frr/libospf.h
@@ -67,11 +70,11 @@ usr/bin/vtysh
 #usr/include/frr/memory.h
 #usr/include/frr/mgmt.pb-c.h
 #usr/include/frr/mgmt_be_client.h
+#usr/include/frr/mgmt_defines.h
 #usr/include/frr/mgmt_fe_client.h
 #usr/include/frr/mgmt_msg.h
+#usr/include/frr/mgmt_msg_native.h
 #usr/include/frr/mgmt_pb.h
-#usr/include/frr/mgmtd
-#usr/include/frr/mgmtd/mgmt_defines.h
 #usr/include/frr/mlag.h
 #usr/include/frr/module.h
 #usr/include/frr/monotime.h
@@ -152,6 +155,7 @@ usr/bin/vtysh
 #usr/include/frr/zlog.h
 #usr/include/frr/zlog_5424.h
 #usr/include/frr/zlog_live.h
+#usr/include/frr/zlog_recirculate.h
 #usr/include/frr/zlog_targets.h
 #usr/lib/frr
 #usr/lib/frr/modules
@@ -181,6 +185,7 @@ usr/lib/libmgmt_be_nb.so.0
 usr/lib/libmgmt_be_nb.so.0.0.0
 usr/sbin/bgpd
 usr/sbin/fabricd
+usr/sbin/fpm_listener
 usr/sbin/frr
 usr/sbin/frr-reload
 usr/sbin/frr-reload.py
@@ -211,6 +216,7 @@ usr/sbin/zebra
 #usr/share/yang/frr-bgp-types.yang
 #usr/share/yang/frr-bgp.yang
 #usr/share/yang/frr-deviations-bgp-datacenter.yang
+#usr/share/yang/frr-deviations-ietf-key-chain.yang
 #usr/share/yang/frr-filter.yang
 #usr/share/yang/frr-if-rmap.yang
 #usr/share/yang/frr-interface.yang
@@ -231,5 +237,9 @@ usr/sbin/zebra
 #usr/share/yang/frr-zebra.yang
 #usr/share/yang/ietf-bgp-types.yang
 #usr/share/yang/ietf-interfaces.yang
+#usr/share/yang/ietf-key-chain.yang
+#usr/share/yang/ietf-netconf-acm.yang
+#usr/share/yang/ietf-netconf-with-defaults.yang
+#usr/share/yang/ietf-netconf.yang
 #usr/share/yang/ietf-routing-types.yang
 var/ipfire/backup/addons/includes/frr

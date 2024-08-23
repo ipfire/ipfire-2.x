@@ -46,6 +46,7 @@
 < choose media
 < could not connect to www ipfire org
 < cryptographic settings
+< data transfer
 < desired
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
@@ -77,7 +78,9 @@
 < no entries
 < notes
 < okay
+< oops something went wrong
 < optional
+< ovpn roadwarrior server
 < quick control
 < random number generator daemon
 < regenerate host certificate
@@ -101,9 +104,13 @@
 < user management
 < vpn configuration main
 < winbind daemon
+< wireguard
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client encryption wpa3
 < wlan client management frame protection
 ############################################################################
@@ -114,6 +121,7 @@
 < access point name is required
 < addon
 < cpu frequency
+< data transfer
 < dhcp fixed ip address in dynamic range
 < dns servers
 < downfall gather data sampling
@@ -130,10 +138,14 @@
 < ids provider eol
 < ids unsupported provider
 < invalid ip or hostname
+< load average
 < log drop hostile in
 < log drop hostile out
+< oops something went wrong
 < openvpn cert expires soon
 < openvpn cert has expired
+< ovpn roadwarrior server
+< processors
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
@@ -143,7 +155,12 @@
 < system time
 < timeformat
 < transport mode does not support vti
+< warning
+< wireguard
 < wlanap
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client configuration
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
@@ -151,6 +168,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< data transfer
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
 < g.dtm
@@ -158,10 +176,19 @@
 < hostile networks total
 < ids provider eol
 < ids unsupported provider
+< load average
+< oops something went wrong
+< ovpn roadwarrior server
+< processors
 < reg_file_data_sampling
 < system time
 < timeformat
 < upload fcdsl.o
+< warning
+< wireguard
+< wlanap psk
+< wlanap wireless mode
+< wlanap wlan clients
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -276,6 +303,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < default IP address
 < desired
 < dh
@@ -478,6 +506,7 @@
 < itlb multihit
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -516,6 +545,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -526,6 +556,7 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn error md5
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -543,6 +574,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -634,9 +666,11 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -649,7 +683,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -802,6 +839,7 @@
 < daemon login script
 < Daily
 < dangerous
+< data transfer
 < default
 < default IP address
 < desired
@@ -1010,6 +1048,7 @@
 < itlb multihit
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -1064,6 +1103,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -1079,6 +1119,7 @@
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -1095,6 +1136,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -1185,9 +1227,11 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -1200,7 +1244,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1415,6 +1462,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < dead peer detection
 < default
 < default ip
@@ -1855,6 +1903,7 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -1918,6 +1967,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -1959,6 +2009,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn routes push
 < ovpn routes push options
 < ovpn rw connection log
@@ -1978,6 +2029,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
@@ -2151,9 +2203,11 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -2167,7 +2221,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -2413,6 +2470,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < day-graph
 < dead peer detection
 < default
@@ -2859,6 +2917,7 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< load average
 < local ip address
 < location
 < locationblock
@@ -2923,6 +2982,7 @@
 < one month
 < one week
 < one year
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -2963,6 +3023,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -2980,6 +3041,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< processors
 < processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
@@ -3153,10 +3215,12 @@
 < vpn weak
 < vulnerability
 < vulnerable
+< warning
 < week-graph
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wireless network
 < wlanap
 < wlanap 802.11w disabled
@@ -3170,7 +3234,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3289,6 +3356,7 @@
 < crypto warning
 < Daily
 < dangerous
+< data transfer
 < default IP address
 < desired
 < dh
@@ -3436,6 +3504,7 @@
 < itlb multihit
 < legacy architecture warning
 < link-layer encapsulation
+< load average
 < local ip address
 < log drop hostile in
 < log drop hostile out
@@ -3449,6 +3518,7 @@
 < not affected
 < not validating
 < okay
+< oops something went wrong
 < open connections
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -3456,6 +3526,7 @@
 < otp qrcode
 < ovpn connection name
 < ovpn error md5
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -3470,6 +3541,7 @@
 < pakfire tree unstable
 < pak update
 < please reboot to apply your changes
+< processors
 < processor vulnerability mitigations
 < ptr
 < random number generator daemon
@@ -3534,9 +3606,11 @@
 < vpn wait
 < vulnerability
 < vulnerable
+< warning
 < Weekly
 < whois results from
 < winbind daemon
+< wireguard
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
@@ -3546,7 +3620,10 @@
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap psk
 < wlanap ssid
+< wlanap wireless mode
+< wlanap wlan clients
 < wlan client encryption wpa3
 < wlan client management frame protection
 < working

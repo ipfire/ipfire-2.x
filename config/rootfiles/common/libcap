@@ -4,12 +4,12 @@ sbin/getpcaps
 sbin/setcap
 #usr/include/sys/capability.h
 #usr/include/sys/psx_syscall.h
-usr/lib/libcap.so
+#usr/lib/libcap.so
 usr/lib/libcap.so.2
-usr/lib/libcap.so.2.69
+usr/lib/libcap.so.2.70
 #usr/lib/libpsx.so
 #usr/lib/libpsx.so.2
-usr/lib/libpsx.so.2.69
+usr/lib/libpsx.so.2.70
 #usr/lib/pkgconfig/libcap.pc
 #usr/lib/pkgconfig/libpsx.pc
 #usr/lib/security
@@ -88,7 +88,9 @@ usr/lib/security/pam_cap.so
 #usr/share/man/man3/psx_syscall.3
 #usr/share/man/man3/psx_syscall3.3
 #usr/share/man/man3/psx_syscall6.3
+#usr/share/man/man5/capability.conf.5
 #usr/share/man/man8/captree.8
 #usr/share/man/man8/getcap.8
 #usr/share/man/man8/getpcaps.8
+#usr/share/man/man8/pam_cap.8
 #usr/share/man/man8/setcap.8

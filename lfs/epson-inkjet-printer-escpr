@@ -26,20 +26,21 @@ include Config
 
 SUMMARY    = Epson ESC/P-R Inkjet Printer Driver
 
-VER        = 1.7.23
-LSB        = 1lsb3.2
+VER        = 1.8.5
 
 THISAPP    = epson-inkjet-printer-escpr-$(VER)
-DL_FILE    = $(THISAPP)-$(LSB).tar.gz
+DL_FILE    = $(THISAPP)-1.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = epson-inkjet-printer-escpr
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = cups
 
 SERVICES   =
+
+CFLAGS    += -Wno-implicit-function-declaration
 
 ###############################################################################
 # Top-level Rules
@@ -49,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 037ad4bb838732a658f349506d676585f32fa651bf196387fa9c3d8c57de2c701b5d609908ac7884f8322b26a142f71c9bf41cc054f8a866c0c242cbb71cd5f7
+$(DL_FILE)_BLAKE2 = 549c948709993779b5615b501038fdceb6c3d6f173709b8cf99459346fff89923bdbe1babe34ee98eed4e1ebbd7a4b5962ddbc9cec9711aa15ff2056fec3d436
 
 install : $(TARGET)
 

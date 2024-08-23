@@ -1,0 +1,15 @@
+--- hostap_2_11/src/ap/wpa_auth.c.orig	2024-07-20 20:04:37.000000000 +0200
++++ hostap_2_11/src/ap/wpa_auth.c	2024-08-06 12:51:22.849029559 +0200
+@@ -75,9 +75,9 @@
+ 				 struct wpa_group *group);
+ 
+ 
+-static const u32 eapol_key_timeout_first = 100; /* ms */
+-static const u32 eapol_key_timeout_subseq = 1000; /* ms */
+-static const u32 eapol_key_timeout_first_group = 500; /* ms */
++static const u32 eapol_key_timeout_first = 300; /* ms */
++static const u32 eapol_key_timeout_subseq = 3000; /* ms */
++static const u32 eapol_key_timeout_first_group = 1500; /* ms */
+ static const u32 eapol_key_timeout_no_retrans = 4000; /* ms */
+ 
+ /* TODO: make these configurable */

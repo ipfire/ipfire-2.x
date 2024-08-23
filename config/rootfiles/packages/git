@@ -124,6 +124,7 @@ usr/libexec/git-core/git-read-tree
 usr/libexec/git-core/git-rebase
 usr/libexec/git-core/git-receive-pack
 usr/libexec/git-core/git-reflog
+usr/libexec/git-core/git-refs
 usr/libexec/git-core/git-remote
 usr/libexec/git-core/git-remote-ext
 usr/libexec/git-core/git-remote-fd

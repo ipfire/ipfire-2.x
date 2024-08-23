@@ -8,7 +8,6 @@ Standard commands:
 
 Maintainer and advanced commands:
   check-manualpages	Check the manual pages for broken links
-  docker		Build a docker image
   find-dependencies	Confirm needed libraries are included in build
   lang			Check translations for missing or obsolete strings
   shell			Enter a shell inside the chroot. Used to tune lfs script
@@ -22,5 +21,5 @@ OPTIONS:
 			Cross-compile for this target architecture.  Uses the QEMU 
 			  emulator if needed to virtualise the desired target 
 			  architecture.  Can be permanently set with 
-			  TARGET_ARCH= in .config file.
+			  BUILD_ARCH= in .config file.
 

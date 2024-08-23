@@ -20,7 +20,6 @@ srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/getrrdimage.cgi
-srv/web/ipfire/cgi-bin/gpl.cgi
 #srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
@@ -355,7 +354,6 @@ srv/web/ipfire/html/themes/ipfire/include/css/style.css
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Bold.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Medium.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Regular.ttf
-srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/js
 srv/web/ipfire/html/themes/ipfire/include/js/refreshInetInfo.js
 var/updatecache

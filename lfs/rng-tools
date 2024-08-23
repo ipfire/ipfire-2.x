@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.16
+VER        = 6.17
 SUMMARY    = This is a random number generator daemon
 
 THISAPP    = rng-tools-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rng-tools
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ab1a84c9a298e71ea5cdc1e91004ac069199a0128ee9701b1b3e24b6c705c63a642ab3db260a2c6c910c185e8fc75d5775caa3b7c370f102c75fac496e9bca17
+$(DL_FILE)_BLAKE2 = 4e5a654369ef21ffe19c50fc60bb0242d48ee91c9ea839cde18379aba01fc3648019c610526a51d75094578e25f94a4aa23566bb2dc723b2ff447b9800bfc03f
 
 install : $(TARGET)
 

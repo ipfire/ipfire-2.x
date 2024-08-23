@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.71
+VER        = 5.72
 SUMMARY    = Universal TLS Tunnel
 
 THISAPP    = stunnel-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = stunnel
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d323363c7bfdd6c0b7931b84a6069cf9a8337e967c31e14d15976d7932f0c0d6f40f7a1cbf5abbdff0e9edc52176cdcead4f848653088193b2debf4e77443b42
+$(DL_FILE)_BLAKE2 = 2b4c6400cf25522592e237f35700f81c0092a827526155cb02f503a9b3af50242aea63c3b5389a62d002d6a2ec9e852f80cc9c48318f23d3f9d12ff42cbe5978
 
 install : $(TARGET)
 
@@ -81,9 +81,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--sysconfdir=/etc \
-		--localstatedir=/var
+				--prefix=/usr \
+				--sysconfdir=/etc \
+				--localstatedir=/var
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

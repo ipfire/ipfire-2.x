@@ -48,12 +48,6 @@ my $showbox=0;
 my $showipsec=0;
 my $showovpn=0;
 
-if ( ! -e "/var/ipfire/main/gpl_accepted" ) {
-	print "Status: 302 Moved Temporarily\n";
-	print "Location: gpl.cgi\n\n";
-	exit (0);
-}
-
 &Header::showhttpheaders();
 
 $cgiparams{'ACTION'} = '';
@@ -74,12 +68,10 @@ my %mainsettings = ();
 
 my $connstate = &Header::connectionstatus();
 
-if ( -e "/var/ipfire/main/gpl_accepted" ) {
-	if ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
-		$refresh = "<meta http-equiv='refresh' content='5;'>";
-	}elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
-		$refresh = "<meta http-equiv='refresh' content='30;'>";
-	}
+if ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
+	$refresh = "<meta http-equiv='refresh' content='5;'>";
+} elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
+	$refresh = "<meta http-equiv='refresh' content='30;'>";
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
@@ -151,7 +143,7 @@ if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
 	    chomp ($ipaddr);
 	}
 
-&Header::openbox('100%', 'center', '');
+&Header::opensection();
 if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
 	if (open(IPADDR,"${General::swroot}/ddns/ipcache")) {
    	    $ipaddr = <IPADDR>;
@@ -171,7 +163,7 @@ if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || (
 
 print <<END;
 <!-- Table of networks -->
-<table class='tbl' style='width:80%;'>
+<table class='tbl'>
   <tr>
         <th>$Lang::tr{'network'}</th>
         <th>$Lang::tr{'ip address'}</th>
@@ -247,7 +239,7 @@ if ( $netsettings{'RED_TYPE'} ne "STATIC" && $netsettings{'RED_TYPE'} ne "DHCP" 
 	if ( ( $pppsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
 		print <<END;
 		<br/>
-		<table style='width:80%;'>
+		<table>
 		<tr><td>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'profile'}:
 			<select name='PROFILE'>
@@ -292,7 +284,7 @@ END
 
 print <<END;
 <br/>
-<table class='tbl' style='width:80%;'>
+<table class='tbl'>
 <tr>
 	<th>$Lang::tr{'network'}</th>
 	<th>$Lang::tr{'ip address'}</th>
@@ -380,7 +372,7 @@ print <<END;
 END
 	}
 print"</table>";
-&Header::closebox();
+&Header::closesection();
 
 #Check if there are any vpns configured (ipsec and openvpn)
 &General::readhasharray("${General::swroot}/vpn/config", \%vpnconfig);
@@ -402,7 +394,7 @@ foreach my $dkey (sort { ncmp($ovpnconfig{$a}[1],$ovpnconfig{$b}[1])} keys %ovpn
 
 if ($showbox){
 # Start of Box wich contains all vpn connections
-	&Header::openbox('100%', 'center', $Lang::tr{'vpn'});
+	&Header::opensection();
 
 	#show ipsec connectiontable
 	if ( $showipsec ) {
@@ -414,7 +406,7 @@ if ($showbox){
 		my $col="";
 		my $count=0;
 		print <<END;
-		<table class='tbl' style='width:80%;'>
+		<table class='tbl'>
 		<tr>
 			<th style='width:40%;'>$Lang::tr{'ipsec network'}</th>
 			<th style='width:30%;'>$Lang::tr{'ip address'}</th>
@@ -478,7 +470,7 @@ END
 	if ( $showovpn ){
 		print <<END;
 		<br/>
-		<table class='tbl' style='width:80%;'>
+		<table class='tbl'>
 		<tr>
 			<th style='width:40%;'>$Lang::tr{'openvpn network'}</th>
 			<th style='width:30%;'>$Lang::tr{'ip address'}</th>
@@ -533,29 +525,15 @@ END
 		}
 		print"</table>";
 	}
-&Header::closebox();
+
+	&Header::closesection();
 }
+
+my @warnings = ();
 
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
-	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
-}
-
-# EOL architecture
-my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
-if ($machine =~ m/^arm/) {
-	$warnmessage .= "<li><a href='https://wiki.ipfire.org/hardware/requirements' style='color:white;'>$Lang::tr{'eol architecture warning'}</a></li>";
-}
-
-# Memory usage warning
-my @free = `/usr/bin/free`;
-$free[1] =~ m/(\d+)/;
-my $mem = $1;
-$free[2] =~ m/(\d+)/;
-my $used = $1;
-my $pct = int 100 * ($mem - $used) / $mem;
-if ($used / $mem > 90) {
-	$warnmessage .= "<li>$Lang::tr{'high memory usage'}: $pct% !</li>";
+	push(@warnings, "<a href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a>");
 }
 
 # Diskspace usage warning
@@ -571,7 +549,7 @@ foreach my $line (@df) {
 		if ($1<5) {
 			# available:plain value in MB, and not %used as 10% is too much to waste on small disk
 			# and root size should not vary during time
-			$warnmessage .= "<li>$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !</li>";
+			push(@warnings, "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b>");
 		}
 
 	} else {
@@ -580,7 +558,7 @@ foreach my $line (@df) {
 		if ($1>90) {
 			@temp = split(/ /,$line);
 			$temp2=int(100-$1);
-			$warnmessage .= "<li>$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b> !</li>";
+			push(@warnings, "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b>");
 		}
 	}
 }
@@ -592,36 +570,25 @@ foreach my $file (@files) {
 	my $disk=`echo $file | cut -d"-" -f2`;
 	chomp ($disk);
 	if (`/bin/grep "SAVE ALL DATA" $file`) {
-		$warnmessage .= "<li>$Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>";
+		push(@warnings, "$Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'}");
 	}
-}
-
-if ($warnmessage) {
-	&Header::openbox('100%','center', );
-	print "<table class='tbl' style='width:80%;'>";
-	print "<tr><th>$Lang::tr{'fwhost hint'}</th></tr>";
-	print "<tr><td style='color:white; background-color:$Header::colourred;'>$warnmessage</td></tr>";
-    print "</table>";
-	&Header::closebox();
 }
 
 my %coredb = &Pakfire::coredbinfo();
 if (defined $coredb{'AvailableRelease'}) {
-	print "<br /><br /><br /><a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $coredb{'Release'} $Lang::tr{'core notice 2'} $coredb{'AvailableRelease'} $Lang::tr{'core notice 3'}</a>";
+	push(@warnings, "<a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $coredb{'Release'} $Lang::tr{'core notice 2'} $coredb{'AvailableRelease'} $Lang::tr{'core notice 3'}</a>");
 }
 
 if ( -e "/var/run/need_reboot" ) {
-	print "<div style='text-align:center; color:red;'>";
-	print "<br/><br/>$Lang::tr{'needreboot'}!";
-	print "</div>";
+	push(@warnings, $Lang::tr{'needreboot'});
 }
 
 if ( `/bin/grep -c "reiserfs" /proc/self/mounts`  > 0 ) {
-        print "<div style='text-align:center; color:blue;'>";
-        print "<br/><br/>$Lang::tr{'reiserfs warning1'}";
-        print "<br/>$Lang::tr{'reiserfs warning2'}";
-        print "</div>";
+	push (@warnings, $Lang::tr{'reiserfs warning1'} . " " . $Lang::tr{'reiserfs warning2'});
 }
+
+# Show any warnings
+&Header::warningbox(@warnings);
 
 &Header::closebigbox();
 &Header::closepage();

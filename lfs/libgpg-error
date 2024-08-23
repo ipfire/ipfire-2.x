@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.48
+VER        = 1.50
 
 THISAPP    = libgpg-error-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4ced63058586558f4d001bcc468f4bd419b8ec29fbd7dbcaa1a21f959d847c9e12c10c548a0038fd4eac0bdfc9907b61e9f6be71c95fc61c964c649e2415dfd7
+$(DL_FILE)_BLAKE2 = 621d9a604585daa1fbd08aaa94f3b177f6265046ccf452317e126e73079c567c555cbb8ab8b63e09b76bdf4f11a1aad7effd118651fe9e9cbcf01229f20ab297
 
 install : $(TARGET)
 
@@ -70,7 +70,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

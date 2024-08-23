@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20240531
+VER        = 20240813
 
 THISAPP    = Intel-Linux-Processor-Microcode-Data-Files-microcode-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6a2c5ee6b6f3543b28f3753b30812e360bad50776b4f81e32a832e2169f38c11f8d5108ce0a81ddcdf1ecf7557baf1fd62c053a365f39a33ded5fd5018580b1f
+$(DL_FILE)_BLAKE2 = 39fefb8fba7c204a5e62ea2147aaf6152a01e2be02b18b9da73a2379633fa8536be2508b97ac0b6d7aad998d060cee733224250c9c4a8ca283e9f28fd011831e
 
 install : $(TARGET)
 
@@ -74,7 +74,12 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && mkdir -p $(DIR_APP) && tar axf $(DIR_DL)/$(DL_FILE)
+
 	# Copy the firmware files into the right position
 	cd $(DIR_APP) && cp -R intel-ucode /lib/firmware/
+
+	# Hardlink any identical files
+	hardlink -c -vv /lib/firmware/intel-ucode
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

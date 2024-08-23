@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.37
+VER        = 1.1.42
 
 THISAPP    = libxslt-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 096d93dd7178bf4483207514b1435f5bf426eea4952ffab7cc00c3e85aa736534c4acb5377af9647aa77a0cd793205194509d997a7bb5cae692f65e326566cd8
+$(DL_FILE)_BLAKE2 = 91b2ca38807ae21b6629b8e19f4ab9d7d19bc0af17f2546e1cf278b2f2fff62b86bbbd996085fff322f3d5ae6c2b20bcfc4e9fb501c301d3fd5d56cf5b205ede
 
 install : $(TARGET)
 

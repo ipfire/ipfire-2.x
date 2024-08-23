@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 24.03.0
+VER        = 24.08.0
 
 THISAPP    = poppler-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 34cd3b64b1fbee53727d99bf73a896331c15d816ea77aa678a9ebe4bc6ddf8c859ae004915aba36346dbcb13862d7d6670562e45d99888d444c523d83c90b58a
+$(DL_FILE)_BLAKE2 = f76ccb8d596909d671df34f6c028e6161ad734d31b460bc7b3578d08a75ad146d6d2c1e4108acb33d08fd518fee014cc84e23d2e04ea92ad152702af614c5ca2
 
 install : $(TARGET)
 
@@ -81,9 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-DENABLE_GPGME=OFF \
 		-DENABLE_QT6=OFF \
 		..
-
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -11,7 +11,7 @@ etc/unbound/unbound.conf
 #usr/lib/libunbound.la
 #usr/lib/libunbound.so
 usr/lib/libunbound.so.8
-usr/lib/libunbound.so.8.1.27
+usr/lib/libunbound.so.8.1.28
 #usr/lib/pkgconfig/libunbound.pc
 usr/sbin/unbound
 usr/sbin/unbound-anchor
@@ -19,6 +19,7 @@ usr/sbin/unbound-checkconf
 usr/sbin/unbound-control
 usr/sbin/unbound-control-setup
 usr/sbin/unbound-dhcp-leases-bridge
+usr/sbin/unbound-dhcp-leases-client
 usr/sbin/unbound-host
 #usr/share/man/man1/unbound-host.1
 #usr/share/man/man3/libunbound.3

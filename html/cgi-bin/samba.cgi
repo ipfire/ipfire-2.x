@@ -180,35 +180,23 @@ $selected{'MAPTOGUEST'}{$sambasettings{'MAPTOGUEST'}} = "selected='selected'";
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ###################################
 
-&Header::openbox('100%', 'center', $Lang::tr{'samba'});
+&Header::opensection();
 
-my %servicenames = (
-	"nmbd"     => $Lang::tr{'netbios nameserver daemon'},
-	"smbd"     => $Lang::tr{'smb daemon'},
-	"winbindd" => $Lang::tr{'winbind daemon'},
-);
+&Header::ServiceStatus({
+	$Lang::tr{'netbios nameserver daemon'} => {
+		"process" => "nmbd",
+	},
+
+	$Lang::tr{'smb daemon'} => {
+		"process" => "smbd",
+	},
+
+	$Lang::tr{'winbind daemon'} => {
+		"process" => "winbindd",
+	},
+});
 
 print <<END;
-	<table class="tbl" width='100%' cellspacing='0'>
-		<tr bgcolor='$color{'color20'}'>
-			<td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td>
-		</tr>
-END
-
-foreach my $service (sort keys %servicenames) {
-	my $status = &isrunning($service);
-
-	print <<END;
-		<tr>
-			<td align='left' width='40%'>$servicenames{$service}</td>
-			$status
-		</tr>
-END
-}
-
-print <<END
-	</table>
-
 	<br>
 
 	<table width="100%">
@@ -233,40 +221,41 @@ print <<END
 			</form>
 		</td>
 	</table>
+END
 
-	<br>
+&Header::closesection();
 
+&Header::openbox('100%', 'center', $Lang::tr{'samba'});
+
+print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table class="tbl" width='100%' cellspacing='0'>
-			<tr bgcolor='$color{'color20'}'>
-				<td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td>
-			</tr>
+		<h6>$Lang::tr{'basic options'}</h6>
+
+		<table class="form">
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'workgroup'}</td>
-				<td align='left'>
+				<td>$Lang::tr{'workgroup'}</td>
+				<td>
 					<input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" />
 				</td>
 			</tr>
+		</table>
+
+		<h6>$Lang::tr{'security options'}</h6>
+
+		<table class="form">
 			<tr>
-				<td align='left'><br /></td>
-				<td></td>
-			</tr>
-			<tr bgcolor='$color{'color20'}'>
-				<td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td>
-			</tr>
-			<tr>
-				<td align='left' width='40%'>$Lang::tr{'security'}</td>
-				<td align='left'>
-					<select name='ROLE' style="width: 165px">
+				<td>$Lang::tr{'security'}</td>
+				<td>
+					<select name='ROLE'>
 						<option value='standalone' $selected{'ROLE'}{'standalone'}>$Lang::tr{'samba server role standalone'}</option>
 						<option value='member' $selected{'ROLE'}{'member'}>$Lang::tr{'samba server role member'}</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'encryption'}</td>
-				<td align='left'>
-					<select name='ENCRYPTION' style="width: 165px">
+				<td>$Lang::tr{'encryption'}</td>
+				<td>
+					<select name='ENCRYPTION'>
 						<option value='optional' $selected{'ENCRYPTION'}{'optional'}>$Lang::tr{'optional'}</option>
 						<option value='desired' $selected{'ENCRYPTION'}{'desired'}>$Lang::tr{'desired'}</option>
 						<option value='required' $selected{'ENCRYPTION'}{'required'}>$Lang::tr{'required'}</option>
@@ -274,44 +263,36 @@ print <<END
 				</td>
 			</tr>
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'map to guest'}</td>
-				<td align='left'>
-					<select name='MAPTOGUEST' style="width: 165px">
+				<td>$Lang::tr{'map to guest'}</td>
+				<td>
+					<select name='MAPTOGUEST'>
 						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
 						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
 					</select>
 				</td>
 			</tr>
+		</table>
+
+		<h6>$Lang::tr{'network options'}</h6>
+
+		<table class="form">
 			<tr>
-				<td align='left'><br /></td>
-				<td></td>
-			</tr>
-			<tr bgcolor='$color{'color20'}'>
-				<td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td>
-			</tr>
-			<tr>
-				<td align='left' width='40%'>$Lang::tr{'remote announce'}</td>
-				<td align='left'>
+				<td>$Lang::tr{'remote announce'}</td>
+				<td>
 					<input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" />
 				</td>
 			</tr>
 			<tr>
-				<td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td>
-				<td align='left'>
+				<td>$Lang::tr{'remote browse sync'}</td>
+				<td>
 					<input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" />
 				</td>
 			</tr>
-		</table>
 
-		<br>
-
-		<table width='100%' cellspacing='0'>
-			<tr>
-				<td align='center'>
-					<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='ACTION' value="$Lang::tr{'save'}">
-						<input type='submit' value="$Lang::tr{'save'}">
-					</form>
+			<tr class="action">
+				<td colspan="2">
+					<input type='hidden' name='ACTION' value="$Lang::tr{'save'}">
+					<input type='submit' value="$Lang::tr{'save'}">
 				</td>
 			</tr>
 		</table>
@@ -737,40 +718,6 @@ close FILE;
 &General::system("/usr/local/bin/sambactrl", "smbsafeconf");
 &General::system("/usr/local/bin/sambactrl", "smbreload");
 }
-
-sub isrunning
-	{
-	my $cmd = $_[0];
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
-	my $pid = '';
-	my $testcmd = '';
-	my $exename;
-
-	$cmd =~ /(^[a-z]+)/;
-	$exename = $1;
-
-	if (open(FILE, "/var/run/${cmd}.pid"))
-		{
-		$pid = <FILE>; chomp $pid;
-		close FILE;
-		if (open(FILE, "/proc/${pid}/status"))
-			{
-			while (<FILE>)
-				{
-				if (/^Name:\W+(.*)/)
-					{
-					$testcmd = $1;
-					}
-				}
-			close FILE;
-			if ($testcmd =~ /$exename/)
-				{
-				$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
-				}
-			}
-		}
-	return $status;
-	}
 
 sub writeconfiguration() {
 	open (FILE, ">${General::swroot}/samba/global") or die "Can't save the global settings: $!";

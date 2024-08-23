@@ -152,6 +152,9 @@ my @http_ports = ('80', '81');
 # Array which contains a list of rulefiles which always will be included if they exist.
 my @static_included_rulefiles = ('local.rules', 'whitelist.rules');
 
+# Log App Layer Events? (Useful for debugging only)
+my $LOG_APP_LAYER_EVENTS = 0;
+
 # Array which contains a list of allways enabled application layer protocols.
 my @static_enabled_app_layer_protos = ('app-layer', 'decoder', 'files', 'stream');
 
@@ -1437,31 +1440,33 @@ sub write_used_rulefiles_file (@) {
 		}
 	}
 
-	print FILE "\n#Default rules for used application layer protocols.\n";
-	foreach my $enabled_app_layer_proto (@enabled_app_layer_protos) {
-		# Check if the current processed app layer proto needs to be translated
-		# into an application name.
-		if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
-			# Obtain the translated application name for this protocol.
-			$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
-		}
+	if ($LOG_APP_LAYER_EVENTS) {
+		print FILE "\n#Default rules for used application layer protocols.\n";
+		foreach my $enabled_app_layer_proto (@enabled_app_layer_protos) {
+			# Check if the current processed app layer proto needs to be translated
+			# into an application name.
+			if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
+				# Obtain the translated application name for this protocol.
+				$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
+			}
 
-		# Generate filename.
-		my $rulesfile = "$default_rulespath/$enabled_app_layer_proto\.rules";
+			# Generate filename.
+			my $rulesfile = "$default_rulespath/$enabled_app_layer_proto\.rules";
 
-		# Check if such a file exists.
-		if (-f "$rulesfile") {
-			# Write the rulesfile name to the file.
-			print FILE " - $rulesfile\n";
-		}
+			# Check if such a file exists.
+			if (-f "$rulesfile") {
+				# Write the rulesfile name to the file.
+				print FILE " - $rulesfile\n";
+			}
 
-		# Generate filename with "events" in filename.
-		$rulesfile = "$default_rulespath/$enabled_app_layer_proto\-events.rules";
+			# Generate filename with "events" in filename.
+			$rulesfile = "$default_rulespath/$enabled_app_layer_proto\-events.rules";
 
-		# Check if this file exists.
-		if (-f "$rulesfile" ) {
-			# Write the rulesfile name to the file.
-			print FILE " - $rulesfile\n";
+			# Check if this file exists.
+			if (-f "$rulesfile" ) {
+				# Write the rulesfile name to the file.
+				print FILE " - $rulesfile\n";
+			}
 		}
 	}
 

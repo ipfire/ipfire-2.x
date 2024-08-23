@@ -31,8 +31,19 @@
 ###############################################################################
 
 # Cleanup environment from any variables
-unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
+unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN
+unexport NAME SNAME VERSION CORE SLOGAN SYSTEM_RELEASE PAKFIRE_TREE CONFIG_ROOT
+unexport KVER KVER_SUFFIX
+unexport SYSTEM_PROCESSOR SYSTEM_MEMORY
+unexport DEFAULT_PARALLELISM
+unexport LFS_BASEDIR
+unexport BUILD_DIR
+unexport IMAGES_DIR
+unexport LOG_DIR
+unexport PACKAGES_DIR
+unexport TOOLS_DIR
 unexport XZ_OPT
+unexport ZSTD_OPT
 
 # Basic Variables
 EMPTY :=
@@ -67,19 +78,14 @@ endif
 TAR_OPTIONS = \
 	--format=pax \
 	--acls \
-	--xattrs --xattrs-include='*'
-
-ZSTD_OPTIONS = \
-	-T$(PARALLELISM) \
-	-19 \
-	--long
+	--xattrs \
+	--xattrs-include='*' \
+	--sparse
 
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #
 URL_IPFIRE  = https://source.ipfire.org/source-2.x
-URL_TOOLCHAIN = https://source.ipfire.org/toolchains
-URL_SOURCE = people.ipfire.org:/pub/sources/source-2.x
 
 # Don't change this; it will be overridden by other makefiles where necessary.
 #
@@ -98,7 +104,7 @@ DIR_SRC = $(ROOT)/usr/src
 DIR_DL      = $(LFS_BASEDIR)/cache
 DIR_CHK     = $(LFS_BASEDIR)/cache/check
 DIR_CONF    = $(LFS_BASEDIR)/config
-DIR_INFO    = $(LFS_BASEDIR)/log
+DIR_INFO    = $(LOG_DIR)
 DIR_TMP     = /tmp
 DIR_TMP_PAK = $(DIR_TMP)/package-$(PROG)
 
@@ -248,12 +254,6 @@ define PREBUILD
 	echo "====================================== Installing $(THISAPP) ..."
 	@echo "Install started; saving file list to $(DIR_SRC)/lsalr ..."
 	@if [ ! -f $(DIR_SRC)/lsalr ]; then $(FIND_FILES) > $(DIR_SRC)/lsalr; fi
-	# Fix installation on partial rebuild, so modules install where they should
-	# and not everytime on the last compiled kernel
-	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
-		cd $(DIR_SRC)/linux-$(KVER) && \
-			sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire$(KCFG)+' Makefile; \
-	fi
 endef
 else
 define PREBUILD
@@ -282,7 +282,7 @@ define POSTBUILD
 	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
 	# $(TARGET) : log result with {commented|include|added} files
 	@if [ -s "$(TARGET)_diff" ]; then \
-		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
+		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
 		echo $(LFS_SCRIPT); \
 		ROOTFILE=$$(find -L $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
@@ -332,69 +332,133 @@ define B2SUM
 	[ "$($@_BLAKE2)" = "$$(b2sum $(DIR_DL)/$@ | awk '{ print $$1 }')" ] && echo "$@ checksum OK"
 endef
 
+ARCHIVE_DIR      = /tmp/archive
+ARCHIVE_TMP      = $(ARCHIVE_DIR)/.tmp
+
+# The filename of the package file
+PACKAGE_FILENAME = $(PROG)-$(VER)-$(PAK_VER).ipfire
+
+# The filename of the meta file
+META_FILENAME    = meta-$(PROG)
+
+# Takes one rootfile or a directory and will return a list of all included files
+COLLECT_FILES = \
+	BUILD_ARCH="$(BUILD_ARCH)" \
+	BUILDTARGET="$(BUILDTARGET)" \
+	KVER="$(KVER)" \
+		$(DIR_SRC)/src/scripts/archive.files $(BUILD_ARCH) $(1) $(2) | tee $(3)
+
+# Takes a filelist from standard input and streams a tarball with all files
+__FILES_IN = \
+	tar \
+		--create \
+		$(TAR_OPTIONS) \
+		--directory=/ \
+		--exclude="dev/pts/*" \
+		--exclude="proc/*" \
+		--exclude="tmp/*" \
+		--exclude="__pycache__" \
+		--files-from=-
+
+# Takes a tarball and extracts it in the target directory
+__FILES_OUT = \
+	tar \
+		--extract \
+		$(TAR_OPTIONS) \
+		--directory=$(1)
+
+# Copies all files on a rootfile into the given directory
+define COPY_FILES
+	# Copy all files from $(1) to $(2) ($(3))
+	$(call COLLECT_FILES,$(1),$(3),$(4)) | \
+		$(call __FILES_IN) | \
+		$(call __FILES_OUT,$(2))
+
+	# Strip everything, except a few things
+	$(DIR_SRC)/src/stripper $(2) \
+		--exclude=/lib/firmware \
+		--exclude=/usr/lib/go \
+		--exclude=/usr/lib/vdr \
+		--exclude=/usr/sbin/vdr
+endef
+
+# Called to compress a file that will be distributed
+__COMPRESS = \
+	tar \
+		--create \
+		--verbose --verbose \
+		--use-compress-program="$(3)" \
+		$(TAR_OPTIONS) \
+		--directory=$(1) \
+		--file=$(2) \
+		--show-transform \
+		--transform="s@^\./@@" \
+		.
+
+COMPRESS_XZ   = $(call __COMPRESS,$(1),$(2),xz $(XZ_OPT))
+COMPRESS_ZSTD = $(call __COMPRESS,$(1),$(2),zstd $(ZSTD_OPT))
+
+# Command to create a Pakfire package
+define CREATE_PACKAGE
+	# Compress the package
+	tar \
+		--create \
+		--format=pax \
+		--no-acls \
+		--no-xattrs \
+		--directory=$(1) \
+		--file=$(2) \
+		--transform="s@^\./@@" \
+		.
+endef
+
+# Creates the meta file for a Pakfire package
+define CREATE_META
+	# Clear/create the file
+	: > $(2)
+
+	# Write payload
+	echo "Name: $(PROG)"							>> $(2)
+	echo "Summary: $(SUMMARY)"						>> $(2)
+	echo "ProgVersion: $(VER)"						>> $(2)
+	echo "Release: $(PAK_VER)"						>> $(2)
+	echo "Size: $(shell stat --format=%s $(1))"			>> $(2)
+	echo "Dependencies: $(DEPS)"					>> $(2)
+	echo "File: $(PROG)-$(VER)-$(PAK_VER).ipfire"	>> $(2)
+	echo "Services: $(SERVICES)"					>> $(2)
+endef
+
+# Helper function to make sure that we have all sorts of mountpoints in the images
+CREATE_MOUNTPOINTS = mkdir -pv $(1)/dev $(1)/proc $(1)/sys
+
 define PAK
-	# Bringing the files to their right place.
-	@rm -rf $(DIR_TMP_PAK) && mkdir -p $(DIR_TMP_PAK)
-	if [ -e "/usr/src/src/paks/$(PROG)" ]; then \
-		cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
-		$(DIR_TMP_PAK); \
+	# Bringing the files to their right place
+	@rm -rf $(ARCHIVE_DIR) && mkdir -p $(ARCHIVE_DIR) $(ARCHIVE_TMP)
+
+	# Install scripts
+	cd $(DIR_SRC) && if [ -e "src/paks/$(PROG)" ]; then \
+		install -v -m 744 src/paks/$(PROG)/{install,uninstall,update}.sh $(ARCHIVE_DIR); \
 	else \
-		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
-		$(DIR_TMP_PAK); \
+		install -v -m 744 src/paks/default/{install,uninstall,update}.sh $(ARCHIVE_DIR); \
 	fi
-	for i in $(DIR_SRC)/config/rootfiles/packages/{$(BUILD_ARCH),}/$(PROG); do \
-		if [ -e "$${i}" ]; then \
-			cp -v $${i} $(DIR_TMP_PAK)/ROOTFILES; \
-			break; \
-		fi; \
-	done
 
-	# Replace variables in rootfiles
-	sed -i $(DIR_TMP_PAK)/ROOTFILES \
-		-e 's/BUILDTARGET/$(BUILDTARGET)/g' \
-		-e 's/KVER/$(KVER)/g' \
-		-e 's/xxxMACHINExxx/$(BUILD_ARCH)/g'
-
-	# Replace variables in scripts
-	sed -i $(DIR_TMP_PAK)/install.sh \
-		-e 's/xxxKVERxxx/$(KVER)/g'
-
-	# Make scripts executable
-	chmod 754 $(DIR_TMP_PAK)/{{,un}install,update}.sh
-
-	# Collect all files
-	rm -rf $(DIR_TMP_PAK)/root && mkdir -p $(DIR_TMP_PAK)/root
-	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/*' \
-		--exclude='__pycache__' \
-		-C / --files-from=$(DIR_TMP_PAK)/ROOTFILES | tar -x -C $(DIR_TMP_PAK)/root; \
-		exit $${PIPESTATUS[0]}
+	# Copy all files
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/packages,$(ARCHIVE_TMP),$(PROG),$(ARCHIVE_DIR)/ROOTFILES)
 
 	# Compress tarball
-	cd $(DIR_TMP_PAK)/root && tar cf - * | xz $(XZ_OPT) > $(DIR_TMP_PAK)/files.tar.xz
+	$(call COMPRESS_XZ,$(ARCHIVE_TMP),$(ARCHIVE_DIR)/files.tar.xz)
 
 	# Cleanup temporary files
-	rm -rf $(DIR_TMP_PAK)/root
+	rm -rf $(ARCHIVE_TMP)
 
-	# Remove any commented lines
-	sed -i $(DIR_TMP_PAK)/ROOTFILES -e "/^#/d"
+	# Create the package
+	$(call CREATE_PACKAGE,$(ARCHIVE_DIR),$(PACKAGES_DIR)/$(PACKAGE_FILENAME))
 
-	# Make package
-	cd $(DIR_TMP_PAK) && tar cf /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire *
+	# Write the meta file
+	$(call CREATE_META,$(PACKAGES_DIR)/$(PACKAGE_FILENAME),$(PACKAGES_DIR)/$(META_FILENAME))
 
 	# Cleanup
-	rm -rf $(DIR_TMP_PAK)
-
-	# Escape SUMMARY variable and create meta file
-	summaryEscaped=$$(sed 's/[&/\]/\\&/g' <<< "$(SUMMARY)"); \
-	sed \
-		-e "s/NAME/$(PROG)/g" \
-		-e "s/SUMMARY/$$summaryEscaped/g" \
-		-e "s/VER/$(VER)/g" \
-		-e "s/RELEASE/$(PAK_VER)/g" \
-		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/$$(stat --format=%s /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
-		-e "s/SERVICES/$(SERVICES)/g" \
-	  < /usr/src/src/pakfire/meta > /install/packages/meta-$(PROG)
+	rm -rf $(ARCHIVE_DIR)
 endef
 
 define INSTALL_INITSCRIPT
@@ -415,6 +479,3 @@ define UPDATE_AUTOMAKE
 	done
 endef
 endif
-
-test:
-	$(call INSTALL_INITSCRIPT,hostapd)

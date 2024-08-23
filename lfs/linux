@@ -24,14 +24,12 @@
 
 include Config
 
-VER         = 6.6.32
+VER         = 6.6.47
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-CFLAGS     =
-CXXFLAGS   =
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
 KERNEL_ARCH   = $(BUILD_ARCH)
@@ -48,19 +46,17 @@ ifeq "$(BUILD_ARCH)" "riscv64"
 	KERNEL_TARGET = Image.gz
 endif
 
-VERSUFIX=ipfire$(KCFG)
-
 ifeq "$(TOOLCHAIN)" "1"
-	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
+	TARGET = $(DIR_INFO)/$(THISAPP)-tools
 	HEADERS_PREFIX = $(TOOLS_DIR)
 	EXTRAMAKE = CROSS_COMPILE=$(CROSSTARGET)-
 else
-	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 	HEADERS_PREFIX = /usr
+ifeq "$(HEADERS)" "1"
+	TARGET = $(DIR_INFO)/$(THISAPP)-headers
+else
+	TARGET = $(DIR_INFO)/$(THISAPP)
 endif
-
-ifeq "$(KCFG)" ""
-LASTKERNEL=1
 endif
 
 ###############################################################################
@@ -72,7 +68,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6456fcafe10eae6c0cf962b651aa567ba9ad522c4df0c87301ab0060313b8179a818a1d305e0af21599bc5b7bf42e2f61121a2ee0658a065524d098eb2947f0e
+$(DL_FILE)_BLAKE2 = ece3be3257b205c3d56c71525b95798347ab40b00d9ca54f0812a5407725512613075e85b3a6a0f3bfc4a59c714438efc4c08ed171a3f92e62cc3e4046f87a1f
 
 install : $(TARGET)
 
@@ -104,9 +100,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	ln -svf linux-$(VER) $(DIR_SRC)/linux
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.26-layer7.patch
@@ -133,9 +127,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
 
-	# reset ax88179 twice like in older kernels
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.32-asix88179_reset.patch
-
 	# Fix external module compile
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
 
@@ -145,7 +136,10 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
-ifeq "$(KCFG)" "-headers"
+	# Customise the release
+	cd $(DIR_APP) && echo "$(KVER_SUFFIX)" > localversion.10-$(SNAME)
+
+ifeq "$(HEADERS)" "1"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) $(EXTRAMAKE) headers
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
@@ -159,79 +153,77 @@ else
 		drivers/video/logo/logo_linux_clut224.ppm
 
 	# Cleanup kernel source
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)-$(VERSUFIX) $(DIR_APP)/.config
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)$(KVER_SUFFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make oldconfig
 	cd $(DIR_APP) && make clean
-	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
 	# Copy Module signing key configuration
 	cp -f $(DIR_SRC)/config/kernel/x509.genkey $(DIR_APP)/certs/x509.genkey
 
 	# Remove modules folder if exists
-	rm -rf /lib/modules/$(VER)-$(VERSUFIX)
+	rm -rf /lib/modules/$(KVER)
 
 	# Build the kernel
 	cd $(DIR_APP) && make $(MAKETUNING) $(KERNEL_TARGET) modules
 
 	# Install the kernel
-	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(KVER)
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(KVER)
+	cd $(DIR_APP) && cp -v .config /boot/config-$(KVER)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
 
 ifneq "$(BUILD_PLATFORM)" "x86"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
-	mkdir -p /boot/dtb-$(VER)-$(VERSUFIX)
+	mkdir -p /boot/dtb-$(KVER)
 	cd $(DIR_APP)/arch/$(KERNEL_ARCH)/boot/dts && for f in $$(find -name "*.dtb"); do \
-				cp -v --parents $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
-				chmod 644 /boot/dtb-$(VER)-$(VERSUFIX)/$$f ; \
+				cp -v --parents $$f /boot/dtb-$(KVER)/ ; \
+				chmod 644 /boot/dtb-$(KVER)/$$f ; \
 			done
 endif
 
 	# Recreate source and build links
-	rm -rf /lib/modules/$(VER)-$(VERSUFIX)/{build,source}
-	mkdir -p /lib/modules/$(VER)-$(VERSUFIX)/build
-	ln -sf build /lib/modules/$(VER)-$(VERSUFIX)/source
+	rm -rf /lib/modules/$(KVER)/{build,source}
+	mkdir -p /lib/modules/$(KVER)/build
+	ln -sf build /lib/modules/$(KVER)/source
 
 	# Create dirs for extra modules
-	mkdir -p /lib/modules/$(VER)-$(VERSUFIX)/extra
+	mkdir -p /lib/modules/$(KVER)/extra
 
 	cd $(DIR_APP) && cp --parents $$(find -type f -name "Makefile*" -o -name "Kconfig*") \
-		/lib/modules/$(VER)-$(VERSUFIX)/build
-	cd $(DIR_APP) && cp Module.symvers System.map /lib/modules/$(VER)-$(VERSUFIX)/build
-	rm -rf /lib/modules/$(VER)-$(VERSUFIX)/build/{Documentation,scripts,include}
+		/lib/modules/$(KVER)/build
+	cd $(DIR_APP) && cp Module.symvers System.map /lib/modules/$(KVER)/build
+	rm -rf /lib/modules/$(KVER)/build/{Documentation,scripts,include}
 
-	cd $(DIR_APP) && cp .config /lib/modules/$(VER)-$(VERSUFIX)/build
-	cd $(DIR_APP) && cp -a scripts /lib/modules/$(VER)-$(VERSUFIX)/build
-	find /lib/modules/$(VER)-$(VERSUFIX)/build/scripts -name "*.o" -exec rm -vf {} \;
+	cd $(DIR_APP) && cp .config /lib/modules/$(KVER)/build
+	cd $(DIR_APP) && cp -a scripts /lib/modules/$(KVER)/build
+	find /lib/modules/$(KVER)/build/scripts -name "*.o" -exec rm -vf {} \;
 
-	cd $(DIR_APP) && cp -a --parents arch/$(HEADERS_ARCH)/include /lib/modules/$(VER)-$(VERSUFIX)/build
-	cd $(DIR_APP) && cp -a include /lib/modules/$(VER)-$(VERSUFIX)/build/include
+	cd $(DIR_APP) && cp -a --parents arch/$(HEADERS_ARCH)/include /lib/modules/$(KVER)/build
+	cd $(DIR_APP) && cp -a include /lib/modules/$(KVER)/build/include
 
 	# Copy module signing key for off tree modules
-	cd $(DIR_APP) && cp -f certs/signing_key.* /lib/modules/$(VER)-$(VERSUFIX)/build/certs/
+	cd $(DIR_APP) && cp -f certs/signing_key.* /lib/modules/$(KVER)/build/certs/
 
 	# Install objtool
 	cd $(DIR_APP) && cp -a tools/objtool/objtool \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/tools/objtool/ || :
+		/lib/modules/$(KVER)/build/tools/objtool/ || :
 	cd $(DIR_APP) && cp -a --parents tools/build/{Build,Build.include,fixdep.c} \
-		tools/scripts/utilities.mak /lib/modules/$(VER)-$(VERSUFIX)/build
+		tools/scripts/utilities.mak /lib/modules/$(KVER)/build
 
 	# Make sure we can build external modules
-	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/Makefile \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/include/generated/uapi/linux/version.h
-	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/autoconf.h
-	cp /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/include/config/auto.conf
+	touch -r /lib/modules/$(KVER)/build/Makefile \
+		/lib/modules/$(KVER)/build/include/generated/uapi/linux/version.h
+	touch -r /lib/modules/$(KVER)/build/.config \
+		/lib/modules/$(KVER)/build/autoconf.h
+	cp /lib/modules/$(KVER)/build/.config \
+		/lib/modules/$(KVER)/build/include/config/auto.conf
 
 	# Fix permissions
-	find /lib/modules/$(VER)-$(VERSUFIX) -name "modules.order" \
+	find /lib/modules/$(KVER) -name "modules.order" \
 		-exec chmod 644 {} \;
 
-	find /lib/modules/$(VER)-$(VERSUFIX) -name ".*.cmd" -exec rm -f {} \;
+	find /lib/modules/$(KVER) -name ".*.cmd" -exec rm -f {} \;
 
-ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
@@ -239,11 +231,11 @@ ifeq "$(LASTKERNEL)" "1"
 	echo install drm /bin/false > /etc/modprobe.d/framebuffer.conf
 
 	# Blacklist old framebuffer modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
+	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	# Blacklist new drm framebuffer modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm -name *.ko.xz); do \
+	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/gpu/drm -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	sed -i -e "s|.ko.xz||g" /etc/modprobe.d/framebuffer.conf
@@ -256,11 +248,6 @@ ifeq "$(LASTKERNEL)" "1"
 	cd $(DIR_APP)/tools/power/cpupower && make install
 
 endif
-endif
 
-	#force new build of external modules and initrd if the kernel was rebuild
-	-rm -f /usr/src/log/*-kmod-$(VER)-$(VERSUFIX)
-	-rm -f /usr/src/log/linux-initrd-$(VER)-$(VERSUFIX)
-
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
