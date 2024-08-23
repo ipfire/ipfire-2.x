@@ -50,6 +50,9 @@ ldconfig
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Reload init
+telinit u
+
 # Start services
 
 # This update needs a reboot...
