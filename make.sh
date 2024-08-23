@@ -241,9 +241,10 @@ print_status() {
 }
 
 print_build_summary() {
-	local runtime=$(format_runtime $@)
+	local runtime="${1}"
 
-	print_line "*** Build finished in ${runtime}"
+	print_line "*** Build Finished"
+	print_runtime "${runtime}"
 	print_status DONE
 }
 
