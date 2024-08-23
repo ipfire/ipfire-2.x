@@ -46,6 +46,13 @@ KVER="${KVER/-rc/.0-rc}${KVER_SUFFIX}"
 #
 ###############################################################################
 
+# All supported architectures
+ARCHES=(
+	aarch64
+	riscv64
+	x86_64
+)
+
 HOST_ARCH="${HOSTTYPE}"
 LC_ALL=POSIX
 PS1='\u:\w$ '
@@ -2159,8 +2166,8 @@ exec_in_namespace() {
 		"${0}" "${args[@]}" "$@"
 }
 
-check_logfiles() {
-	print_headline "Checking Log Files..."
+check_for_missing_rootfiles() {
+	print_headline "Checking for missing rootfiles..."
 
 	local file
 	for file in ${LOG_DIR}/*_missing_rootfile; do
@@ -2172,6 +2179,102 @@ check_logfiles() {
 	done
 
 	return 0
+}
+
+check_rootfiles_for_arch() {
+	local arch="${1}"
+
+	local args=(
+		# Search path
+		"${BASEDIR}/config/rootfiles"
+
+		# Exclude old core updates
+		"--exclude-dir" "oldcore"
+
+		# Ignore the update scripts
+		"--exclude" "update.sh"
+	)
+
+	# A list of files that are not scanned
+	# because they probably cause some false positives.
+	local excluded_files=(
+		qemu
+	)
+
+	# Exclude any architecture-specific directories
+	local a
+	for a in ${ARCHES[@]}; do
+		args+=( "--exclude-dir" "${a}" )
+	done
+
+	# Exclude all excluded files
+	local x
+	for x in ${excluded_files[@]}; do
+		args+=( "--exclude" "${x}" )
+	done
+
+	# Search for all lines that contain the architecture, but exclude commented lines
+	if grep -r "^[^#].*${arch}" "${args[@]}"; then
+		return 1
+	fi
+
+	return 0
+}
+
+check_rootfiles_for_pattern() {
+	local pattern="${1}"
+	local message="${2}"
+
+	local args=(
+		# Search path
+		"${BASEDIR}/config/rootfiles"
+
+		# Exclude old core updates
+		"--exclude-dir" "oldcore"
+
+		# Ignore the update scripts
+		"--exclude" "update.sh"
+	)
+
+	if grep -r "${pattern}" "${args[@]}"; then
+		if [ -n "${message}" ]; then
+			print_line "${message}"
+			print_status FAIL
+		else
+			print_file "Files matching '${pattern}' have been found in the rootfiles"
+			print_status FAIL
+		fi
+		return 1
+	fi
+
+	return 0
+}
+
+check_rootfiles() {
+	local failed=0
+
+	print_headline "Checking for rootfile consistency..."
+
+	# Check for /etc/init.d
+	if ! check_rootfiles_for_pattern "^etc/init\.d/" \
+			"/etc/init.d/* has been found. Please replace by /etc/rc.d/init.d"; then
+		failed=1
+	fi
+
+	# Check for /var/run
+	if ! check_rootfiles_for_pattern "^var/run/.*" \
+			"You cannot ship files in /var/run as it is a ramdisk"; then
+		failed=1
+	fi
+
+	# Check architectures
+	local arch
+	for arch in ${ARCHES[@]}; do
+		check_rootfiles_for_arch "${arch}" || failed=$?
+	done
+
+	# Return the error
+	return ${failed}
 }
 
 # Set BASEDIR
@@ -2369,14 +2472,13 @@ build)
 	# Build all packages
 	build_packages
 
-	# Check log files
-	check_logfiles
+	# Check for missing rootfiles
+	check_for_missing_rootfiles
 
-	print_headline "Checking Logfiles for new Files"
-
-	pushd "${BASEDIR}" &>/dev/null
-	tools/checkrootfiles
-	popd &>/dev/null
+	# Check for rootfile consistency
+	if ! check_rootfiles; then
+		exiterror "Rootfiles are inconsistent"
+	fi
 
 	print_build_summary $(( SECONDS - START_TIME ))
 	;;
