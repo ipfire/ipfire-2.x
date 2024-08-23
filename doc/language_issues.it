@@ -1079,7 +1079,6 @@ WARNING: untranslated string: guardian blocking of this address is not allowed =
 WARNING: untranslated string: guardian blocktime = unknown string
 WARNING: untranslated string: guardian common settings = unknown string
 WARNING: untranslated string: guardian configuration = unknown string
-WARNING: untranslated string: guardian daemon = unknown string
 WARNING: untranslated string: guardian empty input = unknown string
 WARNING: untranslated string: guardian enabled = unknown string
 WARNING: untranslated string: guardian firewallaction = unknown string
