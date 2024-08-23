@@ -71,6 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/expect-5.45.4-gcc14-1.patch
 	cd $(DIR_APP) && ./configure \
 			--prefix=$(TOOLS_DIR) \
 			--build=$(BUILDTARGET) \

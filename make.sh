@@ -32,7 +32,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20240521
+TOOLCHAINVER=20240802
 
 KVER_SUFFIX="-${SNAME}"
 
@@ -1422,6 +1422,7 @@ build_system() {
 	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 gcc PASS=A
 	lfsmake2 zstd
 	lfsmake2 autoconf
+	lfsmake2 autoconf-archive
 	lfsmake2 automake
 	lfsmake2 help2man
 	lfsmake2 libtool

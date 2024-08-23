@@ -76,7 +76,7 @@ struct hwaddr {
 	u8 len, addr[HWMAX];
 };
 
-static inline hw_eq(struct hwaddr *h, int hl, u8 *ha)
+static inline int hw_eq(struct hwaddr *h, int hl, u8 *ha)
 {
 	return h->len == hl && memcmp(h->addr, ha, hl) == 0;
 }

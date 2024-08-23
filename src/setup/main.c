@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
 	struct keyvalue *kv;
 	char lang[STRING_SIZE] = "en_US.utf8";
 	char title[STRING_SIZE];
-	int langcounter;
 	int autook = 0;
 
 	/* Log file/terminal stuff. */

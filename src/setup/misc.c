@@ -21,7 +21,6 @@ extern int automode;
 
 int writehostsfiles(void)
 {	
-	char message[1000];
 	struct keyvalue *kv;
 	char hostname[STRING_SIZE];
 	char domainname[STRING_SIZE] = "localdomain";
