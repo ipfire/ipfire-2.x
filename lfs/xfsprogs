@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.8.0
+VER        = 6.9.0
 
 THISAPP    = xfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8c296698da1170bb7ff369c2bf5f156e812ddf43ee817369029ad951d6c1e18c20d093db385b9a523f6cb7ba3e01f8924eb3540b71efa4bec8bf3defe2418562
+$(DL_FILE)_BLAKE2 = d952603716cc4022a935c426630b0b7838573476a730c6832f36ef0274a640e64667d3e3a2dd9fd2c5f2c12cdb348fd93abfef5c49e5c5fe2d5a83945dfc7894
 
 install : $(TARGET)
 
