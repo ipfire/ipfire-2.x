@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3.3
+VER        = 3.3.4
 
 THISAPP    = ruby-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e1dbb8f0d5de4b2d7efe3f68c1ea7f28e4fac19dcd9d6d5e301e5c565474958a916ea5f21ef2ce0d741d4d9c45a546dd3d00b3ca3d1eccfaf61f20eba3c871a7
+$(DL_FILE)_BLAKE2 = e10b81ad7838e3d443ce0b12b8372faebb001f00a32dc0fa1f5e37c46baae99ea714e7f2a8741f0294255312030e844f32fc5d1c3695545cf8303e85b3255f21
 
 install : $(TARGET)
 
