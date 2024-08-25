@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 9.16.50
+VER        = 9.20.1
 
 THISAPP    = bind-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0464d1e246d0a5c39e20faf733b7f4ee21d192cc0ccce5bba2a22ae4303c82005ccfb319fe2da51872c7258852a747984d7327c70dec08414ab2d194c412199b
+$(DL_FILE)_BLAKE2 = 0607a2753bcda828cff0f01a7929c3192286050813243a0733d4cf29313c9d9532285d049864b67f3ce352b71cbb878bc22785a73fe186bf244ca807934fefdf
 
 install : $(TARGET)
 
@@ -77,31 +77,24 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && STD_CDEFINES="$(CPPFLAGS)" \
 		./configure \
 			--prefix=/usr \
-			--enable-threads \
-			--with-libtool \
-			--without-python \
-			--disable-linux-caps \
-			--disable-static
+			--disable-static \
+			--disable-doh
 
 	# Build required libraries
 	cd $(DIR_APP) && make -C lib/isc $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/isccc $(MAKETUNING)
 	cd $(DIR_APP) && make -C lib/dns $(MAKETUNING)
 	cd $(DIR_APP) && make -C lib/ns $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/isccc $(MAKETUNING)
 	cd $(DIR_APP) && make -C lib/isccfg $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/bind9 $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/irs $(MAKETUNING)
 	cd $(DIR_APP) && make -C bin/dig $(MAKETUNING)
 	cd $(DIR_APP) && make -C bin/nsupdate $(MAKETUNING)
 
 	# Install utility programs
 	cd $(DIR_APP) && make -C lib/isc install
-	cd $(DIR_APP) && make -C lib/isccc install
 	cd $(DIR_APP) && make -C lib/dns install
 	cd $(DIR_APP) && make -C lib/ns install
+	cd $(DIR_APP) && make -C lib/isccc install
 	cd $(DIR_APP) && make -C lib/isccfg install
-	cd $(DIR_APP) && make -C lib/bind9 install
-	cd $(DIR_APP) && make -C lib/irs install
 	cd $(DIR_APP) && make -C bin/dig install
 	cd $(DIR_APP) && make -C bin/nsupdate install
 

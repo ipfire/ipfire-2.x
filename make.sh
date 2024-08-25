@@ -1547,6 +1547,7 @@ build_system() {
 	lfsmake2 unbound
 	lfsmake2 gnutls
 	lfsmake2 libuv
+	lfsmake2 liburcu
 	lfsmake2 bind
 	lfsmake2 dhcp
 	lfsmake2 dhcpcd
@@ -1698,7 +1699,6 @@ build_system() {
 	lfsmake2 dosfstools
 	lfsmake2 exfatprogs
 	lfsmake2 reiserfsprogs
-	lfsmake2 liburcu
 	lfsmake2 xfsprogs
 	lfsmake2 sysfsutils
 	lfsmake2 fuse
