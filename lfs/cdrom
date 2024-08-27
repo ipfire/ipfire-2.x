@@ -148,7 +148,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(DIR_TMP)/root && mkdir -p $(DIR_TMP)/root
 
 	# Copy all files that we want
-	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(DIR_TMP)/root,)
+	$(call COPY_FILES,$(DIR_SRC)/config/rootfiles/common,$(DIR_TMP)/root,,,)
 
 	# Create mount points
 	$(call CREATE_MOUNTPOINTS,$(DIR_TMP)/root)

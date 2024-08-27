@@ -358,6 +358,7 @@ __FILES_IN = \
 		--exclude="proc/*" \
 		--exclude="tmp/*" \
 		--exclude="__pycache__" \
+		$(if $(1),--exclude-from=$(1)) \
 		--files-from=-
 
 # Takes a tarball and extracts it in the target directory
@@ -370,8 +371,10 @@ __FILES_OUT = \
 # Copies all files on a rootfile into the given directory
 define COPY_FILES
 	# Copy all files from $(1) to $(2) ($(3))
+	# $4 = rootfile to write out
+	# $5 = exclude
 	$(call COLLECT_FILES,$(1),$(3),$(4)) | \
-		$(call __FILES_IN) | \
+		$(call __FILES_IN,$(5)) | \
 		$(call __FILES_OUT,$(2))
 
 	# Strip everything, except a few things
