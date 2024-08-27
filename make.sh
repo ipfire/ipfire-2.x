@@ -2081,6 +2081,7 @@ build_system() {
 	lfsmake2 libplist
 	lfsmake2 nqptp
 	lfsmake2 shairport-sync
+	lfsmake2 libxxhash
 	lfsmake2 borgbackup
 	lfsmake2 lmdb
 	lfsmake2 knot
