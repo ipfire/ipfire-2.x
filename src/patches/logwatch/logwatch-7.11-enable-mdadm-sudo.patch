@@ -1,6 +1,6 @@
-diff -U 3 a/conf/services/mdadm.conf b/conf/services/mdadm.conf
---- a/conf/services/mdadm.conf	Sat Jan 22 01:00:00 2022
-+++ b/conf/services/mdadm.conf	Sun Apr 10 10:48:21 2022
+diff -Naur logwatch-7.11.orig/conf/services/mdadm.conf logwatch-7.11/conf/services/mdadm.conf
+--- logwatch-7.11.orig/conf/services/mdadm.conf	2018-12-17 02:47:45.000000000 +0100
++++ logwatch-7.11/conf/services/mdadm.conf	2024-08-27 15:18:31.430605943 +0200
 @@ -13,7 +13,7 @@
  # Logwatch will try to find md devices in /etc/mdadm.conf or 
  # /etc/mdadm/mdadm.conf. If none of these files exist it can scan actively
@@ -10,14 +10,14 @@ diff -U 3 a/conf/services/mdadm.conf b/conf/services/mdadm.conf
  
  # Logwatch will emit an error for md devices listed in /etc/mdadm.conf
  # that are not present.  If you do not want this (e.g. raid devices may come
-diff -U 3 a/scripts/services/mdadm b/scripts/services/mdadm
---- a/scripts/services/mdadm	Sat Jan 22 01:00:00 2022
-+++ b/scripts/services/mdadm	Sun Apr 10 10:38:19 2022
+diff -Naur logwatch-7.11.orig/scripts/services/mdadm logwatch-7.11/scripts/services/mdadm
+--- logwatch-7.11.orig/scripts/services/mdadm	2023-05-21 02:25:35.000000000 +0200
++++ logwatch-7.11/scripts/services/mdadm	2024-08-27 15:21:08.495487732 +0200
 @@ -36,7 +36,7 @@
  if (
      open($mdadm, "<", "/etc/mdadm.conf") or
      open($mdadm, "<", "/etc/mdadm/mdadm.conf") or
--    open($mdadm, "<", "mdadm --detail --scan 2>/dev/null|")) {
+-    open($mdadm, "-|", "mdadm --detail --scan")) {
 +    open($mdadm, "<", "sudo mdadm --detail --scan 2>/dev/null|")) {
     while (<$mdadm>) {
         if (/^ARRAY/) {

@@ -1,0 +1,39 @@
+diff -Naur logwatch-7.11.orig/conf/services/secure.conf logwatch-7.11/conf/services/secure.conf
+--- logwatch-7.11.orig/conf/services/secure.conf	2016-03-09 21:14:35.000000000 +0100
++++ logwatch-7.11/conf/services/secure.conf	2024-08-27 14:48:48.453853293 +0200
+@@ -24,7 +24,7 @@
+ # Use this to ignore certain services in the secure log.
+ # You can ignore as many services as you would like.
+ # (we ignore sshd because its entries are processed by the sshd script)
+-$ignore_services = sshd Pluto stunnel proftpd saslauthd imapd postfix/smtpd
++$ignore_services = sshd sshd-session Pluto stunnel proftpd saslauthd imapd postfix/smtpd
+ 
+ # For these services, summarize only (i.e. don't least each IP, just
+ # list the number of connections total)
+diff -Naur logwatch-7.11.orig/conf/services/sshd.conf logwatch-7.11/conf/services/sshd.conf
+--- logwatch-7.11.orig/conf/services/sshd.conf	2020-09-20 23:38:32.000000000 +0200
++++ logwatch-7.11/conf/services/sshd.conf	2024-08-27 14:49:08.077782387 +0200
+@@ -19,7 +19,7 @@
+ LogFile = messages
+ 
+ # Only give lines pertaining to the sshd service...
+-*OnlyService = sshd
++*OnlyService = (sshd|sshd-session)
+ *RemoveHeaders
+ 
+ # Variable $sshd_ignore_host is used to filter out hosts that login
+diff -Naur logwatch-7.11.orig/scripts/services/sshd logwatch-7.11/scripts/services/sshd
+--- logwatch-7.11.orig/scripts/services/sshd	2022-12-29 01:34:28.000000000 +0100
++++ logwatch-7.11/scripts/services/sshd	2024-08-27 14:49:21.908202288 +0200
+@@ -246,9 +246,9 @@
+       $NoIdent{$name}++;
+    } elsif (
+       ($ThisLine =~ m/^(?:error:.*|fatal:) Connection closed by remote host/ ) or
+-      ($ThisLine =~ m/^(|fatal: )Read error from remote host(| [^ ]+): Connection reset by peer/ ) or
++      ($ThisLine =~ m/^(|fatal: )Read error from remote host(| [^ ]+)(| port \d+): Connection reset by peer/ ) or
+       ($ThisLine =~ m/^error: .*: read: Connection reset by peer/ ) or
+-      ($ThisLine =~ m/^Read error from remote host [^ ]+: (Connection timed out|No route to host)/ ) or
++      ($ThisLine =~ m/^Read error from remote host [^ ]+(| port \d+): (Connection timed out|No route to host)/ ) or
+       ($ThisLine =~ m/^fatal: Read from socket failed: No route to host/) or
+       ($ThisLine =~ m/^fatal: Write failed: Network is unreachable/ ) or
+       ($ThisLine =~ m/^fatal: Write failed: Broken pipe/) or

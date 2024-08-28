@@ -59,6 +59,7 @@ usr/share/logwatch/default.conf/logfiles/resolver.conf
 #usr/share/logwatch/default.conf/logfiles/rt314.conf
 usr/share/logwatch/default.conf/logfiles/samba.conf
 #usr/share/logwatch/default.conf/logfiles/secure.conf
+#usr/share/logwatch/default.conf/logfiles/snort.conf
 #usr/share/logwatch/default.conf/logfiles/sonicwall.conf
 #usr/share/logwatch/default.conf/logfiles/spamassassin.conf
 usr/share/logwatch/default.conf/logfiles/syslog.conf
@@ -167,6 +168,7 @@ usr/share/logwatch/default.conf/services/scsi.conf
 #usr/share/logwatch/default.conf/services/shaperd.conf
 #usr/share/logwatch/default.conf/services/slon.conf
 #usr/share/logwatch/default.conf/services/smartd.conf
+#usr/share/logwatch/default.conf/services/snort.conf
 #usr/share/logwatch/default.conf/services/sonicwall.conf
 #usr/share/logwatch/default.conf/services/spamassassin.conf
 usr/share/logwatch/default.conf/services/sshd.conf
@@ -317,6 +319,7 @@ usr/share/logwatch/scripts/services/scsi
 #usr/share/logwatch/scripts/services/shaperd
 #usr/share/logwatch/scripts/services/slon
 #usr/share/logwatch/scripts/services/smartd
+#usr/share/logwatch/scripts/services/snort
 #usr/share/logwatch/scripts/services/sonicwall
 #usr/share/logwatch/scripts/services/spamassassin
 usr/share/logwatch/scripts/services/sshd

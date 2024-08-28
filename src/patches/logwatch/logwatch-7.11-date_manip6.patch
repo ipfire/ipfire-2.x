@@ -1,9 +1,9 @@
---- Logwatch.pm.orig    2012-06-20 09:58:12.786294471 +0200
-+++ Logwatch.pm 2012-06-20 09:41:59.443055298 +0200
+--- Logwatch.pm.orig	2022-02-07 01:59:10.000000000 +0100
++++ Logwatch.pm	2024-08-27 15:16:30.023491645 +0200
 @@ -4,6 +4,10 @@
-
+ 
  package Logwatch;
-
+ 
 +# Define interace version 5 for Date::Manip
 +BEGIN {
 +       $Date::Manip::Backend = 'DM5';
