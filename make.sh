@@ -54,8 +54,18 @@ ARCHES=(
 )
 
 HOST_ARCH="${HOSTTYPE}"
+HOST_KERNEL="$(uname -r)"
 LC_ALL=POSIX
 PS1='\u:\w$ '
+
+HAS_TIME_NAMESPACE="true"
+
+# Disable time namespaces for older kernels
+case "${HOST_KERNEL}" in
+	4.*|5.[12345].*)
+		HAS_TIME_NAMESPACE="false"
+		;;
+esac
 
 # Are we reading from/writing to a terminal?
 is_terminal() {
@@ -674,9 +684,6 @@ execute() {
 			"--pid"
 			"--fork"
 
-			# Create a new time namespace
-			"--time"
-
 			# Create a new UTS namespace
 			"--uts"
 
@@ -687,6 +694,11 @@ execute() {
 			# If unshare is asked to terminate, terminate all child processes
 			"--kill-child"
 		)
+
+		# Optionally set up a new time namespace
+		if [ "${HAS_TIME_NAMESPACE}" = "true" ]; then
+			unshare+=( "--time" )
+		fi
 	fi
 
 	while [ $# -gt 0 ]; do
