@@ -461,6 +461,10 @@ prepareenv() {
 	mount build_tmp "${BUILD_DIR}/tmp" \
 		-t tmpfs -o "nosuid,nodev,strictatime,size=4G,nr_inodes=1M,mode=1777"
 
+	# Create an empty /proc directory and make it a mountpoint
+	mkdir -p "${BUILD_DIR}/proc"
+	mount --bind "${BUILD_DIR}/proc" "${BUILD_DIR}/proc"
+
 	# Make all sources and proc available under lfs build
 	mount --bind     	/sys					"${BUILD_DIR}/sys"
 	mount --bind -o ro	"${BASEDIR}/cache"		"${BUILD_DIR}/usr/src/cache"
