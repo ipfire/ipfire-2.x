@@ -17,3 +17,7 @@
 *.tar.bz2
 /*.md5
 /*.b2
+
+# These files have been removed but could still be around in older environments
+/doc/ChangeLog
+/doc/packages-list.txt
