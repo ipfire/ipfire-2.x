@@ -600,5 +600,3 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/man/man1/strip.1
 #usr/share/man/man1/windmc.1
 #usr/share/man/man1/windres.1
--usr/lib/libbfd-2.42.so
--usr/lib/libopcodes-2.42.so
