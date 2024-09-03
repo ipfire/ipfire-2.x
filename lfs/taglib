@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Audio Meta-Data Library
 
-VER        = 2.0.1
+VER        = 2.0.2
 
 THISAPP    = taglib-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = taglib
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a39997b3185609b47b4d20c12b9d131eee32a2846627799d83df98eaaf5b909514fd97667e779715b940f0866252d02a523fa9d87534ea3cdefbd27449cbe714
+$(DL_FILE)_BLAKE2 = 389af213bd467d68e2b0ca4485f51c35e660439baf2ecb7165069e5cb73589f5cf6c92d56e25780cea60e082b6fa51c5dde320dd25b8c5ef0e3b738ff0a6d4ea
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))

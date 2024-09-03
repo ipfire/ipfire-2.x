@@ -120,9 +120,9 @@ usr/bin/taglib-config
 #usr/lib/cmake/taglib/taglib-targets.cmake
 #usr/lib/libtag.so
 usr/lib/libtag.so.2
-usr/lib/libtag.so.2.0.1
+usr/lib/libtag.so.2.0.2
 #usr/lib/libtag_c.so
 usr/lib/libtag_c.so.2
-usr/lib/libtag_c.so.2.0.1
+usr/lib/libtag_c.so.2.0.2
 #usr/lib/pkgconfig/taglib.pc
 #usr/lib/pkgconfig/taglib_c.pc
