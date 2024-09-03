@@ -2473,7 +2473,7 @@ build)
 	exec_in_namespace "$@"
 
 	# Prepare the environment
-	prepareenv --required-space=2048
+	prepareenv --required-space=8192
 
 	# Check if the toolchain is available
 	if [ ! -e "${BUILD_DIR}${TOOLS_DIR}/.toolchain-successful" ]; then
