@@ -378,6 +378,7 @@ prepareenv() {
 	# Do we need to check the required space?
 	if [ -n "${required_space}" ]; then
 		local free_space free_blocks block_size
+		local consumed_space path
 
 		# Fetch free blocks
 		read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BASEDIR}")"
@@ -385,9 +386,17 @@ prepareenv() {
 		# Calculate free space
 		(( free_space = free_blocks * block_size / 1024 / 1024 ))
 
-		# Check if we have at least 4GB of space
+		# If we don't have the total space free, we need to check how much we have consumed already...
 		if [ "${free_space}" -lt "${required_space}" ]; then
-			exiterror "Not enough temporary space available, need at least ${required_space}MiB"
+			# Add any consumed space
+			while read -r consumed_space path; do
+				(( free_space += consumed_space / 1024 / 1024 )) 
+			done <<< "$(du --summarize --bytes "${BUILD_DIR}" "${IMAGES_DIR}" "${LOG_DIR}")"
+		fi
+
+		# Check that we have the required space
+		if [ "${free_space}" -lt "${required_space}" ]; then
+			exiterror "Not enough temporary space available, need at least ${required_space}MiB, but only have ${free_space}MiB"
 		fi
 	fi
 
