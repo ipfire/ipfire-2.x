@@ -1908,6 +1908,7 @@ build_system() {
 	lfsmake2 libusbredir
 	lfsmake2 libseccomp
 	lfsmake2 libslirp
+	lfsmake2 dtc
 	lfsmake2 qemu
 	lfsmake2 netsnmpd
 	lfsmake2 nagios_nrpe
@@ -1968,7 +1969,6 @@ build_system() {
 	lfsmake2 ddrescue
 	lfsmake2 parted
 	lfsmake2 swig
-	lfsmake2 dtc
 	lfsmake2 u-boot
 	lfsmake2 wireless-regdb
 	lfsmake2 ddns
