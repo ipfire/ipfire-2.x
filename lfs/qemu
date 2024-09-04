@@ -27,7 +27,7 @@ include Config
 SUMMARY    = Machine emulator and virtualizer
 
 # If you update the version also qemu-ga !!!
-VER        = 9.0.0
+VER        = 9.0.2
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 43
+PAK_VER    = 44
 
 DEPS       = alsa libusbredir spice libseccomp libslirp
 
@@ -57,7 +57,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d92acb859d9ce5097fee27a4689c71869aa38f65eb0308547956d54bd8caf29efe5389d9009f334f109ad228e0ef1f1fd1444d26360f03fac4320b204b657081
+$(DL_FILE)_BLAKE2 = 6b5301f985919ae53e056410be7486b8150a65016127568bd4d58f596e94960d08eb3fc57cff7ff6a3435d71274adee516f57375d856d61b4fc7a3f24cbf75c4
 
 install : $(TARGET)
 
@@ -103,8 +103,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-seccomp \
 		--disable-docs \
 		--disable-sdl \
-		--enable-slirp
-
+		--enable-slirp \
+		-Dfdt=system
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
