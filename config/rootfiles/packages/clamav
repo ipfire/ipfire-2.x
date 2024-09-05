@@ -105,14 +105,13 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/images
 #usr/share/doc/ClamAV/html/images/change-fork-name.png
 #usr/share/doc/ClamAV/html/images/cisco.png
+#usr/share/doc/ClamAV/html/images/clamav-git-workflow.png
 #usr/share/doc/ClamAV/html/images/clone-your-fork.png
 #usr/share/doc/ClamAV/html/images/create-a-fork.png
 #usr/share/doc/ClamAV/html/images/demon.png
 #usr/share/doc/ClamAV/html/images/flamegraph.svg
 #usr/share/doc/ClamAV/html/images/fork-is-behind.png
 #usr/share/doc/ClamAV/html/images/logo.png
-#usr/share/doc/ClamAV/html/images/new-git-workflow.png
-#usr/share/doc/ClamAV/html/images/old-git-workflow.png
 #usr/share/doc/ClamAV/html/index.html
 #usr/share/doc/ClamAV/html/manual
 #usr/share/doc/ClamAV/html/manual/Development
@@ -163,6 +162,7 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/manual/Usage/Scanning.html
 #usr/share/doc/ClamAV/html/manual/Usage/Services.html
 #usr/share/doc/ClamAV/html/manual/Usage/SignatureManagement.html
+#usr/share/doc/ClamAV/html/manual/cisco-talos.gpg
 #usr/share/doc/ClamAV/html/mark.min.js
 #usr/share/doc/ClamAV/html/mode-rust.js
 #usr/share/doc/ClamAV/html/print.html
