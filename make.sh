@@ -391,7 +391,7 @@ prepareenv() {
 			# Add any consumed space
 			while read -r consumed_space path; do
 				(( free_space += consumed_space / 1024 / 1024 )) 
-			done <<< "$(du --summarize --bytes "${BUILD_DIR}" "${IMAGES_DIR}" "${LOG_DIR}")"
+			done <<< "$(du --summarize --bytes "${BUILD_DIR}" "${IMAGES_DIR}" "${LOG_DIR}" 2>/dev/null)"
 		fi
 
 		# Check that we have the required space
