@@ -1036,6 +1036,10 @@ sub show_peer_configuration($$) {
 				</a>
 			</p>
 
+			<p class="text-error">
+				$Lang::tr{'wg warning configuration only shown once'}
+			</p>
+
 			<p>
 				<form method="GET" action="">
 					<button type="submit">$Lang::tr{'done'}</button>
@@ -1045,12 +1049,6 @@ sub show_peer_configuration($$) {
 END
 
 	&Header::closebox();
-
-	# Show a note that this configuration cannot be shown again
-	&Header::errorbox((
-		$Lang::tr{'wg warning configuration only shown once'},
-	));
-
 	&Header::closepage();
 
 	exit(0);
