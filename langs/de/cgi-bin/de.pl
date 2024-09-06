@@ -887,6 +887,7 @@
 'donation' => 'Spenden',
 'donation-link' => 'https://www.paypal.com/de_DE/DE/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong> wird von Freiwilligen in ihrer Freizeit betreut und weiterentwickelt. Um dieses Projekt am Leben zu erhalten, entstehen uns natürlich auch Kosten. Wenn Sie uns unterstützen wollen, würden wir uns über eine kleine Spende sehr freuen.',
+'done' => 'Fertig',
 'dos charset' => 'DOS-Zeichensatz',
 'down and up speed' => 'Geben Sie bitte hier ihre Download- bzw. Upload-Geschwindigkeit ein <br /> und klicken Sie danach auf <i>Speichern</i>.',
 'downfall gather data sampling' => 'Downfall/Gather Data Sampling',

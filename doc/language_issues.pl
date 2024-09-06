@@ -242,7 +242,6 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
-WARNING: translation string unused: done
 WARNING: translation string unused: dos charset
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
@@ -1016,6 +1015,7 @@ WARNING: untranslated string: dnsforward zone = Zone
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
+WARNING: untranslated string: done = Done
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: downlink = Downlink
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile

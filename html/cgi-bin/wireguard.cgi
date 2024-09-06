@@ -1035,6 +1035,12 @@ sub show_peer_configuration($$) {
 					$Lang::tr{'wg download configuration file'}
 				</a>
 			</p>
+
+			<p>
+				<form method="GET" action="">
+					<button type="submit">$Lang::tr{'done'}</button>
+				</form>
+			</p>
 		</div>
 END
 

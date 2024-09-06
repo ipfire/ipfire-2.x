@@ -54,7 +54,6 @@
 < dhcp server enabled on blue interface
 < disable
 < dns could not add server
-< done
 < download apple profile
 < enable
 < endpoint
@@ -169,6 +168,7 @@
 < data transfer
 < dhcp fixed ip address in dynamic range
 < dns servers
+< done
 < downfall gather data sampling
 < endpoint
 < endpoint address
@@ -262,6 +262,7 @@
 < bypassed
 < ca name must only contain characters or spaces
 < data transfer
+< done
 < endpoint
 < endpoint address
 < endpoint port
@@ -480,6 +481,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < download apple profile
 < drop hostile
@@ -1065,6 +1067,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < download apple profile
 < download tls-auth key
@@ -1748,6 +1751,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < downlink
 < download apple profile
@@ -2805,6 +2809,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < downlink
 < download apple profile
@@ -3713,6 +3718,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < download apple profile
 < drop hostile

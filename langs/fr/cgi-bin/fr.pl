@@ -933,7 +933,6 @@
 'donation' => 'Faire un don',
 'donation-link' => 'https://www.paypal.com/fr_fr/fr/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong> est développé et maintenu par des bénévoles durant leur temps libre.<br>Afin de participer aux coûts du projet et nous encourager, vous pouvez faire un don.',
-'done' => 'Fait',
 'dos charset' => 'Jeu de car. DOS',
 'down and up speed' => 'Entrez votre débit descendant et montant <br /> et cliquez sur <i>Sauvegarder</i>.',
 'downfall gather data sampling' => 'Chute / collecte échantillons de données - proc. Intel',

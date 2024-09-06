@@ -286,7 +286,6 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
-WARNING: translation string unused: done
 WARNING: translation string unused: dos charset
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
@@ -980,6 +979,7 @@ WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: core notice 3 = available.
 WARNING: untranslated string: data transfer = Data Transfer
+WARNING: untranslated string: done = Done
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: endpoint = Endpoint

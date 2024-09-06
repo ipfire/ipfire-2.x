@@ -289,7 +289,6 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
-WARNING: translation string unused: done
 WARNING: translation string unused: dos charset
 WARNING: translation string unused: download dh parameter
 WARNING: translation string unused: download new ruleset
@@ -1017,6 +1016,7 @@ WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: dns servers = DNS Servers
+WARNING: untranslated string: done = Done
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
