@@ -526,12 +526,12 @@ END
 						$Lang::tr{'name'}
 					</th>
 
-					<th width='20%' colspan='2'>
-						$Lang::tr{'status'}
-					</th>
-
 					<th>
 						$Lang::tr{'remark'}
+					</th>
+
+					<th width='20%' colspan='2'>
+						$Lang::tr{'status'}
 					</th>
 
 					<th width='10%' colspan='3'>
@@ -606,6 +606,13 @@ EOF
 						$name
 					</th>
 
+					<td>
+						$remarks
+					</td>
+END
+
+			if ($location) {
+				print <<END;
 					<td class="@status">
 						$connected
 					</td>
@@ -613,11 +620,16 @@ EOF
 					<td class="@status">
 						$location
 					</td>
-
-					<td>
-						$remarks
+END
+			} else {
+				print <<END;
+					<td class="@status" colspan="2">
+						$connected
 					</td>
+END
+			}
 
+			print <<END;
 					<td class="text-center">
 						<form method='post'>
 							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
