@@ -205,7 +205,7 @@ sub isautorun (@) {
 sub isrunningaddon (@) {
 	my ($pak, $service) = @_;
 
-	my $status = "<td class='status is-stopped'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
+	my $status = "<td class='status is-stopped is-fixed'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
 	my $testcmd = '';
 	my $exename;
 
@@ -234,7 +234,7 @@ sub isrunningaddon (@) {
 		$status .="<td align='right'>$memory</td>";
 	}else{
 		$status = "<td align='center' width='16%' colspan=2><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
-		$status .= "<td class='status is-stopped'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
+		$status .= "<td class='status is-stopped is-fixed'>$Lang::tr{'stopped'}</td><td colspan='2'></td>";
 	}
 	return $status;
 }
