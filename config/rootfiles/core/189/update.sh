@@ -325,6 +325,8 @@ rm -vrf \
 	/lib/firmware/RTL8192E
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 # Extract files
 extract_files
@@ -347,6 +349,8 @@ ldconfig
 telinit u
 
 # Start services
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 # This update needs a reboot...
 touch /var/run/need_reboot
