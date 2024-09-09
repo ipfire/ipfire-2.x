@@ -123,11 +123,8 @@ case "$1" in
 		if [ "$ENABLE_IDS" == "on" ]; then
 			# Start the IDS.
 			boot_mesg "Starting Intrusion Detection System..."
-			/usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES >/dev/null 2>/dev/null
+			/usr/bin/suricata-watcher -c /etc/suricata/suricata.yaml $NFQUEUES
 			evaluate_retval
-
-			# Allow reading the pidfile.
-			chmod 644 $PID_FILE
 
 			# Flush the firewall chain
 			flush_fw_chain
@@ -139,19 +136,10 @@ case "$1" in
 
         stop)
 		boot_mesg "Stopping Intrusion Detection System..."
-		killproc -p $PID_FILE /var/run
+		killproc /usr/bin/suricata
 
 		# Flush firewall chain.
 		flush_fw_chain
-
-		# Sometimes suricata not correct shutdown. So killall.
-		killall -KILL /usr/bin/suricata 2>/dev/null
-
-		# Remove suricata control socket.
-		rm /var/run/suricata/* >/dev/null 2>/dev/null
-
-		# Trash remain pid file if still exists.
-		rm -f $PID_FILE >/dev/null 2>/dev/null
 
 		# Don't report returncode of rm if suricata was not started
 		exit 0
