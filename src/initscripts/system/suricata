@@ -43,9 +43,6 @@ NFQ_OPTS=(
 	"--queue-bypass"
 )
 
-# PID file of suricata.
-PID_FILE="/var/run/suricata.pid"
-
 # Function to flush the firewall chains.
 flush_fw_chain() {
 	iptables -w -t mangle -F IPS
@@ -123,8 +120,7 @@ case "$1" in
 		if [ "$ENABLE_IDS" == "on" ]; then
 			# Start the IDS.
 			boot_mesg "Starting Intrusion Detection System..."
-			/usr/bin/suricata-watcher -c /etc/suricata/suricata.yaml $NFQUEUES
-			evaluate_retval
+			loadproc -b /usr/bin/suricata-watcher -c /etc/suricata/suricata.yaml $NFQUEUES
 
 			# Flush the firewall chain
 			flush_fw_chain
