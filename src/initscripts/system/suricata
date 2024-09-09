@@ -29,8 +29,14 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 IPS_REPEAT_MARK="0x80000000"
 IPS_REPEAT_MASK="0x80000000"
-IPS_BYPASS_MARK="0x40000000"
-IPS_BYPASS_MASK="0x40000000"
+
+# The IPS requested that this connection is being bypassed
+IPS_BYPASS_REQUESTED_MARK="0x40000000"
+IPS_BYPASS_REQUESTED_MASK="0x40000000"
+
+# Marks a connection to be bypassed
+IPS_BYPASS_MARK="0x20000000"
+IPS_BYPASS_MASK="0x20000000"
 
 # Optional options for the Netfilter queue.
 NFQ_OPTS=(
@@ -72,6 +78,11 @@ generate_fw_rules() {
 	# Don't process packets where the IPS has requested to bypass the stream
 	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" -j RETURN
 
+	# If suricata decided to bypass a stream, we will store the mark in the connection tracking table
+	iptables -w -t mangle -A IPS \
+		-m mark --mark "$(( IPS_BYPASS_REQUESTED_MARK ))/$(( IPS_BYPASS_REQUESTED_MASK ))" \
+		-j CONNMARK --set-mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))"
+
 	# Don't process packets that have already been seen by the IPS
 	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
 
@@ -92,11 +103,6 @@ generate_fw_rules() {
 
 	# Send packets to suricata
 	iptables -w -t mangle -A IPS -j NFQUEUE "${NFQ_OPTIONS[@]}"
-
-	# If suricata decided to bypass a stream, we will store the mark in the connection tracking table
-	iptables -w -t mangle -A IPS \
-		-m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" \
-		-j CONNMARK --save-mark --mask "$(( IPS_BYPASS_MASK ))"
 
 	return 0
 }

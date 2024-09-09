@@ -160,7 +160,7 @@ iptables_init() {
 	iptables -A CTOUTPUT -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
 	# Restore any connection marks
-	iptables -t mangle -A PREROUTING -j CONNMARK --restore-mark
+	iptables -t mangle -A PREROUTING -m mark --mark 0 -j CONNMARK --restore-mark
 
 	# Fix for braindead ISPs
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
