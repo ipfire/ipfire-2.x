@@ -103,8 +103,8 @@ generate_fw_rules() {
 
 case "$1" in
         start)
-		# Get amount of CPU cores.
-		cpu_count=$(get_cpu_count)
+		# Get amount of CPU cores
+		cpu_count="$(getconf _NPROCESSORS_ONLN)"
 
 		# Numer of NFQUES.
 		NFQUEUES="-q 0"
