@@ -52,7 +52,7 @@ enabled_ips_zones=()
 PID_FILE="/var/run/suricata.pid"
 
 # Function to get the amount of CPU cores of the system.
-function get_cpu_count {
+get_cpu_count() {
 	CPUCOUNT=0
 
 	# Loop through "/proc/cpuinfo" and count the amount of CPU cores.
@@ -70,12 +70,12 @@ function get_cpu_count {
 }
 
 # Function to flush the firewall chains.
-function flush_fw_chain {
+flush_fw_chain() {
 	iptables -w -t mangle -F IPS
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
-function generate_fw_rules {
+generate_fw_rules() {
 	# Assign NFQ_OPTS
 	local NFQ_OPTIONS=( "${NFQ_OPTS[@]}" )
 
