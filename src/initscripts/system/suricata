@@ -32,21 +32,10 @@ IPS_REPEAT_MASK="0x80000000"
 IPS_BYPASS_MARK="0x40000000"
 IPS_BYPASS_MASK="0x40000000"
 
-# Name of the firewall chains.
-IPS_INPUT_CHAIN="IPS_INPUT"
-IPS_FORWARD_CHAIN="IPS_FORWARD"
-IPS_OUTPUT_CHAIN="IPS_OUTPUT"
-
 # Optional options for the Netfilter queue.
 NFQ_OPTS=(
 	"--queue-bypass"
 )
-
-# Array containing the 4 possible network zones.
-network_zones=( red green blue orange ovpn )
-
-# Array to store the network zones weather the IPS is enabled for.
-enabled_ips_zones=()
 
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
