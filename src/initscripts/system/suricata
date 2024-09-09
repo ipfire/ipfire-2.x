@@ -27,13 +27,20 @@ PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
 eval $(/usr/local/bin/readhash /var/ipfire/suricata/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
+IPS_REPEAT_MARK="0x80000000"
+IPS_REPEAT_MASK="0x80000000"
+IPS_BYPASS_MARK="0x40000000"
+IPS_BYPASS_MASK="0x40000000"
+
 # Name of the firewall chains.
 IPS_INPUT_CHAIN="IPS_INPUT"
 IPS_FORWARD_CHAIN="IPS_FORWARD"
 IPS_OUTPUT_CHAIN="IPS_OUTPUT"
 
 # Optional options for the Netfilter queue.
-NFQ_OPTS="--queue-bypass "
+NFQ_OPTS=(
+	"--queue-bypass"
+)
 
 # Array containing the 4 possible network zones.
 network_zones=( red green blue orange ovpn )
@@ -64,91 +71,48 @@ function get_cpu_count {
 
 # Function to flush the firewall chains.
 function flush_fw_chain {
-	# Call iptables and flush the chains
-	iptables -w -F "$IPS_INPUT_CHAIN"
-	iptables -w -F "$IPS_FORWARD_CHAIN"
-	iptables -w -F "$IPS_OUTPUT_CHAIN"
+	iptables -w -t mangle -F IPS
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
 function generate_fw_rules {
-	cpu_count=$(get_cpu_count)
-
-	# Loop through the array of network zones.
-	for zone in "${network_zones[@]}"; do
-		# Convert zone into upper case.
-		zone_upper=${zone^^}
-
-		# Generate variable name for checking if the IDS is
-		# enabled on the zone.
-		enable_ids_zone="ENABLE_IDS_$zone_upper"
-
-		# Check if the IDS is enabled for this network zone.
-		if [ "${!enable_ids_zone}" == "on" ]; then
-			# Check if the current processed zone is "red" and the configured type is PPPoE dialin.
-			if [ "$zone" == "red" ] && [ "$RED_TYPE" == "PPPOE" ] && [ "$RED_DRIVER" != "qmi_wwan" ]; then
-				# Set device name to ppp0.
-				network_device="ppp0"
-			elif [ "$zone" == "ovpn" ]; then
-				# Get all virtual net devices because the RW server and each
-				# N2N connection creates it's own tun device.
-				for virt_dev in /sys/devices/virtual/net/*; do
-					# Cut-off the directory.
-					dev="${virt_dev##*/}"
-
-					# Only process tun devices.
-					if [[ $dev =~ "tun" ]]; then
-						# Add the network device to the array of enabled zones.
-						enabled_ips_zones+=( "$dev" )
-					fi
-				done
-
-				# Process next zone.
-				continue
-			else
-				# Generate variable name which contains the device name.
-				zone_name="$zone_upper"
-				zone_name+="_DEV"
-
-				# Grab device name.
-				network_device=${!zone_name}
-			fi
-
-			# Add the network device to the array of enabled zones.
-			enabled_ips_zones+=( "$network_device" )
-		fi
-	done
-
 	# Assign NFQ_OPTS
-	NFQ_OPTIONS=$NFQ_OPTS
+	local NFQ_OPTIONS=( "${NFQ_OPTS[@]}" )
+
+	local cpu_count="$(get_cpu_count)"
 
 	# Check if there are multiple cpu cores available.
 	if [ "$cpu_count" -gt "1" ]; then
-		# Balance beetween all queues.
-		NFQ_OPTIONS+="--queue-balance 0:$(($cpu_count-1))"
-		NFQ_OPTIONS+=" --queue-cpu-fanout"
+		# Balance beetween all queues
+		NFQ_OPTIONS+=(
+			"--queue-balance" "0:$(($cpu_count-1))"
+			"--queue-cpu-fanout"
+		)
 	else
-		# Send all packets to queue 0.
-		NFQ_OPTIONS+="--queue-num 0"
+		# Send all packets to queue 0
+		NFQ_OPTIONS+=(
+			"--queue-num" "0"
+		)
 	fi
 
 	# Flush the firewall chains.
 	flush_fw_chain
 
-	# Check if the array of enabled_ips_zones contains any elements.
-	if [[ ${enabled_ips_zones[@]} ]]; then
-		# Loop through the array and create firewall rules.
-		for enabled_ips_zone in "${enabled_ips_zones[@]}"; do
-			# Create rules queue input and output related traffic and pass it to the IPS.
-			iptables -w -A "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -j NFQUEUE $NFQ_OPTIONS
-			iptables -w -A "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -j NFQUEUE $NFQ_OPTIONS
+	# Don't process packets where the IPS has requested to bypass the stream
+	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" -j RETURN
 
-			# Create rules which are required to handle forwarded traffic.
-			for enabled_ips_zone_forward in "${enabled_ips_zones[@]}"; do
-				iptables -w -A "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -j NFQUEUE $NFQ_OPTIONS
-			done
-		done
-	fi
+	# Don't process packets that have already been seen by the IPS
+	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
+
+	# Send packets to suricata
+	iptables -w -t mangle -A IPS -j NFQUEUE "${NFQ_OPTIONS[@]}"
+
+	# If suricata decided to bypass a stream, we will store the mark in the connection tracking table
+	iptables -w -t mangle -A IPS \
+		-m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" \
+		-j CONNMARK --save-mark --mask "$(( IPS_BYPASS_MASK ))"
+
+	return 0
 }
 
 case "$1" in

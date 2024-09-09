@@ -39,11 +39,6 @@ fi
 
 NAT_MASK="0x0f000000"
 
-IPS_REPEAT_MARK="0x80000000"
-IPS_REPEAT_MASK="0x80000000"
-IPS_BYPASS_MARK="0x40000000"
-IPS_BYPASS_MASK="0x40000000"
-
 IPSET_DB_DIR="/var/lib/location/ipset"
 
 SYNPROXY_OPTIONS=(
@@ -83,16 +78,6 @@ iptables_init() {
 	# Enable TRACE logging to syslog
 	modprobe nf_log_ipv4
 	sysctl -q -w net.netfilter.nf_log.2=nf_log_ipv4
-
-	# IPS Bypass Chain which stores the BYPASS bit in connection tracking
-	iptables -N IPSBYPASS
-	iptables -A IPSBYPASS -j CONNMARK --save-mark --mask "$(( ~IPS_REPEAT_MASK & 0xffffffff ))"
-
-	# Jump into bypass chain when the BYPASS bit is set
-	for chain in INPUT FORWARD OUTPUT; do
-		iptables -A "${chain}" -m mark \
-			--mark "$(( IPS_REPEAT_MARK | IPS_BYPASS_MARK ))/$(( IPS_REPEAT_MASK | IPS_BYPASS_MASK ))" -j IPSBYPASS
-	done
 
 	# Empty LOG_DROP and LOG_REJECT chains
 	iptables -N LOG_DROP
@@ -237,12 +222,10 @@ iptables_init() {
 	iptables -A FORWARD -o tun+ -j OVPNBLOCK
 
 	# IPS (Suricata) chains
-	iptables -N IPS_INPUT
-	iptables -N IPS_FORWARD
-	iptables -N IPS_OUTPUT
+	iptables -t mangle -N IPS
 
-	for chain in INPUT FORWARD OUTPUT; do
-		iptables -A "${chain}" -m mark --mark "0x0/$(( IPS_REPEAT_MASK | IPS_BYPASS_MASK ))" -j "IPS_${chain}"
+	for chain in PREROUTING POSTROUTING; do
+		iptables -t mangle -A "${chain}" -j IPS
 	done
 
 	# OpenVPN transfer network translation
