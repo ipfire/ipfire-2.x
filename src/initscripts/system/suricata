@@ -51,24 +51,6 @@ enabled_ips_zones=()
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
 
-# Function to get the amount of CPU cores of the system.
-get_cpu_count() {
-	CPUCOUNT=0
-
-	# Loop through "/proc/cpuinfo" and count the amount of CPU cores.
-	while read line; do
-		[ "$line" ] && [ -z "${line%processor*}" ]  && ((CPUCOUNT++))
-	done </proc/cpuinfo
-
-	# Limit to a maximum of 16 cores, because suricata does not support more than
-	# 16 netfilter queues at the moment.
-	if [ $CPUCOUNT -gt "16" ]; then
-		echo "16"
-	else
-		echo $CPUCOUNT
-	fi
-}
-
 # Function to flush the firewall chains.
 flush_fw_chain() {
 	iptables -w -t mangle -F IPS
@@ -79,7 +61,7 @@ generate_fw_rules() {
 	# Assign NFQ_OPTS
 	local NFQ_OPTIONS=( "${NFQ_OPTS[@]}" )
 
-	local cpu_count="$(get_cpu_count)"
+	local cpu_count="$(getconf _NPROCESSORS_ONLN)"
 
 	# Check if there are multiple cpu cores available.
 	if [ "$cpu_count" -gt "1" ]; then
