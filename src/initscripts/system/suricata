@@ -75,6 +75,21 @@ generate_fw_rules() {
 	# Don't process packets that have already been seen by the IPS
 	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
 
+	# Never send any whitelisted packets to the IPS
+	if [ -r "/var/ipfire/suricata/ignored" ]; then
+		local id network remark enabled rest
+
+		while IFS=',' read -r id network remark enabled rest; do
+			echo "$network"
+			echo "$remark"
+			# Skip disabled entries
+			[ "${enabled}" = "enabled" ] || continue
+
+			iptables -w -t mangle -A IPS -s "${network}" -j RETURN
+			iptables -w -t mangle -A IPS -d "${network}" -j RETURN
+		done < "/var/ipfire/suricata/ignored"
+	fi
+
 	# Send packets to suricata
 	iptables -w -t mangle -A IPS -j NFQUEUE "${NFQ_OPTIONS[@]}"
 
