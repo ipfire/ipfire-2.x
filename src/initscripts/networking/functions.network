@@ -54,6 +54,54 @@ bin2ip() {
 	echo "${address[*]}"
 }
 
+network_get_intf() {
+	local zone="${1}"
+
+	case "${zone}" in
+		RED)
+			# For PPPoE, the RED interface is called ppp0 (unless we use QMI)
+			if [ "${RED_TYPE}" = "PPPOE" ] && [ "${RED_DRIVER}" != "qmi_wwan" ]; then
+				echo "ppp0"
+				return 0
+
+			# Otherwise we return RED_DEV
+			elif [ -n "${RED_DEV}" ]; then
+				echo "${RED_DEV}"
+				return 0
+			fi
+			;;
+
+		GREEN)
+			if [ -n "${GREEN_DEV}" ]; then
+				echo "${GREEN_DEV}"
+				return 0
+			fi
+			;;
+
+		ORANGE)
+			if [ -n "${ORANGE_DEV}" ]; then
+				echo "${ORANGE_DEV}"
+				return 0
+			fi
+			;;
+
+		BLUE)
+			if [ -n "${BLUE_DEV}" ]; then
+				echo "${BLUE_DEV}"
+				return 0
+			fi
+			;;
+
+		OPENVPN|OVPN)
+			# OpenVPN is using all tun devices
+			echo "tun+"
+			;;
+	esac
+
+	# Not found
+	return 1
+}
+
 network_get_address() {
 	local network="${1}"
 

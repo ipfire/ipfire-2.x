@@ -21,6 +21,7 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
+. /etc/init.d/networking/functions.network
 
 PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
 
@@ -37,6 +38,13 @@ IPS_BYPASS_REQUESTED_MASK="0x40000000"
 # Marks a connection to be bypassed
 IPS_BYPASS_MARK="0x20000000"
 IPS_BYPASS_MASK="0x20000000"
+
+# Set if we request to scan this packet
+IPS_SCAN_MARK="0x10000000"
+IPS_SCAN_MASK="0x10000000"
+
+# Supported network zones
+NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "OVPN" )
 
 # Optional options for the Netfilter queue.
 NFQ_OPTS=(
@@ -82,6 +90,30 @@ generate_fw_rules() {
 
 	# Don't process packets that have already been seen by the IPS
 	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
+
+	local zone
+	local status
+	local intf
+
+	# Mark packets for all zones that we want to scan
+	for zone in "${NETWORK_ZONES[@]}"; do
+		status="ENABLE_IDS_${zone}"
+
+		if [ "${!status}" = "on" ]; then
+			intf="$(network_get_intf "${zone}")"
+
+			# Skip if we could not determine an interface
+			if [ -z "${intf}" ]; then
+				continue
+			fi
+
+			iptables -w -t mangle -A IPS -i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+			iptables -w -t mangle -A IPS -o "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+		fi
+	done
+
+	# Don't keep processing packets we don't want to scan
+	iptables -w -t mangle -A IPS -m mark ! --mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))" -j RETURN
 
 	# Never send any whitelisted packets to the IPS
 	if [ -r "/var/ipfire/suricata/ignored" ]; then
