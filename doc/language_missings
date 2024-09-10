@@ -137,8 +137,10 @@
 < hostile networks out
 < hostile networks total
 < ids provider eol
+< ids rulesets
 < ids unsupported provider
 < invalid ip or hostname
+< last updated
 < load average
 < log drop hostile in
 < log drop hostile out
@@ -177,7 +179,9 @@
 < g.lite
 < hostile networks total
 < ids provider eol
+< ids rulesets
 < ids unsupported provider
+< last updated
 < load average
 < oops something went wrong
 < ovpn roadwarrior server
@@ -447,6 +451,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -507,6 +512,7 @@
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
 < load average
@@ -988,6 +994,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -1050,6 +1057,7 @@
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
 < load average
@@ -1834,6 +1842,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -1904,6 +1913,7 @@
 < ipsec settings
 < itlb multihit
 < last
+< last updated
 < least preferred
 < legacy architecture warning
 < lifetime
@@ -2848,6 +2858,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -2919,6 +2930,7 @@
 < ipsec settings
 < itlb multihit
 < last
+< last updated
 < least preferred
 < legacy architecture warning
 < lifetime
@@ -3454,6 +3466,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -3509,6 +3522,7 @@
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
 < load average

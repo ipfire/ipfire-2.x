@@ -1103,16 +1103,15 @@ END
 	#
 	# Used Ruleset Providers section.
 	#
-	&Header::openbox('100%', 'center', $Lang::tr{'ids ruleset settings'});
+	&Header::openbox('100%', 'center', $Lang::tr{'ids rulesets'});
 
 print <<END;
-	<table width='100%' border='0'>
+	<table width='100%' border='0' class='tbl'>
 		<tr>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ids provider'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'date'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'ids autoupdates'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'action'}</b></td>
-			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
+			<th>$Lang::tr{'ids provider'}</td>
+			<th>$Lang::tr{'last updated'}</td>
+			<th align='center'>$Lang::tr{'ids autoupdates'}</td>
+			<th align='center' colspan='3'>$Lang::tr{'action'}</td>
 		</tr>
 END
 		my $line = 1;
@@ -1132,13 +1131,6 @@ END
 				my $autoupdate_status = $used_providers{$id}[2];
 				my $status  = $used_providers{$id}[3];
 				my $unsupported;
-
-				# Check if the item number is even or not.
-				if ($line % 2) {
-					$col="bgcolor='$color{'color22'}'";
-				} else {
-					$col="bgcolor='$color{'color20'}'";
-				}
 
 				# Handle providers which are not longer supported.
 				unless ($IDS::Ruleset::Providers{$provider}{'dl_url'}) {
@@ -1172,8 +1164,8 @@ END
 
 print <<END;
 				<tr>
-					<td width='33%' class='base' $col>$provider_name $unsupported</td>
-					<td width='30%' class='base' $col>$rulesetdate</td>
+					<th scope='row' width='33%' $col>$provider_name $unsupported</th>
+					<td width='30%' $col align='center'>$rulesetdate</td>
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1224,8 +1216,6 @@ END
 
 	# Section to add new elements or edit existing ones.
 	print <<END;
-	<br>
-	<hr>
 	<br>
 
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>

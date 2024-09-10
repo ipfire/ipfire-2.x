@@ -444,6 +444,7 @@ WARNING: translation string unused: ids rules license1
 WARNING: translation string unused: ids rules license2
 WARNING: translation string unused: ids rules license3
 WARNING: translation string unused: ids rules update
+WARNING: translation string unused: ids ruleset settings
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -1028,8 +1029,10 @@ WARNING: untranslated string: hostile networks in = From Hostile Networks
 WARNING: untranslated string: hostile networks out = To Hostile Networks
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
+WARNING: untranslated string: ids rulesets = Rulesets
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
+WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
 WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks

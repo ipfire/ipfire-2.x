@@ -428,6 +428,7 @@ WARNING: translation string unused: id
 WARNING: translation string unused: ids automatic rules update
 WARNING: translation string unused: ids oinkcode required
 WARNING: translation string unused: ids rules update
+WARNING: translation string unused: ids ruleset settings
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -981,6 +982,8 @@ WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
+WARNING: untranslated string: ids rulesets = Rulesets
+WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
