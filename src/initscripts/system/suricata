@@ -78,7 +78,9 @@ generate_fw_rules() {
 	flush_fw_chain
 
 	# Don't process packets where the IPS has requested to bypass the stream
-	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" -j RETURN
+	iptables -w -t mangle -A IPS \
+		-m comment --comment "BYPASSED" \
+		-m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" -j RETURN
 
 	# If suricata decided to bypass a stream, we will store the mark in the connection tracking table
 	iptables -w -t mangle -A IPS \
@@ -126,7 +128,7 @@ generate_fw_rules() {
 	fi
 
 	# Send packets to suricata
-	iptables -w -t mangle -A IPS -j NFQUEUE "${NFQ_OPTIONS[@]}"
+	iptables -w -t mangle -A IPS -m comment --comment "SCANNED" -j NFQUEUE "${NFQ_OPTIONS[@]}"
 
 	return 0
 }
