@@ -1007,7 +1007,7 @@ sub show_mainpage() {
 	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
 
 	# Draw current state of the IDS
-	&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
+	&Header::opensection();
 
 	&Header::ServiceStatus({
 		$Lang::tr{'intrusion prevention system'} => {
@@ -1098,7 +1098,7 @@ END
 
 	}
 
-	&Header::closebox();
+	&Header::closesection();
 
 	#
 	# Used Ruleset Providers section.
