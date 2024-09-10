@@ -92,9 +92,15 @@ network_get_intf() {
 			fi
 			;;
 
+		WIREGUARD|WG)
+			echo "wg+"
+			return 0
+			;;
+
 		OPENVPN|OVPN)
 			# OpenVPN is using all tun devices
 			echo "tun+"
+			return 0
 			;;
 	esac
 

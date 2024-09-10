@@ -103,6 +103,7 @@
 < upload fcdsl.o
 < user management
 < vpn configuration main
+< wg
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -156,6 +157,7 @@
 < timeformat
 < transport mode does not support vti
 < warning
+< wg
 < wireguard
 < wlanap
 < wlanap psk
@@ -185,6 +187,7 @@
 < timeformat
 < upload fcdsl.o
 < warning
+< wg
 < wireguard
 < wlanap psk
 < wlanap wireless mode
@@ -668,6 +671,7 @@
 < vulnerable
 < warning
 < Weekly
+< wg
 < whois results from
 < winbind daemon
 < wireguard
@@ -1229,6 +1233,7 @@
 < vulnerable
 < warning
 < Weekly
+< wg
 < whois results from
 < winbind daemon
 < wireguard
@@ -2205,6 +2210,7 @@
 < vulnerable
 < warning
 < Weekly
+< wg
 < whois results from
 < winbind daemon
 < wireguard
@@ -3218,6 +3224,7 @@
 < warning
 < week-graph
 < Weekly
+< wg
 < whois results from
 < winbind daemon
 < wireguard
@@ -3608,6 +3615,7 @@
 < vulnerable
 < warning
 < Weekly
+< wg
 < whois results from
 < winbind daemon
 < wireguard

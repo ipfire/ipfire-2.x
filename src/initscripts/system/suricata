@@ -41,7 +41,7 @@ IPS_SCAN_MARK="0x10000000"
 IPS_SCAN_MASK="0x10000000"
 
 # Supported network zones
-NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "OVPN" )
+NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "WG" "OVPN" )
 
 # Optional options for the Netfilter queue.
 NFQ_OPTS=(

@@ -3020,6 +3020,7 @@
 'week-graph' => 'Week',
 'weekly firewallhits' => 'weekly firewallhits',
 'weeks' => 'Weeks',
+'wg' => 'WireGuard',
 'whois results from' => 'WHOIS results from',
 'wildcards' => 'Wildcards',
 'winbind daemon' => 'Winbind Daemon',
