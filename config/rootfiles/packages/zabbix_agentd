@@ -23,3 +23,4 @@ var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
 var/ipfire/zabbix_agentd/userparameters/userparameter_ovpn.conf
 var/ipfire/zabbix_agentd/scripts
 var/ipfire/zabbix_agentd/scripts/ipfire_certificate_detail.sh
+var/ipfire/zabbix_agentd/scripts/ipfire_services.pl

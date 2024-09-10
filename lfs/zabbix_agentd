@@ -117,6 +117,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /var/ipfire/zabbix_agentd/scripts
 	install -v -m 755 $(DIR_SRC)/config/zabbix_agentd/ipfire_certificate_detail.sh \
 		/var/ipfire/zabbix_agentd/scripts/ipfire_certificate_detail.sh
+	install -v -m 755 $(DIR_SRC)/config/zabbix_agentd/ipfire_services.pl \
+		/var/ipfire/zabbix_agentd/scripts/ipfire_services.pl
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix
