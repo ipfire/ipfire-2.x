@@ -117,8 +117,6 @@ generate_fw_rules() {
 		local id network remark enabled rest
 
 		while IFS=',' read -r id network remark enabled rest; do
-			echo "$network"
-			echo "$remark"
 			# Skip disabled entries
 			[ "${enabled}" = "enabled" ] || continue
 
