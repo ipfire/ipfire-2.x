@@ -1253,7 +1253,7 @@ END
 			my $col = "";
 
 			# Loop through all entries of the hash.
-			while( (my $key) = each %ignored)  {
+			foreach my $key (sort { $ignored{$a}[0] <=> $ignored{$b}[0] } keys %ignored)  {
 				# Assign data array positions to some nice variable names.
 				my $address = $ignored{$key}[0];
 				my $remark = $ignored{$key}[1];
