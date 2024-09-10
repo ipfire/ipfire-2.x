@@ -221,13 +221,6 @@ iptables_init() {
 	iptables -A FORWARD -i tun+ -j OVPNBLOCK
 	iptables -A FORWARD -o tun+ -j OVPNBLOCK
 
-	# IPS (Suricata) chains
-	iptables -t mangle -N IPS
-
-	for chain in PREROUTING POSTROUTING; do
-		iptables -t mangle -A "${chain}" -j IPS
-	done
-
 	# OpenVPN transfer network translation
 	iptables -t nat -N OVPNNAT
 	iptables -t nat -A POSTROUTING -j OVPNNAT
@@ -381,6 +374,13 @@ iptables_init() {
 		iptables -t nat -A NAT_DESTINATION_FIX \
 			-m mark --mark "0x04000000/${NAT_MASK}" -j SNAT --to-source "${ORANGE_ADDRESS}"
 	fi
+
+	# IPS (Suricata) chains
+	iptables -t mangle -N IPS
+
+	for chain in PREROUTING POSTROUTING; do
+		iptables -t mangle -A "${chain}" -j IPS
+	done
 
 	# RED chain, used for the red interface
 	iptables -N REDINPUT
