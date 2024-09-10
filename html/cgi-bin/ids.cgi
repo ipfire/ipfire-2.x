@@ -1011,7 +1011,7 @@ sub show_mainpage() {
 
 	&Header::ServiceStatus({
 		$Lang::tr{'intrusion prevention system'} => {
-			"process" => "Suricata-Main",
+			"pidfile" => "/var/run/suricata.pid",
 		},
 	});
 

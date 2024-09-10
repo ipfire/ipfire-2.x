@@ -24,9 +24,12 @@ PIDFILE="/var/run/suricata.pid"
 main() {
 	local ret
 
+	# Suricata becomes unhappy if the PID file exists
+	unlink "${PIDFILE}" &>/dev/null
+
 	while :; do
 		# Launch suricata
-		/usr/bin/suricata "$@" &>/dev/null
+		/usr/bin/suricata --pidfile "${PIDFILE}" "$@" &>/dev/null
 
 		# Wait until suricata is done
 		ret=$?

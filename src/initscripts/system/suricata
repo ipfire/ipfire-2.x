@@ -159,7 +159,7 @@ case "$1" in
 
         stop)
 		boot_mesg "Stopping Intrusion Detection System..."
-		killproc /usr/bin/suricata
+		killproc -p /var/run/suricata.pid /usr/bin/suricata
 
 		# Flush firewall chain.
 		flush_fw_chain
@@ -169,13 +169,14 @@ case "$1" in
         ;;
 
         status)
-                statusproc /usr/bin/suricata
+                PIDFILE="/var/run/suricata.pid" statusproc /usr/bin/suricata
                 ;;
 
         restart)
                 $0 stop
                 $0 start
                 ;;
+
 	reload)
 		# Send SIGUSR2 to the suricata process to perform a reload
 		# of the ruleset.
