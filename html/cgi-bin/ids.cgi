@@ -1017,30 +1017,29 @@ sub show_mainpage() {
 
 	# Only show this area, if at least one ruleset provider is configured.
 	if (%used_providers) {
+		my $num_zones = scalar @network_zones;
 
 print <<END
-
-		<br><br><h2>$Lang::tr{'settings'}</h2>
+		<br>
 
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<table width='100%' border='0'>
 				<tr>
-					<td class='base' colspan='2'>
+					<td colspan='$num_zones'>
 						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
 					</td>
+				</tr>
 
-				</td>
+				<tr> <!-- empty row for spacing -->
+					<td colspan='$num_zones'>
+						&nbsp;
+					</td>
 				</tr>
 
 				<tr>
-					<td><br><br></td>
-					<td><br><br></td>
-					<td><br><br></td>
-					<td><br><br></td>
-				</tr>
-
-				<tr>
-					<td colspan='4'><b>$Lang::tr{'ids monitored interfaces'}</b><br></td>
+					<td colspan='$num_zones'>
+						<b>$Lang::tr{'ids monitored interfaces'}</b>
+					</td>
 				</tr>
 
 				<tr>
@@ -1068,21 +1067,29 @@ END
 				$checked_input = "checked = 'checked'";
 			}
 
-			print "<td class='base' width='20%'>\n";
-			print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
-			print "&nbsp;$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
-			print "</td>\n";
+			print <<END;
+				<td>
+					<label>
+						<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>
+						&nbsp; $Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>
+					</label>
+				</td>
+END
 		}
 
 print <<END
 				</tr>
-			</table>
 
-			<br><br>
+				<tr> <!-- empty row for spacing -->
+					<td colspan='$num_zones'>
+						&nbsp;
+					</td>
+				</tr>
 
-			<table width='100%'>
 				<tr>
-					<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+					<td colspan='$num_zones' align='right'>
+						<input type='submit' name='IDS' value='$Lang::tr{'save'}' />
+					</td>
 				</tr>
 			</table>
 		</form>
