@@ -24,7 +24,6 @@
 . /etc/init.d/networking/functions.network
 
 eval $(/usr/local/bin/readhash /var/ipfire/suricata/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 IPS_REPEAT_MARK="0x80000000"
 IPS_REPEAT_MASK="0x80000000"
