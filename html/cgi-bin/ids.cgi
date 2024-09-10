@@ -1100,6 +1100,9 @@ END
 
 	&Header::closesection();
 
+	# Throughput Graph
+	&Header::graph("$Lang::tr{'ips throughput'}", "ids.cgi", "ips-throughput", "day");
+
 	#
 	# Used Ruleset Providers section.
 	#

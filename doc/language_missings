@@ -121,6 +121,7 @@
 < access point name is invalid
 < access point name is required
 < addon
+< bypassed
 < cpu frequency
 < data transfer
 < dhcp fixed ip address in dynamic range
@@ -140,6 +141,7 @@
 < ids rulesets
 < ids unsupported provider
 < invalid ip or hostname
+< ips throughput
 < last updated
 < load average
 < log drop hostile in
@@ -153,10 +155,12 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< scanned
 < service boot setting unavailable
 < spec rstack overflow
 < system time
 < timeformat
+< total
 < transport mode does not support vti
 < warning
 < wg
@@ -172,6 +176,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< bypassed
 < data transfer
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
@@ -181,14 +186,17 @@
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< ips throughput
 < last updated
 < load average
 < oops something went wrong
 < ovpn roadwarrior server
 < processors
 < reg_file_data_sampling
+< scanned
 < system time
 < timeformat
+< total
 < upload fcdsl.o
 < warning
 < wg
@@ -233,6 +241,7 @@
 < available
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -511,6 +520,7 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last updated
 < legacy architecture warning
@@ -604,6 +614,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -642,6 +653,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -771,6 +783,7 @@
 < available
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -1056,6 +1069,7 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last updated
 < legacy architecture warning
@@ -1167,6 +1181,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -1209,6 +1224,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -1349,6 +1365,7 @@
 < bit
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -1911,6 +1928,7 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last
 < last updated
@@ -2072,6 +2090,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -2175,6 +2194,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -2360,6 +2380,7 @@
 < bit
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -2928,6 +2949,7 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last
 < last updated
@@ -3087,6 +3109,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -3190,6 +3213,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -3352,6 +3376,7 @@
 < autonomous system
 < available
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -3521,6 +3546,7 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last updated
 < legacy architecture warning
@@ -3579,6 +3605,7 @@
 < runmode
 < samba server role member
 < samba server role standalone
+< scanned
 < secret
 < sent
 < service boot setting unavailable
@@ -3613,6 +3640,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
