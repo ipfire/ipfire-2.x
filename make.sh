@@ -571,19 +571,12 @@ prepareenv() {
 }
 
 entershell() {
-	local environ=(
-		# HTTP(S) Proxy
-		"https_proxy=${https_proxy}"
-		"http_proxy=${http_proxy}"
-	)
-
 	echo "Entering to a shell inside the build environment, go out with exit"
 
 	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
 	# Run an interactive shell
-	execute --chroot --interactive --network \
-		"${environ[@]}" bash -i
+	execute --chroot --interactive --network bash -i
 }
 
 lfsmakecommoncheck() {
@@ -760,6 +753,12 @@ execute() {
 
 			--network)
 				network="true"
+
+				# Export the proxy configuration
+				environ+=(
+					[https_proxy]="${https_proxy}"
+					[http_proxy]="${http_proxy}"
+				)
 				;;
 
 			--timer=*)
