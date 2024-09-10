@@ -1241,11 +1241,11 @@ END
 	&Header::openbox('100%', 'center', $Lang::tr{'ids ignored hosts'});
 
 	print <<END;
-	<table width='100%'>
+	<table class='tbl'>
 		<tr>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ip address'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'remark'}</b></td>
-			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
+			<th>$Lang::tr{'ip address'}</td>
+			<th>$Lang::tr{'remark'}</td>
+			<th colspan='3'></td>
 		</tr>
 END
 		# Check if some hosts have been added to be ignored.
@@ -1262,10 +1262,6 @@ END
 				# Check if the key (id) number is even or not.
 				if ($cgiparams{'ID'} eq $key) {
 					$col="bgcolor='${Header::colouryellow}'";
-				} elsif ($key % 2) {
-					$col="bgcolor='$color{'color22'}'";
-				} else {
-					$col="bgcolor='$color{'color20'}'";
 				}
 
 				# Choose icon for the checkbox.
@@ -1283,8 +1279,8 @@ END
 
 print <<END;
 				<tr>
-					<td width='20%' class='base' $col>$address</td>
-					<td width='65%' class='base' $col>$remark</td>
+					<td width='20%' $col>$address</td>
+					<td width='65%' $col>$remark</td>
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1323,12 +1319,10 @@ END
 
 		# Section to add new elements or edit existing ones.
 print <<END;
-		<br>
-		<hr>
-		<br>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
 
-		<div align='center'>
-			<table width='100%'>
+			<table class='form'>
 END
 
 		# Assign correct headline and button text.
@@ -1339,30 +1333,36 @@ END
 		# Check if an ID (key) has been given, in this case an existing entry should be edited.
 		if ($cgiparams{'ID'} ne '') {
 			$buttontext = $Lang::tr{'update'};
-				print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'update'}</b></td></tr>\n";
+				print "<tr><td colspan='2'><h6>$Lang::tr{'update'}</h6></td></tr>\n";
 
 				# Grab address and remark for the given key.
 				$entry_address = $ignored{$cgiparams{'ID'}}[0];
 				$entry_remark = $ignored{$cgiparams{'ID'}}[1];
 			} else {
 				$buttontext = $Lang::tr{'add'};
-				print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'dnsforward add a new entry'}</b></td></tr>\n";
+				print "<tr><td colspan='2'><h6>$Lang::tr{'dnsforward add a new entry'}</h6></td></tr>\n";
 			}
 
 print <<END;
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
 				<tr>
-					<td width='30%'>$Lang::tr{'ip address'}: </td>
-					<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
-
-					<td width='30%'>$Lang::tr{'remark'}: </td>
-					<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
-					<td align='center' width='20%'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
+					<td>$Lang::tr{'ip address'}</td>
+					<td>
+						<input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' />
+					</td>
 				</tr>
-				</form>
+
+				<tr>
+					<td>$Lang::tr{'remark'}</td>
+					<td>
+						<input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' />
+					</td>
+				</tr>
+
+				<tr class='action'>
+					<td colspan='2'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
+				</tr>
 			</table>
-		</div>
+		</form>
 END
 
 	&Header::closebox();
