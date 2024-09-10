@@ -23,8 +23,6 @@
 . ${rc_functions}
 . /etc/init.d/networking/functions.network
 
-PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
-
 eval $(/usr/local/bin/readhash /var/ipfire/suricata/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
@@ -198,5 +196,3 @@ case "$1" in
                 exit 1
                 ;;
 esac
-
-chmod 644 /var/log/suricata/* 2>/dev/null
