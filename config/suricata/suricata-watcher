@@ -52,4 +52,4 @@ main() {
 	return ${ret}
 }
 
-main "$@" || return $?
+main "$@" || exit $?
