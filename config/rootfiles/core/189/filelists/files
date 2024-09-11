@@ -1,1 +1,2 @@
 etc/rc.d/init.d/functions
+var/ipfire/header.pl
