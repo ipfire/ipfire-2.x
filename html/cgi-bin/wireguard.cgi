@@ -30,30 +30,12 @@ use MIME::Base64;
 require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
+require "${General::swroot}/wireguard-functions.pl";
 
-my $DEFAULT_PORT		= 51820;
-my $DEFAULT_KEEPALIVE	= 25;
-
-my $INTF = "wg0";
 my @errormessages = ();
 
-# Read the global configuration
-my %settings = ();
-&General::readhash("/var/ipfire/wireguard/settings", \%settings);
-
-# Read all peers
-my %peers = ();
-&General::readhasharray("/var/ipfire/wireguard/peers", \%peers);
-
-# Set any defaults
-&General::set_defaults(\%settings, {
-	"ENABLED"    => "off",
-	"PORT"       => $DEFAULT_PORT,
-	"CLIENT_DNS" => $Network::ethernet{'GREEN_ADDRESS'},
-});
-
 # Generate keys
-&generate_keys();
+&Wireguard::generate_keys();
 
 # Fetch CGI parameters
 my %cgiparams = ();
@@ -65,21 +47,21 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Store whether enabled or not
 	if ($cgiparams{'ENABLED'} =~ m/^(on|off)?$/) {
-		$settings{'ENABLED'} = $cgiparams{'ENABLED'};
+		$Wireguard::settings{'ENABLED'} = $cgiparams{'ENABLED'};
 	}
 
 	# Check port
 	if (&General::validport($cgiparams{'PORT'})) {
-		$settings{'PORT'} = $cgiparams{'PORT'};
+		$Wireguard::settings{'PORT'} = $cgiparams{'PORT'};
 	} else {
 		push(@errormessages, $Lang::tr{'invalid port'});
 	}
 
 	# Check client pool
-	if (&pool_is_in_use($settings{'CLIENT_POOL'})) {
+	if (&Wireguard::pool_is_in_use($Wireguard::settings{'CLIENT_POOL'})) {
 		# Ignore any changes if the pool is in use
 	} elsif (&Network::check_subnet($cgiparams{'CLIENT_POOL'})) {
-		$settings{'CLIENT_POOL'} = $cgiparams{'CLIENT_POOL'};
+		$Wireguard::settings{'CLIENT_POOL'} = $cgiparams{'CLIENT_POOL'};
 	} else {
 		push(@errormessages, $Lang::tr{'wg invalid client pool'});
 	}
@@ -95,17 +77,17 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		}
 
 		# Store CLIENT_DNS
-		$settings{'CLIENT_DNS'} = join("|", @client_dns);
+		$Wireguard::settings{'CLIENT_DNS'} = join("|", @client_dns);
 	}
 
 	# Don't continue on error
 	goto MAIN if (scalar @errormessages);
 
 	# Store the configuration file
-	&General::writehash("/var/ipfire/wireguard/settings", \%settings);
+	&General::writehash("/var/ipfire/wireguard/settings", \%Wireguard::settings);
 
 	# Start if enabled
-	if ($settings{'ENABLED'} eq "on") {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	} else {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
@@ -116,19 +98,19 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	my $key = $cgiparams{'KEY'};
 
 	# Fail if the peer does not exist
-	unless (exists $peers{$key}) {
+	unless (exists $Wireguard::peers{$key}) {
 		push(@errormessages, $Lang::tr{'wg peer does not exist'});
 		goto MAIN;
 	}
 
 	# Delete the peer
-	delete($peers{$key});
+	delete($Wireguard::peers{$key});
 
 	# Store the configuration
-	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($settings{'ENABLED'} eq "on") {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -137,31 +119,31 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	my $key = $cgiparams{'KEY'};
 
 	# Fail if the peer does not exist
-	unless (exists $peers{$key}) {
+	unless (exists $Wireguard::peers{$key}) {
 		push(@errormessages, $Lang::tr{'wg peer does not exist'});
 		goto MAIN;
 	}
 
 	# Fetch type
-	my $type = $peers{$key}[1];
+	my $type = $Wireguard::peers{$key}[1];
 
-	my @remote_subnets = &decode_subnets($peers{$key}[6]);
-	my @local_subnets  = &decode_subnets($peers{$key}[8]);
+	my @remote_subnets = &Wireguard::decode_subnets($Wireguard::peers{$key}[6]);
+	my @local_subnets  = &Wireguard::decode_subnets($Wireguard::peers{$key}[8]);
 
 	# Flush CGI parameters & load configuration
 	%cgiparams = (
 		"KEY"				=> $key,
-		"ENABLED"			=> $peers{$key}[0],
-		"TYPE"				=> $peers{$key}[1],
-		"NAME"				=> $peers{$key}[2],
-		"PUBLIC_KEY"		=> $peers{$key}[3],
-		"ENDPOINT_ADDRESS"	=> $peers{$key}[4],
-		"ENDPOINT_PORT"		=> $peers{$key}[5],
+		"ENABLED"			=> $Wireguard::peers{$key}[0],
+		"TYPE"				=> $Wireguard::peers{$key}[1],
+		"NAME"				=> $Wireguard::peers{$key}[2],
+		"PUBLIC_KEY"		=> $Wireguard::peers{$key}[3],
+		"ENDPOINT_ADDRESS"	=> $Wireguard::peers{$key}[4],
+		"ENDPOINT_PORT"		=> $Wireguard::peers{$key}[5],
 		"REMOTE_SUBNETS"	=> join(", ", @remote_subnets),
-		"REMARKS"			=> &decode_base64($peers{$key}[7]),
+		"REMARKS"			=> &MIME::Base64::decode_base64($Wireguard::peers{$key}[7]),
 		"LOCAL_SUBNETS"		=> join(", ", @local_subnets),
-		"PSK"				=> $peers{$key}[9],
-		"KEEPALIVE"			=> $peers{$key}[10],
+		"PSK"				=> $Wireguard::peers{$key}[9],
+		"KEEPALIVE"			=> $Wireguard::peers{$key}[10],
 	);
 
 	# Jump to the editor
@@ -178,27 +160,27 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	my @remote_subnets = ();
 
 	# Fetch or allocate a new key
-	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%peers);
+	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%Wireguard::peers);
 
 	# Check if the name is valid
-	unless (&name_is_valid($cgiparams{"NAME"})) {
+	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
 		push(@errormessages, $Lang::tr{'wg invalid name'});
 	}
 
 	# Check if the name is free
-	unless (&name_is_free($cgiparams{"NAME"}, $key)) {
+	unless (&Wireguard::name_is_free($cgiparams{"NAME"}, $key)) {
 		push(@errormessages, $Lang::tr{'wg name is already used'});
 	}
 
 	# Check the public key
-	unless (&publickey_is_valid($cgiparams{'PUBLIC_KEY'})) {
+	unless (&Wireguard::publickey_is_valid($cgiparams{'PUBLIC_KEY'})) {
 		push(@errormessages, $Lang::tr{'wg invalid public key'});
 	}
 
 	# Check PSK
 	if ($cgiparams{'PSK'} eq '') {
 		# The PSK may be empty
-	} elsif (!&publickey_is_valid($cgiparams{'PSK'})) {
+	} elsif (!&Wireguard::publickey_is_valid($cgiparams{'PSK'})) {
 		push(@errormessages, $Lang::tr{'wg invalid psk'});
 	}
 
@@ -215,7 +197,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# Check keepalive
-	unless (&keepalive_is_valid($cgiparams{'KEEPALIVE'})) {
+	unless (&Wireguard::keepalive_is_valid($cgiparams{'KEEPALIVE'})) {
 		push(@errormessages, $Lang::tr{'wg invalid keepalive interval'});
 	}
 
@@ -255,7 +237,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	goto EDITNET if (scalar @errormessages);
 
 	# Save the connection
-	$peers{$key} = [
+	$Wireguard::peers{$key} = [
 		# 0 = Enabled
 		"on",
 		# 1 = Type
@@ -269,11 +251,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 5 = Endpoint Port
 		$cgiparams{"ENDPOINT_PORT"},
 		# 6 = Remote Subnets
-		&encode_subnets(@remote_subnets),
+		&Wireguard::encode_subnets(@remote_subnets),
 		# 7 = Remark
-		&encode_remarks($cgiparams{"REMARKS"}),
+		&Wireguard::encode_remarks($cgiparams{"REMARKS"}),
 		# 8 = Local Subnets
-		&encode_subnets(@local_subnets),
+		&Wireguard::encode_subnets(@local_subnets),
 		# 9 = PSK
 		$cgiparams{"PSK"} || "",
 		# 10 = Keepalive
@@ -281,10 +263,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	];
 
 	# Store the configuration
-	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($settings{'ENABLED'} eq "on") {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -294,18 +276,18 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	my $private_key;
 
 	# Fetch or allocate a new key
-	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%peers);
+	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%Wireguard::peers);
 
 	# Is this a new connection?
-	my $is_new = !exists $peers{$key};
+	my $is_new = !exists $Wireguard::peers{$key};
 
 	# Check if the name is valid
-	unless (&name_is_valid($cgiparams{"NAME"})) {
+	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
 		push(@errormessages, $Lang::tr{'wg invalid name'});
 	}
 
 	# Check if the name is free
-	unless (&name_is_free($cgiparams{"NAME"}, $key)) {
+	unless (&Wireguard::name_is_free($cgiparams{"NAME"}, $key)) {
 		push(@errormessages, $Lang::tr{'wg name is already used'});
 	}
 
@@ -328,7 +310,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Check if we have address space left in the pool
 	if ($is_new) {
 		# Fetch the next free address
-		@free_addresses = &free_pool_addresses($settings{'CLIENT_POOL'}, 1);
+		@free_addresses = &Wireguard::free_pool_addresses($Wireguard::settings{'CLIENT_POOL'}, 1);
 
 		# Fail if we ran out of addresses
 		if (scalar @free_addresses == 0) {
@@ -342,13 +324,13 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Generate things for a new peer
 	if ($is_new) {
 		# Generate a new private key
-		$private_key = &generate_private_key();
+		$private_key = &Wireguard::generate_private_key();
 
 		# Derive the public key
-		$cgiparams{"PUBLIC_KEY"} = &derive_public_key($private_key);
+		$cgiparams{"PUBLIC_KEY"} = &Wireguard::derive_public_key($private_key);
 
 		# Generate a new PSK
-		$cgiparams{"PSK"} = &generate_private_key();
+		$cgiparams{"PSK"} = &Wireguard::generate_private_key();
 
 		# Fetch a free address from the pool
 		foreach (@free_addresses) {
@@ -358,13 +340,13 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 	# Fetch some configuration parts
 	} else {
-		$cgiparams{"PUBLIC_KEY"}     = $peers{$key}[3];
-		$cgiparams{'CLIENT_ADDRESS'} = $peers{$key}[6];
-		$cgiparams{"PSK"}            = $peers{$key}[9];
+		$cgiparams{"PUBLIC_KEY"}     = $Wireguard::peers{$key}[3];
+		$cgiparams{'CLIENT_ADDRESS'} = $Wireguard::peers{$key}[6];
+		$cgiparams{"PSK"}            = $Wireguard::peers{$key}[9];
 	}
 
 	# Save the connection
-	$peers{$key} = [
+	$Wireguard::peers{$key} = [
 		# 0 = Enabled
 		"on",
 		# 1 = Type
@@ -380,9 +362,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 6 = Remote Subnets
 		$cgiparams{'CLIENT_ADDRESS'},
 		# 7 = Remark
-		&encode_remarks($cgiparams{"REMARKS"}),
+		&Wireguard::encode_remarks($cgiparams{"REMARKS"}),
 		# 8 = Local Subnets
-		&encode_subnets(@local_subnets),
+		&Wireguard::encode_subnets(@local_subnets),
 		# 9 = PSK
 		$cgiparams{"PSK"},
 		# 10 = Keepalive
@@ -390,10 +372,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	];
 
 	# Store the configuration
-	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($settings{'ENABLED'} eq "on") {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -416,19 +398,19 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 } elsif ($cgiparams{'ACTION'} eq 'TOGGLE-ENABLE-DISABLE') {
 	my $key = $cgiparams{'KEY'} || 0;
 
-	if (exists $peers{$key}) {
-		if ($peers{$key}[0] eq "on") {
-			$peers{$key}[0] = "off";
+	if (exists $Wireguard::peers{$key}) {
+		if ($Wireguard::peers{$key}[0] eq "on") {
+			$Wireguard::peers{$key}[0] = "off";
 		} else {
-			$peers{$key}[0] = "on";
+			$Wireguard::peers{$key}[0] = "on";
 		}
 	}
 
 	# Store the configuration
-	&General::writehasharray("/var/ipfire/wireguard/peers", \%peers);
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($settings{'ENABLED'} eq "on") {
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 }
@@ -448,14 +430,14 @@ MAIN:
 	&Header::openbox('100%', '', $Lang::tr{'global settings'});
 
 	my %checked = (
-		"ENABLED" => ($settings{'ENABLED'} eq "on") ? "checked" : "",
+		"ENABLED" => ($Wireguard::settings{'ENABLED'} eq "on") ? "checked" : "",
 	);
 
 	my %readonly = (
-		"CLIENT_POOL" => (&pool_is_in_use($settings{'CLIENT_POOL'}) ? "readonly" : ""),
+		"CLIENT_POOL" => (&Wireguard::pool_is_in_use($Wireguard::settings{'CLIENT_POOL'}) ? "readonly" : ""),
 	);
 
-	my $client_dns = $settings{'CLIENT_DNS'} =~ s/\|/, /gr;
+	my $client_dns = $Wireguard::settings{'CLIENT_DNS'} =~ s/\|/, /gr;
 
 	print <<END;
 		<form method="POST" action="">
@@ -470,14 +452,14 @@ MAIN:
 				<tr>
 					<td>$Lang::tr{'public key'}</td>
 					<td>
-						<input type="text" name="PUBLIC_KEY" value="$settings{'PUBLIC_KEY'}" readonly />
+						<input type="text" name="PUBLIC_KEY" value="$Wireguard::settings{'PUBLIC_KEY'}" readonly />
 					</td>
 				</tr>
 
 				<tr>
 					<td>$Lang::tr{'port'}</td>
 					<td>
-						<input type="number" name="PORT" value="$settings{'PORT'}"
+						<input type="number" name="PORT" value="$Wireguard::settings{'PORT'}"
 							min="1024" max="65535" />
 					</td>
 				</tr>
@@ -490,7 +472,7 @@ MAIN:
 					<td>$Lang::tr{'wg client pool'}</td>
 					<td>
 						<input type="text" name="CLIENT_POOL"
-							value="$settings{'CLIENT_POOL'}" $readonly{'CLIENT_POOL'} />
+							value="$Wireguard::settings{'CLIENT_POOL'}" $readonly{'CLIENT_POOL'} />
 					</td>
 				</tr>
 
@@ -515,9 +497,9 @@ END
 	# Show a list with all peers
 	&Header::opensection();
 
-	if (%peers) {
+	if (%Wireguard::peers) {
 		# Fetch the dump
-		my %dump = &dump($INTF);
+		my %dump = &Wireguard::dump($Wireguard::INTF);
 
 		print <<END;
 			<table class='tbl'>
@@ -541,15 +523,15 @@ END
 END
 
 		# Iterate through all peers...
-		foreach my $key (sort { $peers{$a}[2] cmp $peers{$b}[2] } keys %peers) {
-			my $enabled  = $peers{$key}[0];
-			my $type     = $peers{$key}[1];
-			my $name     = $peers{$key}[2];
-			my $pubkey   = $peers{$key}[3];
-			my $endpoint = $peers{$key}[4];
-			my $port     = $peers{$key}[5];
-			my $routes   = $peers{$key}[6];
-			my $remarks  = &decode_remarks($peers{$key}[7]);
+		foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
+			my $enabled  = $Wireguard::peers{$key}[0];
+			my $type     = $Wireguard::peers{$key}[1];
+			my $name     = $Wireguard::peers{$key}[2];
+			my $pubkey   = $Wireguard::peers{$key}[3];
+			my $endpoint = $Wireguard::peers{$key}[4];
+			my $port     = $Wireguard::peers{$key}[5];
+			my $routes   = $Wireguard::peers{$key}[6];
+			my $remarks  = &Wireguard::decode_remarks($Wireguard::peers{$key}[7]);
 
 			my $connected = $Lang::tr{'capsclosed'};
 			my $country   = "ZZ";
@@ -699,12 +681,12 @@ ADD:
 	);
 
 	# If there is no CLIENT_POOL configured, we disable the option
-	if ($settings{'CLIENT_POOL'} eq "") {
+	if ($Wireguard::settings{'CLIENT_POOL'} eq "") {
 		$disabled{"host"} = "disabled";
 
 	# If the client pool is out of addresses, we do the same
 	} else {
-		my @free_addresses = &free_pool_addresses($settings{'CLIENT_POOL'}, 1);
+		my @free_addresses = &Wireguard::free_pool_addresses($Wireguard::settings{'CLIENT_POOL'}, 1);
 
 		if (scalar @free_addresses == 0) {
 			$disabled{"host"} = "disabled";
@@ -764,11 +746,11 @@ EDITNET:
 	# Set defaults
 	unless (defined $key) {
 		&General::set_defaults(\%cgiparams, {
-			"ENDPOINT_PORT" => $DEFAULT_PORT,
+			"ENDPOINT_PORT" => $Wireguard::DEFAULT_PORT,
 			"LOCAL_SUBNETS" =>
 				$Network::ethernet{"GREEN_NETADDRESS"}
 				. "/" . $Network::ethernet{"GREEN_NETMASK"},
-			"KEEPALIVE"		=> $DEFAULT_KEEPALIVE,
+			"KEEPALIVE"     => $Wireguard::DEFAULT_KEEPALIVE,
 		});
 	}
 
@@ -823,7 +805,7 @@ EDITNET:
 					<td>
 						<input type="number" name="ENDPOINT_PORT"
 							value="$cgiparams{'ENDPOINT_PORT'}" required
-							min="1" max="65535" placeholder="${DEFAULT_PORT}"/>
+							min="1" max="65535" placeholder="${Wireguard::DEFAULT_PORT}"/>
 					</td>
 				</tr>
 
@@ -992,18 +974,18 @@ sub show_peer_configuration($$) {
 
 	# Load the configuration
 	my %peer = (
-		"NAME"				=> $peers{$key}[2],
-		"PUBLIC_KEY"		=> $peers{$key}[3],
-		"CLIENT_ADDRESS"	=> $peers{$key}[6],
-		"LOCAL_SUBNETS"		=> &decode_subnets($peers{$key}[8]),
-		"PSK"				=> $peers{$key}[9],
+		"NAME"				=> $Wireguard::peers{$key}[2],
+		"PUBLIC_KEY"		=> $Wireguard::peers{$key}[3],
+		"CLIENT_ADDRESS"	=> $Wireguard::peers{$key}[6],
+		"LOCAL_SUBNETS"		=> &Wireguard::decode_subnets($Wireguard::peers{$key}[8]),
+		"PSK"				=> $Wireguard::peers{$key}[9],
 
 		# Other stuff
 		"PRIVATE_KEY"		=> $private_key,
 	);
 
 	# Generate the client configuration
-	my $config = &generate_client_configuration(\%peer);
+	my $config = &Wireguard::generate_client_configuration(\%peer);
 
 	# Create a QR code generator
 	my $qrgen = Imager::QRCode->new(
@@ -1064,312 +1046,4 @@ END
 	&Header::closepage();
 
 	exit(0);
-}
-
-# This function generates a set of keys for this host if none exist
-sub generate_keys($) {
-	my $force = shift || 0;
-
-	# Reset any previous keys if re-generation forced
-	if ($force) {
-		$settings{"PRIVATE_KEY"} = undef;
-		$settings{"PUBLIC_KEY"}  = undef;
-	}
-
-	# Return if we already have keys
-	return if (defined $settings{"PRIVATE_KEY"} && defined $settings{"PUBLIC_KEY"});
-
-	# Generate a new private key
-	unless (defined $settings{'PRIVATE_KEY'}) {
-		# Generate a new private key
-		$settings{"PRIVATE_KEY"} = &generate_private_key();
-
-		# Reset the public key
-		$settings{"PUBLIC_KEY"} = undef;
-	}
-
-	# Derive the public key
-	unless (defined $settings{"PUBLIC_KEY"}) {
-		# Derive the public key
-		$settings{"PUBLIC_KEY"} = &derive_public_key($settings{"PRIVATE_KEY"});
-	}
-
-	# Store the configuration file
-	&General::writehash("/var/ipfire/wireguard/settings", \%settings);
-}
-
-# Generates a new private key
-sub generate_private_key() {
-	# Generate a new private key
-	my @output = &General::system_output("wg", "genkey");
-
-	# Store the key
-	foreach (@output) {
-		chomp;
-
-		return $_;
-	}
-
-	# Return undefined on error
-	return undef;
-}
-
-# Takes a private key and derives the public key
-sub derive_public_key($) {
-	my $private_key = shift;
-	my @output = ();
-
-	# Derive the public key
-	if (open(STDIN, "-|")) {
-		@output = &General::system_output("wg", "pubkey");
-	} else {
-		print $private_key . "\n";
-		exit (0);
-	}
-
-	# Return the first line
-	foreach (@output) {
-		chomp;
-
-		return $_;
-	}
-
-	# Return undefined on error
-	return undef;
-}
-
-sub dump($) {
-	my $intf = shift;
-
-	my %dump = ();
-	my $lineno = 0;
-
-	# Fetch the dump
-	my @output = &General::system_output("/usr/local/bin/wireguardctrl", "dump", $intf);
-
-	foreach my $line (@output) {
-		# Increment the line numbers
-		$lineno++;
-
-		# Skip the first line
-		next if ($lineno <= 1);
-
-		# Split the line into its fields
-		my @fields = split(/\t/, $line);
-
-		# Create a new hash indexed by the public key
-		$dump{$fields[0]} = {
-			"psk"                  => $fields[1],
-			"endpoint"             => $fields[2],
-			"allowed-ips"          => $fields[3],
-			"latest-handshake"     => $fields[4],
-			"transfer-rx"          => $fields[5],
-			"transfer-tx"          => $fields[6],
-			"persistent-keepalive" => $fields[7],
-		};
-	}
-
-	return %dump;
-}
-
-sub name_is_valid($) {
-	my $name = shift;
-
-	# The name must be between 1 and 63 characters
-	if (length ($name) < 1 || length ($name) > 63) {
-		return 0;
-	}
-
-	# Only valid characters are a-z, A-Z, 0-9, space and -
-	if ($name !~ /^[a-zA-Z0-9 -]*$/) {
-		return 0;
-	}
-
-	return 1;
-}
-
-sub name_is_free($) {
-	my $name = shift;
-	my $key  = shift || 0;
-
-	foreach my $i (keys %peers) {
-		# Skip the connection with ID
-		next if ($key eq $i);
-
-		# Return if we found a match
-		return 0 if ($peers{$i}[2] eq $name);
-	}
-
-	return 1;
-}
-
-sub publickey_is_valid($) {
-	my $key = shift;
-
-	# Try to decode the key
-	$key = &MIME::Base64::decode_base64($key);
-
-	# All keys must be 32 bytes long
-	return length($key) == 32;
-}
-
-sub keepalive_is_valid($) {
-	my $keepalive = shift;
-
-	# Must be a number
-	return 0 unless ($keepalive =~ m/^[0-9]+$/);
-
-	# Must be between 0 and 65535 (inclusive)
-	return 0 if ($keepalive lt 0);
-	return 0 if ($keepalive gt 65535);
-
-	return 1;
-}
-
-sub encode_remarks($) {
-	my $remarks = shift;
-
-	# Encode to Base64
-	$remarks = &MIME::Base64::encode_base64($remarks);
-
-	# Remove the trailing newline
-	chomp($remarks);
-
-	return $remarks;
-}
-
-sub decode_remarks($) {
-	my $remarks = shift;
-
-	# Decode from base64
-	return &MIME::Base64::decode_base64($remarks);
-}
-
-sub encode_subnets($) {
-	my @subnets = @_;
-
-	# Join subnets together separated by |
-	return join("|", @subnets);
-}
-
-sub decode_subnets($) {
-	my $subnets = shift;
-
-	# Split the string
-	my @subnets = split(/\|/, $subnets);
-
-	return @subnets;
-}
-
-sub pool_is_in_use($) {
-	my $pool = shift;
-
-	foreach my $key (keys %peers) {
-		my $type    = $peers{$key}[1];
-		my $address = $peers{$key}[6];
-
-		# Check if a host is using an IP address from the pool
-		if ($type eq "host" && &Network::ip_address_in_network($address, $pool)) {
-			return 1;
-		}
-	}
-
-	# No match found
-	return 0;
-}
-
-# Takes the pool and an optional limit of up to how many addresses to return
-sub free_pool_addresses($$) {
-	my $pool = shift;
-	my $limit = shift || 0;
-
-	my @used_addresses = ();
-	my @free_addresses = ();
-
-	# Collect all used addresses
-	foreach my $key (keys %peers) {
-		my $type    = $peers{$key}[1];
-		my $address = $peers{$key}[6];
-
-		# Only check hosts
-		next if ($type ne "host");
-
-		push(@used_addresses, &Network::ip2bin($address));
-	}
-
-	# Fetch the first address
-	my $address = &Network::get_netaddress($pool);
-
-	# Fetch the last address
-	my $broadcast = &Network::get_broadcast($pool);
-	$broadcast = &Network::ip2bin($broadcast);
-
-	# Walk through all addresses excluding the first and last address.
-	# No technical reason, we just don't want to confuse people.
-	OUTER: for (my $i = &Network::ip2bin($address) + 1; $i < $broadcast; $i++) {
-		# Skip any addresses that already in use
-		foreach my $used_address (@used_addresses) {
-			next OUTER if ($i == $used_address);
-		}
-
-		push(@free_addresses, &Network::bin2ip($i));
-
-		# Check limit
-		last if ($limit > 0 && scalar @free_addresses >= $limit);
-	}
-
-	return @free_addresses;
-}
-
-sub generate_client_configuration($) {
-	my $peer = shift;
-
-	my @allowed_ips = ();
-
-	# Convert all subnets into CIDR notation
-	foreach my $subnet ($peer->{'LOCAL_SUBNETS'}) {
-		my $netaddress = &Network::get_netaddress($subnet);
-		my $prefix     = &Network::get_prefix($subnet);
-
-		# Skip invalid subnets
-		next if (!defined $netaddress || !defined $prefix);
-
-		push(@allowed_ips, "${netaddress}/${prefix}");
-	}
-
-	# Build the FQDN of the firewall
-	my $fqdn = join(".", (
-		$General::mainsettings{'HOSTNAME'},
-		$General::mainsettings{'DOMAINNAME'},
-	));
-	my $port = $settings{'PORT'};
-
-	# Fetch any DNS servers
-	my @dns = split(/\|/, $settings{'CLIENT_DNS'});
-
-	my @conf = (
-		"[Interface]",
-		"PrivateKey = $peer->{'PRIVATE_KEY'}",
-		"Address = $peer->{'CLIENT_ADDRESS'}",
-	);
-
-	# Optionally add DNS servers
-	if (scalar @dns) {
-		push(@conf, "DNS = " . join(", ", @dns));
-	}
-
-	# Finish the [Interface] section
-	push(@conf, "");
-
-	# Add peer configuration
-	push(@conf, (
-		"[Peer]",
-		"Endpoint = ${fqdn}:${port}",
-		"PublicKey = $settings{'PUBLIC_KEY'}",
-		"PresharedKey = $peer->{'PSK'}",
-		"AllowedIPs = " . join(", ", @allowed_ips),
-		"PersistentKeepalive = $DEFAULT_KEEPALIVE",
-	));
-
-	return join("\n", @conf);
 }

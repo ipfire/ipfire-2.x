@@ -82,6 +82,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/location-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/ipblocklist-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/ids-functions.pl		$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/wireguard-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
