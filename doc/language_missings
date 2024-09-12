@@ -142,6 +142,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < winbind daemon
@@ -242,6 +243,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
@@ -320,6 +322,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
@@ -852,6 +855,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
@@ -1460,6 +1464,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
@@ -2484,6 +2489,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
@@ -3545,6 +3551,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted
@@ -3983,6 +3990,7 @@
 < wg peer configuration
 < wg peer does not exist
 < wg pre-shared key (optional)
+< wg rw peers
 < wg scan the qr code
 < wg warning configuration only shown once
 < whitelisted

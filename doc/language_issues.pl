@@ -1675,6 +1675,7 @@ WARNING: untranslated string: wg no more free addresses in pool = No more free a
 WARNING: untranslated string: wg no remote subnets = No remote subnets given
 WARNING: untranslated string: wg peer configuration = Peer Configuration
 WARNING: untranslated string: wg peer does not exist = Peer does not exist
+WARNING: untranslated string: wg rw peers = WireGuard Roadwarrior Peers
 WARNING: untranslated string: wg scan the qr code = Scan the QR code to import the WireGuard configuration into a mobile client.
 WARNING: untranslated string: wg warning configuration only shown once = Attention: This WireGuard configuration file will only be shown this one time as it contains private key material that is not being stored on IPFire.
 WARNING: untranslated string: whitelisted = Whitelisted

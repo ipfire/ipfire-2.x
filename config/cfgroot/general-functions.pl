@@ -24,6 +24,7 @@ $General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
 
 require "${General::swroot}/network-functions.pl";
+require "${General::swroot}/wireguard-functions.pl";
 
 # Load the main settings file
 our %mainsettings = ();
@@ -255,6 +256,13 @@ sub setup_default_networks
 			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NAME'} = "IPsec RW";
 			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NET'}  = $netaddress;
 		}
+	}
+
+	# WireGuard
+	if ($Wireguard::settings{'CLIENT_POOL'}) {
+		my $name = $Lang::tr{'wg rw peers'};
+
+		$defaultNetworks->{$name}{'NAME'} = "WGRW";
 	}
 }
 sub get_aliases

@@ -3066,6 +3066,7 @@
 'wg peer configuration' => 'Peer Configuration',
 'wg peer does not exist' => 'Peer does not exist',
 'wg pre-shared key (optional)' => 'Pre-Shared Key (optional)',
+'wg rw peers' => 'WireGuard Roadwarrior Peers',
 'wg scan the qr code' => 'Scan the QR code to import the WireGuard configuration into a mobile client.',
 'wg warning configuration only shown once' => 'Attention: This WireGuard configuration file will only be shown this one time as it contains private key material that is not being stored on IPFire.',
 'whitelisted' => 'Whitelisted',

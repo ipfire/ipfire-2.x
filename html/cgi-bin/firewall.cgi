@@ -33,6 +33,7 @@ no warnings 'uninitialized';
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/network-functions.pl';
+require '/var/ipfire/wireguard-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
@@ -875,8 +876,14 @@ sub checkrule
 					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target: $networkip2/$tcidr<br>";
 				}
 		}else{
+			$errormessage .= $sip;
+			$errormessage .= $scidr;
+
+			$errormessage .= $tip;
+			$errormessage .= $tcidr;
+
 			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) ){
-			$errormessage.=$Lang::tr{'fwdfw err samesub'};
+			$errormessage.=$Lang::tr{'fwdfw err samesub'} . $fwdfwsettings{'grp1'} .$fwdfwsettings{$fwdfwsettings{'grp1'}} . $fwdfwsettings{'grp2'} . $fwdfwsettings{$fwdfwsettings{'grp2'}};
 			}
 		}
 	}
@@ -1261,19 +1268,23 @@ sub get_ip
 		if ($fwdfwsettings{$grp} eq $val.'_addr'){
 			($a,$b)   = split (/\//, $fwdfwsettings{$fwdfwsettings{$grp}});
 		}elsif($fwdfwsettings{$grp} eq 'std_net_'.$val){
-			if ($fwdfwsettings{$fwdfwsettings{$grp}} =~ /Gr/i){
+			if ($fwdfwsettings{$fwdfwsettings{$grp}} eq "GREEN"){
 				$a=$netsettings{'GREEN_NETADDRESS'};
 				$b=&General::iporsubtocidr($netsettings{'GREEN_NETMASK'});
-			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} =~ /Ora/i){
+			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} eq "ORANGE"){
 				$a=$netsettings{'ORANGE_NETADDRESS'};
 				$b=&General::iporsubtocidr($netsettings{'ORANGE_NETMASK'});
-			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} =~ /Bl/i){
+			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} eq "BLUE"){
 				$a=$netsettings{'BLUE_NETADDRESS'};
 				$b=&General::iporsubtocidr($netsettings{'BLUE_NETMASK'});
-			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} =~ /OpenVPN/i){
+			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} eq "OpenVPN-Dyn"){
 				&General::readhash("$configovpn",\%ovpnsettings);
 				($a,$b)   = split (/\//, $ovpnsettings{'DOVPN_SUBNET'});
 				$b=&General::iporsubtocidr($b);
+
+			# WireGuard
+			} elsif ($fwdfwsettings{$fwdfwsettings{$grp}} eq "WGRW") {
+				return $Wireguard::settings{'CLIENT_POOL'};
 			}
 		}elsif($fwdfwsettings{$grp} eq 'cust_net_'.$val){
 			&General::readhasharray("$confignet", \%customnetwork);
@@ -1424,6 +1435,9 @@ sub getcolor
 		}elsif ($val eq 'IPsec RW' ){
 			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 			return;
+		}elsif ($val eq "WGRW") {
+			$tdcolor="style='background-color: $Header::colourwg; color: white;'";
+			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &Header::orange_used() && &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
@@ -1490,6 +1504,14 @@ sub getcolor
 					}
 				}
 			}
+
+			# WireGuard Roadwarrior
+			if ($Wireguard::settings{'CLIENT_POOL'}) {
+				if (&Network::ip_address_in_network($c, $Wireguard::settings{'CLIENT_POOL'})) {
+					$tdcolor="style='background-color: $Header::colourwg; color:white;'";
+					return;
+				}
+			}
 		}
 		#VPN networks
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
@@ -1500,6 +1522,7 @@ sub getcolor
 			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 			return;
 		}
+
 		#ALIASE
 		foreach my $alias (sort keys %aliases)
 		{
