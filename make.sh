@@ -432,41 +432,7 @@ prepareenv() {
 
 	# Create a new, minimal /dev
 	mount build_dev "${BUILD_DIR}/dev" \
-		-t tmpfs -o "nosuid,noexec,mode=0755,size=4m,nr_inodes=64k"
-
-	# Create device nodes
-	mknod -m 600 "${BUILD_DIR}/dev/console"			c   5   1
-	mknod -m 666 "${BUILD_DIR}/dev/null"			c   1   3
-	mknod -m 666 "${BUILD_DIR}/dev/zero"			c   1   5
-	mknod -m 666 "${BUILD_DIR}/dev/full"			c   1   7
-	mknod -m 444 "${BUILD_DIR}/dev/random"			c   1   8
-	mknod -m 444 "${BUILD_DIR}/dev/urandom"			c   1   9
-	mknod -m 444 "${BUILD_DIR}/dev/kmsg"			c   1  11
-	mknod -m 666 "${BUILD_DIR}/dev/tty"				c   5   0
-	mknod -m 666 "${BUILD_DIR}/dev/rtc0"			c 252   0
-
-	# Create loop devices
-	mknod -m 666 "${BUILD_DIR}/dev/loop-control"	c  10 237
-	mknod -m 666 "${BUILD_DIR}/dev/loop0"			b   7   0
-	mknod -m 666 "${BUILD_DIR}/dev/loop1"			b   7   1
-	mknod -m 666 "${BUILD_DIR}/dev/loop2"			b   7   2
-	mknod -m 666 "${BUILD_DIR}/dev/loop3"			b   7   3
-	mknod -m 666 "${BUILD_DIR}/dev/loop4"			b   7   4
-	mknod -m 666 "${BUILD_DIR}/dev/loop5"			b   7   5
-	mknod -m 666 "${BUILD_DIR}/dev/loop6"			b   7   6
-	mknod -m 666 "${BUILD_DIR}/dev/loop7"			b   7   7
-
-	# Create directories
-	mkdir -p "${BUILD_DIR}/dev/pts"
-	mkdir -p "${BUILD_DIR}/dev/shm"
-
-	# Create symlinks
-	ln -s  "pts/ptmx"				"${BUILD_DIR}/dev/ptmx"
-	ln -s "../proc/self/fd"			"${BUILD_DIR}/dev/fd"
-	ln -s "../proc/self/fd/0"		"${BUILD_DIR}/dev/stdin"
-	ln -s "../proc/self/fd/1"		"${BUILD_DIR}/dev/stdout"
-	ln -s "../proc/self/fd/2"		"${BUILD_DIR}/dev/stderr"
-	ln -s "../proc/kcore"			"${BUILD_DIR}/dev/core"
+		-t devtmpfs -o "nosuid,noexec,mode=0755,size=4m,nr_inodes=64k"
 
 	# Mount a new /dev/pts
 	mount build_dev_pts "${BUILD_DIR}/dev/pts" \
