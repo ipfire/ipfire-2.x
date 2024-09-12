@@ -447,19 +447,14 @@ prepareenv() {
 
 	# Create loop devices
 	mknod -m 666 "${BUILD_DIR}/dev/loop-control"	c  10 237
-
-	local loop
-
-	# Copy all loop devices from the host
-	for loop in /dev/loop*; do
-		if [ -b "${loop}" ]; then
-			# Create the mountpoint
-			: > "${BUILD_DIR}${loop}"
-
-			# Bind-mount the device
-			mount --bind  "${loop}" "${BUILD_DIR}${loop}"
-		fi
-	done
+	mknod -m 666 "${BUILD_DIR}/dev/loop0"			b   7   0
+	mknod -m 666 "${BUILD_DIR}/dev/loop1"			b   7   1
+	mknod -m 666 "${BUILD_DIR}/dev/loop2"			b   7   2
+	mknod -m 666 "${BUILD_DIR}/dev/loop3"			b   7   3
+	mknod -m 666 "${BUILD_DIR}/dev/loop4"			b   7   4
+	mknod -m 666 "${BUILD_DIR}/dev/loop5"			b   7   5
+	mknod -m 666 "${BUILD_DIR}/dev/loop6"			b   7   6
+	mknod -m 666 "${BUILD_DIR}/dev/loop7"			b   7   7
 
 	# Create directories
 	mkdir -p "${BUILD_DIR}/dev/pts"
