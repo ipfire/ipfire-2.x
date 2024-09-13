@@ -40,6 +40,10 @@ IPS_BYPASS_MASK="0x20000000"
 IPS_SCAN_MARK="0x10000000"
 IPS_SCAN_MASK="0x10000000"
 
+# Set if a packet has been whitelisted
+IPS_WHITELISTED_MARK="0x08000000"
+IPS_WHITELISTED_MASK="0x08000000"
+
 # Supported network zones
 NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "WG" "OVPN" )
 
@@ -122,9 +126,14 @@ generate_fw_rules() {
 			# Skip disabled entries
 			[ "${enabled}" = "enabled" ] || continue
 
-			iptables -w -t mangle -A IPS -s "${network}" -j RETURN
-			iptables -w -t mangle -A IPS -d "${network}" -j RETURN
+			iptables -w -t mangle -A IPS -s "${network}" -j MARK --set-mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))"
+			iptables -w -t mangle -A IPS -d "${network}" -j MARK --set-mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))"
 		done < "/var/ipfire/suricata/ignored"
+
+		# Count and skip the whitelisted packets
+		iptables -w -t mangle -A IPS \
+			-m comment --comment "WHITELISTED" \
+			-m mark --mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))" -j RETURN
 	fi
 
 	# Send packets to suricata

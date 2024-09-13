@@ -1219,9 +1219,17 @@ sub updateipsthroughputgraph {
 		"VDEF:scanned_bytes_min=scanned_bytes,MINIMUM",
 		"VDEF:scanned_bytes_max=scanned_bytes,MAXIMUM",
 
+		# Read whitelisted packets
+		"DEF:whitelisted_bytes=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_bytes-WHITELISTED.rrd:value:AVERAGE",
+		#"DEF:whitelisted_packets=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_packets-WHITELISTED.rrd:value:AVERAGE",
+
+		"VDEF:whitelisted_bytes_avg=whitelisted_bytes,AVERAGE",
+		"VDEF:whitelisted_bytes_min=whitelisted_bytes,MINIMUM",
+		"VDEF:whitelisted_bytes_max=whitelisted_bytes,MAXIMUM",
+
 		# Total
-		"CDEF:total_bytes=bypassed_bytes,scanned_bytes,+",
-		#"CDEF:total_packets=bypassed_packets,scanned_packets,+",
+		"CDEF:total_bytes=bypassed_bytes,scanned_bytes,ADDNAN,whitelisted_bytes,ADDNAN",
+		#"CDEF:total_packets=bypassed_packets,scanned_packets,ADDNAN,whitelisted_packets,ADDNAN",
 
 		"VDEF:total_bytes_avg=total_bytes,AVERAGE",
 		"VDEF:total_bytes_min=total_bytes,MINIMUM",
@@ -1236,8 +1244,14 @@ sub updateipsthroughputgraph {
 		"COMMENT:" . sprintf("%16s", $Lang::tr{'minimum'}),
 		"COMMENT:" . sprintf("%16s", $Lang::tr{'maximum'}) . "\\j",
 
+		# Whitelisted Packets
+		"AREA:whitelisted_bytes$color{'color12'}A0:" . sprintf("%-30s", $Lang::tr{'whitelisted'}),
+		"GPRINT:whitelisted_bytes_avg:%9.2lf %sbps",
+		"GPRINT:whitelisted_bytes_min:%9.2lf %sbps",
+		"GPRINT:whitelisted_bytes_max:%9.2lf %sbps\\j",
+
 		# Bypassed Packets
-		"AREA:bypassed_bytes$color{'color12'}A0:" . sprintf("%-30s", $Lang::tr{'bypassed'}),
+		"STACK:bypassed_bytes$color{'color11'}A0:" . sprintf("%-30s", $Lang::tr{'bypassed'}),
 		"GPRINT:bypassed_bytes_avg:%9.2lf %sbps",
 		"GPRINT:bypassed_bytes_min:%9.2lf %sbps",
 		"GPRINT:bypassed_bytes_max:%9.2lf %sbps\\j",

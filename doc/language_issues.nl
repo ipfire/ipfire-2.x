@@ -1370,6 +1370,7 @@ WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
 WARNING: untranslated string: warning = Warning
+WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wio = unknown string

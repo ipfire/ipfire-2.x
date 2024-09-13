@@ -1061,6 +1061,7 @@ WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
 WARNING: untranslated string: total = Total
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: warning = Warning
+WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string

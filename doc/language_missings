@@ -164,6 +164,7 @@
 < transport mode does not support vti
 < warning
 < wg
+< whitelisted
 < wireguard
 < wlanap
 < wlanap psk
@@ -200,6 +201,7 @@
 < upload fcdsl.o
 < warning
 < wg
+< whitelisted
 < wireguard
 < wlanap psk
 < wlanap wireless mode
@@ -690,6 +692,7 @@
 < warning
 < Weekly
 < wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -1258,6 +1261,7 @@
 < warning
 < Weekly
 < wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -2241,6 +2245,7 @@
 < warning
 < Weekly
 < wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -3261,6 +3266,7 @@
 < week-graph
 < Weekly
 < wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -3658,6 +3664,7 @@
 < warning
 < Weekly
 < wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard

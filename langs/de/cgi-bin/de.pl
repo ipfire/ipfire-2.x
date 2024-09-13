@@ -2942,6 +2942,7 @@
 'week-graph' => 'Woche',
 'weekly firewallhits' => 'wöchentliche Firewalltreffer',
 'weeks' => 'Wochen',
+'whitelisted' => 'Ausgenommen',
 'whois results from' => 'WHOIS-Ergebnisse von',
 'wildcards' => 'Wildcards',
 'wins server' => 'WINS-Server',
