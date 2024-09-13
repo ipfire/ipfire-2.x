@@ -15,6 +15,7 @@
 #usr/include/urcu/arch/generic.h
 #usr/include/urcu/arch/hppa.h
 #usr/include/urcu/arch/ia64.h
+#usr/include/urcu/arch/loongarch.h
 #usr/include/urcu/arch/m68k.h
 #usr/include/urcu/arch/mips.h
 #usr/include/urcu/arch/nios2.h
@@ -79,6 +80,7 @@
 #usr/include/urcu/uatomic/generic.h
 #usr/include/urcu/uatomic/hppa.h
 #usr/include/urcu/uatomic/ia64.h
+#usr/include/urcu/uatomic/loongarch.h
 #usr/include/urcu/uatomic/m68k.h
 #usr/include/urcu/uatomic/mips.h
 #usr/include/urcu/uatomic/nios2.h
