@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.9.1
+VER        = 8.10.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6e38e20e2b03ab5bfbb8d9797442dfdd9644fc80d7b1f7c1efb1f44e0d730524e82ccf7413b2c6f4555bd61ae42f91ec7c0201e2c0d563811c85164aa234aada
+$(DL_FILE)_BLAKE2 = 18b438c0e4e7b0b698a1fee16406c611124e3d137349869dd8dbb43b5ba45163c6a053e02f665e627424c96e18f8499c13ebe1eeb4c1441936d0183d28696ae6
 
 install : $(TARGET)
 
@@ -71,12 +71,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--disable-ipv6 \
-		--disable-static \
-		--enable-threaded-resolver \
-		--with-ca-bundle=/etc/ssl/certs/ca-bundle.crt \
-		--with-openssl
+				--prefix=/usr \
+				--disable-ipv6 \
+				--disable-static \
+				--enable-threaded-resolver \
+				--with-ca-bundle=/etc/ssl/certs/ca-bundle.crt \
+				--with-openssl \
+				--without-libpsl
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
