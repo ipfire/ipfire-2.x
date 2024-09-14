@@ -1725,10 +1725,6 @@ build_system() {
 	lfsmake2 perl-HTML-Tagset
 	lfsmake2 perl-HTML-Parser
 	lfsmake2 perl-HTML-Template
-	lfsmake2 perl-Compress-Zlib
-	lfsmake2 perl-Digest
-	lfsmake2 perl-Digest-SHA1
-	lfsmake2 perl-Digest-HMAC
 	lfsmake2 perl-libwww
 	lfsmake2 perl-LWP-Protocol-https
 	lfsmake2 perl-Net-HTTP
@@ -1744,13 +1740,11 @@ build_system() {
 	lfsmake2 perl-Canary-Stability
 	lfsmake2 perl-Convert-TNEF
 	lfsmake2 perl-Convert-UUlib
-	lfsmake2 perl-Archive-Tar
 	lfsmake2 perl-Archive-Zip
 	lfsmake2 perl-Text-Tabs+Wrap
 	lfsmake2 perl-XML-Parser
 	lfsmake2 perl-Crypt-PasswdMD5
 	lfsmake2 perl-Net-Telnet
-	lfsmake2 perl-JSON
 	lfsmake2 perl-Capture-Tiny
 	lfsmake2 perl-Config-AutoConf
 	lfsmake2 perl-Object-Tiny
@@ -1895,7 +1889,6 @@ build_system() {
 	lfsmake2 mpc
 	lfsmake2 perl-Net-CIDR-Lite
 	lfsmake2 perl-Net-SMTP-SSL
-	lfsmake2 perl-MIME-Base64
 	lfsmake2 perl-Authen-SASL
 	lfsmake2 perl-MIME-Lite
 	lfsmake2 perl-Email-Date-Format
