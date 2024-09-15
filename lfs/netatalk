@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = AppleShare file server
 
-VER        = 3.2.5
+VER        = 3.2.8
 
 THISAPP    = netatalk-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = netatalk
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = avahi dbus
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 017c8390f4d6e7f81fcc9ddde459af48a47acd9e3fdf3b230887d36ebf96518a96e3483ac063ee734b20e9bca39c7cc2c9c1720265fb05d49358447bedc2976d
+$(DL_FILE)_BLAKE2 = fa7706a87d446c06fb94f20a17e0894c3c1ed6e8dcb75fd6232f049dc12fb57eb0587b433fa3ccc9be2ccb4d4969a893bb79c065729660142f68862e79f53eba
 
 install : $(TARGET)
 
