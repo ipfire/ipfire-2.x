@@ -37,6 +37,7 @@ usr/sbin/nfsdclddb
 usr/sbin/nfsdclnts
 usr/sbin/nfsidmap
 usr/sbin/nfsiostat
+usr/sbin/nfsref
 usr/sbin/nfsstat
 usr/sbin/rpc.idmapd
 usr/sbin/rpc.mountd
@@ -70,6 +71,7 @@ usr/sbin/start-statd
 #usr/share/man/man8/nfsdcltrack.8
 #usr/share/man/man8/nfsidmap.8
 #usr/share/man/man8/nfsiostat.8
+#usr/share/man/man8/nfsref.8
 #usr/share/man/man8/nfsstat.8
 #usr/share/man/man8/rpc.idmapd.8
 #usr/share/man/man8/rpc.mountd.8
