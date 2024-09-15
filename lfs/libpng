@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.42
+VER        = 1.6.44
 
 THISAPP    = libpng-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8a8895b673ff90416a00c9ff775d7bdc38ab1ab0d83fd6e70cfffea2ed78bd42896950a64bf48ad9a00ea50d8c5d5702975b0bae7bb3300d4de4c82b334e513e
+$(DL_FILE)_BLAKE2 = 61064dd83f40a7e2e60ff723a568b7d0cda95aa80621a211aee7127b9783fbfc20cd82a2fe2d03584cbf9ab77c5444e3e008ac5ccc7f64af6e858ebcbcb78822
 
 install : $(TARGET)
 
@@ -70,7 +70,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
