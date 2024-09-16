@@ -1,0 +1,139 @@
+#!/bin/bash
+
+URL="https://git.ipfire.org/?p=thirdparty/linux-firmware.git;a=snapshot;h=TAG;sf=tgz"
+
+download() {
+	local version="${1}"
+	local install="${2}"
+	local target
+
+	local url="${URL/TAG/${version}}"
+
+	echo "Downloading ${version}..."
+
+	# Download and extract
+	if ! curl --silent "${url}" | tar xz -C "${tmp}"; then
+		echo "${0}: Could not download ${version}" >&2
+		return 1
+	fi
+
+	echo "Installing ${version}..."
+
+	# Install
+	pushd "linux-firmware-${version}" &>/dev/null
+
+	case "${version}" in
+		2023*)
+			target="install"
+			;;
+		*)
+			target="install-nodedup"
+			;;
+	esac
+
+	# Install to a new directory
+	if ! make "${target}" DESTDIR="${install}"; then
+		echo "${0}: Could not install ${version}" >&2
+		popd &>/dev/null
+		return 1
+	fi
+
+	popd &>/dev/null
+
+	return 0
+}
+
+compare() {
+	local removed_files=()
+	local changed_files=()
+
+	local line
+	while read -r line; do
+		# Find changed files
+		if [[ ${line} =~ ^Files\ OLD/(.*)\ and ]]; then
+			changed_files+=( "${BASH_REMATCH[1]}" )
+
+		elif [[ ${line} =~ ^Only\ in\ NEW/(.*):\ (.*)$ ]]; then
+			changed_files+=( "${BASH_REMATCH[1]}/${BASH_REMATCH[2]}" )
+
+		elif [[ ${line} =~ ^Only\ in\ OLD/(.*):\ (.*)$ ]]; then
+			removed_files+=( "${BASH_REMATCH[1]}/${BASH_REMATCH[2]}" )
+
+		# Handle unknown lines
+		else
+			echo "Unknown line: ${line}" >&2
+		fi
+	done <<< "$(diff --recursive --brief OLD NEW)"
+
+	local file
+
+	# List all changed files
+	if [ "${#changed_files[@]}" -gt 0 ]; then
+		echo "# Changed files"
+		for file in "${changed_files[@]}"; do
+			echo "${file}"
+		done
+
+		echo # newline
+	fi
+
+	# List all removed files
+	if [ "${#removed_files[@]}" -gt 0 ]; then
+		echo "# Removed files"
+		echo "rm -vrf \\"
+
+		for file in "${removed_files[@]}"; do
+			echo "	/${file} \\"
+		done
+	fi
+
+	# Total size
+	{
+		pushd NEW &>/dev/null
+
+		du -csh "${changed_files[@]}" | tail -n1
+
+		popd &>/dev/null
+	}
+
+	return 0
+}
+
+run() {
+	# Download the old and new versions
+	download "${version_old}" "${tmp}/OLD" || return $?
+	download "${version_new}" "${tmp}/NEW" || return $?
+
+	compare || return $?
+}
+
+main() {
+	local version_old="${1}"
+	local version_new="${2}"
+
+	local r=0
+
+	# Check if we have enough arguments
+	if [ -z "${version_old}" -o -z "${version_new}" ]; then
+		echo "${0}: An old and a new version are required" >&2
+		return 2
+	fi
+
+	# Create a temporary directory
+	local tmp="$(mktemp -d)"
+
+	# Change into the directory
+	pushd "${tmp}" &>/dev/null
+
+	# Run the operation...
+	run || r="${?}"
+
+	popd &>/dev/null
+
+	# Remove the temporary directory
+	rm -rf  "${tmp}"
+
+	return "${r}"
+}
+
+main "$@" || exit $?

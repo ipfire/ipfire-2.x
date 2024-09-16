@@ -2,10 +2,8 @@ lib/udev/rules.d/65-kvm.rules
 usr/bin/elf2dmp
 usr/bin/qemu
 usr/bin/qemu-aarch64
-usr/bin/qemu-arm
 usr/bin/qemu-edid
 #usr/bin/qemu-ga
-usr/bin/qemu-i386
 usr/bin/qemu-img
 usr/bin/qemu-io
 usr/bin/qemu-nbd
@@ -13,8 +11,6 @@ usr/bin/qemu-pr-helper
 usr/bin/qemu-riscv64
 usr/bin/qemu-storage-daemon
 usr/bin/qemu-system-aarch64
-usr/bin/qemu-system-arm
-usr/bin/qemu-system-i386
 usr/bin/qemu-system-riscv64
 usr/bin/qemu-system-x86_64
 usr/bin/qemu-x86_64
@@ -77,6 +73,7 @@ usr/share/qemu/firmware/60-edk2-arm.json
 usr/share/qemu/firmware/60-edk2-i386.json
 usr/share/qemu/firmware/60-edk2-x86_64.json
 #usr/share/qemu/hppa-firmware.img
+#usr/share/qemu/hppa-firmware64.img
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
 usr/share/qemu/keymaps/bepo

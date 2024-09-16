@@ -36,7 +36,11 @@ PROG       = collectd
 
 DEPS       =
 
-CFLAGS    += -fcommon -Wno-error=deprecated-declarations
+CFLAGS    += \
+	-fcommon \
+	-Wno-error=deprecated-declarations \
+	-Wno-error=implicit-function-declaration \
+	-Wno-error=incompatible-pointer-types
 
 ###############################################################################
 # Top-level Rules

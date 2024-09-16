@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -889,4 +889,52 @@ volume_fs_type() {
 	fi
 
 	stat -f --format="%T" ${1}
+}
+
+readhash() {
+	local array="${1}"
+	local file="${2}"
+
+	declare -A -g "${array}"
+
+	local line
+	while read -r line; do
+
+		# Skip Blank Lines
+		if [[ ${line} =~ ^[[:space:]]*$ ]]; then
+			continue
+		fi
+
+		# Skip Comments
+		if [[ ${line} =~ ^#.*$ ]]; then
+			continue
+		fi
+
+		# Skip lines without a =
+		if ! [[ ${line} =~ [^=]*=[^=]*$ ]]; then
+			echo "Invalid line '${line}'" >&2
+			continue
+		fi
+
+		local key="${line%=*}"
+		local val="${line#*=}"
+
+		# Skip lines with an invalid key
+		if ! [[ ${key} =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+			echo "Invalid key '${key}'" >&2
+			continue
+		fi
+
+		# Skip lines with invalid values
+		if ! [[ ${val} =~ ^[\'][\ A-Za-z0-9=/,.:%_@#+-]*[\']$ ]] && ! [[ ${val} =~ ^[A-Za-z0-9=/,.:%_@#+-]*$ ]]; then
+			echo "Invalid value '${val}' for key '${key}'" >&2
+			continue
+		fi
+
+		# strip leading and trailing single quotes
+		val="${val#\'}"
+		val="${val%\'}"
+
+		printf -v "${array}[${key}]" "%s" "${val}"
+	done < "${file}"
 }

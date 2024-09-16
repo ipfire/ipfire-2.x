@@ -52,11 +52,11 @@ static int ip_input_filter(newtComponent entry, void * data, int ch, int cursor)
 int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char *defaultdhcphostname)
 {
-	char *addressresult;
-	char *netmaskresult;
-	char *gatewayresult;
-	char *dhcphostnameresult;
-	char *dhcpforcemturesult;
+	const char *addressresult;
+	const char *netmaskresult;
+	const char *gatewayresult;
+	const char *dhcphostnameresult;
+	const char *dhcpforcemturesult;
 	struct newtExitStruct es;
 	newtComponent header;
 	newtComponent addresslabel;
@@ -480,14 +480,14 @@ char* readmac(char *card) {
 char* find_nic4mac(char *findmac) {
 	DIR *dir;
 	struct dirent *dirzeiger;
-	char temp[STRING_SIZE], temp2[STRING_SIZE];
+	char temp[STRING_SIZE] = "";
+	char temp2[STRING_SIZE] = "";
         
 	if((dir=opendir(SYSDIR)) == NULL) {
 		fprintf(flog,"Fehler bei opendir (find_name4nic) ...\n");
 		return NULL;
 	}
 
-	sprintf(temp, "");
 	while((dirzeiger=readdir(dir)) != NULL) {
 		if(*((*dirzeiger).d_name) != '.' & strcmp(((*dirzeiger).d_name), "lo") != 0) {
 			sprintf(temp2, "%s", readmac((*dirzeiger).d_name) );
@@ -550,7 +550,6 @@ int rename_nics(void) {
 
 int write_configs_netudev(int card , int colour)
 {	
-	char commandstring[STRING_SIZE];
 	struct keyvalue *kv = initkeyvalues();
 	char temp1[STRING_SIZE], temp2[STRING_SIZE], temp3[STRING_SIZE];
 	char ucolour[STRING_SIZE];
@@ -586,7 +585,7 @@ int write_configs_netudev(int card , int colour)
 int scan_network_cards(void)
 {
 	FILE *fp;
-	char driver[STRING_SIZE], description[STRING_SIZE], macaddr[STRING_SIZE], temp_line[STRING_SIZE];
+	char temp_line[STRING_SIZE];
 	int count = 0;
 	const char _driver[]="driver: ";
 	const char _desc[]="desc: ";
@@ -732,7 +731,7 @@ int ask_clear_card_entry(int card)
 	sprintf(message, _("Do you really want to remove the assigned %s interface?"), ucolourcard[card]);
 	rc = newtWinChoice(_("Warning"), _("OK"), _("Cancel"), message);
 
-	if ( rc = 0 || rc == 1) {
+	if ( rc == 0 || rc == 1) {
 		clear_card_entry(card);
 	} else return 1;
 

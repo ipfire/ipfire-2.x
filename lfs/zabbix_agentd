@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Zabbix Agent
 
-VER        = 6.0.30
+VER        = 6.0.33
 
 THISAPP    = zabbix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
-PAK_VER    = 13
+PAK_VER    = 14
 
 DEPS       = fping
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5446a15c5fa3400d78eef47cced6cbd0bc884b6b1f14e267321f562b5891e21de41179bb615a733b49ee0ae334aadede32d931db400b9148ec9bc6636ac71e5a
+$(DL_FILE)_BLAKE2 = 736c5b46193e7e7f93dfa00eb56c65fdf3fa6e36a647d0f910118923950114dbbbe9382563e96db4d8ee6199b4e0342037fb8ec6ec8d349884612f5ef18db966
 
 install : $(TARGET)
 
@@ -117,6 +117,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /var/ipfire/zabbix_agentd/scripts
 	install -v -m 755 $(DIR_SRC)/config/zabbix_agentd/ipfire_certificate_detail.sh \
 		/var/ipfire/zabbix_agentd/scripts/ipfire_certificate_detail.sh
+	install -v -m 755 $(DIR_SRC)/config/zabbix_agentd/ipfire_services.pl \
+		/var/ipfire/zabbix_agentd/scripts/ipfire_services.pl
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix

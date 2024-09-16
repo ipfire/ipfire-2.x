@@ -2,5 +2,5 @@ etc/rc.d/init.d/shairport-sync
 etc/shairport-sync.conf
 #etc/shairport-sync.conf.sample
 usr/bin/shairport-sync
-#usr/share/man/man7/shairport-sync.7
+#usr/share/man/man1/shairport-sync.1
 var/ipfire/backup/addons/includes/shairport-sync

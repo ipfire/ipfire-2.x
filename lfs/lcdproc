@@ -40,7 +40,7 @@ DEPS       =
 
 SERVICES   = lcdproc
 
-CFLAGS    += -fcommon
+CFLAGS    += -fcommon -Wno-error=implicit-function-declaration
 
 ###############################################################################
 # Top-level Rules

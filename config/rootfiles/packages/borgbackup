@@ -68,6 +68,7 @@ usr/lib/python3.10/site-packages/borg/testsuite/chunker.py
 usr/lib/python3.10/site-packages/borg/testsuite/chunker_pytest.py
 usr/lib/python3.10/site-packages/borg/testsuite/chunker_slow.py
 usr/lib/python3.10/site-packages/borg/testsuite/compress.py
+usr/lib/python3.10/site-packages/borg/testsuite/conftest.py
 usr/lib/python3.10/site-packages/borg/testsuite/crypto.py
 usr/lib/python3.10/site-packages/borg/testsuite/efficient_collection_queue.py
 usr/lib/python3.10/site-packages/borg/testsuite/file_integrity.py
@@ -92,11 +93,10 @@ usr/lib/python3.10/site-packages/borg/testsuite/xattr.py
 usr/lib/python3.10/site-packages/borg/upgrader.py
 usr/lib/python3.10/site-packages/borg/version.py
 usr/lib/python3.10/site-packages/borg/xattr.py
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/PKG-INFO
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/SOURCES.txt
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/dependency_links.txt
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/entry_points.txt
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/not-zip-safe
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/requires.txt
-usr/lib/python3.10/site-packages/borgbackup-1.2.7-py3.10.egg-info/top_level.txt
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info/PKG-INFO
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info/SOURCES.txt
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info/dependency_links.txt
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info/entry_points.txt
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info/requires.txt
+usr/lib/python3.10/site-packages/borgbackup-1.4.0-py3.10.egg-info/top_level.txt

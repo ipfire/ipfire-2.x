@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.7
+VER        = 1.0.8
 SUMMARY    = Python module for reading and writing MessagePack data
 
 THISAPP    = msgpack-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-msgpack
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 # borgbackup only works with specific versions of python3-msgpack - check when updating
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8ddf2acf6bf81498d981c3ec83cbdffde1b1611f8ac23d3377f3f1541e679eda288b40b949bd586ca24a7059da3a0f73fa797a661375135ec092f408521c8527
+$(DL_FILE)_BLAKE2 = 714b0355941104e791c5a3b8ee2bd4f40b11484631a3bde63e7c0bdbb925a603c4704b037ab437c2330dc0d2e466d41ccfd50c6a45ef798e5cd34a87e4e3863f
 
 install : $(TARGET)
 

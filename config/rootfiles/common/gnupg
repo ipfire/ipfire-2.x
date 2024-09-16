@@ -6,7 +6,6 @@ usr/bin/gpg
 usr/lib/gnupg/gpgkeys_curl
 usr/lib/gnupg/gpgkeys_finger
 usr/lib/gnupg/gpgkeys_hkp
-usr/lib/gnupg/gpgkeys_ldap
 #usr/share/gnupg
 #usr/share/gnupg/FAQ
 #usr/share/gnupg/options.skel

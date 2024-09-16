@@ -1,11 +1,11 @@
 #usr/bin/meson
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info/entry_points.txt
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/meson-1.4.0-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/entry_points.txt
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/top_level.txt
 #usr/lib/python3.10/site-packages/mesonbuild
 #usr/lib/python3.10/site-packages/mesonbuild/__init__.py
 #usr/lib/python3.10/site-packages/mesonbuild/_pathlib.py
@@ -68,6 +68,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/java.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/__init__.py
+#usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/apple.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/arm.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/ccrx.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/clang.py
@@ -151,6 +152,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/linkers/base.py
 #usr/lib/python3.10/site-packages/mesonbuild/linkers/detect.py
 #usr/lib/python3.10/site-packages/mesonbuild/linkers/linkers.py
+#usr/lib/python3.10/site-packages/mesonbuild/machinefile.py
 #usr/lib/python3.10/site-packages/mesonbuild/mcompile.py
 #usr/lib/python3.10/site-packages/mesonbuild/mconf.py
 #usr/lib/python3.10/site-packages/mesonbuild/mdevenv.py
@@ -158,12 +160,14 @@
 #usr/lib/python3.10/site-packages/mesonbuild/mesondata.py
 #usr/lib/python3.10/site-packages/mesonbuild/mesonlib.py
 #usr/lib/python3.10/site-packages/mesonbuild/mesonmain.py
+#usr/lib/python3.10/site-packages/mesonbuild/mformat.py
 #usr/lib/python3.10/site-packages/mesonbuild/minit.py
 #usr/lib/python3.10/site-packages/mesonbuild/minstall.py
 #usr/lib/python3.10/site-packages/mesonbuild/mintro.py
 #usr/lib/python3.10/site-packages/mesonbuild/mlog.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules
 #usr/lib/python3.10/site-packages/mesonbuild/modules/__init__.py
+#usr/lib/python3.10/site-packages/mesonbuild/modules/_qt.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/cmake.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/cuda.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/dlang.py
@@ -179,7 +183,6 @@
 #usr/lib/python3.10/site-packages/mesonbuild/modules/pkgconfig.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/python.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/python3.py
-#usr/lib/python3.10/site-packages/mesonbuild/modules/qt.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/qt4.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/qt5.py
 #usr/lib/python3.10/site-packages/mesonbuild/modules/qt6.py
@@ -194,6 +197,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/mtest.py
 #usr/lib/python3.10/site-packages/mesonbuild/munstable_coredata.py
 #usr/lib/python3.10/site-packages/mesonbuild/optinterpreter.py
+#usr/lib/python3.10/site-packages/mesonbuild/options.py
 #usr/lib/python3.10/site-packages/mesonbuild/programs.py
 #usr/lib/python3.10/site-packages/mesonbuild/rewriter.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts

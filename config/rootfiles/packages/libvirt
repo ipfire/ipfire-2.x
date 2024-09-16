@@ -52,6 +52,8 @@ etc/logrotate.d/libvirtd.qemu
 etc/rc.d/init.d/libvirt-guests
 etc/rc.d/init.d/libvirtd
 etc/rc.d/init.d/virtlogd
+#etc/ssh/ssh_config.d
+etc/ssh/ssh_config.d/30-libvirt-ssh-proxy.conf
 usr/bin/virsh
 usr/bin/virt-admin
 usr/bin/virt-host-validate
@@ -85,16 +87,16 @@ usr/bin/virt-xml-validate
 #usr/lib/libvirt
 #usr/lib/libvirt-admin.so
 usr/lib/libvirt-admin.so.0
-usr/lib/libvirt-admin.so.0.10000.0
+usr/lib/libvirt-admin.so.0.10007.0
 #usr/lib/libvirt-lxc.so
 usr/lib/libvirt-lxc.so.0
-usr/lib/libvirt-lxc.so.0.10000.0
+usr/lib/libvirt-lxc.so.0.10007.0
 #usr/lib/libvirt-qemu.so
 usr/lib/libvirt-qemu.so.0
-usr/lib/libvirt-qemu.so.0.10000.0
+usr/lib/libvirt-qemu.so.0.10007.0
 #usr/lib/libvirt.so
 usr/lib/libvirt.so.0
-usr/lib/libvirt.so.0.10000.0
+usr/lib/libvirt.so.0.10007.0
 #usr/lib/libvirt/connection-driver
 usr/lib/libvirt/connection-driver/libvirt_driver_ch.so
 usr/lib/libvirt/connection-driver/libvirt_driver_interface.so
@@ -118,6 +120,9 @@ usr/lib/libvirt/storage-file/libvirt_storage_file_fs.so
 #usr/lib/sysctl.d
 usr/lib/sysctl.d/60-libvirtd.conf
 usr/lib/sysctl.d/60-qemu-postcopy-migration.conf
+#usr/lib/sysusers.d
+usr/lib/sysusers.d/libvirt-qemu.conf
+usr/libexec/libvirt-ssh-proxy
 usr/libexec/libvirt_iohelper
 usr/libexec/virt-login-shell-helper
 usr/sbin/libvirtd
@@ -253,6 +258,7 @@ usr/share/libvirt/cpu_map/x86_EPYC-IBPB.xml
 usr/share/libvirt/cpu_map/x86_EPYC-Milan.xml
 usr/share/libvirt/cpu_map/x86_EPYC-Rome.xml
 usr/share/libvirt/cpu_map/x86_EPYC.xml
+usr/share/libvirt/cpu_map/x86_GraniteRapids.xml
 usr/share/libvirt/cpu_map/x86_Haswell-IBRS.xml
 usr/share/libvirt/cpu_map/x86_Haswell-noTSX-IBRS.xml
 usr/share/libvirt/cpu_map/x86_Haswell-noTSX.xml

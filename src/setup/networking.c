@@ -385,7 +385,7 @@ int drivermenu(void)
 		if (strcmp(knics[i].macaddr, ""))
 			kcount++;
 
-	if (neednics = kcount)
+	if (neednics == kcount)
 	{
 		strcat(message, "\n");
 		strcat(message, _("Do you wish to change these settings?"));
@@ -401,11 +401,6 @@ int drivermenu(void)
 	freekeyvalues(kv);
 
 	return 1;
-}
-
-int set_menu_entry_for(int *nr, int *card)
-{
-
 }
 
 int changedrivers(void)
@@ -438,7 +433,7 @@ int changedrivers(void)
 		{ green = 1; red = 1; blue = 1; }
 	else if (configtype == 4)
 		{ green = 1; red=1; orange=1; blue = 1; }
-	else if (configtype == "")
+	else
 	  { green = 1; red = 1; }
 
 	do

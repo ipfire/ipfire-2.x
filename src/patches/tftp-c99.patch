@@ -1,0 +1,50 @@
+The glibc headers do not declare bsd_signal by default.  Call signal
+instead, which is the same function as bsd_signal in current glibc.
+
+This fixes implicit function declarations and avoids build issues with
+future compilers.
+
+diff --git a/tftp/main.c b/tftp/main.c
+index fcf5a25ac654954b..7e399d414ca0dd2b 100644
+--- a/tftp/main.c
++++ b/tftp/main.c
+@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
+         sp->s_proto = (char *)"udp";
+     }
+ 
+-    bsd_signal(SIGINT, intr);
++    signal(SIGINT, intr);
+ 
+     if (peerargc) {
+         /* Set peer */
+@@ -791,7 +791,7 @@ void intr(int sig)
+ {
+     (void)sig;                  /* Quiet unused warning */
+ 
+-    bsd_signal(SIGALRM, SIG_IGN);
++    signal(SIGALRM, SIG_IGN);
+     alarm(0);
+     siglongjmp(toplevel, -1);
+ }
+diff --git a/tftp/tftp.c b/tftp/tftp.c
+index 109848c4f9a5ad4e..d31553be5b76e305 100644
+--- a/tftp/tftp.c
++++ b/tftp/tftp.c
+@@ -85,7 +85,7 @@ void tftp_sendfile(int fd, const char *name, const char *mode)
+     is_request = 1;             /* First packet is the actual WRQ */
+     amount = 0;
+ 
+-    bsd_signal(SIGALRM, timer);
++    signal(SIGALRM, timer);
+     do {
+         if (is_request) {
+             size = makerequest(WRQ, name, dp, mode) - 4;
+@@ -191,7 +191,7 @@ void tftp_recvfile(int fd, const char *name, const char *mode)
+     firsttrip = 1;
+     amount = 0;
+ 
+-    bsd_signal(SIGALRM, timer);
++    signal(SIGALRM, timer);
+     do {
+         if (firsttrip) {
+             size = makerequest(RRQ, name, ap, mode);

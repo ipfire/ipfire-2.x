@@ -950,9 +950,6 @@ EOF
 			@pids = &General::find_pids("${process}");
 		}
 
-		# Get memory consumption
-		my $mem = &General::get_memory_consumption(@pids);
-
 		print <<EOF;
 				<tr>
 					<th scope="row">
@@ -962,6 +959,9 @@ EOF
 
 		# Running?
 		if (scalar @pids) {
+			# Get memory consumption
+			my $mem = &General::get_memory_consumption(@pids);
+
 			# Format memory
 			$mem = &General::formatBytes($mem);
 

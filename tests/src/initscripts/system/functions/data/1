@@ -1,0 +1,20 @@
+CONFIG_TYPE=3
+GREEN_DEV=green0
+GREEN_MACADDR=00:c0:08:8a:a0:47
+GREEN_DRIVER=r8175
+RED_DEV=red0
+RED_MACADDR=00:c0:08:8a:a0:56
+RED_DRIVER=r8283
+# Another Comment
+BLUE_DEV='blue0 net0'
+BLUE_MACADDR=bc:30:7d:58:6b:e3
+BLUE_DRIVER=rt2800
+RED_DHCP_HOSTNAME=ipfire
+RED_DHCP_FORCE_MTU=
+RED_ADDRESS=0.0.0.0
+RED_NETMASK=0.0.0.0
+RED_TYPE=PPPOE
+RED_NETADDRESS=0.0.0.0
+
+# Comment for testing  
+    # Comment for testing Comments with spaces before

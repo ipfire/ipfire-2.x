@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="188"							# Core Level (Filename)
+CORE="189"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -32,7 +32,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20240521
+TOOLCHAINVER=20240827
 
 KVER_SUFFIX="-${SNAME}"
 
@@ -378,6 +378,7 @@ prepareenv() {
 	# Do we need to check the required space?
 	if [ -n "${required_space}" ]; then
 		local free_space free_blocks block_size
+		local consumed_space path
 
 		# Fetch free blocks
 		read -r free_blocks block_size <<< "$(stat --file-system --format="%a %S" "${BASEDIR}")"
@@ -385,9 +386,17 @@ prepareenv() {
 		# Calculate free space
 		(( free_space = free_blocks * block_size / 1024 / 1024 ))
 
-		# Check if we have at least 4GB of space
+		# If we don't have the total space free, we need to check how much we have consumed already...
 		if [ "${free_space}" -lt "${required_space}" ]; then
-			exiterror "Not enough temporary space available, need at least ${required_space}MiB"
+			# Add any consumed space
+			while read -r consumed_space path; do
+				(( free_space += consumed_space / 1024 / 1024 )) 
+			done <<< "$(du --summarize --bytes "${BUILD_DIR}" "${IMAGES_DIR}" "${LOG_DIR}" 2>/dev/null)"
+		fi
+
+		# Check that we have the required space
+		if [ "${free_space}" -lt "${required_space}" ]; then
+			exiterror "Not enough temporary space available, need at least ${required_space}MiB, but only have ${free_space}MiB"
 		fi
 	fi
 
@@ -423,41 +432,7 @@ prepareenv() {
 
 	# Create a new, minimal /dev
 	mount build_dev "${BUILD_DIR}/dev" \
-		-t tmpfs -o "nosuid,noexec,mode=0755,size=4m,nr_inodes=64k"
-
-	# Create device nodes
-	mknod -m 600 "${BUILD_DIR}/dev/console"			c   5   1
-	mknod -m 666 "${BUILD_DIR}/dev/null"			c   1   3
-	mknod -m 666 "${BUILD_DIR}/dev/zero"			c   1   5
-	mknod -m 666 "${BUILD_DIR}/dev/full"			c   1   7
-	mknod -m 444 "${BUILD_DIR}/dev/random"			c   1   8
-	mknod -m 444 "${BUILD_DIR}/dev/urandom"			c   1   9
-	mknod -m 444 "${BUILD_DIR}/dev/kmsg"			c   1  11
-	mknod -m 666 "${BUILD_DIR}/dev/tty"				c   5   0
-	mknod -m 666 "${BUILD_DIR}/dev/rtc0"			c 252   0
-
-	# Create loop devices
-	mknod -m 666 "${BUILD_DIR}/dev/loop-control"	c  10 237
-	mknod -m 666 "${BUILD_DIR}/dev/loop0"			b   7   0
-	mknod -m 666 "${BUILD_DIR}/dev/loop1"			b   7   1
-	mknod -m 666 "${BUILD_DIR}/dev/loop2"			b   7   2
-	mknod -m 666 "${BUILD_DIR}/dev/loop3"			b   7   3
-	mknod -m 666 "${BUILD_DIR}/dev/loop4"			b   7   4
-	mknod -m 666 "${BUILD_DIR}/dev/loop5"			b   7   5
-	mknod -m 666 "${BUILD_DIR}/dev/loop6"			b   7   6
-	mknod -m 666 "${BUILD_DIR}/dev/loop7"			b   7   7
-
-	# Create directories
-	mkdir -p "${BUILD_DIR}/dev/pts"
-	mkdir -p "${BUILD_DIR}/dev/shm"
-
-	# Create symlinks
-	ln -s  "pts/ptmx"				"${BUILD_DIR}/dev/ptmx"
-	ln -s "../proc/self/fd"			"${BUILD_DIR}/dev/fd"
-	ln -s "../proc/self/fd/0"		"${BUILD_DIR}/dev/stdin"
-	ln -s "../proc/self/fd/1"		"${BUILD_DIR}/dev/stdout"
-	ln -s "../proc/self/fd/2"		"${BUILD_DIR}/dev/stderr"
-	ln -s "../proc/kcore"			"${BUILD_DIR}/dev/core"
+		-t devtmpfs -o "nosuid,noexec,mode=0755,size=4m,nr_inodes=64k"
 
 	# Mount a new /dev/pts
 	mount build_dev_pts "${BUILD_DIR}/dev/pts" \
@@ -562,19 +537,12 @@ prepareenv() {
 }
 
 entershell() {
-	local environ=(
-		# HTTP(S) Proxy
-		"https_proxy=${https_proxy}"
-		"http_proxy=${http_proxy}"
-	)
-
 	echo "Entering to a shell inside the build environment, go out with exit"
 
 	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
 	# Run an interactive shell
-	execute --chroot --interactive --network \
-		"${environ[@]}" bash -i
+	execute --chroot --interactive --network bash -i
 }
 
 lfsmakecommoncheck() {
@@ -751,6 +719,12 @@ execute() {
 
 			--network)
 				network="true"
+
+				# Export the proxy configuration
+				environ+=(
+					[https_proxy]="${https_proxy}"
+					[http_proxy]="${http_proxy}"
+				)
 				;;
 
 			--timer=*)
@@ -1438,6 +1412,7 @@ build_system() {
 	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 gcc PASS=A
 	lfsmake2 zstd
 	lfsmake2 autoconf
+	lfsmake2 autoconf-archive
 	lfsmake2 automake
 	lfsmake2 help2man
 	lfsmake2 libtool
@@ -1562,6 +1537,7 @@ build_system() {
 	lfsmake2 unbound
 	lfsmake2 gnutls
 	lfsmake2 libuv
+	lfsmake2 liburcu
 	lfsmake2 bind
 	lfsmake2 dhcp
 	lfsmake2 dhcpcd
@@ -1713,7 +1689,6 @@ build_system() {
 	lfsmake2 dosfstools
 	lfsmake2 exfatprogs
 	lfsmake2 reiserfsprogs
-	lfsmake2 liburcu
 	lfsmake2 xfsprogs
 	lfsmake2 sysfsutils
 	lfsmake2 fuse
@@ -1898,6 +1873,7 @@ build_system() {
 	lfsmake2 libusbredir
 	lfsmake2 libseccomp
 	lfsmake2 libslirp
+	lfsmake2 dtc
 	lfsmake2 qemu
 	lfsmake2 netsnmpd
 	lfsmake2 nagios_nrpe
@@ -1958,7 +1934,6 @@ build_system() {
 	lfsmake2 ddrescue
 	lfsmake2 parted
 	lfsmake2 swig
-	lfsmake2 dtc
 	lfsmake2 u-boot
 	lfsmake2 wireless-regdb
 	lfsmake2 ddns
@@ -2080,6 +2055,7 @@ build_system() {
 	lfsmake2 libplist
 	lfsmake2 nqptp
 	lfsmake2 shairport-sync
+	lfsmake2 libxxhash
 	lfsmake2 borgbackup
 	lfsmake2 lmdb
 	lfsmake2 knot
@@ -2462,7 +2438,7 @@ build)
 	exec_in_namespace "$@"
 
 	# Prepare the environment
-	prepareenv --required-space=2048
+	prepareenv --required-space=8192
 
 	# Check if the toolchain is available
 	if [ ! -e "${BUILD_DIR}${TOOLS_DIR}/.toolchain-successful" ]; then
