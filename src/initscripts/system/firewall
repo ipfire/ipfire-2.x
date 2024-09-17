@@ -378,7 +378,7 @@ iptables_init() {
 	# IPS (Suricata) chains
 	iptables -t mangle -N IPS
 
-	for chain in PREROUTING POSTROUTING; do
+	for chain in INPUT FORWARD OUTPUT; do
 		iptables -t mangle -A "${chain}" -j IPS
 	done
 
