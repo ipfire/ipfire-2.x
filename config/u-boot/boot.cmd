@@ -77,8 +77,8 @@ else
 fi;
 
 setenv fdt_high ffffffff;
-fatload ${boot_dev} ${boot_part} ${kernel_addr_r} vmlinuz-${KVER}-ipfire${kernel_type};
-fatload ${boot_dev} ${boot_part} ${fdt_addr_r} dtb-${KVER}-ipfire${kernel_type}/${fdtfile};
+fatload ${boot_dev} ${boot_part} ${kernel_addr_r} vmlinuz-${KVER};
+fatload ${boot_dev} ${boot_part} ${fdt_addr_r} dtb-${KVER}/${fdtfile};
 
 if test "${FDTCMDS}" = ""; then
 	echo ;
@@ -88,7 +88,7 @@ else
 fi;
 
 setenv ramdisk_addr ${ramdisk_addr_r}
-if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire${kernel_type}; then
+if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}; then
 	echo Ramdisk loaded...;
 else
 	echo Ramdisk not loaded...;
