@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,13 +25,6 @@
 PIDFILE="/var/run/httpd.pid"
 
 generate_certificates() {
-	if [ ! -f "/etc/httpd/server.key" ]; then
-		boot_mesg "Generating HTTPS RSA server key (this will take a moment)..."
-		openssl genrsa -out /etc/httpd/server.key 4096 &>/dev/null
-		chmod 600 /etc/httpd/server.key
-		evaluate_retval
-	fi
-
 	if [ ! -f "/etc/httpd/server-ecdsa.key" ]; then
 		boot_mesg "Generating HTTPS ECDSA server key..."
 		openssl ecparam -genkey -name secp384r1 -noout \
@@ -40,27 +33,10 @@ generate_certificates() {
 		evaluate_retval
 	fi
 
-	# Generate RSA CSR
-	if [ ! -f "/etc/httpd/server.csr" ]; then
-		sed "s/HOSTNAME/`hostname -f`/" < /etc/certparams | \
-			openssl req -new -key /etc/httpd/server.key \
-				-out /etc/httpd/server.csr &>/dev/null
-	fi
-
-	# Generate ECDSA CSR
 	if [ ! -f "/etc/httpd/server-ecdsa.csr" ]; then
 		sed "s/HOSTNAME/`hostname -f`/" < /etc/certparams | \
 			openssl req -new -key /etc/httpd/server-ecdsa.key \
 			-out /etc/httpd/server-ecdsa.csr &>/dev/null
-	fi
-
-	if [ ! -f "/etc/httpd/server.crt" ]; then
-		boot_mesg "Signing RSA certificate..."
-		openssl x509 -req -days 999999 -sha256 \
-			-in /etc/httpd/server.csr \
-			-signkey /etc/httpd/server.key \
-			-out /etc/httpd/server.crt &>/dev/null
-		evaluate_retval
 	fi
 
 	if [ ! -f "/etc/httpd/server-ecdsa.crt" ]; then
