@@ -1,0 +1,2 @@
+srv/web/ipfire/cgi-bin/index.cgi
+var/ipfire/network-functions.pl
