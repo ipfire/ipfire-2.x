@@ -13,5 +13,6 @@ var/ipfire/backup/bin/backup.pl
 var/ipfire/general-functions.pl
 var/ipfire/graphs.pl
 var/ipfire/header.pl
+var/ipfire/ids-functions.pl
 var/ipfire/lang.pl
 var/ipfire/network-functions.pl
