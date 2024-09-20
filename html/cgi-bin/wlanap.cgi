@@ -354,29 +354,33 @@ END
 
 &Header::closebox();
 
-&Header::opensection();
+if ($INTF) {
 
-my @status = `iw dev $INTF info`;
+	&Header::opensection();
 
-if (@status) {
-	print <<END;
-		<h6>$Lang::tr{'wlanap wlan status'}</h6>
+	my @status = `iw dev $INTF info`;
 
-		<pre>@status</pre>
+	if (@status) {
+		print <<END;
+			<h6>$Lang::tr{'wlanap wlan status'}</h6>
+
+			<pre>@status</pre>
 END
+	}
+
+	@status = `iw dev $INTF station dump`;
+
+	if (@status) {
+		print <<END;
+			<h6>$Lang::tr{'wlanap clients'}</h6>
+
+			<pre>@status</pre>
+END
+	}
+
+	&Header::closesection();
 }
 
-my @status = `iw dev $INTF station dump`;
-
-if (@status) {
-	print <<END;
-		<h6>$Lang::tr{'wlanap clients'}</h6>
-
-		<pre>@status</pre>
-END
-}
-
-&Header::closesection();
 &Header::closebigbox();
 &Header::closepage();
 
