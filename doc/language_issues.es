@@ -939,6 +939,7 @@ WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
 WARNING: translation string unused: wlan clients
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap broadcast ssid
 WARNING: translation string unused: wlanap debugging
 WARNING: translation string unused: wlanap del interface
 WARNING: translation string unused: wlanap informations
@@ -1189,5 +1190,6 @@ WARNING: untranslated string: wireguard = WireGuard
 WARNING: untranslated string: wlan client configuration = Wireless Client Configuration
 WARNING: untranslated string: wlanap = Wireless Access Point
 WARNING: untranslated string: wlanap clients = unknown string
+WARNING: untranslated string: wlanap hide ssid = Hide SSID
 WARNING: untranslated string: wlanap psk = Pre-Shared Key
 WARNING: untranslated string: wlanap wireless mode = Wireless Mode
