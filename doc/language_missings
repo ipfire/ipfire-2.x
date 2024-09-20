@@ -167,6 +167,7 @@
 < whitelisted
 < wireguard
 < wlanap
+< wlanap hide ssid
 < wlanap psk
 < wlanap wireless mode
 < wlanap wlan clients
@@ -203,6 +204,7 @@
 < wg
 < whitelisted
 < wireguard
+< wlanap hide ssid
 < wlanap psk
 < wlanap wireless mode
 < wlanap wlan clients
@@ -702,9 +704,9 @@
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -1271,9 +1273,9 @@
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -2255,10 +2257,10 @@
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -3276,10 +3278,10 @@
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -3672,8 +3674,8 @@
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
-< wlanap broadcast ssid
 < wlanap client isolation
+< wlanap hide ssid
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
