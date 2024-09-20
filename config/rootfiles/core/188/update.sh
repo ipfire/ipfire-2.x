@@ -130,7 +130,7 @@ dracut --regenerate-all --force
 KVER="xxxKVERxxx"
 case "$(uname -m)" in
 	aarch64)
-		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}.img /boot/uInit-${KVER}
 		# dont remove initramfs because grub need this to boot.
 		;;
 esac
