@@ -352,6 +352,10 @@ telinit u
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
 
+# Regenerate Suricata rule files
+perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::write_used_rulefiles_file();"t
+/etc/init.d/suricata reload
+
 # Build initial ramdisks
 dracut --regenerate-all --force
 KVER="xxxKVERxxx"
