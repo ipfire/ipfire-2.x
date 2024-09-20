@@ -213,7 +213,7 @@ print <<END;
 			<tr>
 				<td>$Lang::tr{'wlanap broadcast ssid'}</td>
 				<td>
-					<input type='checkbox' name='HIDESSID' $checked{'HIDESSID'}{'on'}>
+					<input type='checkbox' name='HIDESSID' $checked{'HIDESSID'}{'off'}>
 				</td>
 			</tr>
 
