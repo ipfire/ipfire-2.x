@@ -438,7 +438,7 @@ sub _get_wireless_status($) {
 	my $intf = shift;
 
 	if (!$wireless_status{$intf}) {
-		$wireless_status{$intf} = join('\n', &General::system_output("iwconfig", "$intf"));
+		$wireless_status{$intf} = join(/\n/, &General::system_output("iw", "dev", "$intf", "link"));
 	}
 
 	return $wireless_status{$intf};
@@ -447,7 +447,7 @@ sub _get_wireless_status($) {
 sub wifi_get_essid($) {
 	my $status = &_get_wireless_status(shift);
 
-	my ($essid) = $status =~ /ESSID:\"(.*)\"/;
+	my ($essid) = $status =~ /^\s+SSID: (.*)$/m;
 
 	return $essid;
 }
@@ -455,15 +455,15 @@ sub wifi_get_essid($) {
 sub wifi_get_frequency($) {
 	my $status = &_get_wireless_status(shift);
 
-	my ($frequency) = $status =~ /Frequency:(\d+\.\d+ GHz)/;
+	my ($frequency) = $status =~ /^\s+freq: (\d+\.\d+)/m;
 
-	return $frequency;
+	return $frequency / 1000 . " GHz";
 }
 
 sub wifi_get_access_point($) {
 	my $status = &_get_wireless_status(shift);
 
-	my ($access_point) = $status =~ /Access Point: ([0-9A-F:]+)/;
+	my ($access_point) = $status =~ /^Connected to ([0-9a-f:]+)/;
 
 	return $access_point;
 }
@@ -471,27 +471,15 @@ sub wifi_get_access_point($) {
 sub wifi_get_bit_rate($) {
 	my $status = &_get_wireless_status(shift);
 
-	my ($bit_rate) = $status =~ /Bit Rate=(\d+ [GM]b\/s)/;
+	my ($bit_rate) = $status =~ /^\s+rx bitrate: (\d+(?:\.\d+) MBit\/s)/m;
 
 	return $bit_rate;
-}
-
-sub wifi_get_link_quality($) {
-	my $status = &_get_wireless_status(shift);
-
-	my ($cur, $max) = $status =~ /Link Quality=(\d+)\/(\d+)/;
-
-	if($max > 0) {
-		return sprintf('%.0f', ($cur * 100) / $max);
-	}
-
-	return 0;
 }
 
 sub wifi_get_signal_level($) {
 	my $status = &_get_wireless_status(shift);
 
-	my ($signal_level) = $status =~ /Signal level=(\-\d+ dBm)/;
+	my ($signal_level) = $status =~ /^\s+signal: (\-\d+ dBm)/m;
 
 	return $signal_level;
 }

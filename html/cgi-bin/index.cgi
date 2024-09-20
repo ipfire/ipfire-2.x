@@ -199,7 +199,6 @@ END
 		my $frequency    = &Network::wifi_get_frequency($iface);
 		my $access_point = &Network::wifi_get_access_point($iface);
 		my $bit_rate     = &Network::wifi_get_bit_rate($iface);
-		my $link_quality = &Network::wifi_get_link_quality($iface);
 		my $signal_level = &Network::wifi_get_signal_level($iface);
 
 		print <<END;
@@ -224,7 +223,7 @@ END
 					$bit_rate
 				</td>
 				<td style="text-align: center">
-					$link_quality% @ $signal_level
+					$signal_level
 				</td>
 			</tr>
 END
