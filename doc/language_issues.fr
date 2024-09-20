@@ -1021,6 +1021,7 @@ WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: ids rulesets = Rulesets
+WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: ips throughput = Throughput
 WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: load average = Load Average

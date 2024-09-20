@@ -1067,6 +1067,7 @@ WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: ids rulesets = Rulesets
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: ips throughput = Throughput
 WARNING: untranslated string: last updated = Last Updated

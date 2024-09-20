@@ -1181,6 +1181,7 @@ WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: interface mode = Interface
 WARNING: untranslated string: intrusion prevention system = Intrusion Prevention System
+WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
 WARNING: untranslated string: invalid input for interface address = Invalid input for interface address
 WARNING: untranslated string: invalid input for interface mode = Invalid input for interface mode

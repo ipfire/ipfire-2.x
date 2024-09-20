@@ -1529,6 +1529,7 @@
 'invalid domain name' => 'Invalid domain name.',
 'invalid downlink speed' => 'Invalid downlink speed.',
 'invalid end address' => 'Invalid end address.',
+'invalid endpoint' => 'Invalid Endpoint',
 'invalid fixed ip address' => 'Invalid fixed IP address',
 'invalid fixed mac address' => 'Invalid fixed MAC address',
 'invalid hostname' => 'Invalid hostname.',

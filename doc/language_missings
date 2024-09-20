@@ -187,6 +187,7 @@
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< invalid endpoint
 < invalid ip or hostname
 < ips throughput
 < last updated
@@ -276,6 +277,7 @@
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< invalid endpoint
 < ips throughput
 < last updated
 < load average
@@ -607,6 +609,7 @@
 < inodes
 < interface mode
 < intrusion prevention system
+< invalid endpoint
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -1198,6 +1201,7 @@
 < inodes
 < interface mode
 < intrusion prevention system
+< invalid endpoint
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -2093,6 +2097,7 @@
 < integrity
 < interface mode
 < intrusion prevention system
+< invalid endpoint
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -3156,6 +3161,7 @@
 < integrity
 < interface mode
 < intrusion prevention system
+< invalid endpoint
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -3803,6 +3809,7 @@
 < inodes
 < interface mode
 < intrusion prevention system
+< invalid endpoint
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu

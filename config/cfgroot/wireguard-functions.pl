@@ -317,11 +317,13 @@ sub generate_client_configuration($) {
 		push(@allowed_ips, "${netaddress}/${prefix}");
 	}
 
-	# Build the FQDN of the firewall
-	my $fqdn = join(".", (
-		$General::mainsettings{'HOSTNAME'},
-		$General::mainsettings{'DOMAINNAME'},
-	));
+	my $endpoint = $settings{'ENDPOINT'};
+
+	# If no endpoint is set, we fall back to the FQDN of the firewall
+	if ($endpoint eq "") {
+		$endpoint = $General::mainsettings{'HOSTNAME'} . "." . $General::mainsettings{'DOMAINNAME'};
+	}
+
 	my $port = $settings{'PORT'};
 
 	# Fetch any DNS servers
@@ -344,7 +346,7 @@ sub generate_client_configuration($) {
 	# Add peer configuration
 	push(@conf, (
 		"[Peer]",
-		"Endpoint = ${fqdn}:${port}",
+		"Endpoint = ${endpoint}:${port}",
 		"PublicKey = $settings{'PUBLIC_KEY'}",
 		"PresharedKey = $peer->{'PSK'}",
 		"AllowedIPs = " . join(", ", @allowed_ips),

@@ -1471,6 +1471,7 @@
 'invalid domain name' => 'Ungültiger Domainname.',
 'invalid downlink speed' => 'Ungültige Downlink-Gerschwindigkeit.',
 'invalid end address' => 'Ungültige Endadresse.',
+'invalid endpoint' => 'Ungültige Gegenstelle',
 'invalid fixed ip address' => 'Ungültige feste IP-Adresse',
 'invalid fixed mac address' => 'Ungültige feste MAC-Adresse',
 'invalid hostname' => 'Ungültiger Hostname.',

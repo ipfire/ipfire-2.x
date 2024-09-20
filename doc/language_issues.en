@@ -1099,6 +1099,7 @@ WARNING: untranslated string: invalid characters found in pre-shared key = Inval
 WARNING: untranslated string: invalid default lease time = Invalid default lease time.
 WARNING: untranslated string: invalid domain name = Invalid domain name.
 WARNING: untranslated string: invalid end address = Invalid end address.
+WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: invalid fixed ip address = Invalid fixed IP address
 WARNING: untranslated string: invalid fixed mac address = Invalid fixed MAC address
 WARNING: untranslated string: invalid hostname = Invalid hostname.

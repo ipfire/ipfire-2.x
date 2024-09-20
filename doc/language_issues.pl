@@ -1328,6 +1328,7 @@ WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: integrity = Integrity:
 WARNING: untranslated string: interface mode = Interface
 WARNING: untranslated string: intrusion prevention system = Intrusion Prevention System
+WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: invalid input for dpd delay = Invalid input for DPD delay
 WARNING: untranslated string: invalid input for dpd timeout = Invalid input for DPD timeout
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout

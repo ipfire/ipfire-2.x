@@ -50,6 +50,13 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$Wireguard::settings{'ENABLED'} = $cgiparams{'ENABLED'};
 	}
 
+	# Check endpoint
+	if (&General::validfqdn($cgiparams{'ENDPOINT'}) || &Network::check_ip_address($cgiparams{'ENDPOINT'}) || ($cgiparams{'ENDPOINT'} eq '')) {
+		$Wireguard::settings{'ENDPOINT'} = $cgiparams{'ENDPOINT'};
+	} else {
+		push(@errormessages, $Lang::tr{'invalid endpoint'});
+	}
+
 	# Check port
 	if (&General::validport($cgiparams{'PORT'})) {
 		$Wireguard::settings{'PORT'} = $cgiparams{'PORT'};
@@ -446,6 +453,13 @@ MAIN:
 					<td>$Lang::tr{'enabled'}</td>
 					<td>
 						<input type="checkbox" name="ENABLED" $checked{'ENABLED'} />
+					</td>
+				</tr>
+
+				<tr>
+					<td>$Lang::tr{'endpoint'}</td>
+					<td>
+						<input type="text" name="ENDPOINT" value="$Wireguard::settings{'ENDPOINT'}" placeholder="$General::mainsettings{'HOSTNAME'}.$General::mainsettings{'DOMAINNAME'}" />
 					</td>
 				</tr>
 
