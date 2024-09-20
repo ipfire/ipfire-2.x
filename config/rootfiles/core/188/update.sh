@@ -122,7 +122,7 @@ ldconfig
 /etc/init.d/unbound restart
 
 # Regenerate Suricata rule files
-perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::write_used_rulefiles_file();"t
+perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::write_used_rulefiles_file(&IDS::get_enabled_providers());"
 /etc/init.d/suricata reload
 
 # Build initial ramdisks
