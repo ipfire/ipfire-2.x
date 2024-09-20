@@ -47,7 +47,7 @@ my %wlanapsettings=();
 	"PWD" => "",
 	"HTCAPS" => "",
 	"VHTCAPS" => "",
-	"NOSCAN" => "off",
+	"NOSCAN" => "on",
 	"CLIENTISOLATION" => "off",
 	"IEEE80211W" => "off",
 });
