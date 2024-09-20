@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,14 +24,14 @@
 
 case "$1" in
     start)
-	for algo in rsa ecdsa ed25519; do
+	for algo in ecdsa ed25519; do
 		keyfile="/etc/ssh/ssh_host_${algo}_key"
 
 		# If the key already exists, there is nothing to do.
 		[ -e "${keyfile}" ] && continue
 
 		boot_mesg "Generating SSH key (${algo})..."
-		ssh-keygen -qf "${keyfile}" -N '' -t ${algo}
+		ssh-keygen -qf "${keyfile}" -N '' -b 521 -t ${algo}
 		evaluate_retval
 	done
 
