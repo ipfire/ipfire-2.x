@@ -1,12 +1,9 @@
 etc/conntrackd/conntrackd.conf
 etc/group
 etc/hosts*
-etc/httpd/server.crt
-etc/httpd/server.csr
 etc/httpd/server-ecdsa.crt
 etc/httpd/server-ecdsa.csr
 etc/httpd/server-ecdsa.key
-etc/httpd/server.key
 etc/ipsec.user.*
 etc/ipsec.user-post.conf
 etc/logrotate.d
