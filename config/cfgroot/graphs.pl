@@ -1274,5 +1274,5 @@ sub updateipsthroughputgraph {
 	RRDs::graph(@command);
 	$ERROR = RRDs::error;
 
-	return "Error in RRD::Graph for conntrack: " . $ERROR . "\n" if $ERROR;
+	return "Error in RRD::Graph for suricata: " . $ERROR . "\n" if $ERROR;
 }
