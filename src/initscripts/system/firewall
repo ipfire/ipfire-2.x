@@ -377,9 +377,11 @@ iptables_init() {
 
 	# IPS (Suricata) chains
 	iptables -t mangle -N IPS
+	iptables -t mangle -N IPS_CLEAR
 
 	for chain in INPUT FORWARD OUTPUT; do
 		iptables -t mangle -A "${chain}" -j IPS
+		iptables -t mangle -A "${chain}" -j IPS_CLEAR
 	done
 
 	# RED chain, used for the red interface

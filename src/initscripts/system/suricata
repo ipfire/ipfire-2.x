@@ -55,6 +55,7 @@ NFQ_OPTS=(
 # Function to flush the firewall chains.
 flush_fw_chain() {
 	iptables -w -t mangle -F IPS
+	iptables -w -t mangle -F IPS_CLEAR
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
@@ -138,6 +139,11 @@ generate_fw_rules() {
 
 	# Send packets to suricata
 	iptables -w -t mangle -A IPS -m comment --comment "SCANNED" -j NFQUEUE "${NFQ_OPTIONS[@]}"
+
+	# Clear all bits again after packets have been sent to the IPS
+	# This is required so that encapsulated packets can't inherit any set bits here and won't be scanned.
+	iptables -w -t mangle -A IPS_CLEAR \
+			-j MARK --set-mark "0/$(( IPS_BYPASS_MASK | IPS_BYPASS_REQUESTED_MASK | IPS_REPEAT_MASK | IPS_SCAN_MASK ))"
 
 	return 0
 }
