@@ -1211,7 +1211,7 @@ END
 		} else {
 			# Print notice that currently no hosts are ignored.
 			print "<tr>\n";
-			print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+			print "<td class='base' colspan='6'>$Lang::tr{'guardian no entries'}</td>\n";
 			print "</tr>\n";
 		}
 
@@ -1314,7 +1314,7 @@ END
 			} else {
 				# Print notice that currently no hosts are ignored.
 				print "<tr>\n";
-				print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+				print "<td class='base' colspan='5'>$Lang::tr{'guardian no entries'}</td>\n";
 				print "</tr>\n";
 			}
 
