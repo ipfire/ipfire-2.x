@@ -425,7 +425,7 @@ define CREATE_META
 	echo "Summary: $(SUMMARY)"						>> $(2)
 	echo "ProgVersion: $(VER)"						>> $(2)
 	echo "Release: $(PAK_VER)"						>> $(2)
-	echo "Size: $(shell stat --format=%s $(1))"			>> $(2)
+	echo "Size: $$(stat --format=%s $(1))"			>> $(2)
 	echo "Dependencies: $(DEPS)"					>> $(2)
 	echo "File: $(PROG)-$(VER)-$(PAK_VER).ipfire"	>> $(2)
 	echo "Services: $(SERVICES)"					>> $(2)
