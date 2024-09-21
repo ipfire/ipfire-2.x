@@ -129,12 +129,12 @@ generate_fw_rules() {
 			iptables -w -t mangle -A IPS -s "${network}" -j MARK --set-mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))"
 			iptables -w -t mangle -A IPS -d "${network}" -j MARK --set-mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))"
 		done < "/var/ipfire/suricata/ignored"
-
-		# Count and skip the whitelisted packets
-		iptables -w -t mangle -A IPS \
-			-m comment --comment "WHITELISTED" \
-			-m mark --mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))" -j RETURN
 	fi
+
+	# Count and skip the whitelisted packets
+	iptables -w -t mangle -A IPS \
+		-m comment --comment "WHITELISTED" \
+		-m mark --mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))" -j RETURN
 
 	# Send packets to suricata
 	iptables -w -t mangle -A IPS -m comment --comment "SCANNED" -j NFQUEUE "${NFQ_OPTIONS[@]}"
