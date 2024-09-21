@@ -1101,7 +1101,9 @@ END
 	&Header::closesection();
 
 	# Throughput Graph
-	&Header::graph("$Lang::tr{'ips throughput'}", "ids.cgi", "ips-throughput", "day");
+	if (-e "/var/log/rrd/collectd/localhost/iptables-mangle-IPS/ipt_bytes-BYPASSED.rrd") {
+		&Header::graph("$Lang::tr{'ips throughput'}", "ids.cgi", "ips-throughput", "day");
+	}
 
 	#
 	# Used Ruleset Providers section.
