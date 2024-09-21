@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 		return run("/etc/rc.d/init.d/wireguard", argv + 1);
 
 	} else if (strcmp(argv[1], "dump") == 0) {
-		const char* args[] = {
+		char* args[] = {
 			"show",
 			(argc > 2) ? argv[2] : "wg0",
 			"dump",
