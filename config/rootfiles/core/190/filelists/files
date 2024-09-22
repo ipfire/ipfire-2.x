@@ -1,3 +1,6 @@
+etc/collectd.conf
+etc/collectd.d
+etc/rc.d/init.d/collectd
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 var/ipfire/network-functions.pl

@@ -50,7 +50,13 @@ ldconfig
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# collectd
+if [ -e "/etc/collectd.custom" ]; then
+	mv -v /etc/collectd.custom /etc/collectd.d/
+fi
+
 # Start services
+/etc/init.d/collectd restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
