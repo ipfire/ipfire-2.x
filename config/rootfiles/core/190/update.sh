@@ -56,6 +56,7 @@ if [ -e "/etc/collectd.custom" ]; then
 fi
 
 # Start services
+/etc/rc.d/init.d/apache restart
 /etc/init.d/collectd restart
 /etc/init.d/sshd restart
 

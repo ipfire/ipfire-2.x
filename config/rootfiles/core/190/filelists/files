@@ -1,8 +1,11 @@
 etc/collectd.conf
 etc/collectd.d
+etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
+etc/rc.d/init.d/apache
 etc/rc.d/init.d/collectd
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+var/ipfire/backup/include
 var/ipfire/network-functions.pl
