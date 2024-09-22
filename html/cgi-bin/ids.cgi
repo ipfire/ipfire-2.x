@@ -53,8 +53,8 @@ my %ignored=();
 # the list of zones in an array.
 my @network_zones = &Network::get_available_network_zones();
 
-# Always show Wireguard
-push(@network_zones, "wg");
+# Always show IPsec & Wireguard
+push(@network_zones, "ipsec", "wg");
 
 # Check if openvpn is started and add it to the array of network zones.
 if ( -e "/var/run/openvpn.pid") {
@@ -72,6 +72,7 @@ my %colourhash = (
 	'green' => $Header::colourgreen,
 	'blue' => $Header::colourblue,
 	'orange' => $Header::colourorange,
+	'ipsec' => $Header::colourvpn,
 	'ovpn' => $Header::colourovpn,
 	'wg' => $Header::colourwg,
 );
