@@ -569,7 +569,7 @@ sub getccdadresses
 	for (my $i=1;$i<=$count;$i++) {
 		my $tmpip=$iprange[$i-1];
 		my $stepper=$i*4;
-		$iprange[$i]= &General::getnextip($tmpip,4);
+		$iprange[$i]= &Network::bin2ip(&Network::ip2bin($tmpip) + 4);
 	}
 	my $r=0;
 	foreach my $key (keys %ccdhash) {
