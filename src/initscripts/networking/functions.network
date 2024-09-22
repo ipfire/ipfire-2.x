@@ -54,7 +54,7 @@ bin2ip() {
 	echo "${address[*]}"
 }
 
-network_get_intf() {
+network_get_intfs() {
 	local zone="${1}"
 
 	case "${zone}" in

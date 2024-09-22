@@ -109,17 +109,12 @@ generate_fw_rules() {
 		status="ENABLE_IDS_${zone}"
 
 		if [ "${!status}" = "on" ]; then
-			intf="$(network_get_intf "${zone}")"
-
-			# Skip if we could not determine an interface
-			if [ -z "${intf}" ]; then
-				continue
-			fi
-
-			iptables -w -t mangle -A IPS_SCAN_IN \
-				-i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
-			iptables -w -t mangle -A IPS_SCAN_OUT \
-				-o "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+			for intf in $(network_get_intfs "${zone}"); do
+				iptables -w -t mangle -A IPS_SCAN_IN \
+					-i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+				iptables -w -t mangle -A IPS_SCAN_OUT \
+					-o "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+			done
 		fi
 	done
 
