@@ -56,6 +56,8 @@ NFQ_OPTS=(
 flush_fw_chain() {
 	iptables -w -t mangle -F IPS
 	iptables -w -t mangle -F IPS_CLEAR
+	iptables -w -t mangle -F IPS_SCAN_IN
+	iptables -w -t mangle -F IPS_SCAN_OUT
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
@@ -93,7 +95,10 @@ generate_fw_rules() {
 		-j CONNMARK --set-mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))"
 
 	# Don't process packets that have already been seen by the IPS
-	iptables -w -t mangle -A IPS -m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
+	for chain in IPS IPS_SCAN_IN IPS_SCAN_OUT; do
+		iptables -w -t mangle -A "${chain}" \
+			-m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
+	done
 
 	local zone
 	local status
@@ -111,8 +116,10 @@ generate_fw_rules() {
 				continue
 			fi
 
-			iptables -w -t mangle -A IPS -i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
-			iptables -w -t mangle -A IPS -o "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+			iptables -w -t mangle -A IPS_SCAN_IN \
+				-i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+			iptables -w -t mangle -A IPS_SCAN_OUT \
+				-o "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
 		fi
 	done
 

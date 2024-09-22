@@ -378,6 +378,13 @@ iptables_init() {
 	# IPS (Suricata) chains
 	iptables -t mangle -N IPS
 	iptables -t mangle -N IPS_CLEAR
+	iptables -t mangle -N IPS_SCAN_IN
+	iptables -t mangle -N IPS_SCAN_OUT
+
+	iptables -t mangle -A INPUT   -j IPS_SCAN_IN
+	iptables -t mangle -A FORWARD -j IPS_SCAN_IN
+	iptables -t mangle -A FORWARD -j IPS_SCAN_OUT
+	iptables -t mangle -A OUTPUT  -j IPS_SCAN_OUT
 
 	for chain in INPUT FORWARD OUTPUT; do
 		iptables -t mangle -A "${chain}" -j IPS
