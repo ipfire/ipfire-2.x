@@ -388,17 +388,15 @@ if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
 if ($lines != 0) { &oldernewer(); }
 
 print <<END
-<table width='100%' class='tbl'>
-<tr>
-	<th width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></th>
-	<th width='15%' align='center' class='boldbase'><b>$Lang::tr{'section'}</b></th>
-	<th width='75%'>&nbsp;</th>
-</tr>
+<table class='tbl'>
+	<tr>
+		<th width='10%' align='center'>$Lang::tr{'time'}</th>
+		<th width='15%' align='center'>$Lang::tr{'section'}</th>
+		<th width='75%'>&nbsp;</th>
+	</tr>
 END
 ;
 
-$lines = 0;
-#print '<tt>';
 foreach $_ (@log)
 {
 	/^... (..) (..:..:..) [\w\-\.]+ ${section}(.*)$/;
@@ -406,29 +404,24 @@ foreach $_ (@log)
 	$day =~ tr / /0/;
 	my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
 	my $sec = $3;
-	my $data = $4;
-	# correct the cut position, just when section=RED
-	if (($cgiparams{'SECTION'} eq 'red' ) && ($sec =~ /(kernel:)(.*)/)) {
-	    $sec = 'kernel';
-	    $data = $2.': '.$data;
-	}
-	my $d = substr ($data,0,80);
-	while (length($data)>80){	#very basic breaking of lines...
-	    $data = substr ($data,80);	#permit correct display in table cell
-	    $d .=  ' ' . substr ($data,0,80);
-	}
-	my $col="";
+	my $data = &Header::cleanhtml($4, 'y');
 
-	if ($lines % 2) {
-		print "<tr>";
-		$col="bgcolor='$color{'color20'}'"; }
-	else {
-		print "<tr>";
-		$col="bgcolor='$color{'color22'}'"; }
-	print "<td $col>$time<td $col>$sec<td $col>" .&Header::cleanhtml ("$d", 'y') . "</td></tr>\n";
-	$lines++;
+	print <<END;
+		<tr>
+			<td align='center'>
+				$time
+			</td>
+
+			<td>
+				$sec
+			</td>
+
+			<td>
+				$data
+			</td>
+		</tr>
+END
 }
-#print '</tt>';
 print "</table>";
 
 &oldernewer();
