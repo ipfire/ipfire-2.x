@@ -35,7 +35,7 @@ function rrdimage_selectRange(buttonObj) {
 
 // Document loaded: Process all graphs, start reload timers
 $(function() {
-	$('div.rrdimage').each(function() {
+	$('div.graph').each(function() {
 		let graphBox = $(this);
 		_rrdimg_setRange(graphBox, graphBox.data('defaultRange'), true);
 	});

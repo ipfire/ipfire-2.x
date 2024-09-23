@@ -1,3 +1,4 @@
 etc/rc.d/init.d/functions
+srv/web/ipfire/html/include/rrdimage.js
 var/ipfire/header.pl
 var/ipfire/ids-functions.pl
