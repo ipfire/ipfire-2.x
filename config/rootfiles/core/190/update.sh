@@ -59,6 +59,7 @@ fi
 /etc/rc.d/init.d/apache restart
 /etc/init.d/collectd restart
 /etc/init.d/sshd restart
+/etc/init.d/squid restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
