@@ -53,6 +53,9 @@ my %ignored=();
 # the list of zones in an array.
 my @network_zones = &Network::get_available_network_zones();
 
+# Always show IPsec & Wireguard
+push(@network_zones, "ipsec", "wg");
+
 # Check if openvpn is started and add it to the array of network zones.
 if ( -e "/var/run/openvpn.pid") {
 	push(@network_zones, "ovpn");
@@ -69,7 +72,9 @@ my %colourhash = (
 	'green' => $Header::colourgreen,
 	'blue' => $Header::colourblue,
 	'orange' => $Header::colourorange,
-	'ovpn' => $Header::colourovpn
+	'ipsec' => $Header::colourvpn,
+	'ovpn' => $Header::colourovpn,
+	'wg' => $Header::colourwg,
 );
 
 &Header::showhttpheaders();
@@ -1003,7 +1008,7 @@ sub show_mainpage() {
 	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
 
 	# Draw current state of the IDS
-	&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
+	&Header::opensection();
 
 	&Header::ServiceStatus({
 		$Lang::tr{'intrusion prevention system'} => {
@@ -1013,30 +1018,29 @@ sub show_mainpage() {
 
 	# Only show this area, if at least one ruleset provider is configured.
 	if (%used_providers) {
+		my $num_zones = scalar @network_zones;
 
 print <<END
-
-		<br><br><h2>$Lang::tr{'settings'}</h2>
+		<br>
 
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<table width='100%' border='0'>
 				<tr>
-					<td class='base' colspan='2'>
+					<td colspan='$num_zones'>
 						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
 					</td>
+				</tr>
 
-				</td>
+				<tr> <!-- empty row for spacing -->
+					<td colspan='$num_zones'>
+						&nbsp;
+					</td>
 				</tr>
 
 				<tr>
-					<td><br><br></td>
-					<td><br><br></td>
-					<td><br><br></td>
-					<td><br><br></td>
-				</tr>
-
-				<tr>
-					<td colspan='4'><b>$Lang::tr{'ids monitored interfaces'}</b><br></td>
+					<td colspan='$num_zones'>
+						<b>$Lang::tr{'ids monitored interfaces'}</b>
+					</td>
 				</tr>
 
 				<tr>
@@ -1064,21 +1068,29 @@ END
 				$checked_input = "checked = 'checked'";
 			}
 
-			print "<td class='base' width='20%'>\n";
-			print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
-			print "&nbsp;$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
-			print "</td>\n";
+			print <<END;
+				<td>
+					<label>
+						<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>
+						&nbsp; $Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>
+					</label>
+				</td>
+END
 		}
 
 print <<END
 				</tr>
-			</table>
 
-			<br><br>
+				<tr> <!-- empty row for spacing -->
+					<td colspan='$num_zones'>
+						&nbsp;
+					</td>
+				</tr>
 
-			<table width='100%'>
 				<tr>
-					<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+					<td colspan='$num_zones' align='right'>
+						<input type='submit' name='IDS' value='$Lang::tr{'save'}' />
+					</td>
 				</tr>
 			</table>
 		</form>
@@ -1087,21 +1099,25 @@ END
 
 	}
 
-	&Header::closebox();
+	&Header::closesection();
+
+	# Throughput Graph
+	if (-e "/var/log/rrd/collectd/localhost/iptables-mangle-IPS/ipt_bytes-BYPASSED.rrd") {
+		&Header::graph("$Lang::tr{'ips throughput'}", "ids.cgi", "ips-throughput", "day");
+	}
 
 	#
 	# Used Ruleset Providers section.
 	#
-	&Header::openbox('100%', 'center', $Lang::tr{'ids ruleset settings'});
+	&Header::openbox('100%', 'center', $Lang::tr{'ids rulesets'});
 
 print <<END;
-	<table width='100%' border='0'>
+	<table width='100%' border='0' class='tbl'>
 		<tr>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ids provider'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'date'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'ids autoupdates'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'action'}</b></td>
-			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
+			<th>$Lang::tr{'ids provider'}</td>
+			<th>$Lang::tr{'last updated'}</td>
+			<th align='center'>$Lang::tr{'ids autoupdates'}</td>
+			<th align='center' colspan='3'>$Lang::tr{'action'}</td>
 		</tr>
 END
 		my $line = 1;
@@ -1121,13 +1137,6 @@ END
 				my $autoupdate_status = $used_providers{$id}[2];
 				my $status  = $used_providers{$id}[3];
 				my $unsupported;
-
-				# Check if the item number is even or not.
-				if ($line % 2) {
-					$col="bgcolor='$color{'color22'}'";
-				} else {
-					$col="bgcolor='$color{'color20'}'";
-				}
 
 				# Handle providers which are not longer supported.
 				unless ($IDS::Ruleset::Providers{$provider}{'dl_url'}) {
@@ -1161,8 +1170,8 @@ END
 
 print <<END;
 				<tr>
-					<td width='33%' class='base' $col>$provider_name $unsupported</td>
-					<td width='30%' class='base' $col>$rulesetdate</td>
+					<th scope='row' width='33%' $col>$provider_name $unsupported</th>
+					<td width='30%' $col align='center'>$rulesetdate</td>
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1205,7 +1214,7 @@ END
 		} else {
 			# Print notice that currently no hosts are ignored.
 			print "<tr>\n";
-			print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+			print "<td class='base' colspan='6'>$Lang::tr{'guardian no entries'}</td>\n";
 			print "</tr>\n";
 		}
 
@@ -1213,8 +1222,6 @@ END
 
 	# Section to add new elements or edit existing ones.
 	print <<END;
-	<br>
-	<hr>
 	<br>
 
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1240,11 +1247,11 @@ END
 	&Header::openbox('100%', 'center', $Lang::tr{'ids ignored hosts'});
 
 	print <<END;
-	<table width='100%'>
+	<table class='tbl'>
 		<tr>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ip address'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'remark'}</b></td>
-			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
+			<th>$Lang::tr{'ip address'}</td>
+			<th>$Lang::tr{'remark'}</td>
+			<th colspan='3'></td>
 		</tr>
 END
 		# Check if some hosts have been added to be ignored.
@@ -1252,7 +1259,7 @@ END
 			my $col = "";
 
 			# Loop through all entries of the hash.
-			while( (my $key) = each %ignored)  {
+			foreach my $key (sort { $ignored{$a}[0] <=> $ignored{$b}[0] } keys %ignored)  {
 				# Assign data array positions to some nice variable names.
 				my $address = $ignored{$key}[0];
 				my $remark = $ignored{$key}[1];
@@ -1261,10 +1268,6 @@ END
 				# Check if the key (id) number is even or not.
 				if ($cgiparams{'ID'} eq $key) {
 					$col="bgcolor='${Header::colouryellow}'";
-				} elsif ($key % 2) {
-					$col="bgcolor='$color{'color22'}'";
-				} else {
-					$col="bgcolor='$color{'color20'}'";
 				}
 
 				# Choose icon for the checkbox.
@@ -1282,8 +1285,8 @@ END
 
 print <<END;
 				<tr>
-					<td width='20%' class='base' $col>$address</td>
-					<td width='65%' class='base' $col>$remark</td>
+					<td width='20%' $col>$address</td>
+					<td width='65%' $col>$remark</td>
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1314,7 +1317,7 @@ END
 			} else {
 				# Print notice that currently no hosts are ignored.
 				print "<tr>\n";
-				print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+				print "<td class='base' colspan='5'>$Lang::tr{'guardian no entries'}</td>\n";
 				print "</tr>\n";
 			}
 
@@ -1322,12 +1325,10 @@ END
 
 		# Section to add new elements or edit existing ones.
 print <<END;
-		<br>
-		<hr>
-		<br>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
 
-		<div align='center'>
-			<table width='100%'>
+			<table class='form'>
 END
 
 		# Assign correct headline and button text.
@@ -1338,30 +1339,36 @@ END
 		# Check if an ID (key) has been given, in this case an existing entry should be edited.
 		if ($cgiparams{'ID'} ne '') {
 			$buttontext = $Lang::tr{'update'};
-				print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'update'}</b></td></tr>\n";
+				print "<tr><td colspan='2'><h6>$Lang::tr{'update'}</h6></td></tr>\n";
 
 				# Grab address and remark for the given key.
 				$entry_address = $ignored{$cgiparams{'ID'}}[0];
 				$entry_remark = $ignored{$cgiparams{'ID'}}[1];
 			} else {
 				$buttontext = $Lang::tr{'add'};
-				print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'dnsforward add a new entry'}</b></td></tr>\n";
+				print "<tr><td colspan='2'><h6>$Lang::tr{'dnsforward add a new entry'}</h6></td></tr>\n";
 			}
 
 print <<END;
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
 				<tr>
-					<td width='30%'>$Lang::tr{'ip address'}: </td>
-					<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
-
-					<td width='30%'>$Lang::tr{'remark'}: </td>
-					<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
-					<td align='center' width='20%'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
+					<td>$Lang::tr{'ip address'}</td>
+					<td>
+						<input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' />
+					</td>
 				</tr>
-				</form>
+
+				<tr>
+					<td>$Lang::tr{'remark'}</td>
+					<td>
+						<input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' />
+					</td>
+				</tr>
+
+				<tr class='action'>
+					<td colspan='2'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
+				</tr>
 			</table>
-		</div>
+		</form>
 END
 
 	&Header::closebox();

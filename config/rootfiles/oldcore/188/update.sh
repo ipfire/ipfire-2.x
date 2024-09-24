@@ -121,12 +121,16 @@ ldconfig
 /etc/init.d/apache restart
 /etc/init.d/unbound restart
 
+# Regenerate Suricata rule files
+perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::write_used_rulefiles_file(&IDS::get_enabled_providers());"
+/etc/init.d/suricata reload
+
 # Build initial ramdisks
 dracut --regenerate-all --force
 KVER="xxxKVERxxx"
 case "$(uname -m)" in
 	aarch64)
-		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}.img /boot/uInit-${KVER}
 		# dont remove initramfs because grub need this to boot.
 		;;
 esac

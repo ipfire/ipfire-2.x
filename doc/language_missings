@@ -103,6 +103,7 @@
 < upload fcdsl.o
 < user management
 < vpn configuration main
+< wg
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -120,6 +121,7 @@
 < access point name is invalid
 < access point name is required
 < addon
+< bypassed
 < cpu frequency
 < data transfer
 < dhcp fixed ip address in dynamic range
@@ -136,8 +138,11 @@
 < hostile networks out
 < hostile networks total
 < ids provider eol
+< ids rulesets
 < ids unsupported provider
 < invalid ip or hostname
+< ips throughput
+< last updated
 < load average
 < log drop hostile in
 < log drop hostile out
@@ -150,12 +155,16 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< scanned
 < service boot setting unavailable
 < spec rstack overflow
 < system time
 < timeformat
+< total
 < transport mode does not support vti
 < warning
+< wg
+< whitelisted
 < wireguard
 < wlanap
 < wlanap hide ssid
@@ -169,6 +178,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< bypassed
 < data transfer
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
@@ -176,16 +186,23 @@
 < g.lite
 < hostile networks total
 < ids provider eol
+< ids rulesets
 < ids unsupported provider
+< ips throughput
+< last updated
 < load average
 < oops something went wrong
 < ovpn roadwarrior server
 < processors
 < reg_file_data_sampling
+< scanned
 < system time
 < timeformat
+< total
 < upload fcdsl.o
 < warning
+< wg
+< whitelisted
 < wireguard
 < wlanap hide ssid
 < wlanap psk
@@ -228,6 +245,7 @@
 < available
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -446,6 +464,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -505,7 +524,9 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
 < load average
@@ -597,6 +618,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -635,6 +657,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -670,6 +693,8 @@
 < vulnerable
 < warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -763,6 +788,7 @@
 < available
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -986,6 +1012,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -1047,7 +1074,9 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
 < load average
@@ -1157,6 +1186,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -1199,6 +1229,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -1231,6 +1262,8 @@
 < vulnerable
 < warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -1338,6 +1371,7 @@
 < bit
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -1831,6 +1865,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -1899,8 +1934,10 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last
+< last updated
 < least preferred
 < legacy architecture warning
 < lifetime
@@ -2059,6 +2096,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -2162,6 +2200,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -2207,6 +2246,8 @@
 < vulnerable
 < warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -2346,6 +2387,7 @@
 < bit
 < block
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -2844,6 +2886,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -2913,8 +2956,10 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
 < last
+< last updated
 < least preferred
 < legacy architecture warning
 < lifetime
@@ -3071,6 +3116,7 @@
 < samba join domain
 < samba server role member
 < samba server role standalone
+< scanned
 < search
 < secret
 < sent
@@ -3174,6 +3220,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -3220,6 +3267,8 @@
 < warning
 < week-graph
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard
@@ -3335,6 +3384,7 @@
 < autonomous system
 < available
 < broken
+< bypassed
 < cake profile bridged-llcsnap 32
 < cake profile bridged-ptm 19
 < cake profile bridged-vcmux 24
@@ -3449,6 +3499,7 @@
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
+< ids rulesets
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -3503,7 +3554,9 @@
 < ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
+< ips throughput
 < itlb multihit
+< last updated
 < legacy architecture warning
 < link-layer encapsulation
 < load average
@@ -3560,6 +3613,7 @@
 < runmode
 < samba server role member
 < samba server role standalone
+< scanned
 < secret
 < sent
 < service boot setting unavailable
@@ -3594,6 +3648,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< total
 < traffic stat in
 < traffic stat out
 < traffic stat title
@@ -3610,6 +3665,8 @@
 < vulnerable
 < warning
 < Weekly
+< wg
+< whitelisted
 < whois results from
 < winbind daemon
 < wireguard

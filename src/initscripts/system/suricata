@@ -21,140 +21,150 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
-
-PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
+. /etc/init.d/networking/functions.network
 
 eval $(/usr/local/bin/readhash /var/ipfire/suricata/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-# Name of the firewall chains.
-IPS_INPUT_CHAIN="IPS_INPUT"
-IPS_FORWARD_CHAIN="IPS_FORWARD"
-IPS_OUTPUT_CHAIN="IPS_OUTPUT"
+IPS_REPEAT_MARK="0x80000000"
+IPS_REPEAT_MASK="0x80000000"
+
+# The IPS requested that this connection is being bypassed
+IPS_BYPASS_REQUESTED_MARK="0x40000000"
+IPS_BYPASS_REQUESTED_MASK="0x40000000"
+
+# Marks a connection to be bypassed
+IPS_BYPASS_MARK="0x20000000"
+IPS_BYPASS_MASK="0x20000000"
+
+# Set if we request to scan this packet
+IPS_SCAN_MARK="0x10000000"
+IPS_SCAN_MASK="0x10000000"
+
+# Set if a packet has been whitelisted
+IPS_WHITELISTED_MARK="0x08000000"
+IPS_WHITELISTED_MASK="0x08000000"
+
+# Supported network zones
+NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "IPSEC" "WG" "OVPN" )
 
 # Optional options for the Netfilter queue.
-NFQ_OPTS="--queue-bypass "
-
-# Array containing the 4 possible network zones.
-network_zones=( red green blue orange ovpn )
-
-# Array to store the network zones weather the IPS is enabled for.
-enabled_ips_zones=()
-
-# PID file of suricata.
-PID_FILE="/var/run/suricata.pid"
-
-# Function to get the amount of CPU cores of the system.
-function get_cpu_count {
-	CPUCOUNT=0
-
-	# Loop through "/proc/cpuinfo" and count the amount of CPU cores.
-	while read line; do
-		[ "$line" ] && [ -z "${line%processor*}" ]  && ((CPUCOUNT++))
-	done </proc/cpuinfo
-
-	# Limit to a maximum of 16 cores, because suricata does not support more than
-	# 16 netfilter queues at the moment.
-	if [ $CPUCOUNT -gt "16" ]; then
-		echo "16"
-	else
-		echo $CPUCOUNT
-	fi
-}
+NFQ_OPTS=(
+	"--queue-bypass"
+)
 
 # Function to flush the firewall chains.
-function flush_fw_chain {
-	# Call iptables and flush the chains
-	iptables -w -F "$IPS_INPUT_CHAIN"
-	iptables -w -F "$IPS_FORWARD_CHAIN"
-	iptables -w -F "$IPS_OUTPUT_CHAIN"
+flush_fw_chain() {
+	iptables -w -t mangle -F IPS
+	iptables -w -t mangle -F IPS_CLEAR
+	iptables -w -t mangle -F IPS_SCAN_IN
+	iptables -w -t mangle -F IPS_SCAN_OUT
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
-function generate_fw_rules {
-	cpu_count=$(get_cpu_count)
-
-	# Loop through the array of network zones.
-	for zone in "${network_zones[@]}"; do
-		# Convert zone into upper case.
-		zone_upper=${zone^^}
-
-		# Generate variable name for checking if the IDS is
-		# enabled on the zone.
-		enable_ids_zone="ENABLE_IDS_$zone_upper"
-
-		# Check if the IDS is enabled for this network zone.
-		if [ "${!enable_ids_zone}" == "on" ]; then
-			# Check if the current processed zone is "red" and the configured type is PPPoE dialin.
-			if [ "$zone" == "red" ] && [ "$RED_TYPE" == "PPPOE" ] && [ "$RED_DRIVER" != "qmi_wwan" ]; then
-				# Set device name to ppp0.
-				network_device="ppp0"
-			elif [ "$zone" == "ovpn" ]; then
-				# Get all virtual net devices because the RW server and each
-				# N2N connection creates it's own tun device.
-				for virt_dev in /sys/devices/virtual/net/*; do
-					# Cut-off the directory.
-					dev="${virt_dev##*/}"
-
-					# Only process tun devices.
-					if [[ $dev =~ "tun" ]]; then
-						# Add the network device to the array of enabled zones.
-						enabled_ips_zones+=( "$dev" )
-					fi
-				done
-
-				# Process next zone.
-				continue
-			else
-				# Generate variable name which contains the device name.
-				zone_name="$zone_upper"
-				zone_name+="_DEV"
-
-				# Grab device name.
-				network_device=${!zone_name}
-			fi
-
-			# Add the network device to the array of enabled zones.
-			enabled_ips_zones+=( "$network_device" )
-		fi
-	done
-
+generate_fw_rules() {
 	# Assign NFQ_OPTS
-	NFQ_OPTIONS=$NFQ_OPTS
+	local NFQ_OPTIONS=( "${NFQ_OPTS[@]}" )
+
+	local cpu_count="$(getconf _NPROCESSORS_ONLN)"
 
 	# Check if there are multiple cpu cores available.
 	if [ "$cpu_count" -gt "1" ]; then
-		# Balance beetween all queues.
-		NFQ_OPTIONS+="--queue-balance 0:$(($cpu_count-1))"
-		NFQ_OPTIONS+=" --queue-cpu-fanout"
+		# Balance beetween all queues
+		NFQ_OPTIONS+=(
+			"--queue-balance" "0:$(($cpu_count-1))"
+			"--queue-cpu-fanout"
+		)
 	else
-		# Send all packets to queue 0.
-		NFQ_OPTIONS+="--queue-num 0"
+		# Send all packets to queue 0
+		NFQ_OPTIONS+=(
+			"--queue-num" "0"
+		)
 	fi
 
 	# Flush the firewall chains.
 	flush_fw_chain
 
-	# Check if the array of enabled_ips_zones contains any elements.
-	if [[ ${enabled_ips_zones[@]} ]]; then
-		# Loop through the array and create firewall rules.
-		for enabled_ips_zone in "${enabled_ips_zones[@]}"; do
-			# Create rules queue input and output related traffic and pass it to the IPS.
-			iptables -w -A "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -j NFQUEUE $NFQ_OPTIONS
-			iptables -w -A "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -j NFQUEUE $NFQ_OPTIONS
+	# Don't process packets where the IPS has requested to bypass the stream
+	iptables -w -t mangle -A IPS \
+		-m comment --comment "BYPASSED" \
+		-m mark --mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))" -j RETURN
 
-			# Create rules which are required to handle forwarded traffic.
-			for enabled_ips_zone_forward in "${enabled_ips_zones[@]}"; do
-				iptables -w -A "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -j NFQUEUE $NFQ_OPTIONS
+	# If suricata decided to bypass a stream, we will store the mark in the connection tracking table
+	iptables -w -t mangle -A IPS \
+		-m mark --mark "$(( IPS_BYPASS_REQUESTED_MARK ))/$(( IPS_BYPASS_REQUESTED_MASK ))" \
+		-j CONNMARK --set-mark "$(( IPS_BYPASS_MARK ))/$(( IPS_BYPASS_MASK ))"
+
+	# Don't process packets that have already been seen by the IPS
+	for chain in IPS IPS_SCAN_IN IPS_SCAN_OUT; do
+		iptables -w -t mangle -A "${chain}" \
+			-m mark --mark "$(( IPS_REPEAT_MARK ))/$(( IPS_REPEAT_MASK ))" -j RETURN
+	done
+
+	local zone
+	local status
+	local intf
+
+	# Mark packets for all zones that we want to scan
+	for zone in "${NETWORK_ZONES[@]}"; do
+		status="ENABLE_IDS_${zone}"
+
+		if [ "${!status}" = "on" ]; then
+			# Handle IPsec packets
+			case "${zone}" in
+				IPSEC)
+					iptables -w -t mangle -A IPS_SCAN_IN \
+						-m policy --pol ipsec --dir in -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+					iptables -w -t mangle -A IPS_SCAN_OUT \
+						-m policy --pol ipsec --dir out -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+					;;
+			esac
+
+			# Add interfaces
+			for intf in $(network_get_intfs "${zone}"); do
+				iptables -w -t mangle -A IPS_SCAN_IN \
+					-i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+				iptables -w -t mangle -A IPS_SCAN_OUT \
+					-o "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
 			done
-		done
+		fi
+	done
+
+	# Don't keep processing packets we don't want to scan
+	iptables -w -t mangle -A IPS -m mark ! --mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))" -j RETURN
+
+	# Never send any whitelisted packets to the IPS
+	if [ -r "/var/ipfire/suricata/ignored" ]; then
+		local id network remark enabled rest
+
+		while IFS=',' read -r id network remark enabled rest; do
+			# Skip disabled entries
+			[ "${enabled}" = "enabled" ] || continue
+
+			iptables -w -t mangle -A IPS -s "${network}" -j MARK --set-mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))"
+			iptables -w -t mangle -A IPS -d "${network}" -j MARK --set-mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))"
+		done < "/var/ipfire/suricata/ignored"
 	fi
+
+	# Count and skip the whitelisted packets
+	iptables -w -t mangle -A IPS \
+		-m comment --comment "WHITELISTED" \
+		-m mark --mark "$(( IPS_WHITELISTED_MARK ))/$(( IPS_WHITELISTED_MASK ))" -j RETURN
+
+	# Send packets to suricata
+	iptables -w -t mangle -A IPS -m comment --comment "SCANNED" -j NFQUEUE "${NFQ_OPTIONS[@]}"
+
+	# Clear all bits again after packets have been sent to the IPS
+	# This is required so that encapsulated packets can't inherit any set bits here and won't be scanned.
+	iptables -w -t mangle -A IPS_CLEAR \
+			-j MARK --set-mark "0/$(( IPS_BYPASS_MASK | IPS_BYPASS_REQUESTED_MASK | IPS_REPEAT_MASK | IPS_SCAN_MASK ))"
+
+	return 0
 }
 
 case "$1" in
         start)
-		# Get amount of CPU cores.
-		cpu_count=$(get_cpu_count)
+		# Get amount of CPU cores
+		cpu_count="$(getconf _NPROCESSORS_ONLN)"
 
 		# Numer of NFQUES.
 		NFQUEUES="-q 0"
@@ -167,11 +177,7 @@ case "$1" in
 		if [ "$ENABLE_IDS" == "on" ]; then
 			# Start the IDS.
 			boot_mesg "Starting Intrusion Detection System..."
-			/usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES >/dev/null 2>/dev/null
-			evaluate_retval
-
-			# Allow reading the pidfile.
-			chmod 644 $PID_FILE
+			loadproc -b /usr/bin/suricata-watcher -c /etc/suricata/suricata.yaml $NFQUEUES
 
 			# Flush the firewall chain
 			flush_fw_chain
@@ -183,32 +189,24 @@ case "$1" in
 
         stop)
 		boot_mesg "Stopping Intrusion Detection System..."
-		killproc -p $PID_FILE /var/run
+		killproc -p /var/run/suricata.pid /usr/bin/suricata
 
 		# Flush firewall chain.
 		flush_fw_chain
-
-		# Sometimes suricata not correct shutdown. So killall.
-		killall -KILL /usr/bin/suricata 2>/dev/null
-
-		# Remove suricata control socket.
-		rm /var/run/suricata/* >/dev/null 2>/dev/null
-
-		# Trash remain pid file if still exists.
-		rm -f $PID_FILE >/dev/null 2>/dev/null
 
 		# Don't report returncode of rm if suricata was not started
 		exit 0
         ;;
 
         status)
-                statusproc /usr/bin/suricata
+                PIDFILE="/var/run/suricata.pid" statusproc /usr/bin/suricata
                 ;;
 
         restart)
                 $0 stop
                 $0 start
                 ;;
+
 	reload)
 		# Send SIGUSR2 to the suricata process to perform a reload
 		# of the ruleset.
@@ -226,5 +224,3 @@ case "$1" in
                 exit 1
                 ;;
 esac
-
-chmod 644 /var/log/suricata/* 2>/dev/null

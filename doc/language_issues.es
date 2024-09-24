@@ -444,6 +444,7 @@ WARNING: translation string unused: ids rules license1
 WARNING: translation string unused: ids rules license2
 WARNING: translation string unused: ids rules license3
 WARNING: translation string unused: ids rules update
+WARNING: translation string unused: ids ruleset settings
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -980,6 +981,7 @@ WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
+WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
@@ -1029,8 +1031,11 @@ WARNING: untranslated string: hostile networks in = From Hostile Networks
 WARNING: untranslated string: hostile networks out = To Hostile Networks
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
+WARNING: untranslated string: ids rulesets = Rulesets
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
+WARNING: untranslated string: ips throughput = Throughput
+WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
 WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
@@ -1049,12 +1054,15 @@ WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
 WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
+WARNING: untranslated string: total = Total
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: warning = Warning
+WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string

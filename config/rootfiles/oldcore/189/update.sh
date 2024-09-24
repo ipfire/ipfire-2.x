@@ -349,8 +349,13 @@ ldconfig
 telinit u
 
 # Start services
+/etc/init.d/collectd restart
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
+
+# Regenerate Suricata rule files
+perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::write_used_rulefiles_file(&IDS::get_enabled_providers());"
+/etc/init.d/suricata reload
 
 # Build initial ramdisks
 dracut --regenerate-all --force

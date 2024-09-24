@@ -1,6 +1,7 @@
 etc/suricata
 etc/suricata/suricata.yaml
 usr/bin/suricata
+usr/bin/suricata-watcher
 usr/sbin/convert-ids-backend-files
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS

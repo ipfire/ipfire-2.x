@@ -1189,3 +1189,90 @@ sub updateconntrackgraph {
 
 	return "Error in RRD::Graph for conntrack: " . $ERROR . "\n" if $ERROR;
 }
+
+sub updateipsthroughputgraph {
+	my $period = $_[0];
+
+	my @command = (
+		@GRAPH_ARGS,
+		"-",
+		"--start",
+		"-1" . $period,
+		"-r",
+		"--lower-limit","0",
+		"-v $Lang::tr{'bytes per second'}",
+		"--color=BACK" . $color{"color21"},
+
+		# Read bypassed packets
+		"DEF:bypassed_bytes=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_bytes-BYPASSED.rrd:value:AVERAGE",
+		#"DEF:bypassed_packets=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_packets-BYPASSED.rrd:value:AVERAGE",
+
+		"VDEF:bypassed_bytes_avg=bypassed_bytes,AVERAGE",
+		"VDEF:bypassed_bytes_min=bypassed_bytes,MINIMUM",
+		"VDEF:bypassed_bytes_max=bypassed_bytes,MAXIMUM",
+
+		# Read scanned packets
+		"DEF:scanned_bytes=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_bytes-SCANNED.rrd:value:AVERAGE",
+		#"DEF:scanned_packets=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_packets-SCANNED.rrd:value:AVERAGE",
+
+		"VDEF:scanned_bytes_avg=scanned_bytes,AVERAGE",
+		"VDEF:scanned_bytes_min=scanned_bytes,MINIMUM",
+		"VDEF:scanned_bytes_max=scanned_bytes,MAXIMUM",
+
+		# Read whitelisted packets
+		"DEF:whitelisted_bytes=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_bytes-WHITELISTED.rrd:value:AVERAGE",
+		#"DEF:whitelisted_packets=$mainsettings{'RRDLOG'}/collectd/localhost/iptables-mangle-IPS/ipt_packets-WHITELISTED.rrd:value:AVERAGE",
+
+		"VDEF:whitelisted_bytes_avg=whitelisted_bytes,AVERAGE",
+		"VDEF:whitelisted_bytes_min=whitelisted_bytes,MINIMUM",
+		"VDEF:whitelisted_bytes_max=whitelisted_bytes,MAXIMUM",
+
+		# Total
+		"CDEF:total_bytes=bypassed_bytes,scanned_bytes,ADDNAN,whitelisted_bytes,ADDNAN",
+		#"CDEF:total_packets=bypassed_packets,scanned_packets,ADDNAN,whitelisted_packets,ADDNAN",
+
+		"VDEF:total_bytes_avg=total_bytes,AVERAGE",
+		"VDEF:total_bytes_min=total_bytes,MINIMUM",
+		"VDEF:total_bytes_max=total_bytes,MAXIMUM",
+
+		# Add some space below the graph
+		"COMMENT: \\n",
+
+		# Headline
+		"COMMENT:" . sprintf("%32s", ""),
+		"COMMENT:" . sprintf("%16s", $Lang::tr{'average'}),
+		"COMMENT:" . sprintf("%16s", $Lang::tr{'minimum'}),
+		"COMMENT:" . sprintf("%16s", $Lang::tr{'maximum'}) . "\\j",
+
+		# Whitelisted Packets
+		"AREA:whitelisted_bytes$color{'color12'}A0:" . sprintf("%-30s", $Lang::tr{'whitelisted'}),
+		"GPRINT:whitelisted_bytes_avg:%9.2lf %sbps",
+		"GPRINT:whitelisted_bytes_min:%9.2lf %sbps",
+		"GPRINT:whitelisted_bytes_max:%9.2lf %sbps\\j",
+
+		# Bypassed Packets
+		"STACK:bypassed_bytes$color{'color11'}A0:" . sprintf("%-30s", $Lang::tr{'bypassed'}),
+		"GPRINT:bypassed_bytes_avg:%9.2lf %sbps",
+		"GPRINT:bypassed_bytes_min:%9.2lf %sbps",
+		"GPRINT:bypassed_bytes_max:%9.2lf %sbps\\j",
+
+		# Scanned Packets
+		"STACK:scanned_bytes$color{'color13'}A0:" . sprintf("%-30s", $Lang::tr{'scanned'}),
+		"GPRINT:scanned_bytes_avg:%9.2lf %sbps",
+		"GPRINT:scanned_bytes_min:%9.2lf %sbps",
+		"GPRINT:scanned_bytes_max:%9.2lf %sbps\\j",
+
+		"COMMENT: \\n",
+
+		# Total Packets
+		"COMMENT:" . sprintf("%-32s", $Lang::tr{'total'}),
+		"GPRINT:total_bytes_avg:%9.2lf %sbps",
+		"GPRINT:total_bytes_min:%9.2lf %sbps",
+		"GPRINT:total_bytes_max:%9.2lf %sbps\\j",
+	);
+
+	RRDs::graph(@command);
+	$ERROR = RRDs::error;
+
+	return "Error in RRD::Graph for suricata: " . $ERROR . "\n" if $ERROR;
+}

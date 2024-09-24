@@ -428,6 +428,7 @@ WARNING: translation string unused: id
 WARNING: translation string unused: ids automatic rules update
 WARNING: translation string unused: ids oinkcode required
 WARNING: translation string unused: ids rules update
+WARNING: translation string unused: ids ruleset settings
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -943,6 +944,7 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: core notice 3 = available.
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: enable disable client = unknown string
@@ -982,6 +984,9 @@ WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
+WARNING: untranslated string: ids rulesets = Rulesets
+WARNING: untranslated string: ips throughput = Throughput
+WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
@@ -990,9 +995,12 @@ WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
+WARNING: untranslated string: total = Total
 WARNING: untranslated string: warning = Warning
+WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string

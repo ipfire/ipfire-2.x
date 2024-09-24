@@ -2240,6 +2240,12 @@ check_rootfiles() {
 
 	print_headline "Checking for rootfile consistency..."
 
+	# Check for changes
+	if ! check_rootfiles_for_pattern "^[\+\-]" \
+			"Rootfiles have changed in them"; then
+		failed=1
+	fi
+
 	# Check for /etc/init.d
 	if ! check_rootfiles_for_pattern "^etc/init\.d/" \
 			"/etc/init.d/* has been found. Please replace by /etc/rc.d/init.d"; then
