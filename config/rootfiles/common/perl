@@ -1732,7 +1732,7 @@ usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/B
 #usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress
 #usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress/Raw
 #usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress/Raw/Bzip2.pm
-#usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress/Raw/Zlib.pm
+usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress/Raw/Zlib.pm
 usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Config.pm
 usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Config.pod
 usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Config_git.pl
