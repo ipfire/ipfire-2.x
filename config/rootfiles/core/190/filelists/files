@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/suricata-watcher
+usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress/Raw/Zlib.pm
 var/ipfire/backup/include
 var/ipfire/graphs.pl
 var/ipfire/network-functions.pl
