@@ -3,9 +3,16 @@ etc/collectd.d
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/apache
 etc/rc.d/init.d/collectd
+etc/rc.d/init.d/firewall
+etc/rc.d/init.d/networking/functions.network
+etc/rc.d/init.d/suricata
+srv/web/ipfire/cgi-bin/getrrdimage.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/bin/suricata-watcher
 var/ipfire/backup/include
+var/ipfire/graphs.pl
 var/ipfire/network-functions.pl
