@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A highly DNS-, DoS- and abuse-aware loadbalancer
 
-VER        = 1.9.4
+VER        = 1.9.6
 
 THISAPP    = dnsdist-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,9 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dnsdist
-PAK_VER    = 23
-
-SUP_ARCH   = x86_64 aarch64
+PAK_VER    = 24
 
 DEPS       =
 
@@ -52,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a8cfc5c2da135ed96b857f9f1b6c3caa796b27f66ff7ead6e976b871a5e5db208ef3ce275c23085318bd7ff2f0fa2ec19e28ad36234991d84b8d13e74acb2f34
+$(DL_FILE)_BLAKE2 = adb56707bb768ceae974cd9b725d2bf1f4beaa6e3edc6ede22a7d93920214614f10c82d71dbb773741f56dff04e0f0aa26dc0a0e2d5d405bee89d8ada1130303
 
 install : $(TARGET)
 
