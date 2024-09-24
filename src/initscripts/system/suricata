@@ -45,7 +45,7 @@ IPS_WHITELISTED_MARK="0x08000000"
 IPS_WHITELISTED_MASK="0x08000000"
 
 # Supported network zones
-NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "WG" "OVPN" )
+NETWORK_ZONES=( "RED" "GREEN" "ORANGE" "BLUE" "IPSEC" "WG" "OVPN" )
 
 # Optional options for the Netfilter queue.
 NFQ_OPTS=(
@@ -109,6 +109,17 @@ generate_fw_rules() {
 		status="ENABLE_IDS_${zone}"
 
 		if [ "${!status}" = "on" ]; then
+			# Handle IPsec packets
+			case "${zone}" in
+				IPSEC)
+					iptables -w -t mangle -A IPS_SCAN_IN \
+						-m policy --pol ipsec --dir in -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+					iptables -w -t mangle -A IPS_SCAN_OUT \
+						-m policy --pol ipsec --dir out -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
+					;;
+			esac
+
+			# Add interfaces
 			for intf in $(network_get_intfs "${zone}"); do
 				iptables -w -t mangle -A IPS_SCAN_IN \
 					-i "${intf}" -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"

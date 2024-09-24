@@ -57,7 +57,7 @@ bin2ip() {
 network_get_intfs() {
 	local zone="${1}"
 
-	case "${zone}" in
+	case "${zone^^}" in
 		RED)
 			# For PPPoE, the RED interface is called ppp0 (unless we use QMI)
 			if [ "${RED_TYPE}" = "PPPOE" ] && [ "${RED_DRIVER}" != "qmi_wwan" ]; then
@@ -90,6 +90,32 @@ network_get_intfs() {
 				echo "${BLUE_DEV}"
 				return 0
 			fi
+			;;
+
+		IPSEC)
+			local VARS=(
+				id status x1 x2 type x3 x4 x5 x6 x7 x8 x9 x10
+				x11 x12 x13 x14 x15 x16 x17 x18 x19 x20
+				x21 x22 x23 x24 x25 x26 x27 x28 x29 x30
+				x31 x32 x33 x34 interface_mode rest
+			)
+
+			while IFS="," read -r "${VARS[@]}"; do
+				# Check if the connection is enabled
+				[ "${status}" = "on" ] || continue
+
+				# Check if this a net-to-net connection
+				[ "${type}" = "net" ] || continue
+
+				# Determine the interface name
+				case "${interface_mode}" in
+					gre|vti)
+						echo "${interface_mode}${id}"
+						;;
+				esac
+			done < /var/ipfire/vpn/config
+
+			return 0
 			;;
 
 		WIREGUARD|WG)
