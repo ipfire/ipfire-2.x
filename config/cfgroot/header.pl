@@ -195,7 +195,7 @@ print <<END;
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<script type="text/javascript" src="/include/jquery.js"></script>
-	<script src="/include/rrdimage.js"></script>
+	<script src="/include/rrdimage.js?v=20240926"></script>
 
 	$extrahead
 	<script type="text/javascript">
