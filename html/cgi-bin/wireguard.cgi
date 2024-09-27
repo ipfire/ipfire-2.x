@@ -999,7 +999,7 @@ sub show_peer_configuration($$) {
 	);
 
 	# Generate the client configuration
-	my $config = &Wireguard::generate_client_configuration(\%peer);
+	my $config = &Wireguard::generate_peer_configuration(\%peer);
 
 	# Create a QR code generator
 	my $qrgen = Imager::QRCode->new(

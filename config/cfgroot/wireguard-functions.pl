@@ -301,7 +301,7 @@ sub free_pool_addresses($$) {
 	return @free_addresses;
 }
 
-sub generate_client_configuration($) {
+sub generate_peer_configuration($) {
 	my $peer = shift;
 
 	my @allowed_ips = ();
