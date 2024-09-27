@@ -183,7 +183,7 @@ sub name_is_free($) {
 	return 1;
 }
 
-sub publickey_is_valid($) {
+sub key_is_valid($) {
 	my $key = shift;
 
 	# Try to decode the key

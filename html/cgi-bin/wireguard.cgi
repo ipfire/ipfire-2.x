@@ -180,14 +180,14 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# Check the public key
-	unless (&Wireguard::publickey_is_valid($cgiparams{'PUBLIC_KEY'})) {
+	unless (&Wireguard::key_is_valid($cgiparams{'PUBLIC_KEY'})) {
 		push(@errormessages, $Lang::tr{'wg invalid public key'});
 	}
 
 	# Check PSK
 	if ($cgiparams{'PSK'} eq '') {
 		# The PSK may be empty
-	} elsif (!&Wireguard::publickey_is_valid($cgiparams{'PSK'})) {
+	} elsif (!&Wireguard::key_is_valid($cgiparams{'PSK'})) {
 		push(@errormessages, $Lang::tr{'wg invalid psk'});
 	}
 
