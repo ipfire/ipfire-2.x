@@ -21,6 +21,7 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
+. /etc/rc.d/init.d/networking/functions.network
 
 INTF="wg0"
 
@@ -65,6 +66,9 @@ generate_config() {
 		ip route add "${CLIENT_POOL}" dev "${INTF}"
 	fi
 
+	local args
+	local src
+
 	while read -r id enabled type name pubkey endpoint port remote_subnets \
 			remarks local_subnets psk keepalive _rest; do
 		# Skip peers that are not enabled
@@ -89,8 +93,22 @@ generate_config() {
 
 			# Apply the routes
 			if [ "${type}" = "net" ]; then
+				local_subnets=( "${local_subnets//|/,}" )
+
+				# Find an IP address of the firewall that is inside the routed subnet
+				src="$(ipfire_address_in_networks "${local_subnets[@]}")"
+
 				for remote_subnet in ${remote_subnets//|/,}; do
-					ip route add "${remote_subnet}" dev "${INTF}"
+					args=(
+						"${remote_subnet}" "dev" "${INTF}"
+					)
+
+					# Add the preferred source if we found one
+					if [ -n "${src}" ]; then
+						args+=( "src" "${src}" )
+					fi
+
+					ip route add "${args[@]}"
 				done
 			fi
 		fi
