@@ -1028,6 +1028,9 @@ sub show_peer_configuration($$) {
 	# Open a new box
 	&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
 
+	# Make the filename for files
+	my $filename = &Header::normalize($peer{'NAME'}) . ".conf";
+
 	print <<END;
 		<div class="text-center">
 			<p>
@@ -1039,7 +1042,7 @@ sub show_peer_configuration($$) {
 			</p>
 
 			<p>
-				<a href="data:text/plain;base64,${config}" download="$peer{'NAME'}.conf">
+				<a href="data:text/plain;base64,${config}" download="${filename}">
 					$Lang::tr{'wg download configuration file'}
 				</a>
 			</p>
