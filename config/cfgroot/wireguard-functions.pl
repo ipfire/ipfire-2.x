@@ -305,6 +305,7 @@ sub generate_peer_configuration($) {
 	my $peer = shift;
 
 	my @allowed_ips = ();
+	my @dns = ();
 
 	# Convert all subnets into CIDR notation
 	foreach my $subnet ($peer->{'LOCAL_SUBNETS'}) {
@@ -326,8 +327,10 @@ sub generate_peer_configuration($) {
 
 	my $port = $settings{'PORT'};
 
-	# Fetch any DNS servers
-	my @dns = split(/\|/, $settings{'CLIENT_DNS'});
+	# Fetch any DNS servers for hosts
+	if ($peer->{'TYPE'} eq 'host') {
+		@dns = split(/\|/, $settings{'CLIENT_DNS'});
+	}
 
 	my @conf = (
 		"[Interface]",
