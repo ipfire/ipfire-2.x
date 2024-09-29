@@ -25,15 +25,15 @@
 include Config
 
 SUMMARY    = Daemon for running a WPA capable Access Point
-VER        = 2_11
+VER        = 64d60bb4
 
-THISAPP    = hostap_$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = hostap-$(VER)
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 65
+PAK_VER    = 66
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = de98a3634ff937b0068329219e4fa5dece34c9eeb27fa81a9e7de689d5dd2936ceb0ea43923a0e994e0a7bfcd71709b5f739df2f3efdd7c6ec5c765171711a19
+$(DL_FILE)_BLAKE2 = a377efb1f173a8622ca7ba2073161a64ea3a041c2c662ef35615e74b61e29da2d1f7dccba68a8f2ae1a80c7d3fbde08cd9d72a0babf85324efa9b3b11b1cb3ac
 
 install : $(TARGET)
 
