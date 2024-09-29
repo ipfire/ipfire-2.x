@@ -25,7 +25,7 @@
 case "$1" in
 	start)
 		boot_mesg "Starting MPD..."
-		chown -R root.nobody /var/ipfire/mpd/db
+		chown -R root:nobody /var/ipfire/mpd/db
 		/bin/nice --5 /usr/bin/mpd
     evaluate_retval
 		;;
