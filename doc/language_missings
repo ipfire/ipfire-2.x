@@ -187,14 +187,22 @@
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< import connection
 < invalid endpoint
+< invalid endpoint address
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
+< invalid network
 < ips throughput
 < last updated
 < load average
 < local subnets
 < log drop hostile in
 < log drop hostile out
+< malformed preshared key
+< malformed private key
+< malformed public key
 < oops something went wrong
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -277,11 +285,19 @@
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< import connection
 < invalid endpoint
+< invalid endpoint address
+< invalid ip address
+< invalid keepalive interval
+< invalid network
 < ips throughput
 < last updated
 < load average
 < local subnets
+< malformed preshared key
+< malformed private key
+< malformed public key
 < oops something went wrong
 < ovpn roadwarrior server
 < password has quotation mark
@@ -604,12 +620,14 @@
 < ids unsupported provider
 < ids visit provider website
 < ids working
+< import connection
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < inodes
 < interface mode
 < intrusion prevention system
 < invalid endpoint
+< invalid endpoint address
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -618,8 +636,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -678,6 +699,9 @@
 < log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -1195,6 +1219,7 @@
 < ids visit provider website
 < ids working
 < imei
+< import connection
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
@@ -1202,6 +1227,7 @@
 < interface mode
 < intrusion prevention system
 < invalid endpoint
+< invalid endpoint address
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -1210,8 +1236,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -1270,6 +1299,9 @@
 < log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -2089,6 +2121,7 @@
 < ids visit provider website
 < ids working
 < imei
+< import connection
 < imsi
 < incoming compression in bytes per second
 < incoming firewall access
@@ -2098,6 +2131,7 @@
 < interface mode
 < intrusion prevention system
 < invalid endpoint
+< invalid endpoint address
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -2108,8 +2142,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -2175,6 +2212,9 @@
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -3152,6 +3192,7 @@
 < ids visit provider website
 < ids working
 < imei
+< import connection
 < imsi
 < incoming compression in bytes per second
 < incoming firewall access
@@ -3162,6 +3203,7 @@
 < interface mode
 < intrusion prevention system
 < invalid endpoint
+< invalid endpoint address
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -3172,8 +3214,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -3239,6 +3284,9 @@
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -3806,17 +3854,22 @@
 < ids unsupported provider
 < ids visit provider website
 < ids working
+< import connection
 < inodes
 < interface mode
 < intrusion prevention system
 < invalid endpoint
+< invalid endpoint address
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
 < invalid input for subscription code
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -3864,6 +3917,9 @@
 < log drop hostile in
 < log drop hostile out
 < log dropped conntrack invalids
+< malformed preshared key
+< malformed private key
+< malformed public key
 < meltdown
 < mitigated
 < mmio stale data

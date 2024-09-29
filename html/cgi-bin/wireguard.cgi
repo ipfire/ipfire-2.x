@@ -32,14 +32,14 @@ require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/wireguard-functions.pl";
 
+my %cgiparams = ();
 my @errormessages = ();
 
 # Generate keys
 &Wireguard::generate_keys();
 
 # Fetch CGI parameters
-my %cgiparams = ();
-&Header::getcgihash(\%cgiparams);
+&Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 # Save on main page
 if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
@@ -396,6 +396,14 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	} elsif ($cgiparams{"TYPE"} eq "host") {
 		goto EDITHOST;
 
+	} elsif ($cgiparams{"TYPE"} eq "import") {
+		# Parse the configuration file
+		(%cgiparams, @errormessages) = &Wireguard::parse_configuration($cgiparams{'FH'});
+
+		# We basically don't support importing RW connections, so we always
+		# need to go and show the N2N editor.
+		goto EDITNET;
+
 	# Ask the user what type they want
 	} else {
 		goto ADD;
@@ -722,6 +730,15 @@ ADD:
 						<input type='radio' name='TYPE' value='net' checked />
 						$Lang::tr{'net to net vpn'}
 					</label>
+				</li>
+
+				<li>
+					<label>
+						<input type='radio' name='TYPE' value='import' />
+						$Lang::tr{'import connection'}
+					</label>
+
+					<input type='file' name='FH' />
 				</li>
 			</ul>
 

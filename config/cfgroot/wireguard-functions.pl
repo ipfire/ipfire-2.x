@@ -359,4 +359,128 @@ sub generate_peer_configuration($) {
 	return join("\n", @conf);
 }
 
+sub parse_configuration($) {
+	my $fh = shift;
+
+	my %peer = ();
+
+	# Collect any errors
+	my @errormessages = ();
+
+	my $section = undef;
+	my $key = undef;
+	my $val = undef;
+
+	while (<$fh>) {
+		# Remove line breaks
+		chomp;
+
+		# Search for section headers
+		if ($_ =~ m/^\[(\w+)\]$/) {
+			$section = $1;
+			next;
+
+		# Search for key = value lines
+		} elsif ($_ =~ m/^(\w+)\s+=\s+(.*)$/) {
+			# Skip anything before the first section header
+			next unless (defined $section);
+
+			# Store keys and values
+			$key = $1;
+			$val = $2;
+
+		# Skip any unhandled lines
+		} else {
+			next;
+		}
+
+		# Interface section
+		if ($section eq "Interface") {
+			# Address
+			if ($key eq "Address") {
+				if (&Network::check_ip_address($val)) {
+					$peer{'CLIENT_ADDRESS'} = $val;
+				} else {
+					push(@errormessages, $Lang::tr{'invalid ip address'});
+				}
+
+			# PrivateKey
+			} elsif ($key eq "PrivateKey") {
+				if (&key_is_valid($val)) {
+					$peer{'PRIVATE_KEY'} = $val;
+				} else {
+					push(@errormessages, $Lang::tr{'malformed private key'});
+				}
+			}
+
+		# Peer section
+		} elsif ($section eq "Peer") {
+			# PublicKey
+			if ($key eq "PublicKey") {
+				if (&key_is_valid($val)) {
+					$peer{'PUBLIC_KEY'} = $val;
+				} else {
+					push(@errormessages, $Lang::tr{'malformed public key'});
+				}
+
+			# PresharedKey
+			} elsif ($key eq "PresharedKey") {
+				if (&key_is_valid($val)) {
+					$peer{'PSK'} = $val;
+				} else {
+					push(@errormessages, $Lang::tr{'malformed preshared key'});
+				}
+
+			# AllowedIPs
+			} elsif ($key eq "AllowedIPs") {
+				my @networks = split(/,/, $val);
+
+				# Check if all networks are valid
+				foreach my $network (@networks) {
+					unless (&Network::check_subnet($network)) {
+						push(@errormessages, $Lang::tr{'invalid network'} . " $network");
+					}
+				}
+
+				$peer{'REMOTE_SUBNETS'} = join(/, /, @networks);
+			# Endpoint
+			} elsif ($key eq "Endpoint") {
+				my $address = $val;
+				my $port = $DEFAULT_PORT;
+
+				# Try to separate the port (if any)
+				if ($val =~ m/^(.*):(\d+)$/) {
+					$address = $1;
+					$port    = $2;
+				}
+
+				# Check if we have a valid IP address
+				if (&Network::check_ip_address($address)) {
+					# nothing
+
+				# Otherwise this fails
+				} else {
+					push(@errormessages, $Lang::tr{'invalid endpoint address'});
+					next;
+				}
+
+				# Store the values
+				$peer{'ENDPOINT_ADDRESS'} = $address;
+				$peer{'ENDPOINT_PORT'}    = $port;
+
+			# PersistentKeepalive
+			} elsif ($key eq "PersistentKeepalive") {
+				# Must be an integer
+				if ($val =~ m/^(\d+)$/) {
+					$peer{'KEEPALIVE'} = $1;
+				} else {
+					push(@errormessages, $Lang::tr{'invalid keepalive interval'});
+				}
+			}
+		}
+	}
+
+	return %peer, @errormessages;
+}
+
 1;
