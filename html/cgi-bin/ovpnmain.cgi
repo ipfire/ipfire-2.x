@@ -4402,7 +4402,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 				print CCDRWCONF "#This client uses the dynamic pool\n";
 			}else{
 				print CCDRWCONF "#Ip address client and server\n";
-				print CCDRWCONF "ifconfig-push $ccdip ".&General::getlastip($ccdip,1)."\n";
+				print CCDRWCONF "ifconfig-push $ccdip ". &Network::bin2ip(&Network::ip2bin($ccdip) - 1) ."\n";
 			}
 			if ($confighash{$key}[34] eq 'on'){
 				print CCDRWCONF "\n#Redirect Gateway: \n#All IP traffic is redirected through the vpn \n";

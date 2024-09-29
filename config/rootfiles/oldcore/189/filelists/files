@@ -5,6 +5,7 @@ etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/suricata
 srv/web/ipfire/cgi-bin/getrrdimage.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/html/include/rrdimage.js
 usr/bin/suricata-watcher
 var/ipfire/graphs.pl
