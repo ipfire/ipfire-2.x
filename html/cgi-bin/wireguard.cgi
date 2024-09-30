@@ -134,8 +134,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Fetch type
 	my $type = $Wireguard::peers{$key}[1];
 
-	my @remote_subnets = &Wireguard::decode_subnets($Wireguard::peers{$key}[6]);
-	my @local_subnets  = &Wireguard::decode_subnets($Wireguard::peers{$key}[8]);
+	my @remote_subnets = &Wireguard::decode_subnets($Wireguard::peers{$key}[8]);
+	my @local_subnets  = &Wireguard::decode_subnets($Wireguard::peers{$key}[10]);
 
 	# Flush CGI parameters & load configuration
 	%cgiparams = (
@@ -144,13 +144,15 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"TYPE"				=> $Wireguard::peers{$key}[1],
 		"NAME"				=> $Wireguard::peers{$key}[2],
 		"PUBLIC_KEY"		=> $Wireguard::peers{$key}[3],
-		"ENDPOINT_ADDRESS"	=> $Wireguard::peers{$key}[4],
-		"ENDPOINT_PORT"		=> $Wireguard::peers{$key}[5],
+		"PRIVATE_KEY"		=> $Wireguard::peers{$key}[4],
+		"PORT"				=> $Wireguard::peers{$key}[5],
+		"ENDPOINT_ADDRESS"	=> $Wireguard::peers{$key}[6],
+		"ENDPOINT_PORT"		=> $Wireguard::peers{$key}[7],
 		"REMOTE_SUBNETS"	=> join(", ", @remote_subnets),
-		"REMARKS"			=> &MIME::Base64::decode_base64($Wireguard::peers{$key}[7]),
+		"REMARKS"			=> &MIME::Base64::decode_base64($Wireguard::peers{$key}[9]),
 		"LOCAL_SUBNETS"		=> join(", ", @local_subnets),
-		"PSK"				=> $Wireguard::peers{$key}[9],
-		"KEEPALIVE"			=> $Wireguard::peers{$key}[10],
+		"PSK"				=> $Wireguard::peers{$key}[11],
+		"KEEPALIVE"			=> $Wireguard::peers{$key}[12],
 	);
 
 	# Jump to the editor
@@ -184,12 +186,24 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		push(@errormessages, $Lang::tr{'wg invalid public key'});
 	}
 
+	# Check private key
+	#if ($cgiparams{'PRIVATE_KEY'} eq '') {
+	#		# The private key may be empty
+	#} elsif (!&Wireguard::key_is_valid($cgiparams{'PRIVATE_KEY'})) {
+	#		push(@errormessages, $Lang::tr{'wg invalid private key'});
+	#}
+
 	# Check PSK
 	if ($cgiparams{'PSK'} eq '') {
 		# The PSK may be empty
 	} elsif (!&Wireguard::key_is_valid($cgiparams{'PSK'})) {
 		push(@errormessages, $Lang::tr{'wg invalid psk'});
 	}
+
+	# Check port
+	#unless (&General::validport($cgiparams{'PORT'})) {
+	#	push(@errormessages, $LANG::tr{'invalid port'});
+	#}
 
 	# Check the endpoint address
 	if ($cgiparams{'ENDPOINT_ADDRESS'} eq '') {
@@ -251,21 +265,25 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"net",
 		# 2 = Name
 		$cgiparams{"NAME"},
-		# 3 = Pubkey
+		# 3 = Public Key
 		$cgiparams{"PUBLIC_KEY"},
-		# 4 = Endpoint Address
+		# 4 = Private Key
+		$cgiparams{"PRIVATE_KEY"},
+		# 5 = Port
+		$cgiparams{"PORT"},
+		# 6 = Endpoint Address
 		$cgiparams{"ENDPOINT_ADDRESS"},
-		# 5 = Endpoint Port
+		# 7 = Endpoint Port
 		$cgiparams{"ENDPOINT_PORT"},
-		# 6 = Remote Subnets
+		# 8 = Remote Subnets
 		&Wireguard::encode_subnets(@remote_subnets),
-		# 7 = Remark
+		# 9 = Remark
 		&Wireguard::encode_remarks($cgiparams{"REMARKS"}),
-		# 8 = Local Subnets
+		# 10 = Local Subnets
 		&Wireguard::encode_subnets(@local_subnets),
-		# 9 = PSK
+		# 11 = PSK
 		$cgiparams{"PSK"} || "",
-		# 10 = Keepalive
+		# 12 = Keepalive
 		$cgiparams{"KEEPALIVE"} || 0,
 	];
 
@@ -348,8 +366,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Fetch some configuration parts
 	} else {
 		$cgiparams{"PUBLIC_KEY"}     = $Wireguard::peers{$key}[3];
-		$cgiparams{'CLIENT_ADDRESS'} = $Wireguard::peers{$key}[6];
-		$cgiparams{"PSK"}            = $Wireguard::peers{$key}[9];
+		$cgiparams{'CLIENT_ADDRESS'} = $Wireguard::peers{$key}[8];
+		$cgiparams{"PSK"}            = $Wireguard::peers{$key}[11];
 	}
 
 	# Save the connection
@@ -360,21 +378,25 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"host",
 		# 2 = Name
 		$cgiparams{"NAME"},
-		# 3 = Pubkey
+		# 3 = Public Key
 		$cgiparams{"PUBLIC_KEY"},
-		# 4 = Endpoint Address
+		# 4 = Private Key
 		"",
-		# 5 = Endpoint Port
+		# 5 = Port
 		"",
-		# 6 = Remote Subnets
+		# 6 = Endpoint Address
+		"",
+		# 7 = Endpoint Port
+		"",
+		# 8 = Remote Subnets
 		$cgiparams{'CLIENT_ADDRESS'},
-		# 7 = Remark
+		# 9 = Remark
 		&Wireguard::encode_remarks($cgiparams{"REMARKS"}),
-		# 8 = Local Subnets
+		# 10 = Local Subnets
 		&Wireguard::encode_subnets(@local_subnets),
-		# 9 = PSK
+		# 11 = PSK
 		$cgiparams{"PSK"},
-		# 10 = Keepalive
+		# 12 = Keepalive
 		0,
 	];
 
@@ -550,10 +572,12 @@ END
 			my $type     = $Wireguard::peers{$key}[1];
 			my $name     = $Wireguard::peers{$key}[2];
 			my $pubkey   = $Wireguard::peers{$key}[3];
-			my $endpoint = $Wireguard::peers{$key}[4];
-			my $port     = $Wireguard::peers{$key}[5];
-			my $routes   = $Wireguard::peers{$key}[6];
-			my $remarks  = &Wireguard::decode_remarks($Wireguard::peers{$key}[7]);
+			#my $privkey  = $Wireguard::peers{$key}[4]
+			#my $port     = $Wireguard::peers{$key}[5];
+			my $endpoint = $Wireguard::peers{$key}[6];
+			#my $endpport = $Wireguard::peers{$key}[7];
+			my $routes   = $Wireguard::peers{$key}[8];
+			my $remarks  = &Wireguard::decode_remarks($Wireguard::peers{$key}[9]);
 
 			my $connected = $Lang::tr{'capsclosed'};
 			my $country   = "ZZ";
@@ -790,6 +814,8 @@ EDITNET:
 			<input type="hidden" name="ACTION" value="SAVE-PEER-NET">
 			<input type="hidden" name="KEY" value="$cgiparams{'KEY'}">
 
+			<input type="hidden" name="PRIVATE_KEY" value="$cgiparams{'PRIVATE_KEY'}">
+
 			<table class="form">
 				<tr>
 					<td>
@@ -1007,9 +1033,9 @@ sub show_peer_configuration($$) {
 	my %peer = (
 		"NAME"				=> $Wireguard::peers{$key}[2],
 		"PUBLIC_KEY"		=> $Wireguard::peers{$key}[3],
-		"CLIENT_ADDRESS"	=> $Wireguard::peers{$key}[6],
-		"LOCAL_SUBNETS"		=> &Wireguard::decode_subnets($Wireguard::peers{$key}[8]),
-		"PSK"				=> $Wireguard::peers{$key}[9],
+		"CLIENT_ADDRESS"	=> $Wireguard::peers{$key}[8],
+		"LOCAL_SUBNETS"		=> &Wireguard::decode_subnets($Wireguard::peers{$key}[10]),
+		"PSK"				=> $Wireguard::peers{$key}[11],
 
 		# Other stuff
 		"PRIVATE_KEY"		=> $private_key,
