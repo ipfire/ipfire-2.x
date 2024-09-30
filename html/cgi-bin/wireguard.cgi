@@ -298,7 +298,6 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-HOST") {
 	my @free_addresses = ();
 	my @local_subnets = ();
-	my $private_key;
 
 	# Fetch or allocate a new key
 	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%Wireguard::peers);
@@ -349,10 +348,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Generate things for a new peer
 	if ($is_new) {
 		# Generate a new private key
-		$private_key = &Wireguard::generate_private_key();
+		$cgiparams{"PRIVATE_KEY"} = &Wireguard::generate_private_key();
 
 		# Derive the public key
-		$cgiparams{"PUBLIC_KEY"} = &Wireguard::derive_public_key($private_key);
+		$cgiparams{"PUBLIC_KEY"} = &Wireguard::derive_public_key($cgiparams{"PRIVATE_KEY"});
 
 		# Generate a new PSK
 		$cgiparams{"PSK"} = &Wireguard::generate_private_key();
@@ -366,6 +365,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Fetch some configuration parts
 	} else {
 		$cgiparams{"PUBLIC_KEY"}     = $Wireguard::peers{$key}[3];
+		$cgiparams{"PRIVATE_KEY"}    = $Wireguard::peers{$key}[4];
 		$cgiparams{'CLIENT_ADDRESS'} = $Wireguard::peers{$key}[8];
 		$cgiparams{"PSK"}            = $Wireguard::peers{$key}[11];
 	}
@@ -381,7 +381,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 3 = Public Key
 		$cgiparams{"PUBLIC_KEY"},
 		# 4 = Private Key
-		"",
+		$cgiparams{"PRIVATE_KEY"},
 		# 5 = Port
 		"",
 		# 6 = Endpoint Address
@@ -409,7 +409,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# Show the client configuration when creating a new peer
-	&show_peer_configuration($key, $private_key) if ($is_new);
+	&show_peer_configuration($key) if ($is_new);
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
@@ -1016,9 +1016,8 @@ END
 
 	exit(0);
 
-sub show_peer_configuration($$) {
+sub show_peer_configuration($) {
 	my $key = shift;
-	my $private_key = shift;
 
 	# The generated QR code
 	my $qrcode;
@@ -1033,12 +1032,10 @@ sub show_peer_configuration($$) {
 	my %peer = (
 		"NAME"				=> $Wireguard::peers{$key}[2],
 		"PUBLIC_KEY"		=> $Wireguard::peers{$key}[3],
+		"PRIVATE_KEY"		=> $Wireguard::peers{$key}[4],
 		"CLIENT_ADDRESS"	=> $Wireguard::peers{$key}[8],
 		"LOCAL_SUBNETS"		=> &Wireguard::decode_subnets($Wireguard::peers{$key}[10]),
 		"PSK"				=> $Wireguard::peers{$key}[11],
-
-		# Other stuff
-		"PRIVATE_KEY"		=> $private_key,
 	);
 
 	# Generate the client configuration
@@ -1088,10 +1085,6 @@ sub show_peer_configuration($$) {
 				<a href="data:text/plain;base64,${config}" download="${filename}">
 					$Lang::tr{'wg download configuration file'}
 				</a>
-			</p>
-
-			<p class="text-error">
-				$Lang::tr{'wg warning configuration only shown once'}
 			</p>
 
 			<p>
