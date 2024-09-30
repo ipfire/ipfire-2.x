@@ -152,6 +152,31 @@ sub dump($) {
 	return %dump;
 }
 
+sub load_peer($) {
+	my $key = shift;
+
+	my $type = $peers{$key}[1];
+
+	my %peer = (
+		"ENABLED"               => $peers{$key}[0],
+		"TYPE"                  => $type,
+		"NAME"                  => $peers{$key}[2],
+		"PUBLIC_KEY"            => $peers{$key}[3],
+		"PRIVATE_KEY"           => $peers{$key}[4],
+		"PORT"                  => $peers{$key}[5],
+		"ENDPOINT_ADDR"         => $peers{$key}[6],
+		"ENDPOINT_PORT"         => $peers{$key}[7],
+		($type eq "host") ? "CLIENT_ADDRESS" : "REMOTE_SUBNETS"
+		                        => &decode_subnets($peers{$key}[8]),
+		"REMARKS"               => &decode_remarks($peers{$key}[9]),
+		"LOCAL_SUBNETS"         => &decode_subnets($peers{$key}[10]),
+		"PSK"                   => $peers{$key}[11],
+		"KEEPALIVE"             => $peers{$key}[12],
+	);
+
+	return %peer;
+}
+
 sub name_is_valid($) {
 	my $name = shift;
 
@@ -314,13 +339,19 @@ sub free_pool_addresses($$) {
 }
 
 sub generate_peer_configuration($) {
-	my $peer = shift;
+	my $key = shift;
+
+	# Load the peer
+	my %peer = &load_peer($key);
+
+	# Return if we could not find the peer
+	return undef unless (%peer);
 
 	my @allowed_ips = ();
 	my @dns = ();
 
 	# Convert all subnets into CIDR notation
-	foreach my $subnet ($peer->{'LOCAL_SUBNETS'}) {
+	foreach my $subnet ($peer{'LOCAL_SUBNETS'}) {
 		my $netaddress = &Network::get_netaddress($subnet);
 		my $prefix     = &Network::get_prefix($subnet);
 
@@ -340,14 +371,14 @@ sub generate_peer_configuration($) {
 	my $port = $settings{'PORT'};
 
 	# Fetch any DNS servers for hosts
-	if ($peer->{'TYPE'} eq 'host') {
+	if ($peer{'TYPE'} eq 'host') {
 		@dns = split(/\|/, $settings{'CLIENT_DNS'});
 	}
 
 	my @conf = (
 		"[Interface]",
-		"PrivateKey = $peer->{'PRIVATE_KEY'}",
-		"Address = $peer->{'CLIENT_ADDRESS'}",
+		"PrivateKey = $peer{'PRIVATE_KEY'}",
+		"Address = $peer{'CLIENT_ADDRESS'}",
 	);
 
 	# Optionally add DNS servers
@@ -363,7 +394,7 @@ sub generate_peer_configuration($) {
 		"[Peer]",
 		"Endpoint = ${endpoint}:${port}",
 		"PublicKey = $settings{'PUBLIC_KEY'}",
-		"PresharedKey = $peer->{'PSK'}",
+		"PresharedKey = $peer{'PSK'}",
 		"AllowedIPs = " . join(", ", @allowed_ips),
 		"PersistentKeepalive = $DEFAULT_KEEPALIVE",
 	));

@@ -2954,6 +2954,8 @@
 'week-graph' => 'Woche',
 'weekly firewallhits' => 'wöchentliche Firewalltreffer',
 'weeks' => 'Wochen',
+'wg download configuration' => 'Konfiguration herunterladen',
+'wg show configuration qrcode' => 'Konfigurations-QR-Code anzeigen',
 'whitelisted' => 'Ausgenommen',
 'whois results from' => 'WHOIS-Ergebnisse von',
 'wildcards' => 'Wildcards',

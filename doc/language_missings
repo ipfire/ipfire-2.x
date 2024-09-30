@@ -231,6 +231,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -254,6 +255,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < wireguard
@@ -319,6 +321,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -342,6 +345,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < wireguard
@@ -861,6 +865,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -884,6 +889,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -1479,6 +1485,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -1502,6 +1509,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -2513,6 +2521,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -2536,6 +2545,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -3584,6 +3594,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -3607,6 +3618,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
@@ -4032,6 +4044,7 @@
 < wg client pool
 < wg create peer
 < wg dns
+< wg download configuration
 < wg download configuration file
 < wg edit peer
 < wg host to net client settings
@@ -4055,6 +4068,7 @@
 < wg pre-shared key (optional)
 < wg rw peers
 < wg scan the qr code
+< wg show configuration qrcode
 < wg warning configuration only shown once
 < whitelisted
 < whois results from
