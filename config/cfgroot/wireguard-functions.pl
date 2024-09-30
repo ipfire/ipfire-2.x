@@ -228,8 +228,20 @@ sub decode_remarks($) {
 sub encode_subnets($) {
 	my @subnets = @_;
 
+	my @formatted = ();
+
+	# wg only handles the CIDR notation
+	foreach my $subnet (@subnets) {
+		my $netaddr = &Network::get_netaddress($subnet);
+		my $prefix  = &Network::get_prefix($subnet);
+
+		next unless (defined $netaddr && defined $prefix);
+
+		push(@formatted, "${netaddr}/${prefix}");
+	}
+
 	# Join subnets together separated by |
-	return join("|", @subnets);
+	return join("|", @formatted);
 }
 
 sub decode_subnets($) {
