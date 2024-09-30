@@ -200,10 +200,14 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		push(@errormessages, $Lang::tr{'wg invalid psk'});
 	}
 
-	# Check port
-	#unless (&General::validport($cgiparams{'PORT'})) {
-	#	push(@errormessages, $LANG::tr{'invalid port'});
-	#}
+	# Select a new random port if none given
+	if ($cgiparams{'PORT'} eq "") {
+		$cgiparams{'PORT'} = &Wireguard::get_free_port();
+
+	# If a port was given we check that it is valid
+	} elsif (!&General::validport($cgiparams{'PORT'})) {
+		push(@errormessages, $LANG::tr{'invalid port'});
+	}
 
 	# Check the endpoint address
 	if ($cgiparams{'ENDPOINT_ADDRESS'} eq '') {
@@ -917,6 +921,18 @@ EDITNET:
 						<input type="number" name="ENDPOINT_PORT"
 							value="$cgiparams{'ENDPOINT_PORT'}" required
 							min="1" max="65535" placeholder="${Wireguard::DEFAULT_PORT}"/>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'local port'}
+					</td>
+
+					<td>
+						<input type="number" name="PORT"
+							value="$cgiparams{'PORT'}" min="1" max="65535"
+							placeholder="$Lang::tr{'wg leave empty to automatically select'}" />
 					</td>
 				</tr>
 

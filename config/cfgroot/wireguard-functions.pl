@@ -27,9 +27,9 @@ use MIME::Base64;
 require "/var/ipfire/general-functions.pl";
 require "/var/ipfire/network-functions.pl";
 
-our $DEFAULT_PORT		= 51820;
-our $DEFAULT_KEEPALIVE	= 25;
-our $INTF               = "wg0";
+our @DEFAULT_PORTRANGE  = (60000, 62000);
+our $DEFAULT_PORT       = 51820;
+our $DEFAULT_KEEPALIVE  = 25;
 
 # Read the global configuration
 our %settings = ();
@@ -524,6 +524,28 @@ sub parse_configuration($) {
 	}
 
 	return %peer, @errormessages;
+}
+
+sub get_free_port() {
+	my @used_ports = ();
+
+	my $tries = 100;
+
+	# Collect all ports that are already in use
+	foreach my $key (keys %peers) {
+		push(@used_ports, $peers{$key}[5]);
+	}
+
+	my ($port_start, $port_end) = @DEFAULT_PORTRANGE;
+
+	while ($tries-- > 0) {
+		my $port = $port_start + int(rand($port_end - $port_start));
+
+		# Return the port unless it is already in use
+		return $port unless (grep { $port == $_ } @used_ports);
+	}
+
+	return undef;
 }
 
 1;

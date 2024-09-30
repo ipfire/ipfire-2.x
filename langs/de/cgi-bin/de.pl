@@ -14,6 +14,8 @@
 'Captive 1week' => '1 Woche',
 'Captive ACTIVATE' => 'AKTIVIEREN',
 'Captive GAIN ACCESS' => 'ZUGANG',
+'wg leave empty to automatically select' => 'Leer lassen für automatische Wahl',
+'local port' => 'Lokaler Port',
 'Captive WiFi coupon' => 'WLAN-Gutschein',
 'Captive activate' => 'Aktivieren',
 'Captive activated' => 'Aktiviert',
