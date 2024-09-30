@@ -181,6 +181,9 @@ generate_config() {
 		# Skip peers that are not enabled
 		[ "${enabled}" = "on" ] || continue
 
+		# Update the interface alias
+		ip link set "${intf}" alias "${name}"
+
 		echo "[Interface]"
 
 		if [ -n "${privkey}" ]; then
