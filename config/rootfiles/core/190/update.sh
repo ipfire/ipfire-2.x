@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/suricata stop
 
 # Extract files
 extract_files
@@ -60,6 +61,7 @@ fi
 /etc/init.d/collectd restart
 /etc/init.d/sshd restart
 /etc/init.d/squid restart
+/etc/init.d/suricata start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
