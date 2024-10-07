@@ -349,6 +349,7 @@ ldconfig
 telinit u
 
 # Start services
+/etc/init.d/unbound restart
 /etc/init.d/collectd restart
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
