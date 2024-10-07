@@ -33,12 +33,6 @@ DL_FILE    = nmap-$(VER).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/nmap-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = ncat
-PAK_VER    = 12
-
-DEPS       =
-
-SERVICES   =
 
 ###############################################################################
 # Top-level Rules
