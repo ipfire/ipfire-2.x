@@ -221,6 +221,7 @@ sub flush {
 	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
+	run("$IPTABLES -t raw -F SYN_FLOOD_PROTECT");
 }
 
 sub buildrules {
