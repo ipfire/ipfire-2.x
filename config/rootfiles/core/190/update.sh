@@ -34,6 +34,11 @@ done
 # Stop services
 /etc/init.d/suricata stop
 
+# Remove the metadata for ncat (if installed) as this is now part of the core system
+rm -f "/opt/pakfire/db/installed/meta-ncat"
+rm -f "/opt/pakfire/db/meta/meta-ncat"
+rm -f "/opt/pakfire/db/rootfiles/ncat"
+
 # Extract files
 extract_files
 
