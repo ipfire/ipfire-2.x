@@ -35,9 +35,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 aarch64
 PROG       = libvirt
-PAK_VER    = 35
+PAK_VER    = 36
 
-DEPS       = ebtables libpciaccess libyajl ncat qemu
+DEPS       = ebtables libpciaccess libyajl qemu
 
 SERVICES   = libvirtd virtlogd
 
