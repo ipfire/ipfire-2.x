@@ -62,6 +62,7 @@ fi
 /etc/init.d/sshd restart
 /etc/init.d/squid restart
 /etc/init.d/suricata start
+/etc/init.d/unbound restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
