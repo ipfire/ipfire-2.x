@@ -1998,7 +1998,6 @@ build_system() {
 	lfsmake2 strace
 	lfsmake2 ltrace
 	lfsmake2 ipfire-netboot
-	lfsmake2 lcdproc
 	lfsmake2 keepalived
 	lfsmake2 ipvsadm
 	lfsmake2 perl-Carp-Clan
