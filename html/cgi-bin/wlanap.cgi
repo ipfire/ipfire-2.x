@@ -61,7 +61,7 @@ my %cgiparams = ();
 &Header::getcgihash(\%cgiparams);
 
 # Find the selected interface
-my $INTF = &Network::get_intf_by_address($wlanapsettings{'INTERFACE'});
+my $INTF = &Network::get_intf_by_address($cgiparams{'INTERFACE'});
 
 delete $wlanapsettings{'__CGI__'};
 delete $wlanapsettings{'x'};
