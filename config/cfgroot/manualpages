@@ -69,7 +69,6 @@ iptables.cgi=configuration/firewall/iptables
 pakfire.cgi=configuration/ipfire/pakfire
 wlanap.cgi=addons/wireless
 tor.cgi=addons/tor
-mpfire.cgi=addons/mpfire
 samba.cgi=addons/samba
 
 #	Logs menu

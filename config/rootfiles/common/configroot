@@ -119,7 +119,6 @@ var/ipfire/menu.d/60-ipfire.menu
 var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-apcupsd.menu
 #var/ipfire/menu.d/EX-guardian.menu
-#var/ipfire/menu.d/EX-mpfire.menu
 #var/ipfire/menu.d/EX-mympd.menu
 #var/ipfire/menu.d/EX-samba.menu
 #var/ipfire/menu.d/EX-tor.menu

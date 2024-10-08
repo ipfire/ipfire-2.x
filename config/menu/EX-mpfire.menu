@@ -1,5 +1,0 @@
-    $subipfire->{'40.mpfire'} = {'caption' => $Lang::tr{'mpfire'},
-				  'uri' => '/cgi-bin/mpfire.cgi',
-				  'title' => $Lang::tr{'mpfire'},
-				  'enabled' => 1,
-				  };

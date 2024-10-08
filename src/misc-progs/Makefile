@@ -29,7 +29,7 @@ SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	logwatch wioscan wiohelper openvpnctrl firewallctrl \
 	wirelessctrl getipstat qosctrl \
 	redctrl syslogdctrl extrahdctrl sambactrl \
-	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
+	smartctrl clamavctrl addonctrl pakfire wlanapctrl \
 	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
 	getconntracktable wirelessclient torctrl ddnsctrl unboundctrl \
 	captivectrl

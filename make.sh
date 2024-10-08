@@ -1819,7 +1819,6 @@ build_system() {
 	lfsmake2 perl-NetAddr-IP
 	lfsmake2 dma
 	lfsmake2 alsa
-	lfsmake2 mpfire
 	lfsmake2 guardian
 	lfsmake2 libid3tag
 	lfsmake2 libmad

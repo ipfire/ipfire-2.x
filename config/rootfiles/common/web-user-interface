@@ -55,7 +55,6 @@ srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
-#srv/web/ipfire/cgi-bin/mpfire.cgi
 #srv/web/ipfire/cgi-bin/mympd.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
@@ -218,8 +217,6 @@ srv/web/ipfire/html/images/media-resume.png
 srv/web/ipfire/html/images/media-shuffle.png
 srv/web/ipfire/html/images/media-skip-backward.png
 srv/web/ipfire/html/images/media-skip-forward.png
-srv/web/ipfire/html/images/mpfire
-srv/web/ipfire/html/images/mpfire/box.png
 srv/web/ipfire/html/images/network-error.png
 srv/web/ipfire/html/images/network-idle.png
 srv/web/ipfire/html/images/network-offline.png

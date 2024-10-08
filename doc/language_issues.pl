@@ -2,14 +2,18 @@ WARNING: translation string unused: Async logging enabled
 WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
+WARNING: translation string unused: Existing Files
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: Pages
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
 WARNING: translation string unused: Remote IP
 WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
+WARNING: translation string unused: Scan for Files
+WARNING: translation string unused: Scan from Directory
 WARNING: translation string unused: Subclass
 WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Utilization on
@@ -80,6 +84,7 @@ WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: advproxy web browser
 WARNING: translation string unused: again
+WARNING: translation string unused: album
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
 WARNING: translation string unused: all interfaces
@@ -93,6 +98,7 @@ WARNING: translation string unused: and
 WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
+WARNING: translation string unused: artist
 WARNING: translation string unused: attemps
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
@@ -143,6 +149,7 @@ WARNING: translation string unused: choose config
 WARNING: translation string unused: choose media
 WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
+WARNING: translation string unused: clear playlist
 WARNING: translation string unused: client
 WARNING: translation string unused: comment
 WARNING: translation string unused: compression
@@ -164,6 +171,7 @@ WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
+WARNING: translation string unused: current playlist
 WARNING: translation string unused: current profile
 WARNING: translation string unused: custom networks
 WARNING: translation string unused: custom services
@@ -309,6 +317,7 @@ WARNING: translation string unused: generatekeys
 WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
+WARNING: translation string unused: genre
 WARNING: translation string unused: gpl i accept these terms and conditions
 WARNING: translation string unused: gpl license agreement
 WARNING: translation string unused: gpl please read carefully the general public license and accept it below
@@ -463,6 +472,7 @@ WARNING: translation string unused: network traffic graphs
 WARNING: translation string unused: network updated
 WARNING: translation string unused: networks settings
 WARNING: translation string unused: new optionsfw must boot
+WARNING: translation string unused: next
 WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
 WARNING: translation string unused: no eciadsl synch.bin file
@@ -541,6 +551,7 @@ WARNING: translation string unused: pdc options
 WARNING: translation string unused: phase1 group
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
+WARNING: translation string unused: play
 WARNING: translation string unused: polfile
 WARNING: translation string unused: port forwarding configuration
 WARNING: translation string unused: ports
@@ -548,6 +559,7 @@ WARNING: translation string unused: pots
 WARNING: translation string unused: pppoe
 WARNING: translation string unused: prefered master
 WARNING: translation string unused: present
+WARNING: translation string unused: prev
 WARNING: translation string unused: printcap name
 WARNING: translation string unused: printer
 WARNING: translation string unused: printername
@@ -562,6 +574,7 @@ WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
 WARNING: translation string unused: qos add subclass
 WARNING: translation string unused: quick control
+WARNING: translation string unused: quick playlist
 WARNING: translation string unused: read list
 WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot question
@@ -572,6 +585,7 @@ WARNING: translation string unused: registered user rules
 WARNING: translation string unused: released
 WARNING: translation string unused: reload
 WARNING: translation string unused: removable device advice
+WARNING: translation string unused: repeat
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: reportlevel
 WARNING: translation string unused: requested data
@@ -616,6 +630,7 @@ WARNING: translation string unused: show areas
 WARNING: translation string unused: show last x lines
 WARNING: translation string unused: show lines
 WARNING: translation string unused: show share options
+WARNING: translation string unused: shuffle
 WARNING: translation string unused: shutdown ask
 WARNING: translation string unused: shutdown sure
 WARNING: translation string unused: shutdown2
@@ -679,9 +694,11 @@ WARNING: translation string unused: this months volume
 WARNING: translation string unused: this update is already installed
 WARNING: translation string unused: this weeks volume
 WARNING: translation string unused: time date manually reset
+WARNING: translation string unused: title
 WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
+WARNING: translation string unused: toggle
 WARNING: translation string unused: too long 80 char max
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
@@ -754,6 +771,10 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: visible in browselist
+WARNING: translation string unused: voldown10
+WARNING: translation string unused: voldown5
+WARNING: translation string unused: volup10
+WARNING: translation string unused: volup5
 WARNING: translation string unused: vpn aggrmode
 WARNING: translation string unused: vpn configuration main
 WARNING: translation string unused: vpn delayed start
@@ -767,6 +788,7 @@ WARNING: translation string unused: vpn red name
 WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
+WARNING: translation string unused: webradio playlist
 WARNING: translation string unused: week
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
@@ -834,7 +856,6 @@ WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
-WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
