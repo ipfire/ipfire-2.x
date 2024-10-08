@@ -1,6 +1,6 @@
-diff -Naur ppp-e1266c7-orig/pppd/eap.c ppp-e1266c7/pppd/eap.c
---- ppp-e1266c7-orig/pppd/eap.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/eap.c	2024-03-15 10:40:53.637190252 +0100
+diff -Naur pppd.orig/eap.c pppd/eap.c
+--- pppd.orig/eap.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/eap.c	2024-10-07 16:18:53.077603533 +0200
 @@ -1542,7 +1542,7 @@
  
  	if ((path = name_of_pn_file()) == NULL)
@@ -10,10 +10,10 @@ diff -Naur ppp-e1266c7-orig/pppd/eap.c ppp-e1266c7/pppd/eap.c
  	err = errno;
  	free(path);
  	errno = err;
-diff -Naur ppp-e1266c7-orig/pppd/main.c ppp-e1266c7/pppd/main.c
---- ppp-e1266c7-orig/pppd/main.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/main.c	2024-03-15 10:41:43.842037617 +0100
-@@ -480,7 +480,7 @@
+diff -Naur pppd.orig/main.c pppd/main.c
+--- pppd.orig/main.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/main.c	2024-10-07 16:19:34.702106298 +0200
+@@ -491,7 +491,7 @@
  	die(0);
  
      /* Make sure fds 0, 1, 2 are open to somewhere. */
@@ -22,10 +22,10 @@ diff -Naur ppp-e1266c7-orig/pppd/main.c ppp-e1266c7/pppd/main.c
      if (fd_devnull < 0)
  	fatal("Couldn't open %s: %m", PPP_DEVNULL);
      while (fd_devnull <= 2) {
-diff -Naur ppp-e1266c7-orig/pppd/options.c ppp-e1266c7/pppd/options.c
---- ppp-e1266c7-orig/pppd/options.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/options.c	2024-03-15 10:43:02.867753370 +0100
-@@ -1719,9 +1719,9 @@
+diff -Naur pppd.orig/options.c pppd/options.c
+--- pppd.orig/options.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/options.c	2024-10-07 16:21:04.207954343 +0200
+@@ -1736,9 +1736,9 @@
  	ppp_option_error("unable to drop permissions to open %s: %m", *argv);
  	return 0;
      }
@@ -37,9 +37,9 @@ diff -Naur ppp-e1266c7-orig/pppd/options.c ppp-e1266c7/pppd/options.c
      err = errno;
      if (!privileged_option && seteuid(euid) == -1)
  	fatal("unable to regain privileges: %m");
-diff -Naur ppp-e1266c7-orig/pppd/sys-linux.c ppp-e1266c7/pppd/sys-linux.c
---- ppp-e1266c7-orig/pppd/sys-linux.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/sys-linux.c	2024-03-15 10:49:59.310297165 +0100
+diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
+--- pppd.orig/sys-linux.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/sys-linux.c	2024-10-07 16:27:42.282472415 +0200
 @@ -656,7 +656,7 @@
  	    goto err;
  	}
@@ -135,10 +135,10 @@ diff -Naur ppp-e1266c7-orig/pppd/sys-linux.c ppp-e1266c7/pppd/sys-linux.c
  		if (sfd >= 0) {
  		    ret = fchown(sfd, uid, -1);
  		    if (ret != 0) {
-diff -Naur ppp-e1266c7-orig/pppd/tdb.c ppp-e1266c7/pppd/tdb.c
---- ppp-e1266c7-orig/pppd/tdb.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/tdb.c	2024-03-15 10:51:25.182882191 +0100
-@@ -1732,7 +1732,7 @@
+diff -Naur pppd.orig/tdb.c pppd/tdb.c
+--- pppd.orig/tdb.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/tdb.c	2024-10-07 16:30:04.033122023 +0200
+@@ -1276,7 +1276,7 @@
  	}
  
  again:
@@ -147,18 +147,9 @@ diff -Naur ppp-e1266c7-orig/pppd/tdb.c ppp-e1266c7/pppd/tdb.c
  		if ((open_flags & O_CREAT) && errno == ENOENT &&
  			mkdir_recursive(PPP_PATH_VARRUN) == 0)
  			goto again;
-@@ -1979,7 +1979,7 @@
- 	}
- 	if (close(tdb->fd) != 0)
- 		TDB_LOG((tdb, 0, "tdb_reopen: WARNING closing tdb->fd failed!\n"));
--	tdb->fd = open(tdb->name, tdb->open_flags & ~(O_CREAT|O_TRUNC), 0);
-+	tdb->fd = open(tdb->name, (tdb->open_flags & ~(O_CREAT|O_TRUNC)) | O_CLOEXEC, 0);
- 	if (tdb->fd == -1) {
- 		TDB_LOG((tdb, 0, "tdb_reopen: open failed (%s)\n", strerror(errno)));
- 		goto fail;
-diff -Naur ppp-e1266c7-orig/pppd/tty.c ppp-e1266c7/pppd/tty.c
---- ppp-e1266c7-orig/pppd/tty.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/tty.c	2024-03-15 10:52:35.828341901 +0100
+diff -Naur pppd.orig/tty.c pppd/tty.c
+--- pppd.orig/tty.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/tty.c	2024-10-07 16:31:11.161674911 +0200
 @@ -621,7 +621,7 @@
  				ppp_set_status(EXIT_OPEN_FAILED);
  				goto errret;
@@ -177,9 +168,9 @@ diff -Naur ppp-e1266c7-orig/pppd/tty.c ppp-e1266c7/pppd/tty.c
  				break;
  			if (errno != EINTR) {
  				error("Failed to reopen %s: %m", devnam);
-diff -Naur ppp-e1266c7-orig/pppd/utils.c ppp-e1266c7/pppd/utils.c
---- ppp-e1266c7-orig/pppd/utils.c	2024-02-13 10:40:56.000000000 +0100
-+++ ppp-e1266c7/pppd/utils.c	2024-03-15 10:55:27.176832115 +0100
+diff -Naur pppd.orig/utils.c pppd/utils.c
+--- pppd.orig/utils.c	2024-09-18 06:30:31.000000000 +0200
++++ pppd/utils.c	2024-10-07 16:32:37.780775463 +0200
 @@ -926,14 +926,14 @@
      slprintf(lock_file, sizeof(lock_file), "%s/LCK..%s", PPP_PATH_LOCKDIR, dev);
  #endif
