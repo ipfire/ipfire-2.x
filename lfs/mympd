@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Webfrontend for Music Player Daemon
 
-VER        = 15.0.1
+VER        = 18.0.0
 
 THISAPP    = myMPD-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mympd
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = mpd libmpdclient
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ebd28edb73a884cbb30a5ceefc20813c678c28b03601f97ac9889c2c242dd7a2f7934d98b1f92bf148283ad9f026ac0994b75a1d046d3694160871523dc8a7ca
+$(DL_FILE)_BLAKE2 = b599c3dd621bd6d3cc3259f6015f86b69b81724390272db6e05228092fe5b75a5c74191285318dc07938fe75d4b57dd902aa9fb58518b71ae39371496e9e5aca
 
 install : $(TARGET)
 
