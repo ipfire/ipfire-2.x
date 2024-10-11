@@ -1607,6 +1607,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/arch/x86/include/asm/platform_sst_audio.h
 #lib/modules/KVER/build/arch/x86/include/asm/pm-trace.h
 #lib/modules/KVER/build/arch/x86/include/asm/posix_types.h
+#lib/modules/KVER/build/arch/x86/include/asm/posted_intr.h
 #lib/modules/KVER/build/arch/x86/include/asm/preempt.h
 #lib/modules/KVER/build/arch/x86/include/asm/probe_roms.h
 #lib/modules/KVER/build/arch/x86/include/asm/processor-cyrix.h
@@ -7314,6 +7315,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/CC_HAS_IBT
 #lib/modules/KVER/build/include/config/CC_HAS_INT128
 #lib/modules/KVER/build/include/config/CC_HAS_KASAN_GENERIC
+#lib/modules/KVER/build/include/config/CC_HAS_KASAN_SW_TAGS
 #lib/modules/KVER/build/include/config/CC_HAS_NO_PROFILE_FN_ATTR
 #lib/modules/KVER/build/include/config/CC_HAS_RETURN_THUNK
 #lib/modules/KVER/build/include/config/CC_HAS_SANCOV_TRACE_PC
@@ -7597,6 +7599,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/CRYPTO_SHA3
 #lib/modules/KVER/build/include/config/CRYPTO_SHA512
 #lib/modules/KVER/build/include/config/CRYPTO_SHA512_SSSE3
+#lib/modules/KVER/build/include/config/CRYPTO_SIG
 #lib/modules/KVER/build/include/config/CRYPTO_SIG2
 #lib/modules/KVER/build/include/config/CRYPTO_SIMD
 #lib/modules/KVER/build/include/config/CRYPTO_SKCIPHER
@@ -8093,6 +8096,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/FB_HYPERV
 #lib/modules/KVER/build/include/config/FB_I740
 #lib/modules/KVER/build/include/config/FB_IBM_GXT4500
+#lib/modules/KVER/build/include/config/FB_IOMEM_FOPS
 #lib/modules/KVER/build/include/config/FB_IOMEM_HELPERS
 #lib/modules/KVER/build/include/config/FB_KYRO
 #lib/modules/KVER/build/include/config/FB_LE80578
@@ -8197,7 +8201,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/GACT_PROB
 #lib/modules/KVER/build/include/config/GARP
 #lib/modules/KVER/build/include/config/GCC10_NO_ARRAY_BOUNDS
-#lib/modules/KVER/build/include/config/GCC_ASM_GOTO_OUTPUT_WORKAROUND
 #lib/modules/KVER/build/include/config/GCC_PLUGINS
 #lib/modules/KVER/build/include/config/GCC_VERSION
 #lib/modules/KVER/build/include/config/GENERIC_ALLOCATOR
@@ -10011,6 +10014,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/PCI_XEN
 #lib/modules/KVER/build/include/config/PCNET32
 #lib/modules/KVER/build/include/config/PCPU_DEV_REFCNT
+#lib/modules/KVER/build/include/config/PCP_BATCH_SCALE_MAX
 #lib/modules/KVER/build/include/config/PCSPKR_PLATFORM
 #lib/modules/KVER/build/include/config/PCS_LYNX
 #lib/modules/KVER/build/include/config/PCS_MTK_LYNXI
@@ -10112,6 +10116,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/PRINTK
 #lib/modules/KVER/build/include/config/PROC_EVENTS
 #lib/modules/KVER/build/include/config/PROC_FS
+#lib/modules/KVER/build/include/config/PROC_MEM_ALWAYS_FORCE
 #lib/modules/KVER/build/include/config/PROC_PAGE_MONITOR
 #lib/modules/KVER/build/include/config/PROC_PID_ARCH_STATUS
 #lib/modules/KVER/build/include/config/PROC_PID_CPUSET
@@ -10418,6 +10423,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/SCHED_SMT
 #lib/modules/KVER/build/include/config/SCHED_STACK_END_CHECK
 #lib/modules/KVER/build/include/config/SCHED_TRACER
+#lib/modules/KVER/build/include/config/SCREEN_INFO
 #lib/modules/KVER/build/include/config/SCSI
 #lib/modules/KVER/build/include/config/SCSI_3W_9XXX
 #lib/modules/KVER/build/include/config/SCSI_3W_SAS
@@ -13780,11 +13786,11 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/linux/iio/accel/kxcjk_1013.h
 #lib/modules/KVER/build/include/linux/iio/adc
 #lib/modules/KVER/build/include/linux/iio/adc/ad_sigma_delta.h
-#lib/modules/KVER/build/include/linux/iio/adc/adi-axi-adc.h
 #lib/modules/KVER/build/include/linux/iio/adc/qcom-vadc-common.h
 #lib/modules/KVER/build/include/linux/iio/adc/stm32-dfsdm-adc.h
 #lib/modules/KVER/build/include/linux/iio/afe
 #lib/modules/KVER/build/include/linux/iio/afe/rescale.h
+#lib/modules/KVER/build/include/linux/iio/backend.h
 #lib/modules/KVER/build/include/linux/iio/buffer-dma.h
 #lib/modules/KVER/build/include/linux/iio/buffer-dmaengine.h
 #lib/modules/KVER/build/include/linux/iio/buffer.h
@@ -15329,6 +15335,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/linux/soc/actions/owl-sps.h
 #lib/modules/KVER/build/include/linux/soc/amlogic
 #lib/modules/KVER/build/include/linux/soc/amlogic/meson-canvas.h
+#lib/modules/KVER/build/include/linux/soc/andes
+#lib/modules/KVER/build/include/linux/soc/andes/irq.h
 #lib/modules/KVER/build/include/linux/soc/apple
 #lib/modules/KVER/build/include/linux/soc/apple/rtkit.h
 #lib/modules/KVER/build/include/linux/soc/apple/sart.h
@@ -18484,6 +18492,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/Makefile.randstruct
 #lib/modules/KVER/build/scripts/Makefile.ubsan
 #lib/modules/KVER/build/scripts/Makefile.userprogs
+#lib/modules/KVER/build/scripts/Makefile.vdsoinst
 #lib/modules/KVER/build/scripts/Makefile.vmlinux
 #lib/modules/KVER/build/scripts/Makefile.vmlinux_o
 #lib/modules/KVER/build/scripts/as-version.sh
@@ -18819,7 +18828,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/kconfig/images.h
 #lib/modules/KVER/build/scripts/kconfig/internal.h
 #lib/modules/KVER/build/scripts/kconfig/lexer.l
-#lib/modules/KVER/build/scripts/kconfig/lexer.lex.c
 #lib/modules/KVER/build/scripts/kconfig/list.h
 #lib/modules/KVER/build/scripts/kconfig/lkc.h
 #lib/modules/KVER/build/scripts/kconfig/lkc_proto.h
@@ -18840,8 +18848,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/kconfig/nconf.c
 #lib/modules/KVER/build/scripts/kconfig/nconf.gui.c
 #lib/modules/KVER/build/scripts/kconfig/nconf.h
-#lib/modules/KVER/build/scripts/kconfig/parser.tab.c
-#lib/modules/KVER/build/scripts/kconfig/parser.tab.h
 #lib/modules/KVER/build/scripts/kconfig/parser.y
 #lib/modules/KVER/build/scripts/kconfig/preprocess.c
 #lib/modules/KVER/build/scripts/kconfig/qconf-cfg.sh
@@ -20395,6 +20401,7 @@ lib/modules/KVER/kernel
 #lib/modules/KVER/kernel/drivers/edac/pnd2_edac.ko.xz
 #lib/modules/KVER/kernel/drivers/edac/sb_edac.ko.xz
 #lib/modules/KVER/kernel/drivers/edac/skx_edac.ko.xz
+#lib/modules/KVER/kernel/drivers/edac/skx_edac_common.ko.xz
 #lib/modules/KVER/kernel/drivers/edac/x38_edac.ko.xz
 #lib/modules/KVER/kernel/drivers/extcon
 #lib/modules/KVER/kernel/drivers/extcon/extcon-usbc-tusb320.ko.xz
