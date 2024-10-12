@@ -2197,12 +2197,18 @@ check_rootfiles_for_arch() {
 		args+=( "--exclude" "${x}" )
 	done
 
-	# Search for all lines that contain the architecture, but exclude commented lines
-	if grep -r "^[^#].*${arch}" "${args[@]}"; then
-		return 1
-	fi
+	# Search for all files that contain the architecture, but exclude commented lines
+	local files=(
+		$(grep --files-with-matches -r "^[^#].*${arch}" "${args[@]}")
+	)
 
-	return 0
+	local file
+	for file in ${files[@]}; do
+		print_line "${file} contains ${arch}"
+		print_status FAIL
+	done
+
+	return "${#files[@]}"
 }
 
 check_rootfiles_for_pattern() {
