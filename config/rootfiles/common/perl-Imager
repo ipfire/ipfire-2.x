@@ -20,7 +20,6 @@ usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/File/ICO.
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/File/JPEG.pm
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/File/PNG.pm
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/File/SGI.pm
-usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/File/TIFF.pm
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Files.pod
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Fill.pm
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Filter
@@ -101,8 +100,6 @@ usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/File
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/File/PNG/PNG.so
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/File/SGI
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/File/SGI/SGI.so
-#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/File/TIFF
-usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/File/TIFF/TIFF.so
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/Filter
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/Filter/DynTest
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/Filter/DynTest/DynTest.so
@@ -131,7 +128,6 @@ usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/Imag
 #usr/share/man/man3/Imager::File::JPEG.3
 #usr/share/man/man3/Imager::File::PNG.3
 #usr/share/man/man3/Imager::File::SGI.3
-#usr/share/man/man3/Imager::File::TIFF.3
 #usr/share/man/man3/Imager::Files.3
 #usr/share/man/man3/Imager::Fill.3
 #usr/share/man/man3/Imager::Filter::Flines.3
