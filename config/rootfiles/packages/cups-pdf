@@ -1,5 +1,0 @@
-usr/lib/cups/backend/cups-pdf
-#usr/share/ppd/cups-pdf
-usr/share/ppd/cups-pdf/CUPS-PDF_noopt.ppd
-usr/share/ppd/cups-pdf/CUPS-PDF_opt.ppd
-var/ipfire/cups/cups-pdf.conf
