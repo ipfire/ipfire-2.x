@@ -2155,6 +2155,8 @@ check_for_missing_rootfiles() {
 
 	local file
 	for file in ${LOG_DIR}/*_missing_rootfile; do
+		[ -e "${file}" ] || continue
+
 		file="${file##*/}"
 		file="${file/_missing_rootfile/}";
 
