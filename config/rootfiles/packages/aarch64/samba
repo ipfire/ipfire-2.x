@@ -1001,7 +1001,6 @@ usr/libexec/samba/rpcd_spoolss
 usr/libexec/samba/rpcd_winreg
 usr/libexec/samba/samba-bgqd
 usr/libexec/samba/samba-dcerpcd
-usr/libexec/samba/smbspool_krb5_wrapper
 usr/sbin/eventlogadm
 usr/sbin/nmbd
 usr/sbin/samba-change-password

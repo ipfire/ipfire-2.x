@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 107
+PAK_VER    = 108
 
-DEPS       = avahi cups libtalloc perl-Parse-Yapp perl-JSON wsdd
+DEPS       = avahi libtalloc perl-Parse-Yapp perl-JSON wsdd
 
 SERVICES   = samba
 
@@ -94,7 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-sendfile-support \
 		--with-winbind \
 		--enable-avahi \
-		--enable-cups \
+		--disable-cups \
 		--enable-fhs \
 		--with-syslog \
 		--without-smb1-server
