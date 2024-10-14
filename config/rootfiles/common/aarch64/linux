@@ -8934,6 +8934,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/IONIC
 #lib/modules/KVER/build/include/config/IOSCHED_BFQ
 #lib/modules/KVER/build/include/config/IO_STRICT_DEVMEM
+#lib/modules/KVER/build/include/config/IO_URING
+#lib/modules/KVER/build/include/config/IO_WQ
 #lib/modules/KVER/build/include/config/IP6_NF_FILTER
 #lib/modules/KVER/build/include/config/IP6_NF_IPTABLES
 #lib/modules/KVER/build/include/config/IP6_NF_MANGLE

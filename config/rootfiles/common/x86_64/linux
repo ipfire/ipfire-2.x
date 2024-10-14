@@ -8711,6 +8711,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/IOSF_MBI
 #lib/modules/KVER/build/include/config/IO_DELAY_0X80
 #lib/modules/KVER/build/include/config/IO_STRICT_DEVMEM
+#lib/modules/KVER/build/include/config/IO_URING
+#lib/modules/KVER/build/include/config/IO_WQ
 #lib/modules/KVER/build/include/config/IP5XXX_POWER
 #lib/modules/KVER/build/include/config/IP6_NF_FILTER
 #lib/modules/KVER/build/include/config/IP6_NF_IPTABLES
