@@ -1661,11 +1661,9 @@ build_system() {
 	lfsmake2 libidn
 	lfsmake2 libidn2
 	lfsmake2 nasm
-	lfsmake2 libjpeg
-	lfsmake2 openjpeg
 	lfsmake2 libexif
+	lfsmake2 libjpeg
 	lfsmake2 libpng
-	lfsmake2 libtiff
 	lfsmake2 gd
 	lfsmake2 slang
 	lfsmake2 newt
@@ -1791,17 +1789,6 @@ build_system() {
 	lfsmake2 intltool
 	lfsmake2 libdaemon
 	lfsmake2 avahi
-	lfsmake2 cups
-	lfsmake2 lcms2
-	lfsmake2 ghostscript
-	lfsmake2 qpdf
-	lfsmake2 poppler
-	lfsmake2 poppler-data
-	lfsmake2 cups-filters
-	lfsmake2 epson-inkjet-printer-escpr
-	lfsmake2 cups-pdf
-	lfsmake2 foomatic
-	lfsmake2 hplip
 	lfsmake2 libtalloc
 	lfsmake2 cifs-utils
 	lfsmake2 krb5
@@ -1901,7 +1888,6 @@ build_system() {
 	lfsmake2 syslinux
 	lfsmake2 tftpd
 	lfsmake2 cpufrequtils
-	lfsmake2 gutenprint
 	lfsmake2 apcupsd
 	lfsmake2 fireperf
 	lfsmake2 iperf
