@@ -2275,6 +2275,26 @@ check_rootfiles() {
 	return ${failed}
 }
 
+check_changed_rootfiles() {
+	local files=(
+		$(grep --files-with-matches -r "^+" "${LOG_DIR}" --exclude="_*" | sort)
+	)
+
+	# If we have no matches, there is nothing to do
+	[ "${#files[@]}" -eq 0 ] && return 0
+
+	print_line "Packages have created new files"
+	print_status WARN
+
+	local file
+	for file in ${files[@]}; do
+		print_line "  ${file##*/}"
+		print_status WARN
+	done
+
+	return 0
+}
+
 # Set BASEDIR
 readonly BASEDIR="$(find_base)"
 
@@ -2478,6 +2498,8 @@ build)
 		exiterror "Rootfiles are inconsistent"
 	fi
 
+	check_changed_rootfiles
+
 	print_build_summary $(( SECONDS - START_TIME ))
 	;;
 tail)
@@ -2495,6 +2517,9 @@ shell)
 	# may be used to changed kernel settings
 	prepareenv --network
 	entershell
+	;;
+check)
+	check_changed_rootfiles
 	;;
 clean)
 	print_line "Cleaning build directory..."
