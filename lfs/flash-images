@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -225,7 +225,10 @@ endif
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
 
-	# zerofree the ext2 images to get better compression
+	# sometime zerofree will fail without this
+	sleep 1
+
+	# zerofree the ext4 images to get better compression
 ifneq "$(PART_TYPE)" "c"
 	zerofree $(PART_BOOT)
 	-fsck.ext2 -f -y $(PART_BOOT)
