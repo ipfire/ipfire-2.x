@@ -574,6 +574,9 @@ usr/lib/freeradius/rlm_sql_map.so
 #usr/lib/freeradius/rlm_sql_null.a
 #usr/lib/freeradius/rlm_sql_null.la
 usr/lib/freeradius/rlm_sql_null.so
+#usr/lib/freeradius/rlm_sql_sqlite.a
+#usr/lib/freeradius/rlm_sql_sqlite.la
+usr/lib/freeradius/rlm_sql_sqlite.so
 #usr/lib/freeradius/rlm_sqlcounter.a
 #usr/lib/freeradius/rlm_sqlcounter.la
 usr/lib/freeradius/rlm_sqlcounter.so
