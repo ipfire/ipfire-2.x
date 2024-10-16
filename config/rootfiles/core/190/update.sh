@@ -145,6 +145,21 @@ if [ -e /boot/pakfire-kernel-update ]; then
     /boot/pakfire-kernel-update ${KVER}
 fi
 
+# Remove any entry for FEODO_RECOMMENDED, FEODO_IP or FEODO_AGGRESSIVE from the ipblocklist
+# modified file and the associated ipblocklist files from the /var/lib/ipblocklist directory
+sed -i '/FEODO_RECOMMENDED=/d' /var/ipfire/ipblocklist/modified
+sed -i '/FEODO_IP=/d' /var/ipfire/ipblocklist/modified
+sed -i '/FEODO_AGGRESSIVE=/d' /var/ipfire/ipblocklist/modified
+if [ -e /var/lib/ipblocklist/FEODO_RECOMMENDED.conf ]; then
+	rm /var/lib/ipblocklist/FEODO_RECOMMENDED.conf
+fi
+if [ -e /var/lib/ipblocklist/FEODO_IP.conf ]; then
+	rm /var/lib/ipblocklist/FEODO_IP.conf
+fi
+if [ -e /var/lib/ipblocklist/FEODO_AGGRESSIVE.conf ]; then
+	rm /var/lib/ipblocklist/FEODO_AGGRESSIVE.conf
+fi
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
