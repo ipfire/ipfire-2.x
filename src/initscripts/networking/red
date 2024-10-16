@@ -171,9 +171,20 @@ case "${1}" in
 			# To determine this we check if a wpa_supplicant is running.
 			pid="$(pidof wpa_supplicant)"
 
+			DHCPCD_ARGS=()
+
+			# Enable Rapid Commit (enabled by default)
+			case "${RED_DHCP_RAPID_COMMIT}" in
+				""|yes|true|on)
+					DHCPCD_ARGS+=( "--option" "rapid_commit" )
+					;;
+			esac
+
+			echo dhcpcd_start "${DEVICE}" "${DHCPCD_ARGS[@]}"
+
 			if [ -z "${pid}" ]; then
 				# No wpa_supplicant is running. So it's save to start dhcpcd.
-				dhcpcd_start "${DEVICE}"
+				dhcpcd_start "${DEVICE}" "${DHCPCD_ARGS[@]}"
 			fi
 
 		elif [ "$TYPE" == "PPPOE" ]; then
