@@ -1,6 +1,7 @@
 usr/bin/nmap
 usr/bin/nping
 #usr/share/man/de/man1/nmap.1
+#usr/share/man/es
 #usr/share/man/es/man1
 #usr/share/man/es/man1/nmap.1
 #usr/share/man/fr/man1/nmap.1
@@ -14,6 +15,7 @@ usr/bin/nping
 #usr/share/man/ja/man1/nmap.1
 #usr/share/man/man1/nmap.1
 #usr/share/man/man1/nping.1
+#usr/share/man/pl
 #usr/share/man/pl/man1
 #usr/share/man/pl/man1/nmap.1
 #usr/share/man/pt_BR/man1/nmap.1
