@@ -28,14 +28,14 @@ case "${1}" in
 	start)
 		# Fix permissions of configuration directory
 		if [ -d "/etc/frr" ]; then
-			chown root.frr /etc/frr
+			chown root:frr /etc/frr
 			chmod 775 /etc/frr
 		fi
 
 		for daemon in ${DAEMONS}; do
 			if [ -f "/etc/frr/${daemon}.conf" ]; then
 				# Set permissions
-				chown frr.frr "/etc/frr/${daemon}.conf"
+				chown frr:frr "/etc/frr/${daemon}.conf"
 
 				boot_mesg "Starting FRRouting ${daemon}..."
 				loadproc "/usr/sbin/${daemon}" --daemon

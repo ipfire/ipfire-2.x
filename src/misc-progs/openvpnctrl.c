@@ -504,7 +504,7 @@ void startDaemon(void) {
 		executeCommand(command);
 		snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config /var/ipfire/ovpn/server.conf");
 		executeCommand(command);
-		snprintf(command, STRING_SIZE-1, "/bin/chown root.nobody /var/run/ovpnserver.log");
+		snprintf(command, STRING_SIZE-1, "/bin/chown root:nobody /var/run/ovpnserver.log");
 		executeCommand(command);
 		snprintf(command, STRING_SIZE-1, "/bin/chmod 644 /var/run/ovpnserver.log");
 		executeCommand(command);

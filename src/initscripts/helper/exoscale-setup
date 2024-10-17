@@ -76,11 +76,11 @@ import_exoscale_configuration() {
 	if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
 		mkdir -p "/home/setup/.ssh"
 		chmod 700 "/home/setup/.ssh"
-		chown setup.nobody "/home/setup/.ssh"
+		chown setup:nobody "/home/setup/.ssh"
 
 		echo "${key}" >> "/home/setup/.ssh/authorized_keys"
 		chmod 600 "/home/setup/.ssh/authorized_keys"
-		chown setup.nobody "/home/setup/.ssh/authorized_keys"
+		chown setup:nobody "/home/setup/.ssh/authorized_keys"
 	fi
 
 	# Import any previous settings for the local interfaces

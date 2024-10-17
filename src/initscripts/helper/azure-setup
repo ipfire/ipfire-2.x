@@ -132,12 +132,12 @@ import_azure_configuration() {
 			# Install directory
 			mkdir -p "${dir}"
 			chmod 700 "${dir}"
-			chown "${user}.nobody" "${dir}"
+			chown "${user}:nobody" "${dir}"
 
 			# Install the key
 			echo "${key}" >> "${path}"
 			chmod 600 "${path}"
-			chown "${user}.nobody" "${path}"
+			chown "${user}:nobody" "${path}"
 		fi
 	done
 

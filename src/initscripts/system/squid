@@ -185,7 +185,7 @@ case "$1" in
 		;;
 
 	setperms)
-		chown -R nobody.squid /var/updatecache/
+		chown -R nobody:squid /var/updatecache/
 		;;
 
 	*)

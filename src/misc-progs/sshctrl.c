@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 				sleep(5);
 				unlink("/var/ipfire/remote/enablessh");
 				safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
-        safe_system("chown nobody.nobody /var/ipfire/remote/settings");
+				safe_system("chown nobody:nobody /var/ipfire/remote/settings");
 				snprintf(command, BUFFER_SIZE-1, "sleep %s && /usr/local/bin/sshctrl &", argv[2]);
 				safe_system(command);
 	}

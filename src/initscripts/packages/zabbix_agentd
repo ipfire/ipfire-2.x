@@ -26,7 +26,7 @@ case "${1}" in
         start)
 		if [ ! -d "/var/run/zabbix" ]; then
 			mkdir -p /var/run/zabbix
-			chown zabbix.zabbix /var/run/zabbix
+			chown zabbix:zabbix /var/run/zabbix
 		fi
 
                 boot_mesg "Starting Zabbix Agent..."
