@@ -54,7 +54,7 @@ case "${1}" in
 		fi
 
 		boot_mesg "Starting hostapd... "
-		loadproc /usr/bin/hostapd -B /etc/hostapd.conf -i "${interface}"
+		loadproc /usr/bin/hostapd -s -B /etc/hostapd.conf -i "${interface}"
 		;;
 
 	stop)
