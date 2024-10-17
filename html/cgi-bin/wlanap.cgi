@@ -61,7 +61,7 @@ my %cgiparams = ();
 &Header::getcgihash(\%cgiparams);
 
 # Find the selected interface
-my $INTF = &Network::get_intf_by_address($cgiparams{'INTERFACE'});
+my $INTF = &Network::get_intf_by_address($wlanapsettings{'INTERFACE'});
 
 delete $wlanapsettings{'__CGI__'};
 delete $wlanapsettings{'x'};
@@ -376,7 +376,6 @@ END
 &Header::closebox();
 
 if ($INTF) {
-
 	&Header::opensection();
 
 	my @status = `iw dev $INTF info`;
