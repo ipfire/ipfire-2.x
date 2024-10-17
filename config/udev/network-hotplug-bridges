@@ -42,7 +42,7 @@ detect_zone() {
 		local slave
 		for slave in $(get_value "${zone}_SLAVES"); do
 			# Compare if the mac address matches or if the name matches
-			if [ -r "/sys/class/net/${INTERFACE}/address" -a "$(</sys/class/net/${INTERFACE}/address)" = "${slave}" ] || [ "${INTERFACE}" = "${slave}" ]; then
+			if [ "$(cat /sys/class/net/${INTERFACE}/address 2>/dev/null)" = "${slave}" ] || [ "${INTERFACE}" = "${slave}" ]; then
 				echo "${zone}"
 				return 0
 			fi
