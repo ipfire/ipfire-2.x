@@ -279,9 +279,9 @@ class UnboundDHCPLeasesBridge(object):
 		self.unbound.update_dhcp_leases([l for l in self.leases if not l.has_expired()])
 
 	def _add_lease(self, lease):
-		# Skip leases without an FQDN
+		# Skip leases without a FQDN
 		if not lease.fqdn:
-			log.debug("Skipping lease without an FQDN: %s" % lease)
+			log.debug("Skipping lease without a FQDN: %s" % lease)
 			return
 
 		# Skip any leases that also are a static host
