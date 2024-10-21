@@ -111,6 +111,18 @@ generate_fw_rules() {
 		if [ "${!status}" = "on" ]; then
 			# Handle IPsec packets
 			case "${zone}" in
+				RED)
+					# If IPsec is not enabled, skip everything that is IPsec traffic
+					if [ "${ENABLE_IDS_IPSEC}" != "on" ]; then
+						for intf in $(network_get_intfs "${zone}"); do
+							iptables -w -t mangle -A IPS_SCAN_IN \
+								-i "${intf}" -m policy --pol ipsec --dir in -j RETURN
+							iptables -w -t mangle -A IPS_SCAN_OUT \
+								-o "${intf}" -m policy --pol ipsec --dir out -j RETURN
+						done
+					fi
+					;;
+
 				IPSEC)
 					iptables -w -t mangle -A IPS_SCAN_IN \
 						-m policy --pol ipsec --dir in -j MARK --set-mark "$(( IPS_SCAN_MARK ))/$(( IPS_SCAN_MASK ))"
