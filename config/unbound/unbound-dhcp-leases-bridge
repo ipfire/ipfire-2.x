@@ -216,6 +216,11 @@ class UnboundDHCPLeasesBridge(object):
 			# Find the old lease
 			old_lease = self._find_lease(address)
 
+			# Don't update fixed leases as they might clear the hostname
+			if old_lease and old_lease.fixed:
+				log.debug("Won't update fixed lease %s" % old_lease)
+				return
+
 			# Create a new lease
 			lease = Lease(address, {
 				"client-hostname" : name,
@@ -581,19 +586,20 @@ class FixLeases(object):
 					"client-hostname" : hostname,
 					"starts"          : now.strftime("%w %Y/%m/%d %H:%M:%S"),
 					"ends"            : "never",
-				})
+				}, fixed=True)
 				leases.append(l)
 
 		return leases
 
 
 class Lease(object):
-	def __init__(self, ipaddr, properties):
+	def __init__(self, ipaddr, properties, fixed=False):
 		if not isinstance(ipaddr, ipaddress.IPv4Address):
 			ipaddr = ipaddress.IPv4Address(ipaddr)
 
 		self.ipaddr = ipaddr
 		self._properties = properties
+		self.fixed = fixed
 
 	def __repr__(self):
 		return "<%s for %s (%s)>" % (self.__class__.__name__, self.ipaddr, self.hostname)
