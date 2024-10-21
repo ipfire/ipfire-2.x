@@ -717,7 +717,7 @@ class Lease(object):
 		if not self.time_ends:
 			return self.time_starts > datetime.datetime.utcnow()
 
-		return self.time_starts > datetime.datetime.utcnow() > self.time_ends
+		return not self.time_starts < datetime.datetime.utcnow() < self.time_ends
 
 	@property
 	def rrset(self):
