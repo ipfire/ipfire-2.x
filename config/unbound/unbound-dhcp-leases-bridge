@@ -276,7 +276,7 @@ class UnboundDHCPLeasesBridge(object):
 				if lease.has_expired():
 					log.debug("    Expired")
 
-		self.unbound.update_dhcp_leases(self.leases)
+		self.unbound.update_dhcp_leases([l for l in self.leases if not l.has_expired()])
 
 	def _add_lease(self, lease):
 		# Skip leases without an FQDN
