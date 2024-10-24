@@ -112,6 +112,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	kpartx -v -a $(DEVICE)
 
+	# kpartx trigger a automount on some desktop enviroments
+	# this leads in failing zerofree after build and umount the image
+	# with the sleep 1 prevent this because the image has no fs yet.
+	sleep 1
+
 	# Format them
 ifeq "$(PART_TYPE)" "c"
 	mkfs.vfat $(PART_BOOT)
@@ -224,9 +229,6 @@ ifeq "$(EFI)" "1"
 endif
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
-
-	# sometime zerofree will fail without this
-	sleep 1
 
 	# zerofree the ext4 images to get better compression
 ifneq "$(PART_TYPE)" "c"
