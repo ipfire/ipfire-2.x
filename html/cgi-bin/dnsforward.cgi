@@ -325,7 +325,7 @@ foreach my $line (@current)
 		$col="bgcolor='${Header::colouryellow}'"; }
 	elsif ($disable_dnssec eq 'on') {
 		print "<tr>";
-		$col="bgcolor='${Header::colourred}' style='color: white'"; }
+		$col="bgcolor='${Header::colourred}' style='color: black'"; }
 	elsif ($id % 2) {
 		print "<tr>";
 		$col="bgcolor='$color{'color22'}'"; }
