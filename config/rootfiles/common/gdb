@@ -2,10 +2,13 @@
 #usr/bin/gdb
 #usr/bin/gdb-add-index
 #usr/bin/gdbserver
+#usr/bin/run
 #usr/include/gdb
 #usr/include/gdb/jit-reader.h
 #usr/include/sim
-#usr/lib/libinproctrace.so
+#usr/include/sim/callback.h
+#usr/include/sim/sim.h
+#usr/lib/libsim.a
 #usr/share/gdb/python
 #usr/share/gdb/python/gdb
 #usr/share/gdb/python/gdb/FrameDecorator.py
