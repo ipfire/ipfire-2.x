@@ -54,6 +54,7 @@ else
 	HEADERS_PREFIX = /usr
 ifeq "$(HEADERS)" "1"
 	TARGET = $(DIR_INFO)/$(THISAPP)-headers
+	ROOTFILE_APPEND="-headers"
 else
 	TARGET = $(DIR_INFO)/$(THISAPP)
 endif
