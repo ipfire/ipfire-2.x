@@ -8,6 +8,7 @@
 #usr/include/sim
 #usr/include/sim/callback.h
 #usr/include/sim/sim.h
+#usr/lib/libinproctrace.so
 #usr/lib/libsim.a
 #usr/share/gdb/python
 #usr/share/gdb/python/gdb
