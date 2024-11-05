@@ -6,6 +6,7 @@ etc/rc.d/init.d/collectd
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/suricata
+lib/udev/network-hotplug-bridges
 srv/web/ipfire/cgi-bin/getrrdimage.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
