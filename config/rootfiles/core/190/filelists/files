@@ -11,6 +11,7 @@ etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/collectd
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/functions.network
+etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/suricata
 lib/udev/network-hotplug-bridges
@@ -25,6 +26,8 @@ usr/lib/firewall/rules.pl
 usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/Compress/Raw/Zlib.pm
 usr/local/bin/openvpnctrl
 usr/local/bin/sshctrl
+usr/sbin/setup
 var/ipfire/backup/include
+var/ipfire/dhcpc/dhcpcd.conf
 var/ipfire/graphs.pl
 var/ipfire/network-functions.pl
