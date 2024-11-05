@@ -438,7 +438,7 @@ sub _get_wireless_status($) {
 	my $intf = shift;
 
 	if (!$wireless_status{$intf}) {
-		$wireless_status{$intf} = join(/\n/, &General::system_output("iw", "dev", "$intf", "link"));
+		$wireless_status{$intf} = join("\n", &General::system_output("iw", "dev", "$intf", "link"));
 	}
 
 	return $wireless_status{$intf};
