@@ -107,11 +107,11 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	}
 
 # Start
-} elsif ($wlanapsettings{'ACTION'} eq "$Lang::tr{'start'}") {
+} elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'start'}") {
 	&General::system("/usr/local/bin/wlanapctrl", "start");
 
 # Stop
-} elsif ($wlanapsettings{'ACTION'} eq "$Lang::tr{'stop'}") {
+} elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'stop'}") {
 	&General::system("/usr/local/bin/wlanapctrl", "stop");
 }
 
