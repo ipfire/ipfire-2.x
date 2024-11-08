@@ -180,8 +180,6 @@ case "${1}" in
 					;;
 			esac
 
-			echo dhcpcd_start "${DEVICE}" "${DHCPCD_ARGS[@]}"
-
 			if [ -z "${pid}" ]; then
 				# No wpa_supplicant is running. So it's save to start dhcpcd.
 				dhcpcd_start "${DEVICE}" "${DHCPCD_ARGS[@]}"
