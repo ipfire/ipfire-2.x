@@ -130,6 +130,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-fp-layout=nothing
 	cd $(DIR_APP) && make install #collectd-4 does not support parallel build
 	mkdir /etc/collectd.d
+	echo "# Put custom configfiles in this folder" > /etc/collectd.d/info
 	cp -vf $(DIR_SRC)/config/collectd/collectd.* /etc/
 	mv /etc/collectd.vpn /var/ipfire/ovpn/collectd.vpn
 	chown nobody.nobody /var/ipfire/ovpn/collectd.vpn
