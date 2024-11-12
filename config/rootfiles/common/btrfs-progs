@@ -14,8 +14,6 @@ usr/bin/mkfs.btrfs
 #usr/include/btrfs/ctree.h
 #usr/include/btrfs/ioctl.h
 #usr/include/btrfs/kerncompat.h
-#usr/include/btrfs/list.h
-#usr/include/btrfs/rbtree.h
 #usr/include/btrfs/rbtree_types.h
 #usr/include/btrfs/send-stream.h
 #usr/include/btrfs/send-utils.h
@@ -26,7 +24,7 @@ usr/bin/mkfs.btrfs
 #usr/lib/libbtrfs.so
 usr/lib/libbtrfs.so.0
 usr/lib/libbtrfs.so.0.1
-usr/lib/libbtrfs.so.0.1.3
+usr/lib/libbtrfs.so.0.1.4
 #usr/lib/libbtrfsutil.a
 #usr/lib/libbtrfsutil.so
 usr/lib/libbtrfsutil.so.1
