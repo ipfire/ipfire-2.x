@@ -1,1 +1,13 @@
 usr/bin/beep
+#usr/share/doc/beep
+#usr/share/doc/beep/COPYING
+#usr/share/doc/beep/CREDITS.md
+#usr/share/doc/beep/NEWS.md
+#usr/share/doc/beep/PERMISSIONS.md
+#usr/share/doc/beep/README.md
+#usr/share/doc/beep/contrib
+#usr/share/doc/beep/contrib/failure-beeps
+#usr/share/doc/beep/contrib/morse2beep.pl
+#usr/share/doc/beep/contrib/morse2beep.sed
+#usr/share/doc/beep/contrib/success-beeps
+#usr/share/man/man1/beep.1
