@@ -1,0 +1,32 @@
+From 771ef328dcc4adc169b11334a3a9d940db82d250 Mon Sep 17 00:00:00 2001
+From: Niko Tyni <ntyni@debian.org>
+Date: Sun, 15 Sep 2024 09:03:46 +0100
+Subject: [PATCH] include t1tables.h for FT_Has_PS_Glyph_Names
+
+This is no longer pulled in by ftmm.h since FreeType 2.13.3
+
+Bug-Debian: https://bugs.debian.org/1081821
+Forwarded: https://github.com/tonycoz/imager/pull/533
+Bug: https://github.com/tonycoz/imager/pull/533
+Applied-Upstream: https://github.com/tonycoz/imager/commit/150c84cc0252de9bfe9ea14715e90c052937bf6c
+
+---
+ FT2/freetyp2.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/FT2/freetyp2.c b/FT2/freetyp2.c
+index 87d5e571..92011f38 100644
+--- a/FT2/freetyp2.c
++++ b/FT2/freetyp2.c
+@@ -47,6 +47,9 @@ Truetype, Type1 and Windows FNT.
+ #include FT_MULTIPLE_MASTERS_H
+ #endif
+ #endif
++#ifdef FT_TYPE1_TABLES_H
++#include FT_TYPE1_TABLES_H
++#endif
+ 
+ static void ft2_push_message(int code);
+ 
+-- 
+2.45.2
