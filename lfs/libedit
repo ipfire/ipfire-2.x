@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20240517-3.1
+VER        = 20240808-3.1
 
 THISAPP    = libedit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6326a428204c020864b47db938973a13afb3580f9bb4e7b4d3cb861743c75e1cee99b569cb2baad3e1c7d6dc6986af5282492b5dd9f421a8243bf1d583a87e15
+$(DL_FILE)_BLAKE2 = c10a53d155a7dfbffdaa177aa41206c4bdca54efe8debd7df8cc3ddeaacf574e3cdd69bce9d30801c533f92907e757a92011fde989ee3a39ec91a73b9f80aa41
 
 install : $(TARGET)
 
