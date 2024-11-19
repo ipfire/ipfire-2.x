@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5.7
+VER        = 1.5.8
 
 THISAPP    = libpipeline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b8f9ff6886f8df12e3fefbfaa0cbcb1e07d7baaa8a1dfcf4bc01c17c6632b8c6a40e55395f1e4870ca391eefb1535ebbc3931fcdee51cf5f4293741e437a2f25
+$(DL_FILE)_BLAKE2 = 1feb1a9493fd0850b4e3e446619e7e042bd97d8c0bbb3e13a91d90d6cde3ca2c17fb8a3ca256f65291dadc4d8703ad5d3a795839bf8280adc4547b3ec3d2da7d
 
 install : $(TARGET)
 
