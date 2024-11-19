@@ -1,6 +1,6 @@
-#usr/bin/external-ip
-#usr/bin/upnp-listdevices
-#usr/bin/upnpc
+usr/bin/external-ip
+usr/bin/upnp-listdevices
+usr/bin/upnpc
 #usr/include/miniupnpc
 #usr/include/miniupnpc/igd_desc_parse.h
 #usr/include/miniupnpc/miniupnpc.h
@@ -14,6 +14,6 @@
 #usr/include/miniupnpc/upnpreplyparse.h
 #usr/lib/libminiupnpc.a
 #usr/lib/libminiupnpc.so
-#usr/lib/libminiupnpc.so.18
+usr/lib/libminiupnpc.so.18
 #usr/lib/pkgconfig/miniupnpc.pc
 #usr/share/man/man3/miniupnpc.3.gz
