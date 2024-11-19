@@ -6,10 +6,10 @@ sbin/setcap
 #usr/include/sys/psx_syscall.h
 #usr/lib/libcap.so
 usr/lib/libcap.so.2
-usr/lib/libcap.so.2.70
+usr/lib/libcap.so.2.72
 #usr/lib/libpsx.so
 #usr/lib/libpsx.so.2
-usr/lib/libpsx.so.2.70
+usr/lib/libpsx.so.2.72
 #usr/lib/pkgconfig/libcap.pc
 #usr/lib/pkgconfig/libpsx.pc
 #usr/lib/security
