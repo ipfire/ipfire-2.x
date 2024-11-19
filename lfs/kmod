@@ -24,7 +24,9 @@
 
 include Config
 
-VER        = 32
+VER        = 33
+
+# https://www.kernel.org/pub/linux/utils/kernel/kmod/
 
 THISAPP    = kmod-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5b5dac4639406549b23bb1da44bedd86a42885304ef4c7c67344dc8fd70b9e0ca3f83d033c6b80f6e00371d7188e205f4b68fadc56a9ddbf9d6a9d28e9b1e9a4
+$(DL_FILE)_BLAKE2 = 5fb4ea9d96217f8c94cba752b07a1b53228c6ae79dbaa605030cd84e3c6ca8d9c1a703a0253cea1d6c78a78f1507e2a1d9c6215d28dcb01b9e7f8b98a9fde425
 
 install : $(TARGET)
 
