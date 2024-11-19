@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.19
+VER        = 7.22
 
 THISAPP    = ipset-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 04290b94be471aedd732601e1dc147a066933606152beb76ba1a21283aa2e3f8b891fd9575db73f2af67b446fb77a0ca6b2432ae606440ac9e9bf80e41d1f640
+$(DL_FILE)_BLAKE2 = 9daaff54adb6f9daf69cd7dabbd9134d8fcf8cd7f8ef0c52296961579ad3c8202087158a01664228eff70356ba97f77ec61abbab7c7ce323112fbdc32abd661b
 
 install : $(TARGET)
 
