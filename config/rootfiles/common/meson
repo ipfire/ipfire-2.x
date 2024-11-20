@@ -1,11 +1,11 @@
 #usr/bin/meson
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/entry_points.txt
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/meson-1.5.1-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info/entry_points.txt
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/meson-1.6.0-py3.10.egg-info/top_level.txt
 #usr/lib/python3.10/site-packages/mesonbuild
 #usr/lib/python3.10/site-packages/mesonbuild/__init__.py
 #usr/lib/python3.10/site-packages/mesonbuild/_pathlib.py
@@ -224,6 +224,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/pycompile.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/python_info.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/regen_checker.py
+#usr/lib/python3.10/site-packages/mesonbuild/scripts/reprotest.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/run_tool.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/scanbuild.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/symbolextractor.py
