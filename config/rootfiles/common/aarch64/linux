@@ -346,6 +346,8 @@ boot/dtb-KVER
 #boot/dtb-KVER/rockchip/rk3328-nanopi-r2c-plus.dtb
 #boot/dtb-KVER/rockchip/rk3328-nanopi-r2c.dtb
 #boot/dtb-KVER/rockchip/rk3328-nanopi-r2s-oc.dtb
+#boot/dtb-KVER/rockchip/rk3328-nanopi-r2s-plus-oc.dtb
+#boot/dtb-KVER/rockchip/rk3328-nanopi-r2s-plus.dtb
 #boot/dtb-KVER/rockchip/rk3328-nanopi-r2s.dtb
 #boot/dtb-KVER/rockchip/rk3328-orangepi-r1-plus-lts-oc.dtb
 #boot/dtb-KVER/rockchip/rk3328-orangepi-r1-plus-lts.dtb
@@ -7286,7 +7288,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/ARM64_PTR_AUTH
 #lib/modules/KVER/build/include/config/ARM64_PTR_AUTH_KERNEL
 #lib/modules/KVER/build/include/config/ARM64_RAS_EXTN
-#lib/modules/KVER/build/include/config/ARM64_SME
 #lib/modules/KVER/build/include/config/ARM64_SVE
 #lib/modules/KVER/build/include/config/ARM64_SW_TTBR0_PAN
 #lib/modules/KVER/build/include/config/ARM64_TAGGED_ADDR_ABI
