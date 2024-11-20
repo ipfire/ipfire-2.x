@@ -24,7 +24,9 @@
 
 include Config
 
-VER        = 7.00
+VER        = 7.20
+
+# https://github.com/memtest86plus/memtest86plus/releases
 
 THISAPP    = memtest86plus-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 608f4e31ddaee01d828cb1574086196c26f5e96c5049806ac3ab174ddf669db8cdcb8f336bec5a1ce74439d96fca505fea81311a06581bb43a8034156a4f8165
+$(DL_FILE)_BLAKE2 = f53570e9364f7fc15c946d925b449139f72bdfab6e2c69e40f7edf6aa034c6b46e40194d32eb56122365b6badc199ed9eeb8f3281d1908adb85495ffd25ea5f7
 
 install : $(TARGET)
 
