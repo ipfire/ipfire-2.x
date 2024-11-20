@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.11
+VER        = 2.6.12
 
 THISAPP    = oath-toolkit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f3fa3ab1818f4f9bbf7c8c88432cd3432fbfb30dfcc660ab85f07e2d3d7e1616fc24579900bc55bbf72fb81b2eac4a6591553968872f07d8b3955ce4e6495afd
+$(DL_FILE)_BLAKE2 = 8bd184fa7166bc35af3bd632d0dd24ae00480f78a850e2ed4f058ec22711852757f01623ede16c8990daa366752578430be7c93a27d87c8ae92faf9a3aade1a1
 
 install : $(TARGET)
 
