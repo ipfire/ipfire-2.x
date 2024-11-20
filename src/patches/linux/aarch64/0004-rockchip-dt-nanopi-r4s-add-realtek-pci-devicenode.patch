@@ -1,4 +1,4 @@
-From 6039099142af6cba233ab72b49f70605b611d1c6 Mon Sep 17 00:00:00 2001
+From ef1fa9320c957717d1544dc466042b31695a1b94 Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Fri, 28 Jan 2022 17:20:56 +0100
 Subject: [PATCH 4/8] rockchip: dt: nanopi-r4s: add realtek pci devicenode
@@ -42,5 +42,5 @@ index 9125f013438d..5a60460bd974 100644
  
  &pinctrl {
 -- 
-2.34.1
+2.39.5
 

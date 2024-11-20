@@ -1,4 +1,4 @@
-From dfacc132a5be8eb643495f8ca693fd59368cc262 Mon Sep 17 00:00:00 2001
+From 2b121723dac68ed0817201a289cf766a5100e8a5 Mon Sep 17 00:00:00 2001
 From: Jonas Karlman <jonas@kwiboo.se>
 Date: Sun, 17 Feb 2019 22:14:38 +0000
 Subject: [PATCH 5/8] mmc: core: set initial signal voltage on power off
@@ -23,10 +23,10 @@ Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
  1 file changed, 8 insertions(+)
 
 diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 3d3e0ca52614..33cb13b7bf88 100644
+index a8c17b4cd737..16a4d660cbbe 100644
 --- a/drivers/mmc/core/core.c
 +++ b/drivers/mmc/core/core.c
-@@ -1363,6 +1363,14 @@ void mmc_power_off(struct mmc_host *host)
+@@ -1368,6 +1368,14 @@ void mmc_power_off(struct mmc_host *host)
  	if (host->ios.power_mode == MMC_POWER_OFF)
  		return;
  
@@ -42,5 +42,5 @@ index 3d3e0ca52614..33cb13b7bf88 100644
  
  	host->ios.clock = 0;
 -- 
-2.34.1
+2.39.5
 

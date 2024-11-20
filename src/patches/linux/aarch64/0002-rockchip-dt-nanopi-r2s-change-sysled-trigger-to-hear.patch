@@ -1,4 +1,4 @@
-From ebdbd87a1e1b67755a8e04e93b2bba6a56b2019c Mon Sep 17 00:00:00 2001
+From edc3ad29d3c011ba91c8f5ee2399c21086a2cf1e Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Tue, 9 Nov 2021 08:55:06 +0100
 Subject: [PATCH 2/8] rockchip: dt: nanopi-r2s: change sysled trigger to
@@ -22,5 +22,5 @@ index 35b76d7e8ab4..16caf1e32259 100644
  
  		wan_led: led-2 {
 -- 
-2.34.1
+2.39.5
 

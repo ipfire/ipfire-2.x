@@ -1,4 +1,4 @@
-From 937057185cce0a05eea29f307aa3ef498e49138e Mon Sep 17 00:00:00 2001
+From 2d60e513e8a1889714fbe8a160606ec63b484208 Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Tue, 9 Nov 2021 08:52:11 +0100
 Subject: [PATCH 1/8] rockchip: dt: nanopi-r2s: change button from restart to
@@ -28,5 +28,5 @@ index 1445b879ac7a..35b76d7e8ab4 100644
  		};
  	};
 -- 
-2.34.1
+2.39.5
 

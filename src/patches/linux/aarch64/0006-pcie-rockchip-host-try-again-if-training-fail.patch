@@ -1,4 +1,4 @@
-From 828dc7d5beca4c10db50330d1858cd70588bff5d Mon Sep 17 00:00:00 2001
+From 018eddc7f56efa7addd2d871434e71319bb334df Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Sat, 5 Feb 2022 15:35:57 +0000
 Subject: [PATCH 6/8] pcie-rockchip-host: try again if training fail.
@@ -35,5 +35,5 @@ index afbbdccd195d..5d75189e64e5 100644
  	err = rockchip_pcie_init_irq_domain(rockchip);
  	if (err < 0)
 -- 
-2.34.1
+2.39.5
 
