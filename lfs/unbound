@@ -81,6 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--enable-event-api \
 			--enable-tfo-client \
 			--enable-tfo-server \
+			--enable-ipset \
+			--with-libmnl \
 			ac_cv_func_getentropy=no
 
 	cd $(DIR_APP) && make $(MAKETUNING)
