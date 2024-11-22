@@ -420,8 +420,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# Generate a new private key
 		$cgiparams{'PRIVATE_KEY'} = &Wireguard::generate_private_key();
 
-		# Derive the public key
-		#$cgiparams{'PUBLIC_KEY'} = &Wireguard::derive_public_key($cgiparams{'PRIVATE_KEY'});
+		# Generate a new PSK
+		$cgiparams{"PSK"} = &Wireguard::generate_private_key();
 
 		goto EDITNET;
 
