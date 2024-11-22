@@ -417,6 +417,12 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
+		# Generate a new private key
+		$cgiparams{'PRIVATE_KEY'} = &Wireguard::generate_private_key();
+
+		# Derive the public key
+		#$cgiparams{'PUBLIC_KEY'} = &Wireguard::derive_public_key($cgiparams{'PRIVATE_KEY'});
+
 		goto EDITNET;
 
 	} elsif ($cgiparams{"TYPE"} eq "host") {
@@ -845,6 +851,9 @@ EDITNET:
 	# Fetch the key
 	my $key = $cgiparams{'KEY'};
 
+	# Derive our own public key
+	my $public_key = &Wireguard::derive_public_key($cgiparams{'PRIVATE_KEY'});
+
 	# Open a new box
 	&Header::openbox('100%', '',
 		(defined $key) ? $Lang::tr{'wg edit peer'} : $Lang::tr{'wg create peer'});
@@ -887,6 +896,16 @@ EDITNET:
 					<td>
 						<input type="text" name="REMARKS"
 							value="$cgiparams{'REMARKS'}" />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'public key'}
+					</td>
+
+					<td>
+						<input type="text" value="$public_key" readonly />
 					</td>
 				</tr>
 			</table>
