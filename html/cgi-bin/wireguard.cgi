@@ -582,9 +582,6 @@ END
 	&Header::opensection();
 
 	if (%Wireguard::peers) {
-		# Fetch the dump
-		my %dump = &Wireguard::dump($Wireguard::INTF);
-
 		print <<END;
 			<table class='tbl'>
 				<tr>
@@ -625,6 +622,9 @@ END
 
 			my $gif = ($enabled eq "on") ? "on.gif" : "off.gif";
 			my @status = ("status");
+
+			# Fetch the dump
+			my %dump = &Wireguard::dump("wg$key");
 
 			# Fetch the status of the peer (if possible)
 			my $status = $dump{$pubkey} || ();
