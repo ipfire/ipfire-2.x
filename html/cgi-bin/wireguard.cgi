@@ -534,13 +534,6 @@ MAIN:
 				</tr>
 
 				<tr>
-					<td>$Lang::tr{'public key'}</td>
-					<td>
-						<input type="text" name="PUBLIC_KEY" value="$Wireguard::settings{'PUBLIC_KEY'}" readonly />
-					</td>
-				</tr>
-
-				<tr>
 					<td>$Lang::tr{'port'}</td>
 					<td>
 						<input type="number" name="PORT" value="$Wireguard::settings{'PORT'}"
