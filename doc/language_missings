@@ -119,9 +119,13 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -197,6 +201,7 @@
 < ips throughput
 < last updated
 < load average
+< local port
 < local subnets
 < log drop hostile in
 < log drop hostile out
@@ -229,10 +234,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -246,6 +255,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -296,6 +306,7 @@
 < ips throughput
 < last updated
 < load average
+< local port
 < local subnets
 < malformed preshared key
 < malformed private key
@@ -319,10 +330,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -336,6 +351,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -688,6 +704,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
 < local subnets
 < location
 < locationblock
@@ -863,10 +880,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -880,6 +901,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -1290,6 +1312,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
 < local subnets
 < location
 < locationblock
@@ -1483,10 +1506,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -1500,6 +1527,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -2204,6 +2232,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
 < local subnets
 < location
 < locationblock
@@ -2519,10 +2548,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -2536,6 +2569,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -3278,6 +3312,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
 < local subnets
 < location
 < locationblock
@@ -3592,10 +3627,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -3609,6 +3648,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -3925,6 +3965,7 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
 < local subnets
 < log drop hostile in
 < log drop hostile out
@@ -4042,10 +4083,14 @@
 < wg
 < wg client configuration file
 < wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
 < wg create peer
 < wg dns
 < wg download configuration
 < wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
 < wg invalid client dns
@@ -4059,6 +4104,7 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg leave empty to automatically select
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool

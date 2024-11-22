@@ -856,7 +856,7 @@ EDITNET:
 
 	# Open a new box
 	&Header::openbox('100%', '',
-		(defined $key) ? $Lang::tr{'wg edit peer'} : $Lang::tr{'wg create peer'});
+		(defined $key) ? $Lang::tr{'wg edit net-to-net peer'} : $Lang::tr{'wg create net-to-net peer'});
 
 	# Set defaults
 	unless (defined $key) {
@@ -1031,7 +1031,7 @@ EDITHOST:
 
 	# Open a new box
 	&Header::openbox('100%', '',
-		(defined $key) ? $Lang::tr{'wg edit peer'} : $Lang::tr{'wg create peer'});
+		(defined $key) ? $Lang::tr{'wg edit host-to-net peer'} : $Lang::tr{'wg create host-to-net peer'});
 
 	# Set defaults
 	unless (defined $key) {
