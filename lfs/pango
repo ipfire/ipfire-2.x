@@ -24,7 +24,9 @@
 
 include Config
 
-VER        = 1.52.0
+VER        = 1.54.0
+
+# https://download.gnome.org/sources/pango/
 
 THISAPP    = pango-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3b90c1b104fc2624d0d3c5f35262dc6718f7d795a8932ee6d674ab107c12896f9fced16e9eaa1028db1e92833a108d9d608741df17c0a3aaa7fdf43a6b68e754
+$(DL_FILE)_BLAKE2 = 92c389ab3f21631c245575e30804ffee6fef7b60bc6acdf08159aa325d878cf335203267720aec9143ea2a4e590578424cd64011f73da22e1b0beca85e85a276
 
 install : $(TARGET)
 
@@ -71,7 +73,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && meson --prefix=/usr --sysconfdir=/etc builddir/
+	cd $(DIR_APP) && meson setup \
+				--prefix=/usr \
+				--sysconfdir=/etc \
+				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
 	@rm -rf $(DIR_APP)
