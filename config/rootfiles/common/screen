@@ -1,6 +1,6 @@
 etc/screenrc
 usr/bin/screen
-usr/bin/screen-4.9.1
+usr/bin/screen-5.0.0
 #usr/share/info/screen.info
 #usr/share/man/man1/screen.1
 #usr/share/screen
@@ -12,6 +12,7 @@ usr/bin/screen-4.9.1
 #usr/share/screen/utf8encodings/18
 #usr/share/screen/utf8encodings/19
 #usr/share/screen/utf8encodings/a1
+#usr/share/screen/utf8encodings/a3
 #usr/share/screen/utf8encodings/bf
 #usr/share/screen/utf8encodings/c2
 #usr/share/screen/utf8encodings/c3
