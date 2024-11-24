@@ -1479,6 +1479,14 @@ build_system() {
 	lfsmake2 openssl
 	lfsmake2 popt
 	lfsmake2 libedit
+	lfsmake2 expat
+	lfsmake2 libffi
+	lfsmake2 gdbm
+	lfsmake2 sqlite
+	lfsmake2 python3
+	lfsmake2 python3-setuptools
+	lfsmake2 ninja
+	lfsmake2 meson
 	lfsmake2 pam
 	lfsmake2 libcap
 	lfsmake2 libcap-ng
@@ -1501,22 +1509,14 @@ build_system() {
 	lfsmake2 iproute2
 	lfsmake2 screen
 	lfsmake2 elfutils
-	lfsmake2 expat
 	lfsmake2 libconfig
 	lfsmake2 curl
 	lfsmake2 libarchive
 	lfsmake2 cmake
 	lfsmake2 json-c
 	lfsmake2 tcl
-	lfsmake2 libffi
-	lfsmake2 gdbm
-	lfsmake2 sqlite
-	lfsmake2 python3
-	lfsmake2 python3-setuptools
 	lfsmake2 python3-MarkupSafe
 	lfsmake2 python3-Jinja2
-	lfsmake2 ninja
-	lfsmake2 meson
 	lfsmake2 kmod
 	lfsmake2 udev
 	lfsmake2 libusb
