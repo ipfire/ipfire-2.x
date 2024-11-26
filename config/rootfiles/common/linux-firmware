@@ -667,26 +667,26 @@ lib/firmware/amphion/vpu/vpu_fw_imx8_enc.bin
 #lib/firmware/ar3k
 #lib/firmware/ar3k/1020200
 lib/firmware/ar3k/1020200/PS_ASIC.pst
-#lib/firmware/ar3k/1020200/RamPatch.txt
+lib/firmware/ar3k/1020200/RamPatch.txt
 lib/firmware/ar3k/1020200/ar3kbdaddr.pst
 #lib/firmware/ar3k/1020201
 lib/firmware/ar3k/1020201/PS_ASIC.pst
-#lib/firmware/ar3k/1020201/RamPatch.txt
+lib/firmware/ar3k/1020201/RamPatch.txt
 #lib/firmware/ar3k/1020201coex
 lib/firmware/ar3k/1020201coex/ramps_0x01020201_26_HighPriority.dfu
 #lib/firmware/ar3k/30000
 lib/firmware/ar3k/30000/PS_ASIC.pst
-#lib/firmware/ar3k/30000/RamPatch.txt
+lib/firmware/ar3k/30000/RamPatch.txt
 lib/firmware/ar3k/30000/ar3kbdaddr.pst
 #lib/firmware/ar3k/30101
 lib/firmware/ar3k/30101/PS_ASIC.pst
-#lib/firmware/ar3k/30101/RamPatch.txt
+lib/firmware/ar3k/30101/RamPatch.txt
 lib/firmware/ar3k/30101/ar3kbdaddr.pst
 #lib/firmware/ar3k/30101coex
 lib/firmware/ar3k/30101coex/PS_ASIC.pst
 lib/firmware/ar3k/30101coex/PS_ASIC_aclHighPri.pst
 lib/firmware/ar3k/30101coex/PS_ASIC_aclLowPri.pst
-#lib/firmware/ar3k/30101coex/RamPatch.txt
+lib/firmware/ar3k/30101coex/RamPatch.txt
 lib/firmware/ar3k/30101coex/ar3kbdaddr.pst
 lib/firmware/ar3k/AthrBT_0x01020001.dfu
 lib/firmware/ar3k/AthrBT_0x01020200.dfu
@@ -989,91 +989,91 @@ lib/firmware/brcm/brcmfmac43143-sdio.bin
 lib/firmware/brcm/brcmfmac43143.bin
 lib/firmware/brcm/brcmfmac43236b.bin
 lib/firmware/brcm/brcmfmac43241b0-sdio.bin
-#lib/firmware/brcm/brcmfmac43241b4-sdio.Advantech-MICA-071.txt
-#lib/firmware/brcm/brcmfmac43241b4-sdio.Intel Corp.-VALLEYVIEW C0 PLATFORM.txt
+lib/firmware/brcm/brcmfmac43241b4-sdio.Advantech-MICA-071.txt
+lib/firmware/brcm/brcmfmac43241b4-sdio.Intel Corp.-VALLEYVIEW C0 PLATFORM.txt
 lib/firmware/brcm/brcmfmac43241b4-sdio.bin
 lib/firmware/brcm/brcmfmac43241b5-sdio.bin
 lib/firmware/brcm/brcmfmac43242a.bin
 lib/firmware/brcm/brcmfmac4329-sdio.bin
-#lib/firmware/brcm/brcmfmac4330-sdio.Prowise-PT301.txt
+lib/firmware/brcm/brcmfmac4330-sdio.Prowise-PT301.txt
 lib/firmware/brcm/brcmfmac4330-sdio.bin
 lib/firmware/brcm/brcmfmac4334-sdio.bin
-#lib/firmware/brcm/brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-TF103CE.txt
-#lib/firmware/brcm/brcmfmac43340-sdio.Insyde-VESPA2.txt
+lib/firmware/brcm/brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-TF103CE.txt
+lib/firmware/brcm/brcmfmac43340-sdio.Insyde-VESPA2.txt
 lib/firmware/brcm/brcmfmac43340-sdio.bin
-#lib/firmware/brcm/brcmfmac43340-sdio.meegopad-t08.txt
-#lib/firmware/brcm/brcmfmac43340-sdio.pov-tab-p1006w-data.txt
-#lib/firmware/brcm/brcmfmac43340-sdio.predia-basic.txt
+lib/firmware/brcm/brcmfmac43340-sdio.meegopad-t08.txt
+lib/firmware/brcm/brcmfmac43340-sdio.pov-tab-p1006w-data.txt
+lib/firmware/brcm/brcmfmac43340-sdio.predia-basic.txt
 lib/firmware/brcm/brcmfmac4335-sdio.bin
-#lib/firmware/brcm/brcmfmac43362-sdio.ASUSTeK COMPUTER INC.-ME176C.txt
-#lib/firmware/brcm/brcmfmac43362-sdio.WC121.txt
+lib/firmware/brcm/brcmfmac43362-sdio.ASUSTeK COMPUTER INC.-ME176C.txt
+lib/firmware/brcm/brcmfmac43362-sdio.WC121.txt
 lib/firmware/brcm/brcmfmac43362-sdio.bin
-#lib/firmware/brcm/brcmfmac43362-sdio.cubietech,cubietruck.txt
-#lib/firmware/brcm/brcmfmac43362-sdio.kobo,aura.txt
-#lib/firmware/brcm/brcmfmac43362-sdio.kobo,tolino-shine2hd.txt
-#lib/firmware/brcm/brcmfmac43362-sdio.lemaker,bananapro.txt
+lib/firmware/brcm/brcmfmac43362-sdio.cubietech,cubietruck.txt
+lib/firmware/brcm/brcmfmac43362-sdio.kobo,aura.txt
+lib/firmware/brcm/brcmfmac43362-sdio.kobo,tolino-shine2hd.txt
+lib/firmware/brcm/brcmfmac43362-sdio.lemaker,bananapro.txt
 lib/firmware/brcm/brcmfmac4339-sdio.bin
-#lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.Hampoo-D2D3_Vi8A1.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.MUR1DX.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.beagle,beaglev-starlight-jh7100-a1.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.beagle,beaglev-starlight-jh7100-r0.txt
+lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt
+lib/firmware/brcm/brcmfmac43430-sdio.Hampoo-D2D3_Vi8A1.txt
+lib/firmware/brcm/brcmfmac43430-sdio.MUR1DX.txt
+lib/firmware/brcm/brcmfmac43430-sdio.beagle,beaglev-starlight-jh7100-a1.txt
+lib/firmware/brcm/brcmfmac43430-sdio.beagle,beaglev-starlight-jh7100-r0.txt
 lib/firmware/brcm/brcmfmac43430-sdio.bin
 lib/firmware/brcm/brcmfmac43430-sdio.clm_blob
-#lib/firmware/brcm/brcmfmac43430-sdio.friendlyarm,nanopi-r1.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.ilife-S806.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,3-model-b.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-2-w.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bananapi-m64.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-plus.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-ultra.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-zero.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m3.txt
-#lib/firmware/brcm/brcmfmac43430-sdio.starfive,visionfive-v1.txt
-#lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt
+lib/firmware/brcm/brcmfmac43430-sdio.friendlyarm,nanopi-r1.txt
+lib/firmware/brcm/brcmfmac43430-sdio.ilife-S806.txt
+lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,3-model-b.txt
+lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-2-w.txt
+lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bananapi-m64.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-plus.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-ultra.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-zero.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m3.txt
+lib/firmware/brcm/brcmfmac43430-sdio.starfive,visionfive-v1.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt
 lib/firmware/brcm/brcmfmac43430a0-sdio.bin
-#lib/firmware/brcm/brcmfmac43430a0-sdio.ilife-S806.txt
-#lib/firmware/brcm/brcmfmac43430a0-sdio.jumper-ezpad-mini3.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.AW-CM256SM.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO Z83-4.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi 4 Model B.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi Compute Module 4.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.acepc-t8.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.beagle,am5729-beagleboneai.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.ilife-S806.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.jumper-ezpad-mini3.txt
+lib/firmware/brcm/brcmfmac43455-sdio.AW-CM256SM.txt
+lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO Z83-4.txt
+lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi 4 Model B.txt
+lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi Compute Module 4.txt
+lib/firmware/brcm/brcmfmac43455-sdio.acepc-t8.txt
+lib/firmware/brcm/brcmfmac43455-sdio.beagle,am5729-beagleboneai.txt
 lib/firmware/brcm/brcmfmac43455-sdio.bin
 lib/firmware/brcm/brcmfmac43455-sdio.clm_blob
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinebook-pro.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinenote-v1.1.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinenote-v1.2.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinephone-pro.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,quartz64-a.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,quartz64-b.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,rockpro64-v2.0.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,rockpro64-v2.1.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-blade.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-cm4io.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-model-a.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,3-model-a-plus.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,3-model-b-plus.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-compute-module.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt
-#lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,5-model-b.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinebook-pro.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinenote-v1.1.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinenote-v1.2.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinephone-pro.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,quartz64-a.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,quartz64-b.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,rockpro64-v2.0.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,rockpro64-v2.1.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-blade.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-cm4io.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-model-a.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,3-model-a-plus.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,3-model-b-plus.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-compute-module.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,5-model-b.txt
 lib/firmware/brcm/brcmfmac4350-pcie.bin
 lib/firmware/brcm/brcmfmac4350c2-pcie.bin
 lib/firmware/brcm/brcmfmac4354-sdio.bin
 lib/firmware/brcm/brcmfmac4354-sdio.clm_blob
-#lib/firmware/brcm/brcmfmac4356-pcie.Intel Corporation-CHERRYVIEW D1 PLATFORM.txt
-#lib/firmware/brcm/brcmfmac4356-pcie.Xiaomi Inc-Mipad2.txt
+lib/firmware/brcm/brcmfmac4356-pcie.Intel Corporation-CHERRYVIEW D1 PLATFORM.txt
+lib/firmware/brcm/brcmfmac4356-pcie.Xiaomi Inc-Mipad2.txt
 lib/firmware/brcm/brcmfmac4356-pcie.bin
 lib/firmware/brcm/brcmfmac4356-pcie.clm_blob
-#lib/firmware/brcm/brcmfmac4356-pcie.gpd-win-pocket.txt
-#lib/firmware/brcm/brcmfmac4356-sdio.AP6356S.txt
+lib/firmware/brcm/brcmfmac4356-pcie.gpd-win-pocket.txt
+lib/firmware/brcm/brcmfmac4356-sdio.AP6356S.txt
 lib/firmware/brcm/brcmfmac4356-sdio.bin
 lib/firmware/brcm/brcmfmac4356-sdio.clm_blob
-#lib/firmware/brcm/brcmfmac4356-sdio.firefly,firefly-rk3399.txt
-#lib/firmware/brcm/brcmfmac4356-sdio.khadas,vim2.txt
-#lib/firmware/brcm/brcmfmac4356-sdio.vamrs,rock960.txt
+lib/firmware/brcm/brcmfmac4356-sdio.firefly,firefly-rk3399.txt
+lib/firmware/brcm/brcmfmac4356-sdio.khadas,vim2.txt
+lib/firmware/brcm/brcmfmac4356-sdio.vamrs,rock960.txt
 lib/firmware/brcm/brcmfmac43569.bin
 lib/firmware/brcm/brcmfmac43570-pcie.bin
 lib/firmware/brcm/brcmfmac43570-pcie.clm_blob
@@ -1934,22 +1934,22 @@ lib/firmware/cxgb3/t3fw-7.4.0.bin
 lib/firmware/cxgb4/aq1202_fw.cld
 lib/firmware/cxgb4/bcm8483.bin
 #lib/firmware/cxgb4/configs
-#lib/firmware/cxgb4/configs/t4-config-default.txt
-#lib/firmware/cxgb4/configs/t5-config-default.txt
-#lib/firmware/cxgb4/configs/t5-config-hashfilter.txt
-#lib/firmware/cxgb4/configs/t6-config-default.txt
-#lib/firmware/cxgb4/configs/t6-config-hashfilter.txt
-#lib/firmware/cxgb4/t4-config.txt
+lib/firmware/cxgb4/configs/t4-config-default.txt
+lib/firmware/cxgb4/configs/t5-config-default.txt
+lib/firmware/cxgb4/configs/t5-config-hashfilter.txt
+lib/firmware/cxgb4/configs/t6-config-default.txt
+lib/firmware/cxgb4/configs/t6-config-hashfilter.txt
+lib/firmware/cxgb4/t4-config.txt
 lib/firmware/cxgb4/t4fw-1.14.4.0.bin
 lib/firmware/cxgb4/t4fw-1.15.37.0.bin
 lib/firmware/cxgb4/t4fw-1.27.5.0.bin
 lib/firmware/cxgb4/t4fw.bin
-#lib/firmware/cxgb4/t5-config.txt
+lib/firmware/cxgb4/t5-config.txt
 lib/firmware/cxgb4/t5fw-1.14.4.0.bin
 lib/firmware/cxgb4/t5fw-1.15.37.0.bin
 lib/firmware/cxgb4/t5fw-1.27.5.0.bin
 lib/firmware/cxgb4/t5fw.bin
-#lib/firmware/cxgb4/t6-config.txt
+lib/firmware/cxgb4/t6-config.txt
 lib/firmware/cxgb4/t6fw-1.27.5.0.bin
 lib/firmware/cxgb4/t6fw.bin
 #lib/firmware/cypress

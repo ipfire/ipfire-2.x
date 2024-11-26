@@ -1,0 +1,75 @@
+lib/firmware/ar3k/1020200/RamPatch.txt
+lib/firmware/ar3k/1020201/RamPatch.txt
+lib/firmware/ar3k/30000/RamPatch.txt
+lib/firmware/ar3k/30101/RamPatch.txt
+lib/firmware/ar3k/30101coex/RamPatch.txt
+lib/firmware/brcm/brcmfmac43241b4-sdio.Advantech-MICA-071.txt
+lib/firmware/brcm/brcmfmac43241b4-sdio.Intel Corp.-VALLEYVIEW C0 PLATFORM.txt
+lib/firmware/brcm/brcmfmac4330-sdio.Prowise-PT301.txt
+lib/firmware/brcm/brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-TF103CE.txt
+lib/firmware/brcm/brcmfmac43340-sdio.Insyde-VESPA2.txt
+lib/firmware/brcm/brcmfmac43340-sdio.meegopad-t08.txt
+lib/firmware/brcm/brcmfmac43340-sdio.pov-tab-p1006w-data.txt
+lib/firmware/brcm/brcmfmac43340-sdio.predia-basic.txt
+lib/firmware/brcm/brcmfmac43362-sdio.ASUSTeK COMPUTER INC.-ME176C.txt
+lib/firmware/brcm/brcmfmac43362-sdio.WC121.txt
+lib/firmware/brcm/brcmfmac43362-sdio.cubietech,cubietruck.txt
+lib/firmware/brcm/brcmfmac43362-sdio.kobo,aura.txt
+lib/firmware/brcm/brcmfmac43362-sdio.kobo,tolino-shine2hd.txt
+lib/firmware/brcm/brcmfmac43362-sdio.lemaker,bananapro.txt
+lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt
+lib/firmware/brcm/brcmfmac43430-sdio.Hampoo-D2D3_Vi8A1.txt
+lib/firmware/brcm/brcmfmac43430-sdio.MUR1DX.txt
+lib/firmware/brcm/brcmfmac43430-sdio.beagle,beaglev-starlight-jh7100-a1.txt
+lib/firmware/brcm/brcmfmac43430-sdio.beagle,beaglev-starlight-jh7100-r0.txt
+lib/firmware/brcm/brcmfmac43430-sdio.friendlyarm,nanopi-r1.txt
+lib/firmware/brcm/brcmfmac43430-sdio.ilife-S806.txt
+lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,3-model-b.txt
+lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-2-w.txt
+lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bananapi-m64.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-plus.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-ultra.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-zero.txt
+lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m3.txt
+lib/firmware/brcm/brcmfmac43430-sdio.starfive,visionfive-v1.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.ilife-S806.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.jumper-ezpad-mini3.txt
+lib/firmware/brcm/brcmfmac43455-sdio.AW-CM256SM.txt
+lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO Z83-4.txt
+lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi 4 Model B.txt
+lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi Compute Module 4.txt
+lib/firmware/brcm/brcmfmac43455-sdio.acepc-t8.txt
+lib/firmware/brcm/brcmfmac43455-sdio.beagle,am5729-beagleboneai.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinebook-pro.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinenote-v1.1.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinenote-v1.2.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,pinephone-pro.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,quartz64-a.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,quartz64-b.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,rockpro64-v2.0.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,rockpro64-v2.1.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-blade.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-cm4io.txt
+lib/firmware/brcm/brcmfmac43455-sdio.pine64,soquartz-model-a.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,3-model-a-plus.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,3-model-b-plus.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-compute-module.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt
+lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,5-model-b.txt
+lib/firmware/brcm/brcmfmac4356-pcie.Intel Corporation-CHERRYVIEW D1 PLATFORM.txt
+lib/firmware/brcm/brcmfmac4356-pcie.Xiaomi Inc-Mipad2.txt
+lib/firmware/brcm/brcmfmac4356-pcie.gpd-win-pocket.txt
+lib/firmware/brcm/brcmfmac4356-sdio.AP6356S.txt
+lib/firmware/brcm/brcmfmac4356-sdio.firefly,firefly-rk3399.txt
+lib/firmware/brcm/brcmfmac4356-sdio.khadas,vim2.txt
+lib/firmware/brcm/brcmfmac4356-sdio.vamrs,rock960.txt
+lib/firmware/cxgb4/configs/t4-config-default.txt
+lib/firmware/cxgb4/configs/t5-config-default.txt
+lib/firmware/cxgb4/configs/t5-config-hashfilter.txt
+lib/firmware/cxgb4/configs/t6-config-default.txt
+lib/firmware/cxgb4/configs/t6-config-hashfilter.txt
+lib/firmware/cxgb4/t4-config.txt
+lib/firmware/cxgb4/t5-config.txt
+lib/firmware/cxgb4/t6-config.txt
