@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.0.5
+VER        = 4.0.6
 
 THISAPP    = utfcpp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c2058dac06b7bbedb97c18fe8a2fdfa13e45afe180d6602e8c1347db313361c94abf06514c80a308bef6f72eea63b6a7aaeaa7985925d7f5754f5210ebf040cb
+$(DL_FILE)_BLAKE2 = 9ad44b7390d1f93e2692641e87c693b83ee13f93732dbab893f678db0c32e37e0d2399d2c2834f98ad629ee7025bf7a1f2f36d14b9b89926d97caaaeb8635c83
 
 install : $(TARGET)
 
