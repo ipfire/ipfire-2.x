@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 9.1
+VER        = 9.1.0886
 
 THISAPP    = vim-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/vim91
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 # vim tries to build itself with FORTIFY_SOURCE=1 and is not very good at
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6145f1861be848c6a4d51c16a256a080cc6e71f66d45ac7c66b1462e7542c1a57ad2918406211604d8c5b5dfc54af80a543499b68de7a402105ee811c8681bbc
+$(DL_FILE)_BLAKE2 = c614c257dd56537696fed6625cfa8a02b37014f2caf748b6d0526c511d00305288f787d85c7330cd6fddde342b00d9bd4bd9766d98a2d5eb2c901a0ac29d432c
 
 install : $(TARGET)
 
@@ -73,8 +73,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vim/vim-9.1_fix_hardening_crash.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vim/vim-9.1.0886_fix_hardening_crash.patch
 	cd $(DIR_APP) && echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
