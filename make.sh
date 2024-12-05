@@ -1802,6 +1802,7 @@ build_system() {
 	lfsmake2 cups-pdf
 	lfsmake2 foomatic
 	lfsmake2 hplip
+	lfsmake2 libtalloc
 	lfsmake2 cifs-utils
 	lfsmake2 krb5
 	lfsmake2 rpcsvc-proto
@@ -2034,7 +2035,6 @@ build_system() {
 	lfsmake2 libpciaccess
 	lfsmake2 libyajl
 	lfsmake2 libvirt
-	lfsmake2 libtalloc
 	lfsmake2 freeradius
 	lfsmake2 perl-common-sense
 	lfsmake2 perl-inotify2
