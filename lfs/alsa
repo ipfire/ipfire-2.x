@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,9 +26,9 @@ include Config
 
 SUMMARY    = Advanced Linux Sound Architecture
 
-VER        = 1.2.10
-UVER       = 1.2.10
-CVER       = 1.2.10
+VER        = 1.2.13
+UVER       = 1.2.13
+CVER       = 1.2.13
 FVER       = 1.2.4
 
 THISAPP    = alsa-lib-$(VER)
@@ -36,7 +36,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 20
+PAK_VER    = 21
 
 DEPS       =
 
@@ -56,10 +56,10 @@ alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 alsa-ucm-conf-$(CVER).tar.bz2 = $(DL_FROM)/alsa-ucm-conf-$(CVER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = b2e4f8431e61f5bb56b2b5d124e67d5a68bbca3c647bebfa93f5e5ff092ec9ef3f6cb6315801fcd93e21151784814ff238d357313b8b44f32d4e7c9ee565388f
-alsa-utils-$(UVER).tar.bz2_BLAKE2 = 077b4ad090c1ab40dd4fa22db01ae2a080ca849a5564dfe612654993297c80bd3584541c7e68aaad56c4c05538ba0de449e4677b1c4a9dfe56d8e11706c4ca35
+$(DL_FILE)_BLAKE2 = 1723ca5f191525e050f05423fb9ccf4501e4f20490d01b0c068493bbce279d3a067e8d0e5f52f9c76c2eaecb4c2b3fc42690193b88c313461fce2aec390175b3
+alsa-utils-$(UVER).tar.bz2_BLAKE2 = 9bc2bf8e21fb9308c2eabc6612da0848f9ddba45acb8bf8453d9cff7f73fa0267495430a150ea53b28fab8afb69a51e487e8b253dc7501e17d77ea3f6e90bcf7
 alsa-firmware-$(FVER).tar.bz2_BLAKE2 = 0f844f6cc4859b72635f24d347b4c790469aee39aa60d9addb2c168dcf06b48e7e3cbba26ff21c7e1f5aa355641eec7ab934cb09bfac8ca116a6ac6a7db9d548
-alsa-ucm-conf-$(CVER).tar.bz2_BLAKE2 = 215842f1f59c2dea5e3f3fe880dc49d6263998746a50c2591b8a9786ead3afae2c713e179ff6e8caa518b3a8516a1b031872c1fad2a17fbd3afbb0390a803693
+alsa-ucm-conf-$(CVER).tar.bz2_BLAKE2 = 87e4bf2285961e316ca853e9245e02447ea9e60fa506e124c072e2b6ed71345fc0c30b19bf8c849f8123a6b95a4facd22225eafccba8164266961110a60ef44c
 
 install : $(TARGET)
 
