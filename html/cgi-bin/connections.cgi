@@ -439,7 +439,7 @@ foreach my $line (<CONNTRACK>) {
 			</a>
 			$dport_extra
 		</td>
-		<td style='text-align:center; background-color:$sip_colour;'>
+		<td style='text-align:center; background-color:$dip_colour;'>
 			<a href='country.cgi#$dstccode'><img src='$dst_flag_icon' border='0' align='absmiddle' alt='$dstccode' title='$dstccode' /></a>
 		</td>
 		<td class="text-right">
