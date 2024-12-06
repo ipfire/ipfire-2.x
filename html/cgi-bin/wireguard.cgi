@@ -171,13 +171,15 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Allocate a new key
 	my $key = &General::findhasharraykey(\%Wireguard::peers);
 
+	my $name = $cgiparams{"NAME"};
+
 	# Check if the name is valid
-	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
+	unless (&Wireguard::name_is_valid($name)) {
 		push(@errormessages, $Lang::tr{'wg invalid name'});
 	}
 
 	# Check if the name is free
-	unless (&Wireguard::name_is_free($cgiparams{"NAME"}, $key)) {
+	unless (&Wireguard::name_is_free($name, $key)) {
 		push(@errormessages, $Lang::tr{'wg name is already used'});
 	}
 
@@ -248,7 +250,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 1 = Type
 		"net",
 		# 2 = Name
-		$cgiparams{"NAME"},
+		$name,
 		# 3 = Remote Public Key
 		$remote_public_key,
 		# 4 = Local Private Key
@@ -278,6 +280,45 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
+
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Generate the client configuration
+	my $config = &Wireguard::generate_net_configuration($key, $remote_private_key);
+
+	# Encode the configuration as Base64
+	$config = &MIME::Base64::encode_base64($config);
+
+	# Open a new box
+	&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $name");
+
+	# Make the filename for files
+	my $filename = &Header::normalize("${name}.conf");
+
+	print <<END;
+		<div class="text-center">
+			<p>
+				<a href="data:text/plain;base64,${config}" download="${filename}">
+					$Lang::tr{'wg download configuration file'}
+				</a>
+			</p>
+
+			<p>
+				<form method="GET" action="">
+					<button type="submit">$Lang::tr{'done'}</button>
+				</form>
+			</p>
+		</div>
+END
+
+	&Header::closebox();
+	&Header::closepage();
+
+	exit(0);
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-NET") {
 	my @local_subnets = ();

@@ -338,6 +338,58 @@ sub free_pool_addresses($$) {
 	return @free_addresses;
 }
 
+sub generate_net_configuration($$) {
+	my $key = shift;
+	my $private_key = shift;
+
+	# Load the peer
+	my %peer = &load_peer($key);
+
+	# Return if we could not find the peer
+	return undef unless (%peer);
+
+	# Return if this is not a network peer
+	return undef unless ($peer{'TYPE'} eq 'net');
+
+	my @allowed_ips = ();
+
+	# Convert all subnets into CIDR notation
+	foreach my $subnet ($peer{'LOCAL_SUBNETS'}) {
+		my $netaddress = &Network::get_netaddress($subnet);
+		my $prefix     = &Network::get_prefix($subnet);
+
+		# Skip invalid subnets
+		next if (!defined $netaddress || !defined $prefix);
+
+		push(@allowed_ips, "${netaddress}/${prefix}");
+	}
+
+	my $endpoint = $settings{'ENDPOINT'};
+
+	# If no endpoint is set, we fall back to the FQDN of the firewall
+	if ($endpoint eq "") {
+		$endpoint = $General::mainsettings{'HOSTNAME'} . "." . $General::mainsettings{'DOMAINNAME'};
+	}
+
+	# Derive our own public key
+	my $public_key = &derive_public_key($peer{'PRIVATE_KEY'});
+
+	my @conf = (
+		"[Interface]",
+		"PrivateKey = $private_key",
+		"Port = $peer{'ENDPOINT_PORT'}",
+		"",
+		"[Peer]",
+		"Endpoint = ${endpoint}:$peer{'PORT'}",
+		"PublicKey = $public_key",
+		"PresharedKey = $peer{'PSK'}",
+		"AllowedIPs = " . join(", ", @allowed_ips),
+		"PersistentKeepalive = $peer{'KEEPALIVE'}",
+	);
+
+	return join("\n", @conf);
+}
+
 sub generate_host_configuration($) {
 	my $key = shift;
 
