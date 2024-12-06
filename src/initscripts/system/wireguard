@@ -105,6 +105,27 @@ cleanup_interfaces() {
 	return 0
 }
 
+# Replaces 0.0.0.0/0 with 0.0.0.0/1 and 128.0.0.0/1 so that we can route all traffic
+# through a WireGuard tunnel.
+expand_subnets() {
+	local subnet
+
+	for subnet in $@; do
+		case "${subnet}" in
+			0.0.0.0/0|0.0.0.0/0.0.0.0)
+				echo -n "0.0.0.0/1,"
+				echo -n "128.0.0.0/1,"
+				;;
+
+			*)
+				echo -n "${subnet},"
+				;;
+		esac
+	done
+
+	return 0
+}
+
 generate_config() {
 	local intf="${1}"
 
@@ -217,11 +238,12 @@ generate_config() {
 
 			# Apply the routes
 			local_subnets=( "${local_subnets//|/,}" )
+			remote_subnets=( "${remote_subnets//|/,}" )
 
 			# Find an IP address of the firewall that is inside the routed subnet
 			local src="$(ipfire_address_in_networks "${local_subnets[@]}")"
 
-			for remote_subnet in ${remote_subnets//|/,}; do
+			for remote_subnet in $(expand_subnets "${remote_subnets[@]}"); do
 				local args=(
 					"${remote_subnet}" "dev" "${intf}"
 				)
