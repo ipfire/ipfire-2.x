@@ -46,6 +46,18 @@ our %peers = ();
 	"CLIENT_DNS" => $Network::ethernet{'GREEN_ADDRESS'},
 });
 
+# Returns the local endpoint
+sub get_endpoint() {
+	my $endpoint = $settings{'ENDPOINT'};
+
+	# If no endpoint is set, we fall back to the FQDN of the firewall
+	if ($endpoint eq "") {
+		$endpoint = $General::mainsettings{'HOSTNAME'} . "." . $General::mainsettings{'DOMAINNAME'};
+	}
+
+	return $endpoint;
+}
+
 # This function generates a set of keys for this host if none exist
 sub generate_keys($) {
 	my $force = shift || 0;
@@ -364,12 +376,8 @@ sub generate_net_configuration($$) {
 		push(@allowed_ips, "${netaddress}/${prefix}");
 	}
 
-	my $endpoint = $settings{'ENDPOINT'};
-
-	# If no endpoint is set, we fall back to the FQDN of the firewall
-	if ($endpoint eq "") {
-		$endpoint = $General::mainsettings{'HOSTNAME'} . "." . $General::mainsettings{'DOMAINNAME'};
-	}
+	# Fetch the endpoint
+	my $endpoint = &get_endpoint();
 
 	# Derive our own public key
 	my $public_key = &derive_public_key($peer{'PRIVATE_KEY'});
@@ -416,12 +424,8 @@ sub generate_host_configuration($) {
 		push(@allowed_ips, "${netaddress}/${prefix}");
 	}
 
-	my $endpoint = $settings{'ENDPOINT'};
-
-	# If no endpoint is set, we fall back to the FQDN of the firewall
-	if ($endpoint eq "") {
-		$endpoint = $General::mainsettings{'HOSTNAME'} . "." . $General::mainsettings{'DOMAINNAME'};
-	}
+	# Fetch the endpoint
+	my $endpoint = &get_endpoint();
 
 	my $port = $settings{'PORT'};
 
