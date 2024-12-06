@@ -485,7 +485,7 @@ sub parse_configuration($) {
 					}
 				}
 
-				$peer{'REMOTE_SUBNETS'} = join(/, /, @networks);
+				$peer{'REMOTE_SUBNETS'} = join(", ", @networks);
 			# Endpoint
 			} elsif ($key eq "Endpoint") {
 				my $address = $val;
