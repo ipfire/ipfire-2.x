@@ -307,6 +307,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 				</a>
 			</p>
 
+			<p class="text-error">
+				$Lang::tr{'wg warning configuration only shown once'}
+			</p>
+
 			<p>
 				<form method="GET" action="">
 					<button type="submit">$Lang::tr{'done'}</button>
@@ -1419,6 +1423,10 @@ sub show_peer_configuration($$) {
 				<a href="data:text/plain;base64,${config}" download="${filename}">
 					$Lang::tr{'wg download configuration file'}
 				</a>
+			</p>
+
+			<p class="text-error">
+				$Lang::tr{'wg warning configuration only shown once'}
 			</p>
 
 			<p>
