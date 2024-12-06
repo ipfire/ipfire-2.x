@@ -227,7 +227,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	}
 
 	# If there are any errors, we go back to the editor
-	goto EDITNET if (scalar @errormessages);
+	goto CREATENET if (scalar @errormessages);
 
 	# Generate a new key pair
 	my $local_private_key  = &Wireguard::generate_private_key();
