@@ -501,6 +501,10 @@ sub parse_configuration($) {
 				if (&Network::check_ip_address($address)) {
 					# nothing
 
+				# Check if we have a valid FQDN
+				} elsif (&General::validfqdn($address)) {
+					# nothing
+
 				# Otherwise this fails
 				} else {
 					push(@errormessages, $Lang::tr{'invalid endpoint address'});

@@ -212,7 +212,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Check the endpoint address
 	if ($cgiparams{'ENDPOINT_ADDRESS'} eq '') {
 		# The endpoint address may be empty
-	} elsif (!&Network::check_ip_address($cgiparams{'ENDPOINT_ADDRESS'})) {
+	} elsif (&General::validfqdn($cgiparams{'ENDPOINT_ADDRESS'})) {
+		# The endpoint is a valid FQDN
+	} elsif (&Network::check_ip_address($cgiparams{'ENDPOINT_ADDRESS'})) {
+		# The endpoint is a valid IP address
+	} else {
 		push(@errormessages, $Lang::tr{'wg invalid endpoint address'});
 	}
 
