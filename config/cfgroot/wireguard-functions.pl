@@ -362,9 +362,6 @@ sub generate_peer_configuration($$) {
 	# Return if we could not find the peer
 	return undef unless (%peer);
 
-	# Return if this is not a network peer
-	return undef unless ($peer{'TYPE'} eq 'net');
-
 	my @allowed_ips = ();
 
 	# Convert all subnets into CIDR notation
