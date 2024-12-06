@@ -602,6 +602,9 @@ END
 				</tr>
 END
 
+		# Dump all RW peers
+		my %DUMP = &Wireguard::dump("wg0");
+
 		# Iterate through all peers...
 		foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
 			my $enabled  = $Wireguard::peers{$key}[0];
@@ -623,7 +626,7 @@ END
 			my @status = ("status");
 
 			# Fetch the dump
-			my %dump = &Wireguard::dump("wg$key");
+			my %dump = ($type eq "net") ? &Wireguard::dump("wg$key") : %DUMP;
 
 			# Fetch the status of the peer (if possible)
 			my $status = $dump{$pubkey} || ();
