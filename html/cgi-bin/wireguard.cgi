@@ -810,21 +810,37 @@ END
 
 			print <<END;
 					<td class="text-center">
+END
+
+			if ($type eq "host") {
+				print <<END;
 						<form method='post'>
 							<input type='image' name='$Lang::tr{'wg show configuration qrcode'}' src='/images/qr-code.png'
 								alt='$Lang::tr{'wg show configuration qrcode'}' title='$Lang::tr{'wg show configuration qrcode'}' />
 							<input type='hidden' name='ACTION' value='CONFIG-QRCODE' />
 							<input type='hidden' name='KEY' value='$key' />
 						</form>
+END
+			}
+
+			print <<END;
 					</td>
 
 					<td class="text-center">
+END
+
+			if ($type eq "host") {
+				print <<END;
 						<form method='post'>
 							<input type='image' name='$Lang::tr{'wg download configuration'}' src='/images/media-floppy.png'
 								alt='$Lang::tr{'wg download configuration'}' title='$Lang::tr{'wg download configuration'}' />
 							<input type='hidden' name='ACTION' value='CONFIG' />
 							<input type='hidden' name='KEY' value='$key' />
 						</form>
+END
+			}
+
+			print <<END;
 					</td>
 
 					<td class="text-center">
