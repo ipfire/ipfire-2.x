@@ -116,13 +116,13 @@ if (-e "/var/ipfire/wireguard/peers") {
 	&General::readhasharray("/var/ipfire/wireguard/peers", \%wgpeers);
 
 	foreach my $key (keys %wgpeers) {
-		my $networks = $wgpeers{$key}[6];
+		my $networks = $wgpeers{$key}[8];
 
 		# Split the string
 		my @networks = split(/\|/, $networks);
 
 		foreach my $network (@networks) {
-			$networks[$network] = ${Header::colourwg};
+			$networks{$network} = ${Header::colourwg};
 		}
 	}
 }
