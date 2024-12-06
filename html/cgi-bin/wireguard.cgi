@@ -614,42 +614,6 @@ END
 	if ($Wireguard::settings{'ENABLED'} eq "on") {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
-
-# Download configuration
-} elsif ($cgiparams{'ACTION'} eq 'CONFIG') {
-	my $key = $cgiparams{'KEY'} || 0;
-
-	# Load the peer
-	my %peer = &Wireguard::load_peer($key);
-
-	# Make the filename for files
-	my $filename = &Header::normalize($peer{'NAME'}) . ".conf";
-
-	# Generate the client configuration
-	my $config = &Wireguard::generate_peer_configuration($key);
-
-	# Send the configuration
-	if (defined $config) {
-		print "Content-Type: application/octet-stream\n";
-		print "Content-Disposition: filename=\"${filename}\"\n";
-		print "\n";
-		print $config;
-
-	# If there is no configuration, we return 404
-	} else {
-		&CGI::header(status => 404);
-	}
-
-	exit(0);
-
-# Show the configuration as QR code
-} elsif ($cgiparams{'ACTION'} eq 'CONFIG-QRCODE') {
-	my $key = $cgiparams{'KEY'} || 0;
-
-	# Show the configuration
-	&show_peer_configuration($key);
-
-	exit(0);
 }
 
 # The main page starts here
@@ -750,7 +714,7 @@ END
 						$Lang::tr{'status'}
 					</th>
 
-					<th width='10%' colspan='5'>
+					<th width='10%' colspan='3'>
 						$Lang::tr{'action'}
 					</th>
 				</tr>
@@ -854,40 +818,6 @@ END
 			}
 
 			print <<END;
-					<td class="text-center">
-END
-
-			if ($type eq "host") {
-				print <<END;
-						<form method='post'>
-							<input type='image' name='$Lang::tr{'wg show configuration qrcode'}' src='/images/qr-code.png'
-								alt='$Lang::tr{'wg show configuration qrcode'}' title='$Lang::tr{'wg show configuration qrcode'}' />
-							<input type='hidden' name='ACTION' value='CONFIG-QRCODE' />
-							<input type='hidden' name='KEY' value='$key' />
-						</form>
-END
-			}
-
-			print <<END;
-					</td>
-
-					<td class="text-center">
-END
-
-			if ($type eq "host") {
-				print <<END;
-						<form method='post'>
-							<input type='image' name='$Lang::tr{'wg download configuration'}' src='/images/media-floppy.png'
-								alt='$Lang::tr{'wg download configuration'}' title='$Lang::tr{'wg download configuration'}' />
-							<input type='hidden' name='ACTION' value='CONFIG' />
-							<input type='hidden' name='KEY' value='$key' />
-						</form>
-END
-			}
-
-			print <<END;
-					</td>
-
 					<td class="text-center">
 						<form method='post'>
 							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif'
