@@ -899,7 +899,6 @@ readhash() {
 
 	local line
 	while read -r line; do
-
 		# Skip Blank Lines
 		if [[ ${line} =~ ^[[:space:]]*$ ]]; then
 			continue
@@ -932,8 +931,12 @@ readhash() {
 		fi
 
 		# strip leading and trailing single quotes
-		val="${val#\'}"
-		val="${val%\'}"
+		case "${val}" in
+			'*')
+				val="${val#\'}"
+				val="${val%\'}"
+				;;
+		esac
 
 		printf -v "${array}[${key}]" "%s" "${val}"
 	done < "${file}"
