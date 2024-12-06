@@ -1,3 +1,4 @@
+etc/fcron.cyclic/wg-dynamic
 usr/bin/wg
 #usr/share/bash-completion/completions/wg
 #usr/share/man/man8/wg.8

@@ -75,5 +75,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/src && make $(MAKETUNING)
 	cd $(DIR_APP)/src && make install
+
+	# Install wg-dynamic
+	install -v -m 755 $(DIR_SRC)/config/wireguard/wg-dynamic \
+		/etc/fcron.cyclic/wg-dynamic
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
