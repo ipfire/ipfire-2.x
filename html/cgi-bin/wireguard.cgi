@@ -164,12 +164,130 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		die "Unsupported type: $type";
 	}
 
+} elsif ($cgiparams{"ACTION"} eq "CREATE-PEER-NET") {
+	my @local_subnets = ();
+	my @remote_subnets = ();
+
+	# Allocate a new key
+	my $key = &General::findhasharraykey(\%Wireguard::peers);
+
+	# Check if the name is valid
+	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
+		push(@errormessages, $Lang::tr{'wg invalid name'});
+	}
+
+	# Check if the name is free
+	unless (&Wireguard::name_is_free($cgiparams{"NAME"}, $key)) {
+		push(@errormessages, $Lang::tr{'wg name is already used'});
+	}
+
+	# Check the endpoint address
+	if ($cgiparams{'ENDPOINT_ADDRESS'} eq '') {
+		# The endpoint address may be empty
+	} elsif (&General::validfqdn($cgiparams{'ENDPOINT_ADDRESS'})) {
+		# The endpoint is a valid FQDN
+	} elsif (&Network::check_ip_address($cgiparams{'ENDPOINT_ADDRESS'})) {
+		# The endpoint is a valid IP address
+	} else {
+		push(@errormessages, $Lang::tr{'wg invalid endpoint address'});
+	}
+
+	# Check local subnets
+	if (defined $cgiparams{'LOCAL_SUBNETS'}) {
+		@local_subnets = split(/,/, $cgiparams{'LOCAL_SUBNETS'});
+
+		foreach my $subnet (@local_subnets) {
+			$subnet =~ s/^\s+//g;
+			$subnet =~ s/\s+$//g;
+
+			unless (&Network::check_subnet($subnet)) {
+				push(@errormessages, $Lang::tr{'wg invalid local subnet'} . ": ${subnet}");
+			}
+		}
+	} else {
+		push(@errormessages, $Lang::tr{'wg no local subnets'});
+	}
+
+	# Check remote subnets
+	if (defined $cgiparams{'REMOTE_SUBNETS'}) {
+		@remote_subnets = split(/,/, $cgiparams{'REMOTE_SUBNETS'});
+
+		foreach my $subnet (@remote_subnets) {
+			$subnet =~ s/^\s+//g;
+			$subnet =~ s/\s+$//g;
+
+			unless (&Network::check_subnet($subnet)) {
+				push(@errormessages, $Lang::tr{'wg invalid remote subnet'} . ": ${subnet}");
+			}
+		}
+	} else {
+		push(@errormessages, $Lang::tr{'wg no remote subnets'});
+	}
+
+	# If there are any errors, we go back to the editor
+	goto EDITNET if (scalar @errormessages);
+
+	# Generate a new key pair
+	my $local_private_key  = &Wireguard::generate_private_key();
+	my $remote_private_key = &Wireguard::generate_private_key();
+
+	# Derive the public key
+	my $remote_public_key = &Wireguard::derive_public_key($remote_private_key);
+
+	# Generate a new PSK
+	my $psk = &Wireguard::generate_private_key();
+
+	# Generate two new ports
+	my $local_port  = &Wireguard::get_free_port();
+	my $remote_port = &Wireguard::get_free_port();
+
+	# Save the connection
+	$Wireguard::peers{$key} = [
+		# 0 = Enabled
+		"on",
+		# 1 = Type
+		"net",
+		# 2 = Name
+		$cgiparams{"NAME"},
+		# 3 = Remote Public Key
+		$remote_public_key,
+		# 4 = Local Private Key
+		$local_private_key,
+		# 5 = Port
+		$local_port,
+		# 6 = Endpoint Address
+		$cgiparams{"ENDPOINT_ADDRESS"},
+		# 7 = Endpoint Port
+		$remote_port,
+		# 8 = Remote Subnets
+		&Wireguard::encode_subnets(@remote_subnets),
+		# 9 = Remark
+		&Wireguard::encode_remarks($cgiparams{"REMARKS"}),
+		# 10 = Local Subnets
+		&Wireguard::encode_subnets(@local_subnets),
+		# 11 = PSK
+		$psk,
+		# 12 = Keepalive
+		$Wireguard::DEFAULT_KEEPALIVE,
+	];
+
+	# Store the configuration
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
+
+	# Reload if enabled
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/wireguardctrl", "start");
+	}
+
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-NET") {
 	my @local_subnets = ();
 	my @remote_subnets = ();
 
 	# Fetch or allocate a new key
-	my $key = $cgiparams{'KEY'} || &General::findhasharraykey(\%Wireguard::peers);
+	my $key = $cgiparams{'KEY'};
+
+	# Load the existing peer
+	my %peer = &Wireguard::load_peer($key);
 
 	# Check if the name is valid
 	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
@@ -185,13 +303,6 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	unless (&Wireguard::key_is_valid($cgiparams{'PUBLIC_KEY'})) {
 		push(@errormessages, $Lang::tr{'wg invalid public key'});
 	}
-
-	# Check private key
-	#if ($cgiparams{'PRIVATE_KEY'} eq '') {
-	#		# The private key may be empty
-	#} elsif (!&Wireguard::key_is_valid($cgiparams{'PRIVATE_KEY'})) {
-	#		push(@errormessages, $Lang::tr{'wg invalid private key'});
-	#}
 
 	# Check PSK
 	if ($cgiparams{'PSK'} eq '') {
@@ -276,7 +387,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		# 3 = Public Key
 		$cgiparams{"PUBLIC_KEY"},
 		# 4 = Private Key
-		$cgiparams{"PRIVATE_KEY"},
+		$peer{"PRIVATE_KEY"},
 		# 5 = Port
 		$cgiparams{"PORT"},
 		# 6 = Endpoint Address
@@ -421,16 +532,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
-		# Generate a new private key
-		$cgiparams{'PRIVATE_KEY'} = &Wireguard::generate_private_key();
-
-		# Generate a new PSK
-		$cgiparams{"PSK"} = &Wireguard::generate_private_key();
-
-		goto EDITNET;
+		goto CREATENET;
 
 	} elsif ($cgiparams{"TYPE"} eq "host") {
-		goto EDITHOST;
+		goto CREATEHOST;
 
 	} elsif ($cgiparams{"TYPE"} eq "import") {
 		# Parse the configuration file
@@ -845,6 +950,108 @@ END
 
 	exit(0);
 
+CREATENET:
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Show any error messages
+	&Header::errorbox(@errormessages);
+
+	# Open a new box
+	&Header::openbox('100%', '', $Lang::tr{'wg create net-to-net peer'});
+
+	# Set defaults
+	&General::set_defaults(\%cgiparams, {
+		"LOCAL_SUBNETS" =>
+			$Network::ethernet{"GREEN_NETADDRESS"}
+				. "/" . $Network::ethernet{"GREEN_NETMASK"},
+	});
+
+	print <<END;
+		<form method="POST" ENCTYPE="multipart/form-data">
+			<input type="hidden" name="ACTION" value="CREATE-PEER-NET">
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'name'}
+					</td>
+
+					<td>
+						<input type="text" name="NAME"
+							value="$cgiparams{'NAME'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'remarks'}
+					</td>
+
+					<td>
+						<input type="text" name="REMARKS"
+							value="$cgiparams{'REMARKS'}" />
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'endpoint'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'endpoint address'}
+					</td>
+
+					<td>
+						<input type="text" name="ENDPOINT_ADDRESS"
+							value="$cgiparams{'ENDPOINT_ADDRESS'}" />
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'routing'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'local subnets'}
+					</td>
+
+					<td>
+						<input type="text" name="LOCAL_SUBNETS"
+							value="$cgiparams{'LOCAL_SUBNETS'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'remote subnets'}
+					</td>
+
+					<td>
+						<input type="text" name="REMOTE_SUBNETS"
+							value="$cgiparams{'REMOTE_SUBNETS'}" required />
+					</td>
+				</tr>
+
+				<tr class="action">
+					<td colspan="2">
+						<input type='submit' value='$Lang::tr{'create'}' />
+					</td>
+				</tr>
+			</table>
+	    </form>
+END
+
+	&Header::closebox();
+	&Header::closepage();
+
+	exit(0);
+
 EDITNET:
 	# Send HTTP Headers
 	&Header::showhttpheaders();
@@ -858,30 +1065,16 @@ EDITNET:
 	# Fetch the key
 	my $key = $cgiparams{'KEY'};
 
+	# Open a new box
+	&Header::openbox('100%', '', $Lang::tr{'wg edit net-to-net peer'});
+
 	# Derive our own public key
 	my $public_key = &Wireguard::derive_public_key($cgiparams{'PRIVATE_KEY'});
-
-	# Open a new box
-	&Header::openbox('100%', '',
-		(defined $key) ? $Lang::tr{'wg edit net-to-net peer'} : $Lang::tr{'wg create net-to-net peer'});
-
-	# Set defaults
-	unless (defined $key) {
-		&General::set_defaults(\%cgiparams, {
-			"ENDPOINT_PORT" => $Wireguard::DEFAULT_PORT,
-			"LOCAL_SUBNETS" =>
-				$Network::ethernet{"GREEN_NETADDRESS"}
-				. "/" . $Network::ethernet{"GREEN_NETMASK"},
-			"KEEPALIVE"     => $Wireguard::DEFAULT_KEEPALIVE,
-		});
-	}
 
 	print <<END;
 		<form method="POST" ENCTYPE="multipart/form-data">
 			<input type="hidden" name="ACTION" value="SAVE-PEER-NET">
 			<input type="hidden" name="KEY" value="$cgiparams{'KEY'}">
-
-			<input type="hidden" name="PRIVATE_KEY" value="$cgiparams{'PRIVATE_KEY'}">
 
 			<table class="form">
 				<tr>
@@ -1023,6 +1216,7 @@ END
 
 	exit(0);
 
+CREATEHOST:
 EDITHOST:
 	# Send HTTP Headers
 	&Header::showhttpheaders();
