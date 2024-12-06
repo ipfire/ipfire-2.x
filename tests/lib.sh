@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Get the path of this file.
 # This ist rather complex as we do not want the calling script file
