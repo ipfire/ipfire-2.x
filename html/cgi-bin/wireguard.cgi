@@ -288,7 +288,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
 
 	# Generate the client configuration
-	my $config = &Wireguard::generate_net_configuration($key, $remote_private_key);
+	my $config = &Wireguard::generate_peer_configuration($key, $remote_private_key);
 
 	# Encode the configuration as Base64
 	$config = &MIME::Base64::encode_base64($config);
@@ -626,7 +626,7 @@ END
 	my $filename = &Header::normalize($peer{'NAME'}) . ".conf";
 
 	# Generate the client configuration
-	my $config = &Wireguard::generate_host_configuration($key);
+	my $config = &Wireguard::generate_peer_configuration($key);
 
 	# Send the configuration
 	if (defined $config) {
@@ -1377,7 +1377,7 @@ sub show_peer_configuration($$) {
 	my %peer = &Wireguard::load_peer($key);
 
 	# Generate the client configuration
-	my $config = &Wireguard::generate_host_configuration($key, $private_key);
+	my $config = &Wireguard::generate_peer_configuration($key, $private_key);
 
 	# Create a QR code generator
 	my $qrgen = Imager::QRCode->new(

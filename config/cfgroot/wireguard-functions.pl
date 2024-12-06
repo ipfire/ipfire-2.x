@@ -350,9 +350,11 @@ sub free_pool_addresses($$) {
 	return @free_addresses;
 }
 
-sub generate_net_configuration($$) {
+sub generate_peer_configuration($$) {
 	my $key = shift;
 	my $private_key = shift;
+
+	my @conf = ();
 
 	# Load the peer
 	my %peer = &load_peer($key);
@@ -379,82 +381,53 @@ sub generate_net_configuration($$) {
 	# Fetch the endpoint
 	my $endpoint = &get_endpoint();
 
-	# Derive our own public key
-	my $public_key = &derive_public_key($peer{'PRIVATE_KEY'});
+	# Net-2-Net
+	if ($peer{'TYPE'} eq "net") {
+		# Derive our own public key
+		my $public_key = &derive_public_key($peer{'PRIVATE_KEY'});
 
-	my @conf = (
-		"[Interface]",
-		"PrivateKey = $private_key",
-		"Port = $peer{'ENDPOINT_PORT'}",
-		"",
-		"[Peer]",
-		"Endpoint = ${endpoint}:$peer{'PORT'}",
-		"PublicKey = $public_key",
-		"PresharedKey = $peer{'PSK'}",
-		"AllowedIPs = " . join(", ", @allowed_ips),
-		"PersistentKeepalive = $peer{'KEEPALIVE'}",
-	);
+		push(@conf,
+			"[Interface]",
+			"PrivateKey = $private_key",
+			"Port = $peer{'ENDPOINT_PORT'}",
+			"",
+			"[Peer]",
+			"Endpoint = ${endpoint}:$peer{'PORT'}",
+			"PublicKey = $public_key",
+			"PresharedKey = $peer{'PSK'}",
+			"AllowedIPs = " . join(", ", @allowed_ips),
+			"PersistentKeepalive = $peer{'KEEPALIVE'}",
+		);
 
-	return join("\n", @conf);
-}
+	# Host-2-Net
+	} elsif ($peer{'TYPE'} eq "host") {
+		# Fetch any DNS servers for hosts
+		my @dns = split(/\|/, $settings{'CLIENT_DNS'});
 
-sub generate_host_configuration($) {
-	my $key = shift;
-	my $private_key = shift;
+		push(@conf,
+			"[Interface]",
+			"PrivateKey = $private_key",
+			"Address = $peer{'CLIENT_ADDRESS'}",
+		);
 
-	# Load the peer
-	my %peer = &load_peer($key);
+		# Optionally add DNS servers
+		if (scalar @dns) {
+			push(@conf, "DNS = " . join(", ", @dns));
+		}
 
-	# Return if we could not find the peer
-	return undef unless (%peer);
+		# Finish the [Interface] section
+		push(@conf, "");
 
-	# Return if this is not a roadwarrior peer
-	return undef unless ($peer{'TYPE'} eq 'host');
-
-	my @allowed_ips = ();
-
-	# Convert all subnets into CIDR notation
-	foreach my $subnet ($peer{'LOCAL_SUBNETS'}) {
-		my $netaddress = &Network::get_netaddress($subnet);
-		my $prefix     = &Network::get_prefix($subnet);
-
-		# Skip invalid subnets
-		next if (!defined $netaddress || !defined $prefix);
-
-		push(@allowed_ips, "${netaddress}/${prefix}");
+		# Add peer configuration
+		push(@conf, (
+			"[Peer]",
+			"Endpoint = ${endpoint}:$settings{'PORT'}",
+			"PublicKey = $settings{'PUBLIC_KEY'}",
+			"PresharedKey = $peer{'PSK'}",
+			"AllowedIPs = " . join(", ", @allowed_ips),
+			"PersistentKeepalive = $DEFAULT_KEEPALIVE",
+		));
 	}
-
-	# Fetch the endpoint
-	my $endpoint = &get_endpoint();
-
-	my $port = $settings{'PORT'};
-
-	# Fetch any DNS servers for hosts
-	my @dns = split(/\|/, $settings{'CLIENT_DNS'});
-
-	my @conf = (
-		"[Interface]",
-		"PrivateKey = $private_key",
-		"Address = $peer{'CLIENT_ADDRESS'}",
-	);
-
-	# Optionally add DNS servers
-	if (scalar @dns) {
-		push(@conf, "DNS = " . join(", ", @dns));
-	}
-
-	# Finish the [Interface] section
-	push(@conf, "");
-
-	# Add peer configuration
-	push(@conf, (
-		"[Peer]",
-		"Endpoint = ${endpoint}:${port}",
-		"PublicKey = $settings{'PUBLIC_KEY'}",
-		"PresharedKey = $peer{'PSK'}",
-		"AllowedIPs = " . join(", ", @allowed_ips),
-		"PersistentKeepalive = $DEFAULT_KEEPALIVE",
-	));
 
 	return join("\n", @conf);
 }
