@@ -456,6 +456,7 @@ END
 	}
 
 } elsif ($cgiparams{"ACTION"} eq "SAVE-PEER-HOST") {
+	my $private_key;
 	my @free_addresses = ();
 	my @local_subnets = ();
 
@@ -508,10 +509,10 @@ END
 	# Generate things for a new peer
 	if ($is_new) {
 		# Generate a new private key
-		$cgiparams{"PRIVATE_KEY"} = &Wireguard::generate_private_key();
+		$private_key = &Wireguard::generate_private_key();
 
 		# Derive the public key
-		$cgiparams{"PUBLIC_KEY"} = &Wireguard::derive_public_key($cgiparams{"PRIVATE_KEY"});
+		$cgiparams{"PUBLIC_KEY"} = &Wireguard::derive_public_key($private_key);
 
 		# Generate a new PSK
 		$cgiparams{"PSK"} = &Wireguard::generate_private_key();
@@ -525,7 +526,6 @@ END
 	# Fetch some configuration parts
 	} else {
 		$cgiparams{"PUBLIC_KEY"}     = $Wireguard::peers{$key}[3];
-		$cgiparams{"PRIVATE_KEY"}    = $Wireguard::peers{$key}[4];
 		$cgiparams{'CLIENT_ADDRESS'} = $Wireguard::peers{$key}[8];
 		$cgiparams{"PSK"}            = $Wireguard::peers{$key}[11];
 	}
@@ -541,7 +541,7 @@ END
 		# 3 = Public Key
 		$cgiparams{"PUBLIC_KEY"},
 		# 4 = Private Key
-		$cgiparams{"PRIVATE_KEY"},
+		"",
 		# 5 = Port
 		"",
 		# 6 = Endpoint Address
@@ -569,7 +569,7 @@ END
 	}
 
 	# Show the client configuration when creating a new peer
-	&show_peer_configuration($key) if ($is_new);
+	&show_peer_configuration($key, $private_key) if ($is_new);
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
@@ -1356,8 +1356,9 @@ END
 
 	exit(0);
 
-sub show_peer_configuration($) {
+sub show_peer_configuration($$) {
 	my $key = shift;
+	my $private_key = shift;
 
 	# The generated QR code
 	my $qrcode;
@@ -1372,7 +1373,7 @@ sub show_peer_configuration($) {
 	my %peer = &Wireguard::load_peer($key);
 
 	# Generate the client configuration
-	my $config = &Wireguard::generate_host_configuration($key);
+	my $config = &Wireguard::generate_host_configuration($key, $private_key);
 
 	# Create a QR code generator
 	my $qrgen = Imager::QRCode->new(

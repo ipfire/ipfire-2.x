@@ -392,6 +392,7 @@ sub generate_net_configuration($$) {
 
 sub generate_host_configuration($) {
 	my $key = shift;
+	my $private_key = shift;
 
 	# Load the peer
 	my %peer = &load_peer($key);
@@ -429,7 +430,7 @@ sub generate_host_configuration($) {
 
 	my @conf = (
 		"[Interface]",
-		"PrivateKey = $peer{'PRIVATE_KEY'}",
+		"PrivateKey = $private_key",
 		"Address = $peer{'CLIENT_ADDRESS'}",
 	);
 
