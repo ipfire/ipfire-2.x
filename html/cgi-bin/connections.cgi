@@ -89,6 +89,9 @@ my @routes = &General::system_output("ip", "route", "show");
 
 # Find all routes
 foreach my $intf (keys %interfaces) {
+	# Skip empty interfaces
+	next if ($intf eq "");
+
 	foreach my $route (grep(/dev ${intf}/, @routes)) {
 		if ($route =~ m/^(\d+\.\d+\.\d+\.\d+\/\d+)/) {
 			$networks{$1} = $interfaces{$intf};
