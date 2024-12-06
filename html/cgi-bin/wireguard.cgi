@@ -573,7 +573,85 @@ END
 	}
 
 	# Show the client configuration when creating a new peer
-	&show_peer_configuration($key, $private_key) if ($is_new);
+	if ($is_new) {
+		# Send HTTP Headers
+		&Header::showhttpheaders();
+
+		# Open the page
+		&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+		# Load the peer
+		my %peer = &Wireguard::load_peer($key);
+
+		# Generate the client configuration
+		my $config = &Wireguard::generate_peer_configuration($key, $private_key);
+
+		# Create a QR code generator
+		my $qrgen = Imager::QRCode->new(
+			size          => 6,
+			margin        => 0,
+			version       => 0,
+			level         => 'M',
+			mode          => '8-bit',
+			casesensitive => 1,
+			lightcolor    => Imager::Color->new(255, 255, 255),
+			darkcolor     => Imager::Color->new(0, 0, 0),
+		);
+
+		# The generated QR code
+		my $qrcode;
+
+		# Encode the configuration
+		my $img = $qrgen->plot("$config");
+
+		# Encode the image as PNG
+		$img->write(data => \$qrcode, type => "png") or die $img->errstr;
+
+		# Encode the image as bas64
+		$qrcode = &MIME::Base64::encode_base64($qrcode);
+
+		# Encode the configuration as Base64
+		$config = &MIME::Base64::encode_base64($config);
+
+		# Open a new box
+		&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
+
+		# Make the filename for files
+		my $filename = &Header::normalize($peer{'NAME'}) . ".conf";
+
+		print <<END;
+			<div class="text-center">
+				<p>
+					<img src="data:image/png;base64,${qrcode}" alt="$Lang::tr{'qr code'}">
+				</p>
+
+				<p>
+					$Lang::tr{'wg scan the qr code'}
+				</p>
+
+				<p>
+					<a href="data:text/plain;base64,${config}" download="${filename}">
+						$Lang::tr{'wg download configuration file'}
+					</a>
+				</p>
+
+				<p class="text-error">
+					$Lang::tr{'wg warning configuration only shown once'}
+				</p>
+
+				<p>
+					<form method="GET" action="">
+						<button type="submit">$Lang::tr{'done'}</button>
+					</form>
+				</p>
+			</div>
+END
+
+		&Header::closebox();
+		&Header::closepage();
+
+		exit(0);
+	}
 
 } elsif ($cgiparams{"ACTION"} eq $Lang::tr{'add'}) {
 	if ($cgiparams{"TYPE"} eq "net") {
@@ -1289,86 +1367,3 @@ END
 	&Header::closepage();
 
 	exit(0);
-
-sub show_peer_configuration($$) {
-	my $key = shift;
-	my $private_key = shift;
-
-	# The generated QR code
-	my $qrcode;
-
-	# Send HTTP Headers
-	&Header::showhttpheaders();
-
-	# Open the page
-	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
-
-	# Load the peer
-	my %peer = &Wireguard::load_peer($key);
-
-	# Generate the client configuration
-	my $config = &Wireguard::generate_peer_configuration($key, $private_key);
-
-	# Create a QR code generator
-	my $qrgen = Imager::QRCode->new(
-		size          => 6,
-		margin        => 0,
-		version       => 0,
-		level         => 'M',
-		mode          => '8-bit',
-		casesensitive => 1,
-		lightcolor    => Imager::Color->new(255, 255, 255),
-		darkcolor     => Imager::Color->new(0, 0, 0),
-	);
-
-	# Encode the configuration
-	my $img = $qrgen->plot("$config");
-
-	# Encode the image as PNG
-	$img->write(data => \$qrcode, type => "png") or die $img->errstr;
-
-	# Encode the image as bas64
-	$qrcode = &MIME::Base64::encode_base64($qrcode);
-
-	# Encode the configuration as Base64
-	$config = &MIME::Base64::encode_base64($config);
-
-	# Open a new box
-	&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
-
-	# Make the filename for files
-	my $filename = &Header::normalize($peer{'NAME'}) . ".conf";
-
-	print <<END;
-		<div class="text-center">
-			<p>
-				<img src="data:image/png;base64,${qrcode}" alt="$Lang::tr{'qr code'}">
-			</p>
-
-			<p>
-				$Lang::tr{'wg scan the qr code'}
-			</p>
-
-			<p>
-				<a href="data:text/plain;base64,${config}" download="${filename}">
-					$Lang::tr{'wg download configuration file'}
-				</a>
-			</p>
-
-			<p class="text-error">
-				$Lang::tr{'wg warning configuration only shown once'}
-			</p>
-
-			<p>
-				<form method="GET" action="">
-					<button type="submit">$Lang::tr{'done'}</button>
-				</form>
-			</p>
-		</div>
-END
-
-	&Header::closebox();
-	&Header::closepage();
-
-	exit(0);
-}
