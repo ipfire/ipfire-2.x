@@ -338,7 +338,7 @@ sub free_pool_addresses($$) {
 	return @free_addresses;
 }
 
-sub generate_peer_configuration($) {
+sub generate_host_configuration($) {
 	my $key = shift;
 
 	# Load the peer
@@ -347,8 +347,10 @@ sub generate_peer_configuration($) {
 	# Return if we could not find the peer
 	return undef unless (%peer);
 
+	# Return if this is not a roadwarrior peer
+	return undef unless ($peer{'TYPE'} eq 'host');
+
 	my @allowed_ips = ();
-	my @dns = ();
 
 	# Convert all subnets into CIDR notation
 	foreach my $subnet ($peer{'LOCAL_SUBNETS'}) {
@@ -371,9 +373,7 @@ sub generate_peer_configuration($) {
 	my $port = $settings{'PORT'};
 
 	# Fetch any DNS servers for hosts
-	if ($peer{'TYPE'} eq 'host') {
-		@dns = split(/\|/, $settings{'CLIENT_DNS'});
-	}
+	my @dns = split(/\|/, $settings{'CLIENT_DNS'});
 
 	my @conf = (
 		"[Interface]",
