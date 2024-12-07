@@ -10,6 +10,7 @@ etc/logrotate.d
 etc/passwd
 etc/shadow
 etc/ssh/sshd_config
+etc/ssh/sshd_config.d
 etc/ssh/ssh_host*
 etc/squid/squid.conf.local
 etc/squid/squid.conf.pre.local
