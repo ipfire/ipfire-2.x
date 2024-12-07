@@ -57,4 +57,7 @@ TCPKeepAlive no
 # Add support for SFTP
 Subsystem	sftp	/usr/lib/openssh/sftp-server
 
+# Include additional sshd config files.
+Include /etc/ssh/sshd_config.d/*.conf
+
 # EOF

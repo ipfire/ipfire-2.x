@@ -91,5 +91,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/ssh/ssh_config \
 		/etc/ssh/ssh_config
 
+	# Create directory for additional config
+	# config files.
+	mkdir -pv /etc/ssh/sshd_config.d/
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
