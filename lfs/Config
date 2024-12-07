@@ -292,13 +292,13 @@ define POSTBUILD
 		fi; \
 		sed -e "s/BUILDTARGET/$(BUILDTARGET)/g" -e "s/KVER/$(KVER)/g" -e "s/xxxMACHINExxx/$(BUILD_ARCH)/g" $$ROOTFILE > $(TARGET)_rootfile; \
 		while read -r line; do \
-			if grep -qG "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
-			elif grep -qG "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
+			if grep -qFx "#$$line" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
+			elif grep -qFx "$$line" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
 			else echo "+$$line" >> $(TARGET); \
 			fi; \
 		done < $(TARGET)_diff; \
 		grep -v "^#" $(TARGET)_rootfile | while read -r line; do \
-			if ! grep -qG "^$$line$$" $(TARGET)_diff ; then echo "-$$line" >> $(TARGET); \
+			if ! grep -qFx "$$line" $(TARGET)_diff ; then echo "-$$line" >> $(TARGET); \
 			fi; \
 		done; \
 		rm -f $(TARGET)_rootfile; \
