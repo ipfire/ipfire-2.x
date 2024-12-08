@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.9
+VER        = 2.6.12
 
 THISAPP    = openvpn-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 22289b32f2b9afc2aed59f6fc66dc25b3043b8c82858b7857e4f904a25c6cf0f21a41551ed4f8d8869c0e7248e4e060779f760dd606e99cdc02203fbff886536
+$(DL_FILE)_BLAKE2 = 5e40c61cb4aea3db27eff8ae7f49dafaa6e47c8a19fee5fa8802956fc976be490e9b558397741bc2e4447129f174176f9fbbfce16478d96b27a39ecb08a9da86
 
 install : $(TARGET)
 
