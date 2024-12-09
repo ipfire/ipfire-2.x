@@ -27,7 +27,6 @@ MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@op
 # Only allow cryptographically safe SSH host keys (adjust paths if needed)
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKey /etc/ssh/ssh_host_ecdsa_key
-HostKey /etc/ssh/ssh_host_rsa_key
 
 # Only allow login via public key by default
 PubkeyAuthentication yes
