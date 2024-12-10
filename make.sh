@@ -1806,6 +1806,7 @@ build_system() {
 	lfsmake2 cifs-utils
 	lfsmake2 krb5
 	lfsmake2 rpcsvc-proto
+	lfsmake2 lmdb
 	lfsmake2 samba
 	lfsmake2 netatalk
 	lfsmake2 sudo
@@ -2050,7 +2051,6 @@ build_system() {
 	lfsmake2 shairport-sync
 	lfsmake2 libxxhash
 	lfsmake2 borgbackup
-	lfsmake2 lmdb
 	lfsmake2 knot
 	lfsmake2 spectre-meltdown-checker
 	lfsmake2 zabbix_agentd

@@ -229,6 +229,7 @@ usr/lib/python3.10/site-packages/samba/dcerpc/netlogon.cpython-310-x86_64-linux-
 usr/lib/python3.10/site-packages/samba/dcerpc/ntlmssp.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/preg.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/samr.cpython-310-x86_64-linux-gnu.so
+usr/lib/python3.10/site-packages/samba/dcerpc/schannel.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/security.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/server_id.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/smb3posix.cpython-310-x86_64-linux-gnu.so
@@ -808,6 +809,7 @@ usr/lib/samba/ldb/ildap.so
 usr/lib/samba/ldb/ldap.so
 usr/lib/samba/ldb/ldb.so
 usr/lib/samba/ldb/ldbsamba_extensions.so
+usr/lib/samba/ldb/mdb.so
 usr/lib/samba/ldb/paged_searches.so
 usr/lib/samba/ldb/rdn_name.so
 usr/lib/samba/ldb/sample.so
@@ -874,6 +876,7 @@ usr/lib/samba/libkrb5-private-samba.so
 usr/lib/samba/libkrb5samba-private-samba.so
 usr/lib/samba/libldb-cmdline-private-samba.so
 usr/lib/samba/libldb-key-value-private-samba.so
+usr/lib/samba/libldb-mdb-int-private-samba.so
 usr/lib/samba/libldb-private-samba.so
 usr/lib/samba/libldb-tdb-err-map-private-samba.so
 usr/lib/samba/libldb-tdb-int-private-samba.so
