@@ -8,11 +8,11 @@
 
 vars:
   address-groups:
-    # Include HOME_NET declaration from external file.
-    include: /var/ipfire/suricata/suricata-homenet.yaml
-
-    # Include DNS_SERVERS declaration from external file.
-    include: /var/ipfire/suricata/suricata-dns-servers.yaml
+    include:
+            # Include HOME_NET declaration from external file.
+            - /var/ipfire/suricata/suricata-homenet.yaml
+            # Include DNS_SERVERS declaration from external file.
+            - /var/ipfire/suricata/suricata-dns-servers.yaml
 
     EXTERNAL_NET: "any"
 
