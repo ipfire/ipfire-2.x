@@ -39,6 +39,7 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< ca name must only contain characters or spaces
 < Captive heading terms
 < Captive heading voucher
 < Captive invalid coupon
@@ -122,6 +123,7 @@
 < access point name is required
 < addon
 < bypassed
+< ca name must only contain characters or spaces
 < cpu frequency
 < data transfer
 < dhcp fixed ip address in dynamic range
@@ -179,6 +181,7 @@
 < bewan adsl pci st
 < bewan adsl usb
 < bypassed
+< ca name must only contain characters or spaces
 < data transfer
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
@@ -261,6 +264,7 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< ca name must only contain characters or spaces
 < Captive
 < Captive 1day
 < Captive 1month
@@ -804,6 +808,7 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< ca name must only contain characters or spaces
 < capabilities
 < Captive
 < Captive 1day
@@ -1387,6 +1392,7 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< ca name must only contain characters or spaces
 < capabilities
 < Captive
 < Captive 1day
@@ -2403,6 +2409,7 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< ca name must only contain characters or spaces
 < capabilities
 < Captive
 < Captive 1day
@@ -3400,6 +3407,7 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< ca name must only contain characters or spaces
 < Captive delete logo
 < core update
 < cpu frequency

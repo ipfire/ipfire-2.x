@@ -930,6 +930,7 @@ WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
 WARNING: untranslated string: aliases default interface = - Default Interface -
+WARNING: untranslated string: ca name must only contain characters or spaces = CA Name must only contain characters or spaces.
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
 WARNING: untranslated string: cake profile bridged-vcmux 24 = Bridged VC-MUX (24 bytes)

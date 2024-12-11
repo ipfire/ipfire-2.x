@@ -530,6 +530,7 @@
 'bytes sent' => 'Bytes Sent',
 'ca certificate' => 'CA Certificate',
 'ca name' => 'CA name',
+'ca name must only contain characters or spaces' => 'CA Name must only contain characters or spaces.',
 'cache management' => 'Cache management',
 'cache size' => 'Cache size (MB):',
 'cached' => 'cached',
