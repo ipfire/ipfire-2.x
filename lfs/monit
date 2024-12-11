@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.34.2
+VER        = 5.34.3
 SUMMARY    = Utility for monitoring services on a Unix system
 
 THISAPP    = monit-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = monit
-PAK_VER    = 25
+PAK_VER    = 26
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d4e5587299a44697d0c7d26b0fcc1a7fe4330693de188cf82301e4ab8fa8b2aea141f3aaa99bd1c598655ba993c616faf0a559dbb9c538d2d9421c6791f36880
+$(DL_FILE)_BLAKE2 = 444bc0918fefc59214f9513fa134d4abea9cb0bbfc3e71fa4c3d76d9134821a54e1949bf89a4dc483593862a629a03ac347df9c12f07476c1fcbf2c2e2d4d507
 
 install : $(TARGET)
 
