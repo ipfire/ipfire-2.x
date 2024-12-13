@@ -8,6 +8,7 @@ etc/ssh/ssh_config
 #etc/ssh/ssh_host_rsa_key
 #etc/ssh/ssh_host_rsa_key.pub
 etc/ssh/sshd_config
+etc/ssh/sshd_config.d
 usr/bin/scp
 usr/bin/sftp
 usr/bin/ssh
