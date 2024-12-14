@@ -923,10 +923,6 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	} else if (fs == HW_FS_EXT4) {
 		snprintf(cmd, sizeof(cmd), "/sbin/mke2fs -FF -T ext4 %s", path);
 
-	// EXT4 w/o journal
-	} else if (fs == HW_FS_EXT4_WO_JOURNAL) {
-		snprintf(cmd, sizeof(cmd), "/sbin/mke2fs -FF -T ext4 -O ^has_journal %s", path);
-
 	// XFS
 	} else if (fs == HW_FS_XFS) {
 		snprintf(cmd, sizeof(cmd), "/sbin/mkfs.xfs -f %s", path);
@@ -1027,7 +1023,6 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	const char* filesystem;
 	switch (dest->filesystem) {
 		case HW_FS_EXT4:
-		case HW_FS_EXT4_WO_JOURNAL:
 			filesystem = "ext4";
 			break;
 
