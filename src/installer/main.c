@@ -644,7 +644,6 @@ int main(int argc, char *argv[]) {
 			char* description;
 		} filesystems[] = {
 			{ HW_FS_EXT4,            _("ext4 Filesystem") },
-			{ HW_FS_EXT4_WO_JOURNAL, _("ext4 Filesystem without journal") },
 			{ HW_FS_XFS,             _("XFS Filesystem") },
 			{ HW_FS_BTRFS,           _("BTRFS Filesystem (EXPERIMENTAL)") },
 			{ 0, NULL },

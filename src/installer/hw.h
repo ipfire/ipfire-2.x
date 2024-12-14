@@ -43,10 +43,9 @@
 
 #define HW_FS_SWAP                    0
 #define HW_FS_EXT4                    1
-#define HW_FS_EXT4_WO_JOURNAL         2
-#define HW_FS_XFS                     3
-#define HW_FS_FAT32                   4
-#define HW_FS_BTRFS                   5
+#define HW_FS_XFS                     2
+#define HW_FS_FAT32                   3
+#define HW_FS_BTRFS                   4
 
 #define HW_FS_DEFAULT                 HW_FS_EXT4
 

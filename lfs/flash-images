@@ -126,7 +126,7 @@ endif
 ifeq "$(EFI)" "1"
 	mkfs.vfat $(PART_EFI)
 endif
-	mkfs.ext4 -O ^has_journal,extent -F $(PART_ROOT)
+	mkfs.ext4 -F $(PART_ROOT)
 
 	# Most systems that use Flashimages has no RTC at boot
 	# so the interval check should disables
