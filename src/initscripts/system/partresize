@@ -48,7 +48,6 @@ case "${1}" in
 			# Azure and Google Compute Platform
 			if running_on_ec2 || running_on_oci || running_on_azure || running_on_gcp; then
 				scon="on"
-				journal="on"
 			fi
 
 			mount /boot > /dev/null
@@ -108,18 +107,6 @@ case "${1}" in
 					root_dev="${dev::-1}"
 					if [ ! -b "${dev::-1}" -a "${root_dev: -1}" = "p" ]; then
 						root_dev="${dev::-2}"
-					fi
-
-					# Check if the device support smart
-					smartctl --smart=on "${root_dev}" > /dev/null
-					if [ ${?} = 0 ]; then
-						journal="on"
-					fi
-
-					# Enable journal
-					if [ "${journal}" = "on" ]; then
-						boot_mesg "Create journal on "${dev}" ..."
-						tune2fs -O has_journal "${dev}"
 					fi
 
 					boot_mesg "Growing root partition to maximum size..."
