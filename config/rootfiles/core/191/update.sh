@@ -67,6 +67,7 @@ ldconfig
 
 # Start services
 /etc/init.d/sshd restart
+/etc/init.d/unbound restart
 /etc/init.d/suricata restart
 
 # This update needs a reboot...
