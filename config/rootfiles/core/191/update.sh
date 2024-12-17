@@ -59,6 +59,9 @@ ldconfig
 # run depmod with new kmod version
 depmod -a 6.6.63-ipfire
 
+# restart init
+telinit u
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
