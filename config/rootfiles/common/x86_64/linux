@@ -23720,6 +23720,7 @@ lib/modules/KVER/modules.order
 lib/modules/KVER/modules.softdep
 lib/modules/KVER/modules.symbols
 lib/modules/KVER/modules.symbols.bin
+lib/modules/KVER/modules.weakdep
 #lib/modules/KVER/source
 sbin/gen_init_cpio
 #usr/bin/cpufreq-bench_plot.sh

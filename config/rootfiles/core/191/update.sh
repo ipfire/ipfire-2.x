@@ -56,6 +56,9 @@ fi
 # update linker config
 ldconfig
 
+# run depmod with new kmod version
+depmod -a 6.6.63-ipfire
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
@@ -71,7 +74,7 @@ ldconfig
 /etc/init.d/suricata restart
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
