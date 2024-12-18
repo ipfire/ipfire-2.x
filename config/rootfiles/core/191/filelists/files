@@ -1,3 +1,4 @@
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/dnsforward.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
