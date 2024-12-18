@@ -105,7 +105,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Load the RSA key on systems that still have one
-if [ -e "/etc/ssh/ssh_host_rsa_key" ]; then
+if [ -e "/etc/ssh/ssh_host_rsa_key" ]; then
 	(
 		echo "# Load the legacy RSA key - Deprecated in Core Update 190"
 		echo "HostKey /etc/ssh/ssh_host_rsa_key"
