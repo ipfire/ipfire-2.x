@@ -939,7 +939,7 @@ lfsmake1() {
 		exiterror "Downloading ${pkg}"
 	fi
 
-	if ! make_pkg --timer="update_runtime" "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}" "$@"; then
+	if ! make_pkg --timer="update_runtime" "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}" b2 "$@"; then
 		print_status FAIL
 
 		exiterror "Building ${pkg}"
@@ -962,7 +962,7 @@ lfsmake2() {
 	fi
 
 	# Run install on the package
-	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" install "$@"; then
+	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" b2 install "$@"; then
 		print_status FAIL
 
 		exiterror "Building ${pkg}"
