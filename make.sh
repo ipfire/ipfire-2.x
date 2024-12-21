@@ -1556,8 +1556,10 @@ build_system() {
 	lfsmake2 rust-cipher
 	lfsmake2 rust-hex
 	lfsmake2 rust-unicode-xid
+	lfsmake2 rust-unicode-ident
 	lfsmake2 rust-proc-macro2
 	lfsmake2 rust-quote
+	lfsmake2 rust-syn-1.0.109
 	lfsmake2 rust-syn
 	lfsmake2 rust-home
 	lfsmake2 rust-lazy-static
@@ -1573,6 +1575,7 @@ build_system() {
 	lfsmake2 rust-walkdir
 	lfsmake2 rust-dirs
 	lfsmake2 rust-toolchain_find
+	lfsmake2 rust-serde_derive
 	lfsmake2 rust-serde
 	lfsmake2 rust-itoa
 	lfsmake2 rust-ryu
@@ -1606,12 +1609,22 @@ build_system() {
 	lfsmake2 rust-glob
 	lfsmake2 rust-once_cell
 	lfsmake2 rust-termcolor
+	lfsmake2 rust-serde_spanned
+	lfsmake2 rust-toml_datetime
+	lfsmake2 rust-equivalent
+	lfsmake2 rust-allocator-api2
+	lfsmake2 rust-foldhash
+	lfsmake2 rust-hashbrown
+	lfsmake2 rust-indexmap
+	lfsmake2 rust-winnow
+	lfsmake2 rust-toml_edit
 	lfsmake2 rust-toml
-	lfsmake2 rust-serde_derive
+	lfsmake2 rust-target-triple
 	lfsmake2 rust-trybuild
 	lfsmake2 rust-unindent
 	lfsmake2 rust-proc-macro-hack
 	lfsmake2 rust-indoc-impl
+	lfsmake2 rust-indoc-impl-0.3.6
 	lfsmake2 rust-indoc
 	lfsmake2 rust-indoc-0.3.6
 	lfsmake2 rust-instant
