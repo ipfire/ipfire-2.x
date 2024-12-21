@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.136
+VER        = 1.0.216
 
 THISAPP    = serde_derive-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 687524001bf61c42266d91a7263661ab80aa9556e570975a39bdf56a5cb1a2ec3ad1baf22dff586c7ad4ff66d035555d0a9d4a431c49402dcad6d79d0ef40cee
+$(DL_FILE)_BLAKE2 = 12a9228679c16288c08c8b256707e276aec79f84ac7af0c4cfd1f109500dfea80438df17d798acdd30a9743c753e70093b22bd324217529bac483f257682a3e2
 
 install : $(TARGET)
 
@@ -73,6 +73,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && rm Cargo.toml.orig
 	cd $(DIR_APP) && $(CARGO_PREPARE)
 	cd $(DIR_APP) && $(CARGO_BUILD)
 	cd $(DIR_APP) && $(CARGO_INSTALL)
