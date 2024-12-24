@@ -1,0 +1,175 @@
+Submitted by:            Xi Ruoyao <xry111 at xry111 dot site>
+Date:                    2024-01-30
+Initial Package Version: 2.6.7
+Upstream Status:         BLFS Specific
+Origin:                  Armin K. <krejzi at email dot com> and Debian.
+                         Rediffed multiple times by various editors.
+                         For 2.6.7, manually edited to remove the bogus
+                         ".orig" file creation, and change
+                         %LOCALSTATEDIR%/run to /run because /var/run has
+                         been deprecated.
+
+diff -Naurp openldap-2.6.2.orig/doc/man/man5/slapd.conf.5 openldap-2.6.2/doc/man/man5/slapd.conf.5
+--- openldap-2.6.2.orig/doc/man/man5/slapd.conf.5	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/doc/man/man5/slapd.conf.5	2022-05-05 12:05:53.309727745 +0200
+@@ -2122,7 +2122,7 @@ suffix    "dc=our\-domain,dc=com"
+ # The database directory MUST exist prior to
+ # running slapd AND should only be accessible
+ # by the slapd/tools. Mode 0700 recommended.
+-directory LOCALSTATEDIR/openldap\-data
++directory LOCALSTATEDIR/lib/openldap
+ # Indices to maintain
+ index     objectClass  eq
+ index     cn,sn,mail   pres,eq,approx,sub
+diff -Naurp openldap-2.6.2.orig/doc/man/man5/slapd-config.5 openldap-2.6.2/doc/man/man5/slapd-config.5
+--- openldap-2.6.2.orig/doc/man/man5/slapd-config.5	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/doc/man/man5/slapd-config.5	2022-05-05 12:05:53.312727754 +0200
+@@ -2233,7 +2233,7 @@ olcSuffix: "dc=our\-domain,dc=com"
+ # The database directory MUST exist prior to
+ # running slapd AND should only be accessible
+ # by the slapd/tools. Mode 0700 recommended.
+-olcDbDirectory: LOCALSTATEDIR/openldap\-data
++olcDbDirectory: LOCALSTATEDIR/lib/openldap
+ # Indices to maintain
+ olcDbIndex:     objectClass  eq
+ olcDbIndex:     cn,sn,mail   pres,eq,approx,sub
+
+diff -Naurp openldap-2.6.2.orig/include/ldap_defaults.h openldap-2.6.2/include/ldap_defaults.h
+--- openldap-2.6.2.orig/include/ldap_defaults.h	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/include/ldap_defaults.h	2022-05-05 12:07:08.783961875 +0200
+@@ -40,7 +40,8 @@
+ 
+ /* default ldapi:// socket */
+ #ifndef LDAPI_SOCK
+-#define LDAPI_SOCK LDAP_RUNDIR LDAP_DIRSEP "run" LDAP_DIRSEP "ldapi"
++#define LDAPI_SOCK "/run" LDAP_DIRSEP "openldap" LDAP_DIRSEP "ldapi"
++
+ #endif
+ 
+ /*
+@@ -54,7 +55,8 @@
+ #define SLAPD_DEFAULT_CONFIGDIR		LDAP_SYSCONFDIR LDAP_DIRSEP "slapd.d"
+ #endif
+ #ifndef SLAPD_DEFAULT_DB_DIR
+-#define SLAPD_DEFAULT_DB_DIR		LDAP_RUNDIR LDAP_DIRSEP "openldap-data"
++#define SLAPD_DEFAULT_DB_DIR        LDAP_RUNDIR LDAP_DIRSEP "lib" LDAP_DIRSEP "openldap"
++
+ #endif
+ #define SLAPD_DEFAULT_DB_MODE		0600
+ 	/* default max deref depth for aliases */
+diff -Naurp openldap-2.6.2.orig/libraries/liblber/Makefile.in openldap-2.6.2/libraries/liblber/Makefile.in
+--- openldap-2.6.2.orig/libraries/liblber/Makefile.in	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/libraries/liblber/Makefile.in	2022-05-05 12:05:53.313727757 +0200
+@@ -51,6 +51,6 @@ idtest:  $(XLIBS) idtest.o
+ 
+ install-local: FORCE
+ 	-$(MKDIR) $(DESTDIR)$(libdir)
+-	$(LTINSTALL) $(INSTALLFLAGS) -m 644 $(LIBRARY) $(DESTDIR)$(libdir)
++	$(LTINSTALL) $(INSTALLFLAGS) -m 755 $(LIBRARY) $(DESTDIR)$(libdir)
+ 	$(LTFINISH) $(DESTDIR)$(libdir)
+ 
+diff -Naurp openldap-2.6.2.orig/libraries/libldap/Makefile.in openldap-2.6.2/libraries/libldap/Makefile.in
+--- openldap-2.6.2.orig/libraries/libldap/Makefile.in	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/libraries/libldap/Makefile.in	2022-05-05 12:05:53.327727801 +0200
+@@ -82,7 +82,7 @@ CFFILES=ldap.conf
+ 
+ install-local: $(CFFILES) FORCE
+ 	-$(MKDIR) $(DESTDIR)$(libdir)
+-	$(LTINSTALL) $(INSTALLFLAGS) -m 644 $(LIBRARY) $(DESTDIR)$(libdir)
++	$(LTINSTALL) $(INSTALLFLAGS) -m 755 $(LIBRARY) $(DESTDIR)$(libdir)
+ 	$(LTFINISH) $(DESTDIR)$(libdir)
+ 	-$(MKDIR) $(DESTDIR)$(sysconfdir)
+ 	@for i in $(CFFILES); do \
+diff -Naurp openldap-2.6.2.orig/servers/slapd/Makefile.in openldap-2.6.2/servers/slapd/Makefile.in
+--- openldap-2.6.2.orig/servers/slapd/Makefile.in	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/servers/slapd/Makefile.in	2022-05-05 12:05:53.329727807 +0200
+@@ -374,9 +374,10 @@ install-local-srv: install-slapd install
+ 
+ install-slapd: FORCE
+ 	-$(MKDIR) $(DESTDIR)$(libexecdir)
++	-$(MKDIR) $(DESTDIR)$(sbindir)
+ 	-$(MKDIR) $(DESTDIR)$(localstatedir)/run
+ 	$(LTINSTALL) $(INSTALLFLAGS) $(STRIP_OPTS) -m 755 \
+-		slapd$(EXEEXT) $(DESTDIR)$(libexecdir)
++		slapd$(EXEEXT) $(DESTDIR)$(sbindir)
+ 	@for i in $(SUBDIRS); do \
+ 	    if test -d $$i && test -f $$i/Makefile ; then \
+ 		echo; echo "  cd $$i && $(MAKE) $(MFLAGS) install"; \
+@@ -452,9 +453,9 @@ install-conf: FORCE
+ 
+ install-db-config: FORCE
+ 	@-$(MKDIR) $(DESTDIR)$(localstatedir) $(DESTDIR)$(sysconfdir)
+-	@-$(INSTALL) -m 700 -d $(DESTDIR)$(localstatedir)/openldap-data
++	@-$(INSTALL) -m 700 -d $(DESTDIR)$(localstatedir)/lib/openldap
+ 	$(INSTALL) $(INSTALLFLAGS) -m 600 $(srcdir)/DB_CONFIG \
+-		$(DESTDIR)$(localstatedir)/openldap-data/DB_CONFIG.example
++		$(DESTDIR)$(localstatedir)/lib/openldap/DB_CONFIG.example
+ 	$(INSTALL) $(INSTALLFLAGS) -m 600 $(srcdir)/DB_CONFIG \
+ 		$(DESTDIR)$(sysconfdir)/DB_CONFIG.example
+ 
+@@ -462,6 +463,6 @@ install-tools: FORCE
+ 	-$(MKDIR) $(DESTDIR)$(sbindir)
+ 	for i in $(SLAPTOOLS); do \
+ 		$(RM) $(DESTDIR)$(sbindir)/$$i$(EXEEXT); \
+-		$(LN_S) -f $(DESTDIR)$(libexecdir)/slapd$(EXEEXT) $(DESTDIR)$(sbindir)/$$i$(EXEEXT); \
++		$(LN_S) -f $(DESTDIR)$(sbindir)/slapd$(EXEEXT) $(DESTDIR)$(sbindir)/$$i$(EXEEXT); \
+ 	done
+ 
+diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.conf openldap-2.6.2/servers/slapd/slapd.conf
+--- openldap-2.6.2.orig/servers/slapd/slapd.conf	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/servers/slapd/slapd.conf	2022-05-05 12:05:53.331727813 +0200
+@@ -10,8 +10,9 @@ include		%SYSCONFDIR%/schema/core.schema
+ # service AND an understanding of referrals.
+ #referral	ldap://root.openldap.org
+ 
+-pidfile		%LOCALSTATEDIR%/run/slapd.pid
+-argsfile	%LOCALSTATEDIR%/run/slapd.args
++pidfile		/run/openldap/slapd.pid
++argsfile	/run/openldap/slapd.args
++
+ 
+ # Load dynamic backend modules:
+ modulepath	%MODULEDIR%
+@@ -69,7 +70,7 @@ rootpw		secret
+ # The database directory MUST exist prior to running slapd AND 
+ # should only be accessible by the slapd and slap tools.
+ # Mode 700 recommended.
+-directory	%LOCALSTATEDIR%/openldap-data
++directory	%LOCALSTATEDIR%/lib/openldap
+ # Indices to maintain
+ index	objectClass	eq
+ 
+diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.ldif openldap-2.6.2/servers/slapd/slapd.ldif
+--- openldap-2.6.2.orig/servers/slapd/slapd.ldif	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/servers/slapd/slapd.ldif	2022-05-05 12:05:53.332727816 +0200
+@@ -9,8 +9,8 @@ cn: config
+ #
+ # Define global ACLs to disable default read access.
+ #
+-olcArgsFile: %LOCALSTATEDIR%/run/slapd.args
+-olcPidFile: %LOCALSTATEDIR%/run/slapd.pid
++olcArgsFile: /run/openldap/slapd.args
++olcPidFile: /run/openldap/slapd.pid
+ #
+ # Do not enable referrals until AFTER you have a working directory
+ # service AND an understanding of referrals.
+@@ -88,7 +88,7 @@ olcRootPW: secret
+ # The database directory MUST exist prior to running slapd AND 
+ # should only be accessible by the slapd and slap tools.
+ # Mode 700 recommended.
+-olcDbDirectory:	%LOCALSTATEDIR%/openldap-data
++olcDbDirectory:	%LOCALSTATEDIR%/lib/openldap
+ # Indices to maintain
+ olcDbIndex: objectClass eq
+ 
+diff -Naurp openldap-2.6.2.orig/servers/slapd/slapi/Makefile.in openldap-2.6.2/servers/slapd/slapi/Makefile.in
+--- openldap-2.6.2.orig/servers/slapd/slapi/Makefile.in	2022-05-04 16:55:23.000000000 +0200
++++ openldap-2.6.2/servers/slapd/slapi/Makefile.in	2022-05-05 12:05:53.333727819 +0200
+@@ -46,6 +46,6 @@ BUILD_MOD = @BUILD_SLAPI@
+ install-local: FORCE
+ 	if test "$(BUILD_MOD)" = "yes"; then \
+ 		$(MKDIR) $(DESTDIR)$(libdir); \
+-		$(LTINSTALL) $(INSTALLFLAGS) -m 644 $(LIBRARY) $(DESTDIR)$(libdir); \
++		$(LTINSTALL) $(INSTALLFLAGS) -m 755 $(LIBRARY) $(DESTDIR)$(libdir); \
+ 	fi
+ 

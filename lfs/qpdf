@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 11.9.0
+VER        = 11.9.1
 
 THISAPP    = qpdf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3f79bef4b8d276cb73db1a08eb72cc67dec803c942c5e6f5322ecfc2fb017c7169aebb6b0790f1789970c86f4c8790465d0315ff8b355dd7e395a02192a605cb
+$(DL_FILE)_BLAKE2 = fa845e04d6044c70e1864a8eee9831774218a2fa6de74fed1efc22f0cc4982b7e41b2a7d6f0c794941eac08ba65d2196d72399514c376e2774c754f074560c43
 
 install : $(TARGET)
 

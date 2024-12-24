@@ -7,7 +7,7 @@
 #usr/lib/libcares.la
 #usr/lib/libcares.so
 usr/lib/libcares.so.2
-usr/lib/libcares.so.2.17.1
+usr/lib/libcares.so.2.19.2
 #usr/lib/pkgconfig/libcares.pc
 #usr/share/man/man3/ares_cancel.3
 #usr/share/man/man3/ares_create_query.3
@@ -48,9 +48,11 @@ usr/lib/libcares.so.2.17.1
 #usr/share/man/man3/ares_dns_record_rr_del.3
 #usr/share/man/man3/ares_dns_record_rr_get.3
 #usr/share/man/man3/ares_dns_record_rr_get_const.3
+#usr/share/man/man3/ares_dns_record_set_id.3
 #usr/share/man/man3/ares_dns_rr.3
 #usr/share/man/man3/ares_dns_rr_add_abin.3
 #usr/share/man/man3/ares_dns_rr_del_abin.3
+#usr/share/man/man3/ares_dns_rr_del_opt_byid.3
 #usr/share/man/man3/ares_dns_rr_get_abin.3
 #usr/share/man/man3/ares_dns_rr_get_abin_cnt.3
 #usr/share/man/man3/ares_dns_rr_get_addr.3
@@ -122,6 +124,9 @@ usr/lib/libcares.so.2.17.1
 #usr/share/man/man3/ares_parse_txt_reply.3
 #usr/share/man/man3/ares_parse_uri_reply.3
 #usr/share/man/man3/ares_process.3
+#usr/share/man/man3/ares_process_fd.3
+#usr/share/man/man3/ares_process_fds.3
+#usr/share/man/man3/ares_process_pending_write.3
 #usr/share/man/man3/ares_query.3
 #usr/share/man/man3/ares_query_dnsrec.3
 #usr/share/man/man3/ares_queue.3
@@ -136,6 +141,7 @@ usr/lib/libcares.so.2.17.1
 #usr/share/man/man3/ares_set_local_dev.3
 #usr/share/man/man3/ares_set_local_ip4.3
 #usr/share/man/man3/ares_set_local_ip6.3
+#usr/share/man/man3/ares_set_pending_write_cb.3
 #usr/share/man/man3/ares_set_server_state_callback.3
 #usr/share/man/man3/ares_set_servers.3
 #usr/share/man/man3/ares_set_servers_csv.3
@@ -144,6 +150,7 @@ usr/lib/libcares.so.2.17.1
 #usr/share/man/man3/ares_set_socket_callback.3
 #usr/share/man/man3/ares_set_socket_configure_callback.3
 #usr/share/man/man3/ares_set_socket_functions.3
+#usr/share/man/man3/ares_set_socket_functions_ex.3
 #usr/share/man/man3/ares_set_sortlist.3
 #usr/share/man/man3/ares_strerror.3
 #usr/share/man/man3/ares_svcb_param_t.3

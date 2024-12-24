@@ -54,6 +54,7 @@ usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Test.pm
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Threads.pod
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Transform.pm
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Transformations.pod
+usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/TrimColorList.pm
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/Tutorial.pod
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/include
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Imager/include/draw.h
@@ -160,6 +161,7 @@ usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Imager/Imag
 #usr/share/man/man3/Imager::Threads.3
 #usr/share/man/man3/Imager::Transform.3
 #usr/share/man/man3/Imager::Transformations.3
+#usr/share/man/man3/Imager::TrimColorList.3
 #usr/share/man/man3/Imager::Tutorial.3
 #usr/share/man/man3/Imager::interface.3
 #usr/share/man/man3/Imager::regmach.3

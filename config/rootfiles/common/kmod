@@ -15,7 +15,8 @@ sbin/rmmod
 #usr/lib/libkmod.la
 #usr/lib/libkmod.so
 usr/lib/libkmod.so.2
-usr/lib/libkmod.so.2.4.2
-#usr/lib/pkgconfig/kmod.pc
+usr/lib/libkmod.so.2.5.0
 #usr/lib/pkgconfig/libkmod.pc
 #usr/share/bash-completion/completions/kmod
+#usr/share/pkgconfig
+#usr/share/pkgconfig/kmod.pc

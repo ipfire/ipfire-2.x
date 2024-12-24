@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 14.2
+VER        = 15.2
 
 THISAPP    = gdb-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 65765dfd1ed08e19bb881fc7ae98d6ee4914f38a9a2bb0d0ca73bef472669664f807fe9c04e8dffd7025be98e736ac52f88ff5851ceddbb01a361885b18befc8
+$(DL_FILE)_BLAKE2 = 073668c21b41f12bf40160c6d3df808056453cc9df3b5b86374abe38e955d208f86467458b7e64b3c3e93d70b7f87425619778173fdb375256cd85be15419f14
 
 install : $(TARGET)
 

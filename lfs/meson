@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5.1
+VER        = 1.6.0
 
 THISAPP    = meson-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3368b209444d0873217bafee2339b395dca9fa43df68adce19029a41ad5c0eca59426ef681d174ef8b6b89d4a6c5b4f189c1ae219deed78334028d44bdb23a95
+$(DL_FILE)_BLAKE2 = c1d8f143b17fab90c6128a721ac45b9ed6b85d67272149058e74ab827822b6f2c84ebdc261290585e6af38ab5dca52ca013de9b7be70922c96260fc5ee708893
 
 install : $(TARGET)
 
@@ -70,11 +70,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
 	cd $(DIR_APP) && python3 setup.py build
-
 	cd $(DIR_APP) && python3 setup.py install --root=dest
 	cd $(DIR_APP) && cp -rv dest/* /
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

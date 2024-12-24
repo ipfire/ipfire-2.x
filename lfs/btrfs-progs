@@ -24,13 +24,15 @@
 
 include Config
 
-VER        = 6.9.2
+VER        = 6.11
 
 THISAPP    = btrfs-progs-v$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+# https://mirrors.edge.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 38ab189ac8271ba8d68b74e82569159c671cca1cb946f56ccab28b6b206cb6ee5b330d83afc3536b7e0d7399da3fb01e368809c1ef4a64b843ea88796ebd28bd
+$(DL_FILE)_BLAKE2 = 6dec219394e39a821f29858eddf1d501537d3cebad2dc83f0cea6d88d0b0e94c4fe2e660a48a27942ccfb6f3ac0630d5930f44e083168de65b60af36e895b2af
 
 install : $(TARGET)
 
@@ -74,11 +76,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--disable-documentation \
-		--disable-python
+				--prefix=/usr \
+				--disable-documentation \
+				--disable-python
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

@@ -2,14 +2,10 @@
 #usr/bin/gdb
 #usr/bin/gdb-add-index
 #usr/bin/gdbserver
-#usr/bin/run
 #usr/include/gdb
 #usr/include/gdb/jit-reader.h
 #usr/include/sim
-#usr/include/sim/callback.h
-#usr/include/sim/sim.h
 #usr/lib/libinproctrace.so
-#usr/lib/libsim.a
 #usr/share/gdb/python
 #usr/share/gdb/python/gdb
 #usr/share/gdb/python/gdb/FrameDecorator.py
@@ -19,6 +15,7 @@
 #usr/share/gdb/python/gdb/command/__init__.py
 #usr/share/gdb/python/gdb/command/explore.py
 #usr/share/gdb/python/gdb/command/frame_filters.py
+#usr/share/gdb/python/gdb/command/missing_debug.py
 #usr/share/gdb/python/gdb/command/pretty_printers.py
 #usr/share/gdb/python/gdb/command/prompt.py
 #usr/share/gdb/python/gdb/command/type_printers.py
@@ -54,6 +51,7 @@
 #usr/share/gdb/python/gdb/function/as_string.py
 #usr/share/gdb/python/gdb/function/caller_is.py
 #usr/share/gdb/python/gdb/function/strfns.py
+#usr/share/gdb/python/gdb/missing_debug.py
 #usr/share/gdb/python/gdb/printer
 #usr/share/gdb/python/gdb/printer/__init__.py
 #usr/share/gdb/python/gdb/printer/bound_registers.py
@@ -70,6 +68,7 @@
 #usr/share/gdb/syscalls/freebsd.xml
 #usr/share/gdb/syscalls/gdb-syscalls.dtd
 #usr/share/gdb/syscalls/i386-linux.xml
+#usr/share/gdb/syscalls/loongarch-linux.xml
 #usr/share/gdb/syscalls/mips-n32-linux.xml
 #usr/share/gdb/syscalls/mips-n64-linux.xml
 #usr/share/gdb/syscalls/mips-o32-linux.xml

@@ -24,13 +24,19 @@
 
 include Config
 
-VER        = 6.9.0
+VER        = 6.11.0
 
 THISAPP    = xfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+CONFIGURE_OPTIONS = \
+		--prefix=/usr \
+		--libdir=/lib \
+		--localstatedir=/var \
+		--disable-static
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d952603716cc4022a935c426630b0b7838573476a730c6832f36ef0274a640e64667d3e3a2dd9fd2c5f2c12cdb348fd93abfef5c49e5c5fe2d5a83945dfc7894
+$(DL_FILE)_BLAKE2 = 846b25ad36477d71f8f2091ad16699356416f09befbb4250335081d2a8fd78011e9100fbabfb727acdb65520a38c912d9bb9e33b17c222c97de88fd00ab004a9
 
 install : $(TARGET)
 
@@ -79,7 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install install-dev
 	cd $(DIR_APP) && install -v -m755 -D libhandle/libhandle.la /usr/lib/libhandle.la
 	chmod -v 755 /lib/libhandle.so*
-	rm -f /lib/libhandle.{a,la,so}
+	rm -f /lib/libhandle.{la,so}
 	ln -svf ../../lib/libhandle.so.1 /usr/lib/libhandle.so
+	# Next command is so those programs are in the same location as in previous versions
+	mv /usr/sbin/{fsck.xfs,mkfs.xfs,xfs_repair} /sbin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

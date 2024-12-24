@@ -24,5 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 stop_service tftpd
 make_backup ${NAME}
+# prevent erasing /var/tftpboot
+sed -i '/^var\/tftpboot$/d' /opt/pakfire/db/rootfiles/tftpd
 remove_files
 rm -rf /etc/rc.d/rc*.d/*tftpd

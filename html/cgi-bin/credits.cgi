@@ -139,6 +139,7 @@ Julian McConnell,
 Kay-Michael Köhler,
 Kim Wölfel,
 Logan Schmidt,
+Ludwig Ertl,
 Markus Untersee,
 Nico Prenzel,
 Oliver Fuhrer,
@@ -151,7 +152,8 @@ Steffen Klammer,
 Thomas Cekal,
 Thomas Ebert,
 Timmothy Wilson,
-Umberto Parma
+Umberto Parma,
+Wayne
 	<!-- END -->
 </p>
 END

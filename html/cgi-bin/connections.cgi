@@ -89,6 +89,9 @@ my @routes = &General::system_output("ip", "route", "show");
 
 # Find all routes
 foreach my $intf (keys %interfaces) {
+	# Skip empty interfaces
+	next if ($intf eq "");
+
 	foreach my $route (grep(/dev ${intf}/, @routes)) {
 		if ($route =~ m/^(\d+\.\d+\.\d+\.\d+\/\d+)/) {
 			$networks{$1} = $interfaces{$intf};
@@ -113,13 +116,13 @@ if (-e "/var/ipfire/wireguard/peers") {
 	&General::readhasharray("/var/ipfire/wireguard/peers", \%wgpeers);
 
 	foreach my $key (keys %wgpeers) {
-		my $networks = $wgpeers{$key}[6];
+		my $networks = $wgpeers{$key}[8];
 
 		# Split the string
 		my @networks = split(/\|/, $networks);
 
 		foreach my $network (@networks) {
-			$networks[$network] = ${Header::colourwg};
+			$networks{$network} = ${Header::colourwg};
 		}
 	}
 }
@@ -439,7 +442,7 @@ foreach my $line (<CONNTRACK>) {
 			</a>
 			$dport_extra
 		</td>
-		<td style='text-align:center; background-color:$sip_colour;'>
+		<td style='text-align:center; background-color:$dip_colour;'>
 			<a href='country.cgi#$dstccode'><img src='$dst_flag_icon' border='0' align='absmiddle' alt='$dstccode' title='$dstccode' /></a>
 		</td>
 		<td class="text-right">
@@ -473,7 +476,7 @@ sub ipcolour($) {
 
 	foreach my $network (@networks) {
 		if (defined $network) {
-			if (&Network::check_ip_address_and_netmask($network)) {
+			if (&Network::check_subnet($network)) {
 				if (&Network::ip_address_in_network($address, $network)) {
 					return $networks{$network};
 				}

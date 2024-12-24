@@ -285,7 +285,7 @@ make_addon_backup() {
 restore_addon_backup() {
 	local name="${1}"
 
-	if [ -d "/tmp/${name}.ipf" ]; then
+	if [ -e "/tmp/${name}.ipf" ]; then
 		mv "/tmp/${name}.ipf" "/var/ipfire/backup/addons/backup/${name}.ipf"
 	fi
 

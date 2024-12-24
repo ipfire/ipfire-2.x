@@ -24,27 +24,46 @@
 
 include Config
 
-VER        = ipfire
+VER        = 0.389
 
-THISAPP    = hwdata
+THISAPP    = hwdata-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-# https://pci-ids.ucw.cz/v2.2/pci.ids
-# http://www.linux-usb.org/usb.ids
+# https://github.com/vcrhonek/hwdata/releases?page=1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects =
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_BLAKE2 = 967c107836e2cb6129d6432d116bae1ef57c8bf9212f5b052085029dc4dc7134b89237291ebec192d5031de6ff98338a253a1cdeed0a43a85c5ff37dd3d15b5c
 
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-b2 :
+b2 : $(subst %,%_BLAKE2,$(objects))
+
+###############################################################################
+# Downloading, checking, b2sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details
@@ -52,6 +71,9 @@ b2 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	-mkdir -p -m 755 /usr/share/hwdata
-	install -m 644 $(DIR_SRC)/src/hwdata/*.ids /usr/share/hwdata
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr
+	cd $(DIR_APP) && make install
 	@$(POSTBUILD)

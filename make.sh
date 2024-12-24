@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="190"							# Core Level (Filename)
+CORE="191"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -939,7 +939,7 @@ lfsmake1() {
 		exiterror "Downloading ${pkg}"
 	fi
 
-	if ! make_pkg --timer="update_runtime" "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}" "$@"; then
+	if ! make_pkg --timer="update_runtime" "${pkg}" TOOLCHAIN=1 ROOT="${BUILD_DIR}" b2 "$@"; then
 		print_status FAIL
 
 		exiterror "Building ${pkg}"
@@ -962,7 +962,7 @@ lfsmake2() {
 	fi
 
 	# Run install on the package
-	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" install "$@"; then
+	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" b2 install "$@"; then
 		print_status FAIL
 
 		exiterror "Building ${pkg}"
@@ -1479,6 +1479,14 @@ build_system() {
 	lfsmake2 openssl
 	lfsmake2 popt
 	lfsmake2 libedit
+	lfsmake2 expat
+	lfsmake2 libffi
+	lfsmake2 gdbm
+	lfsmake2 sqlite
+	lfsmake2 python3
+	lfsmake2 python3-setuptools
+	lfsmake2 ninja
+	lfsmake2 meson
 	lfsmake2 pam
 	lfsmake2 libcap
 	lfsmake2 libcap-ng
@@ -1501,22 +1509,14 @@ build_system() {
 	lfsmake2 iproute2
 	lfsmake2 screen
 	lfsmake2 elfutils
-	lfsmake2 expat
 	lfsmake2 libconfig
 	lfsmake2 curl
 	lfsmake2 libarchive
 	lfsmake2 cmake
 	lfsmake2 json-c
 	lfsmake2 tcl
-	lfsmake2 libffi
-	lfsmake2 gdbm
-	lfsmake2 sqlite
-	lfsmake2 python3
-	lfsmake2 python3-setuptools
 	lfsmake2 python3-MarkupSafe
 	lfsmake2 python3-Jinja2
-	lfsmake2 ninja
-	lfsmake2 meson
 	lfsmake2 kmod
 	lfsmake2 udev
 	lfsmake2 libusb
@@ -1659,6 +1659,7 @@ build_system() {
 	lfsmake2 libnet
 	lfsmake2 libnl-3
 	lfsmake2 libidn
+	lfsmake2 libidn2
 	lfsmake2 nasm
 	lfsmake2 libjpeg
 	lfsmake2 openjpeg
@@ -1801,9 +1802,11 @@ build_system() {
 	lfsmake2 cups-pdf
 	lfsmake2 foomatic
 	lfsmake2 hplip
+	lfsmake2 libtalloc
 	lfsmake2 cifs-utils
 	lfsmake2 krb5
 	lfsmake2 rpcsvc-proto
+	lfsmake2 lmdb
 	lfsmake2 samba
 	lfsmake2 netatalk
 	lfsmake2 sudo
@@ -2031,9 +2034,7 @@ build_system() {
 	lfsmake2 dmidecode
 	lfsmake2 mcelog
 	lfsmake2 libpciaccess
-	lfsmake2 libyajl
 	lfsmake2 libvirt
-	lfsmake2 libtalloc
 	lfsmake2 freeradius
 	lfsmake2 perl-common-sense
 	lfsmake2 perl-inotify2
@@ -2049,7 +2050,6 @@ build_system() {
 	lfsmake2 shairport-sync
 	lfsmake2 libxxhash
 	lfsmake2 borgbackup
-	lfsmake2 lmdb
 	lfsmake2 knot
 	lfsmake2 spectre-meltdown-checker
 	lfsmake2 zabbix_agentd
