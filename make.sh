@@ -1850,6 +1850,8 @@ build_system() {
 	lfsmake2 lm_sensors
 	lfsmake2 libstatgrab
 	lfsmake2 liboping
+	lfsmake2 netsnmpd
+	lfsmake2 nut
 	lfsmake2 collectd
 	lfsmake2 git
 	lfsmake2 linux-firmware
@@ -1872,7 +1874,6 @@ build_system() {
 	lfsmake2 libslirp
 	lfsmake2 dtc
 	lfsmake2 qemu
-	lfsmake2 netsnmpd
 	lfsmake2 nagios_nrpe
 	lfsmake2 nagios-plugins
 	lfsmake2 observium-agent
@@ -1920,7 +1921,6 @@ build_system() {
 	lfsmake2 openvmtools
 	lfsmake2 joe
 	lfsmake2 monit
-	lfsmake2 nut
 	lfsmake2 watchdog
 	lfsmake2 usb_modeswitch
 	lfsmake2 usb_modeswitch_data
