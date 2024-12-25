@@ -258,6 +258,16 @@ restore_backup() {
 	if [ -e /var/lib/ipblocklist/SPAMHAUS_EDROP.conf ]; then
 		rm /var/lib/ipblocklist/SPAMHAUS_EDROP.conf
 	fi
+
+	# Create collectd 4.x to 5.x migration script from rrd contents, run the script that
+	# was created and then remove the old interface directory if it is present as it will
+	# be empty after the migration has been carried out.
+	/var/ipfire/collectd-migrate-4-to-5.pl --indir /var/log/rrd/ > /tmp/rrd-migrate.sh
+	sh /tmp/rrd-migrate.sh >/dev/null 2>&1
+	if [ -d /var/log/rrd/collectd/localhost/interface/ ]; then
+		rm -Rf /var/log/rrd/collectd/localhost/interface/
+	fi
+
 	return 0
 }
 
