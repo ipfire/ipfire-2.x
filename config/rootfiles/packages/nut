@@ -54,7 +54,6 @@ usr/bin/riello_usb
 usr/bin/safenet
 usr/bin/skel
 usr/bin/sms_ser
-usr/bin/snmp-ups
 usr/bin/solis
 usr/bin/tripplite
 usr/bin/tripplite_usb
@@ -67,6 +66,15 @@ usr/bin/upsrw
 usr/bin/upssched-cmd
 usr/bin/usbhid-ups
 usr/bin/victronups
+#usr/include/nut-scan.h
+#usr/include/nutclient.h
+#usr/include/nutclientmem.h
+#usr/include/nutscan-device.h
+#usr/include/nutscan-init.h
+#usr/include/nutscan-ip.h
+#usr/include/nutscan-serial.h
+#usr/include/parseconf.h
+#usr/include/upsclient.h
 #usr/lib/libnutclient.la
 #usr/lib/libnutclient.so
 usr/lib/libnutclient.so.2
@@ -83,8 +91,13 @@ usr/lib/libnutscan.so.2.0.5
 #usr/lib/libupsclient.so
 usr/lib/libupsclient.so.6
 usr/lib/libupsclient.so.6.0.1
+#usr/lib/pkgconfig/libnutclient.pc
+#usr/lib/pkgconfig/libnutclientstub.pc
+#usr/lib/pkgconfig/libnutscan.pc
+#usr/lib/pkgconfig/libupsclient.pc
 #usr/lib/python3.10/site-packages/PyNUT.py
 #usr/lib/python3.10/site-packages/test_nutclient.py
+#usr/libexec/sockdebug
 usr/sbin/upsd
 usr/sbin/upsdrvctl
 usr/sbin/upsmon
@@ -93,3 +106,4 @@ usr/share/cmdvartab
 usr/share/driver.list
 var/ipfire/backup/addons/includes/nut
 var/state/ups
+usr/bin/snmp-ups

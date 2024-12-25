@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nut
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       =
 
@@ -85,15 +85,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
-	                    --prefix=/usr \
-	                    --sysconfdir=/etc/nut \
-			            --with-usb \
-			            --with-user=root \
-			            --with-group=nut \
-			            --with-wrap=no \
-			            --with-udev-dir=/etc/udev \
-			            --disable-static \
-			            --without-docs
+				--prefix=/usr \
+				--sysconfdir=/etc/nut \
+				--with-usb \
+				--with-user=root \
+				--with-group=nut \
+				--with-wrap=no \
+				--with-udev-dir=/etc/udev \
+				--disable-static \
+				--without-docs \
+				--with-dev
 	cd $(DIR_APP) && make #$(MAKETUNING)
 	cd $(DIR_APP) && make install
 #	sed -i -e "s|ATTR{|SYSFS{|g" /etc/udev/rules.d/52-nut-usbups.rules
