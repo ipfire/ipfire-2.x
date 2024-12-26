@@ -1,4 +1,4 @@
-From c9be84478925e2cde05a6c099073525af7f497af Mon Sep 17 00:00:00 2001
+From 28589c6d48eea11e9ddf2d332c13b1ea4401b0cd Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Fri, 11 Feb 2022 09:34:40 +0000
 Subject: [PATCH 7/8] rockchip: dt: add overclocked NanoPi R4S
@@ -11,10 +11,10 @@ Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s-oc.dts
 
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 259e59594bf2..9b7394e72104 100644
+index 09423070c992..c5b3ad51c4d2 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -50,6 +50,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4.dtb
+@@ -55,6 +55,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4b.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-neo4.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-r4s.dtb

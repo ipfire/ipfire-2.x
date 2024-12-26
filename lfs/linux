@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.6.63
+VER         = 6.12.6
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -69,7 +69,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e7e00e6e7e333929be3145784d0dc4cac53e236154627026bd2be0030cc76c347bffa43dffc69677b4a74a19725c54483b14f3168e743e4607e3c5228bd32aa4
+$(DL_FILE)_BLAKE2 = b1b992e1c03c095203a6aa8e529768c0af00fc89e1afbbcb56821465a9e78fb8f8ca19d038bc1f08c5286e1781b407d49775f28153572d3b9fe8d80b86d540bf
 
 install : $(TARGET)
 
@@ -104,14 +104,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.6.26-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.12-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
 
 	# Wlan Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_ath_user_regd.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
 
 	# Fix igb and e1000e crash
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.1-igb-e1000e_fix_lock_at_update_stats.patch
@@ -124,9 +124,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Patch performance monitoring restrictions to allow further hardening
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15.17-security-perf-allow-further-restriction-of-perf_event_open.patch
-
-	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
 
 	# Fix external module compile
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
@@ -208,7 +205,7 @@ endif
 	# Install objtool
 	cd $(DIR_APP) && cp -a tools/objtool/objtool \
 		/lib/modules/$(KVER)/build/tools/objtool/ || :
-	cd $(DIR_APP) && cp -a --parents tools/build/{Build,Build.include,fixdep.c} \
+	cd $(DIR_APP) && cp -a --parents tools/build/{Build.include,fixdep.c} \
 		tools/scripts/utilities.mak /lib/modules/$(KVER)/build
 
 	# Make sure we can build external modules

@@ -1,4 +1,4 @@
-From bce6688912ade6dcb227e60f58b7a150aad4b2fc Mon Sep 17 00:00:00 2001
+From 7f81c8b01304070fc0860131f6e09aa9cb442bc5 Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Tue, 25 Jan 2022 18:04:28 +0100
 Subject: [PATCH 3/8] rockchip: dt: nanopi-r4s: fix led names and button

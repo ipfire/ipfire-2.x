@@ -1,4 +1,4 @@
-From 9c4b72a28a0cdb42a9c8f63141fec6c637ad1854 Mon Sep 17 00:00:00 2001
+From 0164f53e363af9da5fe7216c7ed81cd52bdb37d2 Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne_f@ipfire.org>
 Date: Wed, 20 Nov 2024 09:41:13 +0100
 Subject: [PATCH 8/8] rockchip: dt: add some overclocked rk3328 boards
@@ -25,10 +25,10 @@ Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
  create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-oc.dts
 
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 9b7394e72104..5f7c5f56f804 100644
+index c5b3ad51c4d2..678acae01994 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -15,11 +15,17 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3326-odroid-go3.dtb
+@@ -19,11 +19,17 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3326-odroid-go3.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-a1.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c.dtb
