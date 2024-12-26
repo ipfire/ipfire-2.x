@@ -73,6 +73,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/systemd-254-linux-6.12-fs.patch
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.xz
 
 	# Remove two unneeded groups (render and sgx) from the default udev rules

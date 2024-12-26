@@ -1,0 +1,19 @@
+diff -Naur systemd-254.org/src/basic/filesystems-gperf.gperf systemd-254/src/basic/filesystems-gperf.gperf
+--- systemd-254.org/src/basic/filesystems-gperf.gperf	2023-07-28 10:26:32.000000000 +0200
++++ systemd-254/src/basic/filesystems-gperf.gperf	2024-11-27 14:27:23.071774791 +0100
+@@ -28,6 +28,7 @@
+ anon_inodefs,    {ANON_INODE_FS_MAGIC}
+ autofs,          {AUTOFS_SUPER_MAGIC}
+ balloon-kvm,     {BALLOON_KVM_MAGIC}
++bcachefs,        {BCACHEFS_SUPER_MAGIC}
+ bdev,            {BDEVFS_MAGIC}
+ binder,          {BINDERFS_SUPER_MAGIC}
+ binfmt_misc,     {BINFMTFS_MAGIC}
+@@ -91,6 +92,7 @@
+ openpromfs,      {OPENPROM_SUPER_MAGIC}
+ orangefs,        {ORANGEFS_DEVREQ_MAGIC}
+ overlay,         {OVERLAYFS_SUPER_MAGIC}
++pidfs,           {PID_FS_MAGIC}
+ pipefs,          {PIPEFS_MAGIC}
+ ppc-cmm,         {PPC_CMM_MAGIC}
+ proc,            {PROC_SUPER_MAGIC}
