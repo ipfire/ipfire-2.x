@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2022.10
+VER        = 2024.10
 
 THISAPP    = u-boot-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,9 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-$(MKIMAGE)
 SUP_ARCH   = aarch64
 
 CFLAGS    := $(patsubst -fstack-protector-strong,,$(CFLAGS))
-LDFLAGS   += --no-warn-rwx-segments
 
-ATF_VER    = 2.7
+ATF_VER    = 2.12
 
 ###############################################################################
 # Top-level Rules
@@ -48,9 +47,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
 arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 
-$(DL_FILE)_BLAKE2 = 42aa7a6f131735888939982e579de4342e3909e064ab896b0df6f1ff56c20ed6cb11d25286da7c052a5f67dcef6fa7a746944d8df6dd504586f5a71502d157e1
-arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 4fc4d5646e272200d40081902e17f0be32956f451622f011a0d568c8cf26e15ab165fe16a69cf222241f7ba1d443add562d6d382277eb4fb2b49c3918cabdbad
-arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = 04424a7dcda0771f469c8e918a24aed75017c1a28c1b8c2c794e3ce31afbc01e7906ccab6faf1459d69a5ec1ef4fdde2bab1011b883980efeae7372013f2570e
+$(DL_FILE)_BLAKE2 = e7673cb86e7911dcbb2432e6eaea803acef814aa42e3ef322a221b9f89a0d52fb1acd6de92d17486f383d01ea7b1b82c570385a53e3c877d13773cf9e7084f8a
+arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 87bb5bd76993e32a9cc25e405e57f619f2311937af024979d5c20ef022d570435b6e38a23e70079c267e093a45b5a60af671d3eebac0449a908db8ad32aa6592
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = 1b5e80bd260f9869637666a97adc99a0deb87e9b9b6982ba9811e2413477ad178423699ab83267d5e09971abcd5652686e33645b22a6cefba7be7df9b83a02b3
 
 install : $(TARGET)
 
@@ -108,7 +107,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# OrangePi Zero Plus
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-" DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/sun50i_a64/release/bl31.bin bl31.bin
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/orangepi_zero_plus
@@ -123,7 +122,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Nanopi R2S
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-" DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/nanopi_r2s
@@ -132,16 +131,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
 	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
 
 	# Nanopi R2C
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rockchip/add-nanopi-r2c-and-orangepi-r1-plus-lts.patch
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-"  DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/nanopi_r2c
@@ -151,7 +149,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
 	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf  CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r2c/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
@@ -159,7 +157,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Orangepi R1 plus lts
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-"  DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/orangepi_r1_plus_lts
@@ -169,7 +167,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
 	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/orangepi_r1_plus_lts/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
@@ -179,12 +177,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# it is build on ubuntu with make PLAT=rk3399 ARCH=aarch64 DEBUG=0 bl31
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 	-mkdir -pv /usr/share/u-boot/nanopi_r4s
-	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r4s-rk3399_config
+	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf  CROSS_COMPILE="" nanopi-r4s-rk3399_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R4S - IPFire.org"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
 	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
