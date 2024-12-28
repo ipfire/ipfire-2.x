@@ -1929,6 +1929,7 @@ build_system() {
 	lfsmake2 ddrescue
 	lfsmake2 parted
 	lfsmake2 swig
+	lfsmake2 python3-pyelftools
 	lfsmake2 u-boot
 	lfsmake2 wireless-regdb
 	lfsmake2 ddns
