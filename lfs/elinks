@@ -87,9 +87,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Suppress first welcome dialog by creating bookmark
 	# and history files for root
-	mkdir -p /root/.elinks
-	touch /root/.elinks/bookmarks
-	touch /root/.elinks/globhist
+	mkdir -p /root/.config/.elinks
+	touch /root/.config/.elinks/bookmarks
+	touch /root/.config/.elinks/globhist
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
