@@ -1,6 +1,6 @@
-#root/.elinks
-root/.elinks/bookmarks
-root/.elinks/globhist
+#root/.config/.elinks
+root/.config/.elinks/bookmarks
+root/.config/.elinks/globhist
 usr/local/bin/elinks
 #usr/local/etc
 #usr/local/etc/elinks

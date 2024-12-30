@@ -47,6 +47,12 @@ if [ -e /var/lib/ipblocklist/FEODO_AGGRESSIVE.conf ]; then
 	rm /var/lib/ipblocklist/FEODO_AGGRESSIVE.conf
 fi
 
+# move elinks config to new dir
+if [ -e /root/.elinks/* ]; then
+	mv /root/.elinks/* /root/.config/.elinks/
+	rm -rf /root/.elinks
+fi
+
 # Remove files
 
 # update linker config

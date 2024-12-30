@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 106
+PAK_VER    = 107
 
-DEPS       = avahi cups perl-Parse-Yapp perl-JSON wsdd
+DEPS       = avahi cups libtalloc perl-Parse-Yapp perl-JSON wsdd
 
 SERVICES   = samba
 
