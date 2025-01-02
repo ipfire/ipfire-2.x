@@ -49,7 +49,7 @@ fi
 
 # move elinks config to new dir
 if [ -e /root/.elinks/* ]; then
-	mv /root/.elinks/* /root/.config/.elinks/
+	mv /root/.elinks/* /root/.config/elinks/
 	rm -rf /root/.elinks
 fi
 
