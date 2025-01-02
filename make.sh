@@ -1983,7 +1983,6 @@ build_system() {
 	lfsmake2 aws-cli
 	lfsmake2 oci-python-sdk
 	lfsmake2 oci-cli
-	lfsmake2 miniupnpc
 	lfsmake2 transmission
 	lfsmake2 mtr
 	lfsmake2 minidlna
