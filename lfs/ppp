@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.5.1
+VER        = 2.5.2
 
 # Download source file from https://download.samba.org/pub/ppp/
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e3ece873ea25bde5ddffd0da168ffe6ba890693f20fb9f1d6a48f365331abdb4cf517fd0b3004d26a0c778ad4d750e39e38486544e2771b23223469db13c239c
+$(DL_FILE)_BLAKE2 = 5a79bfaf23c2f1cba7b2c4e8f27e6033aa7ee6e119b4d96dfd2870f91524052fe9ed16149e5f76cf93370159f491af828b4103eb04bd4f5dbbecca4a08af9d0d
 
 install : $(TARGET)
 
