@@ -1,19 +1,18 @@
 diff -Naur u-boot-2024.10.org/arch/arm/Kconfig u-boot-2024.10/arch/arm/Kconfig
 --- u-boot-2024.10.org/arch/arm/Kconfig	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/arch/arm/Kconfig	2024-12-30 13:49:36.476480002 +0000
-@@ -2035,7 +2035,8 @@
++++ u-boot-2024.10/arch/arm/Kconfig	2025-01-02 21:34:06.410041224 +0000
+@@ -2035,7 +2035,7 @@
  	imply ADC
  	imply CMD_DM
  	imply DEBUG_UART_BOARD_INIT
 -	imply BOOTSTD_DEFAULTS
-+	imply DISTRO_DEFAULTS if !ROCKCHIP_RK3399
 +	imply BOOTSTD_DEFAULTS if !DISTRO_DEFAULTS
  	imply FAT_WRITE
  	imply SARADC_ROCKCHIP
  	imply SPL_SYSRESET
 diff -Naur u-boot-2024.10.org/include/configs/px30_common.h u-boot-2024.10/include/configs/px30_common.h
 --- u-boot-2024.10.org/include/configs/px30_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/px30_common.h	2024-12-30 13:49:36.477479987 +0000
++++ u-boot-2024.10/include/configs/px30_common.h	2025-01-02 21:05:11.028374025 +0000
 @@ -25,11 +25,12 @@
  	"kernel_comp_addr_r=0x03e80000\0" \
  	"kernel_comp_size=0x2000000\0"
@@ -30,7 +29,7 @@ diff -Naur u-boot-2024.10.org/include/configs/px30_common.h u-boot-2024.10/inclu
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk3036_common.h u-boot-2024.10/include/configs/rk3036_common.h
 --- u-boot-2024.10.org/include/configs/rk3036_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3036_common.h	2024-12-30 13:49:36.478479972 +0000
++++ u-boot-2024.10/include/configs/rk3036_common.h	2025-01-02 21:05:11.029374011 +0000
 @@ -20,6 +20,8 @@
  	"kernel_addr_r=0x62000000\0" \
  	"ramdisk_addr_r=0x64000000\0"
@@ -50,7 +49,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3036_common.h u-boot-2024.10/inc
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk3066_common.h u-boot-2024.10/include/configs/rk3066_common.h
 --- u-boot-2024.10.org/include/configs/rk3066_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3066_common.h	2024-12-30 13:49:36.478479972 +0000
++++ u-boot-2024.10/include/configs/rk3066_common.h	2025-01-02 21:05:11.030373996 +0000
 @@ -21,12 +21,14 @@
  	"kernel_addr_r=0x62000000\0" \
  	"ramdisk_addr_r=0x64000000\0"
@@ -69,7 +68,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3066_common.h u-boot-2024.10/inc
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk3128_common.h u-boot-2024.10/include/configs/rk3128_common.h
 --- u-boot-2024.10.org/include/configs/rk3128_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3128_common.h	2024-12-30 13:49:36.479479958 +0000
++++ u-boot-2024.10/include/configs/rk3128_common.h	2025-01-02 21:05:11.031373981 +0000
 @@ -22,10 +22,11 @@
  	"kernel_addr_r=0x62000000\0" \
  	"ramdisk_addr_r=0x64000000\0"
@@ -85,7 +84,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3128_common.h u-boot-2024.10/inc
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk3188_common.h u-boot-2024.10/include/configs/rk3188_common.h
 --- u-boot-2024.10.org/include/configs/rk3188_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3188_common.h	2024-12-30 13:49:36.479479958 +0000
++++ u-boot-2024.10/include/configs/rk3188_common.h	2025-01-02 21:05:11.034373936 +0000
 @@ -20,6 +20,8 @@
  	"kernel_addr_r=0x62000000\0" \
  	"ramdisk_addr_r=0x64000000\0"
@@ -105,7 +104,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3188_common.h u-boot-2024.10/inc
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk322x_common.h u-boot-2024.10/include/configs/rk322x_common.h
 --- u-boot-2024.10.org/include/configs/rk322x_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk322x_common.h	2024-12-30 13:49:36.480479943 +0000
++++ u-boot-2024.10/include/configs/rk322x_common.h	2025-01-02 21:05:11.035373921 +0000
 @@ -21,6 +21,8 @@
  	"kernel_addr_r=0x62000000\0" \
  	"ramdisk_addr_r=0x64000000\0"
@@ -125,7 +124,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk322x_common.h u-boot-2024.10/inc
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk3288_common.h u-boot-2024.10/include/configs/rk3288_common.h
 --- u-boot-2024.10.org/include/configs/rk3288_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3288_common.h	2024-12-30 13:49:36.480479943 +0000
++++ u-boot-2024.10/include/configs/rk3288_common.h	2025-01-02 21:05:11.036373906 +0000
 @@ -22,6 +22,8 @@
  	"kernel_addr_r=0x02000000\0" \
  	"ramdisk_addr_r=0x04000000\0"
@@ -145,7 +144,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3288_common.h u-boot-2024.10/inc
  #endif
 diff -Naur u-boot-2024.10.org/include/configs/rk3308_common.h u-boot-2024.10/include/configs/rk3308_common.h
 --- u-boot-2024.10.org/include/configs/rk3308_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3308_common.h	2024-12-30 14:01:57.925815373 +0000
++++ u-boot-2024.10/include/configs/rk3308_common.h	2025-01-02 21:05:11.037373891 +0000
 @@ -25,11 +25,13 @@
  	"kernel_comp_addr_r=0x08000000\0"	\
  	"kernel_comp_size=0x2000000\0"
@@ -162,7 +161,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3308_common.h u-boot-2024.10/inc
  #endif /* __CONFIG_RK3308_COMMON_H */
 diff -Naur u-boot-2024.10.org/include/configs/rk3328_common.h u-boot-2024.10/include/configs/rk3328_common.h
 --- u-boot-2024.10.org/include/configs/rk3328_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3328_common.h	2024-12-30 14:06:25.263035725 +0000
++++ u-boot-2024.10/include/configs/rk3328_common.h	2025-01-02 21:05:11.041373832 +0000
 @@ -25,11 +25,12 @@
  	"kernel_comp_addr_r=0x08000000\0"	\
  	"kernel_comp_size=0x2000000\0"
@@ -179,7 +178,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3328_common.h u-boot-2024.10/inc
  #endif /* __CONFIG_RK3328_COMMON_H */
 diff -Naur u-boot-2024.10.org/include/configs/rk3368_common.h u-boot-2024.10/include/configs/rk3368_common.h
 --- u-boot-2024.10.org/include/configs/rk3368_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3368_common.h	2024-12-30 13:49:36.482479914 +0000
++++ u-boot-2024.10/include/configs/rk3368_common.h	2025-01-02 21:05:11.042373817 +0000
 @@ -22,9 +22,11 @@
  	"kernel_addr_r=0x280000\0" \
  	"ramdisk_addr_r=0x5bf0000\0"
@@ -194,9 +193,30 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3368_common.h u-boot-2024.10/inc
 +	BOOTENV
  
  #endif
+diff -Naur u-boot-2024.10.org/include/configs/rk3399_common.h u-boot-2024.10/include/configs/rk3399_common.h
+--- u-boot-2024.10.org/include/configs/rk3399_common.h	2024-10-07 14:54:35.000000000 +0000
++++ u-boot-2024.10/include/configs/rk3399_common.h	2025-01-02 23:03:05.501053098 +0000
+@@ -31,12 +31,16 @@
+ 	"kernel_comp_addr_r=0x08000000\0"	\
+ 	"kernel_comp_size=0x2000000\0"
+ 
++#include <config_distro_bootcmd.h>
++#include <env/distro/sf.h>
++
+ #define CFG_EXTRA_ENV_SETTINGS		\
+ 	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0"	\
+ 	"partitions=" PARTS_DEFAULT	\
+ 	ENV_MEM_LAYOUT_SETTINGS		\
+ 	ROCKCHIP_DEVICE_SETTINGS	\
+-	"boot_targets=" BOOT_TARGETS "\0"
++	BOOTENV \
++	BOOTENV_SF
+ 
+ #endif /* CONFIG_SPL_BUILD */
+ 
 diff -Naur u-boot-2024.10.org/include/configs/rk3568_common.h u-boot-2024.10/include/configs/rk3568_common.h
 --- u-boot-2024.10.org/include/configs/rk3568_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3568_common.h	2024-12-30 14:03:57.919116640 +0000
++++ u-boot-2024.10/include/configs/rk3568_common.h	2025-01-02 21:05:11.042373817 +0000
 @@ -27,11 +27,14 @@
  	"ramdisk_addr_r=0x12180000\0"	\
  	"kernel_comp_size=0x8000000\0"
@@ -214,7 +234,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3568_common.h u-boot-2024.10/inc
  #endif /* __CONFIG_RK3568_COMMON_H */
 diff -Naur u-boot-2024.10.org/include/configs/rk3588_common.h u-boot-2024.10/include/configs/rk3588_common.h
 --- u-boot-2024.10.org/include/configs/rk3588_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rk3588_common.h	2024-12-30 14:05:20.861944658 +0000
++++ u-boot-2024.10/include/configs/rk3588_common.h	2025-01-02 21:05:11.043373802 +0000
 @@ -26,11 +26,12 @@
  	"ramdisk_addr_r=0x12180000\0"	\
  	"kernel_comp_size=0x8000000\0"
@@ -231,7 +251,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rk3588_common.h u-boot-2024.10/inc
  #endif /* __CONFIG_RK3588_COMMON_H */
 diff -Naur u-boot-2024.10.org/include/configs/rockchip-common.h u-boot-2024.10/include/configs/rockchip-common.h
 --- u-boot-2024.10.org/include/configs/rockchip-common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rockchip-common.h	2024-12-30 13:59:28.290940486 +0000
++++ u-boot-2024.10/include/configs/rockchip-common.h	2025-01-02 21:05:11.044373787 +0000
 @@ -13,7 +13,69 @@
  
  #ifndef CONFIG_SPL_BUILD
@@ -304,7 +324,7 @@ diff -Naur u-boot-2024.10.org/include/configs/rockchip-common.h u-boot-2024.10/i
  #define ROOT_UUID "B921B045-1DF0-41C3-AF44-4C6F280D3FAE;\0"
 diff -Naur u-boot-2024.10.org/include/configs/rv1108_common.h u-boot-2024.10/include/configs/rv1108_common.h
 --- u-boot-2024.10.org/include/configs/rv1108_common.h	2024-10-07 14:54:35.000000000 +0000
-+++ u-boot-2024.10/include/configs/rv1108_common.h	2024-12-30 13:49:36.484479884 +0000
++++ u-boot-2024.10/include/configs/rv1108_common.h	2025-01-02 21:05:11.048373728 +0000
 @@ -27,6 +27,6 @@
  	ENV_MEM_LAYOUT_SETTINGS \
  	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \

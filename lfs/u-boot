@@ -131,10 +131,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/share/u-boot/nanopi_r2s
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r2s-rk3328_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2S - IPFire.org"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
-	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
 	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
@@ -149,10 +149,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/share/u-boot/nanopi_r2c
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r2c-rk3328_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2C - IPFire.org"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
-	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
 	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf  CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r2c/u-boot-rockchip.bin
@@ -167,10 +167,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/share/u-boot/orangepi_r1_plus_lts
 	cd $(DIR_APP) && make CROSS_COMPILE="" orangepi-r1-plus-lts-rk3328_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" OrangePi R1 plus lts - IPFire.org"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
-	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
 	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/orangepi_r1_plus_lts/u-boot-rockchip.bin
@@ -183,10 +183,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/share/u-boot/nanopi_r4s
 	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf  CROSS_COMPILE="" nanopi-r4s-rk3399_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R4S - IPFire.org"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
-	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
 	cd $(DIR_APP) && make BL31=$(DIR_APP)/bl31.elf CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
