@@ -6,6 +6,7 @@
 #usr/include/urcu-pointer.h
 #usr/include/urcu-qsbr.h
 #usr/include/urcu.h
+#usr/include/urcu/annotate.h
 #usr/include/urcu/arch
 #usr/include/urcu/arch.h
 #usr/include/urcu/arch/aarch64.h
@@ -43,7 +44,6 @@
 #usr/include/urcu/map/urcu-mb.h
 #usr/include/urcu/map/urcu-memb.h
 #usr/include/urcu/map/urcu-qsbr.h
-#usr/include/urcu/map/urcu-signal.h
 #usr/include/urcu/map/urcu.h
 #usr/include/urcu/pointer.h
 #usr/include/urcu/rcuhlist.h
@@ -62,8 +62,6 @@
 #usr/include/urcu/static/urcu-mb.h
 #usr/include/urcu/static/urcu-memb.h
 #usr/include/urcu/static/urcu-qsbr.h
-#usr/include/urcu/static/urcu-signal-nr.h
-#usr/include/urcu/static/urcu-signal.h
 #usr/include/urcu/static/urcu.h
 #usr/include/urcu/static/wfcqueue.h
 #usr/include/urcu/static/wfqueue.h
@@ -75,7 +73,10 @@
 #usr/include/urcu/uatomic.h
 #usr/include/urcu/uatomic/aarch64.h
 #usr/include/urcu/uatomic/alpha.h
+#usr/include/urcu/uatomic/api.h
 #usr/include/urcu/uatomic/arm.h
+#usr/include/urcu/uatomic/builtins-generic.h
+#usr/include/urcu/uatomic/builtins.h
 #usr/include/urcu/uatomic/gcc.h
 #usr/include/urcu/uatomic/generic.h
 #usr/include/urcu/uatomic/hppa.h
@@ -97,7 +98,6 @@
 #usr/include/urcu/urcu-memb.h
 #usr/include/urcu/urcu-poll.h
 #usr/include/urcu/urcu-qsbr.h
-#usr/include/urcu/urcu-signal.h
 #usr/include/urcu/urcu.h
 #usr/include/urcu/urcu_ref.h
 #usr/include/urcu/wfcqueue.h
@@ -127,10 +127,6 @@ usr/lib/liburcu-memb.so.8.1.0
 #usr/lib/liburcu-qsbr.so
 usr/lib/liburcu-qsbr.so.8
 usr/lib/liburcu-qsbr.so.8.1.0
-#usr/lib/liburcu-signal.la
-#usr/lib/liburcu-signal.so
-usr/lib/liburcu-signal.so.8
-usr/lib/liburcu-signal.so.8.1.0
 #usr/lib/liburcu.la
 #usr/lib/liburcu.so
 usr/lib/liburcu.so.8
@@ -140,10 +136,9 @@ usr/lib/liburcu.so.8.1.0
 #usr/lib/pkgconfig/liburcu-mb.pc
 #usr/lib/pkgconfig/liburcu-memb.pc
 #usr/lib/pkgconfig/liburcu-qsbr.pc
-#usr/lib/pkgconfig/liburcu-signal.pc
 #usr/lib/pkgconfig/liburcu.pc
 #usr/share/doc/userspace-rcu
-#usr/share/doc/userspace-rcu/LICENSE
+#usr/share/doc/userspace-rcu/LICENSE.md
 #usr/share/doc/userspace-rcu/README.md
 #usr/share/doc/userspace-rcu/cds-api.md
 #usr/share/doc/userspace-rcu/examples
@@ -210,12 +205,10 @@ usr/lib/liburcu.so.8.1.0
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/Makefile.mb
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/Makefile.membarrier
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/Makefile.qsbr
-#usr/share/doc/userspace-rcu/examples/urcu-flavors/Makefile.signal
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/bp.c
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/mb.c
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/membarrier.c
 #usr/share/doc/userspace-rcu/examples/urcu-flavors/qsbr.c
-#usr/share/doc/userspace-rcu/examples/urcu-flavors/signal.c
 #usr/share/doc/userspace-rcu/examples/wfcqueue
 #usr/share/doc/userspace-rcu/examples/wfcqueue/Makefile
 #usr/share/doc/userspace-rcu/examples/wfcqueue/Makefile.cds_wfcq_dequeue
