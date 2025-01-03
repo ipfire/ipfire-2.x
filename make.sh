@@ -1363,7 +1363,7 @@ build_toolchain() {
 	lfsmake1 glibc
 	lfsmake1 libxcrypt
 	lfsmake1 gcc			PASS=L
-	lfsmake1 zlib
+	lfsmake1 zlib-ng
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
 	lfsmake1 zstd
@@ -1408,7 +1408,7 @@ build_system() {
 	lfsmake2 glibc
 	lfsmake2 tzdata
 	lfsmake2 cleanup-toolchain
-	lfsmake2 zlib
+	lfsmake2 zlib-ng
 	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 gcc PASS=A
 	lfsmake2 zstd
 	lfsmake2 autoconf

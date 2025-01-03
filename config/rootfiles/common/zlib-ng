@@ -1,0 +1,17 @@
+#usr/include/zconf-ng.h
+#usr/include/zconf.h
+#usr/include/zlib-ng.h
+#usr/include/zlib.h
+#usr/include/zlib_name_mangling-ng.h
+#usr/include/zlib_name_mangling.h
+#usr/lib/libz-ng.a
+#usr/lib/libz-ng.so
+usr/lib/libz-ng.so.2
+usr/lib/libz-ng.so.2.2.3
+#usr/lib/libz.a
+#usr/lib/libz.so
+usr/lib/libz.so.1
+usr/lib/libz.so.1.3.1.zlib-ng
+#usr/lib/pkgconfig
+#usr/lib/pkgconfig/zlib-ng.pc
+#usr/lib/pkgconfig/zlib.pc
