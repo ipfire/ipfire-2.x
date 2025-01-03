@@ -83,10 +83,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
+	# distrobootcmd support was removed for raspberry pi boards. Revert.
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/u-boot-2024.10-revert_rpi_distro_bootcmd_removal.patch
+
 	# Raspberry Pi 3
 	-mkdir -pv /usr/share/u-boot/rpi
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi3 - IPFire.org"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="run distro_bootcmd"!' .config
+
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
 		/usr/share/u-boot/rpi/u-boot-rpi3.bin
@@ -98,6 +104,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/share/u-boot/rpi
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_4_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi4 - IPFire.org"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^.*CONFIG_DISTRO_DEFAULTS.*!CONFIG_DISTRO_DEFAULTS=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="run distro_bootcmd"!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
 		/usr/share/u-boot/rpi/u-boot-rpi4.bin

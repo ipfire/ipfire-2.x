@@ -1,0 +1,89 @@
+diff -Naur u-boot-2024.10.org/include/configs/rpi.h u-boot-2024.10/include/configs/rpi.h
+--- u-boot-2024.10.org/include/configs/rpi.h	2024-10-07 14:54:35.000000000 +0000
++++ u-boot-2024.10/include/configs/rpi.h	2025-01-03 14:15:12.450978450 +0000
+@@ -31,4 +31,85 @@
+  */
+ #define CFG_SYS_SDRAM_SIZE		SZ_128M
+ 
++/* DFU over USB/UDC */
++#ifdef CONFIG_CMD_DFU
++#ifdef CONFIG_ARM64
++#define KERNEL_FILENAME		"Image"
++#else
++#define KERNEL_FILENAME		"zImage"
++#endif
++
++#define ENV_DFU_SETTINGS \
++	"dfu_alt_info=u-boot.bin fat 0 1;uboot.env fat 0 1;" \
++		      "config.txt fat 0 1;" \
++		      KERNEL_FILENAME " fat 0 1\0"
++#else
++#define ENV_DFU_SETTINGS ""
++#endif
++
++/* Environment */
++#define ENV_DEVICE_SETTINGS \
++	"stdin=serial,usbkbd\0" \
++	"stdout=serial,vidconsole\0" \
++	"stderr=serial,vidconsole\0"
++
++#ifdef CONFIG_ARM64
++#define FDT_HIGH "ffffffffffffffff"
++#define INITRD_HIGH "ffffffffffffffff"
++#else
++#define FDT_HIGH "ffffffff"
++#define INITRD_HIGH "ffffffff"
++#endif
++
++#define ENV_MEM_LAYOUT_SETTINGS \
++	"fdt_high=" FDT_HIGH "\0" \
++	"initrd_high=" INITRD_HIGH "\0" \
++	"kernel_addr_r=0x00080000\0" \
++	"scriptaddr=0x02400000\0" \
++	"pxefile_addr_r=0x02500000\0" \
++	"fdt_addr_r=0x02600000\0" \
++	"ramdisk_addr_r=0x02700000\0"
++
++#if CONFIG_IS_ENABLED(CMD_MMC)
++	#define BOOT_TARGET_MMC(func) \
++		func(MMC, mmc, 0) \
++		func(MMC, mmc, 1) \
++		func(MMC, mmc, 2)
++#else
++	#define BOOT_TARGET_MMC(func)
++#endif
++
++#if CONFIG_IS_ENABLED(CMD_USB)
++	#define BOOT_TARGET_USB(func) func(USB, usb, 0)
++#else
++	#define BOOT_TARGET_USB(func)
++#endif
++
++#if CONFIG_IS_ENABLED(CMD_PXE)
++	#define BOOT_TARGET_PXE(func) func(PXE, pxe, na)
++#else
++	#define BOOT_TARGET_PXE(func)
++#endif
++
++#if CONFIG_IS_ENABLED(CMD_DHCP)
++	#define BOOT_TARGET_DHCP(func) func(DHCP, dhcp, na)
++#else
++	#define BOOT_TARGET_DHCP(func)
++#endif
++
++#define BOOT_TARGET_DEVICES(func) \
++	BOOT_TARGET_MMC(func) \
++	BOOT_TARGET_USB(func) \
++	BOOT_TARGET_PXE(func) \
++	BOOT_TARGET_DHCP(func)
++
++#include <config_distro_bootcmd.h>
++
++#define CFG_EXTRA_ENV_SETTINGS \
++	"dhcpuboot=usb start; dhcp u-boot.uimg; bootm\0" \
++	ENV_DEVICE_SETTINGS \
++	ENV_DFU_SETTINGS \
++	ENV_MEM_LAYOUT_SETTINGS \
++	BOOTENV
++
+ #endif
