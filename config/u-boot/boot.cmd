@@ -58,16 +58,6 @@ if test "${SERIAL-CONSOLE}" = "ON"; then
 						setenv console ttyAMA0,115200n8;
 					fi;
 				fi;
-			else
-				if test "${fdtfile}" = "bcm2837-rpi-3-b-plus.dtb"; then
-					setenv console ttyS1,115200n8;
-				else
-					if test "${fdtfile}" = "bcm2837-rpi-3-b.dtb"; then
-						setenv console ttyS1,115200n8;
-					else
-						setenv console ttyAMA0,115200n8;
-					fi;
-				fi;
 			fi;
 		else
 			setenv console ttyS0,115200n8;
@@ -80,7 +70,10 @@ else
 	setenv bootargs console=tty1 root=${root_dev} rootwait;
 fi;
 
-setenv fdt_high ffffffff;
+if test ${fdt_high} = ""; then
+	setenv fdt_high ffffffff;
+fi;
+
 fatload ${boot_dev} ${boot_part} ${kernel_addr_r} vmlinuz-${KVER};
 fatload ${boot_dev} ${boot_part} ${fdt_addr_r} dtb-${KVER}/${fdtfile};
 
@@ -99,10 +92,8 @@ else
 	setenv ramdisk_addr -;
 fi;
 
-bootz ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
 booti ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
 
-bootz ${kernel_addr_r} - ${fdt_addr_r};
 booti ${kernel_addr_r} - ${fdt_addr_r};
 
 # Recompile with:
