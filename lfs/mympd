@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mympd
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = mpd libmpdclient
 
@@ -95,6 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /var/lib/mympd/config
 	echo false > /var/lib/mympd/config/http
 	echo 8800  > /var/lib/mympd/config/ssl_port
+	echo 2  > /var/lib/mympd/config/loglovel
 	mkdir -p /var/lib/mympd/state
 	echo /var/mp3 > /var/lib/mympd/state/music_directory
 	chown nobody:nobody -R /var/lib/mympd
