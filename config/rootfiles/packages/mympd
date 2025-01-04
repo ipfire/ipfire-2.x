@@ -17,6 +17,7 @@ var/ipfire/backup/addons/includes/mympd
 var/lib/mympd
 #var/lib/mympd/config
 #var/lib/mympd/config/http
+#var/lib/mympd/config/loglevel
 #var/lib/mympd/config/ssl_port
 #var/lib/mympd/state
 #var/lib/mympd/state/music_directory

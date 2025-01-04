@@ -95,7 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /var/lib/mympd/config
 	echo false > /var/lib/mympd/config/http
 	echo 8800  > /var/lib/mympd/config/ssl_port
-	echo 2  > /var/lib/mympd/config/loglovel
+	echo 2  > /var/lib/mympd/config/loglevel
 	mkdir -p /var/lib/mympd/state
 	echo /var/mp3 > /var/lib/mympd/state/music_directory
 	chown nobody:nobody -R /var/lib/mympd
