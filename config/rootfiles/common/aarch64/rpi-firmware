@@ -1,7 +1,10 @@
 #boot/LICENCE.broadcom
-boot/bcm2711-rpi-4-b.dtb
 boot/bcm2711-rpi-400.dtb
-boot/bcm2711-rpi-cm4.dtb
+boot/bcm2711-rpi-4-b.dtb
+boot/bcm2711-rpi-cm4-io.dtb
+boot/bcm2837-rpi-3-b.dtb
+boot/bcm2837-rpi-3-b-plus.dtb
+boot/bcm2837-rpi-cm3-io3.dtb
 boot/bootcode.bin
 boot/config.txt
 boot/fixup.dat
