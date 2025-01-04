@@ -8,6 +8,10 @@ if test "${board}" = "ten64"; then
 fi;
 
 if test ${boot_dev} = ""; then
+	setenv boot_dev ${devtype}
+fi;
+
+if test ${boot_dev} = ""; then
 	setenv boot_dev mmc;
 	setenv root_dev /dev/mmcblk0p3;
 fi;
