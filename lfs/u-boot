@@ -127,6 +127,22 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make distclean
 	cd $(DIR_APP) && rm -f bl31.bin
 
+	# OrangePi PC 2
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-" DEBUG=0 bl31
+	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/sun50i_a64/release/bl31.bin bl31.bin
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	-mkdir -pv /usr/share/u-boot/orangepi_pc2
+	cd $(DIR_APP) && make CROSS_COMPILE="" orangepi_pc2_config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING="  OrangePi PC2 - IPFire.org"!' .config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
+		/usr/share/u-boot/orangepi_pc2
+	cd $(DIR_APP) && make distclean
+	cd $(DIR_APP) && rm -f bl31.bin
+
+
 	# distrobootcmd support was removed for rockchip boards. Revert.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/u-boot-2024.10-revert_rockchip_distro_bootcmd_removal.patch
 

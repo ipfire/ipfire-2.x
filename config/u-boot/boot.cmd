@@ -41,7 +41,11 @@ fi;
 
 # for compatiblity reasons set DTBSUNXI if we run on sunxi
 if test "${board}" = "sunxi"; then
-	setenv fdtfile ${DTBSUNXI};
+	if test ${DTBSUNXI} = ""; then
+		echo ...;
+	else
+		setenv fdtfile ${DTBSUNXI};
+	fi;
 fi;
 
 # Check if serial console is enabled

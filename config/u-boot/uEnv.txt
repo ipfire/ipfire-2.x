@@ -1,4 +1,3 @@
 KVER=xxxKVERxxx
-DTBSUNXI=sun8i-h3-nanopi-r1.dtb
 root_dev=UUID=xxxROOT-UUIDxxx
 SERIAL-CONSOLE=ON
