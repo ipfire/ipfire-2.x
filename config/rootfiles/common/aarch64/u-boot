@@ -13,6 +13,8 @@ usr/share/u-boot/nanopi_r2c/u-boot-rockchip.bin
 usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
 #usr/share/u-boot/nanopi_r4s
 usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
+#usr/share/u-boot/orangepi_pc2
+usr/share/u-boot/orangepi_pc2/u-boot-sunxi-with-spl.bin
 #usr/share/u-boot/orangepi_r1_plus_lts
 usr/share/u-boot/orangepi_r1_plus_lts/u-boot-rockchip.bin
 #usr/share/u-boot/orangepi_zero_plus
