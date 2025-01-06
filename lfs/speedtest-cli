@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = speedtest-cli
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -81,6 +81,10 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/speedtest-cli/speedtest-cli-2.1.3-python_3.10_support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/speedtest-cli/speedtest-cli-2.1.3-python_3.11_updates_and_fixes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/speedtest-cli/speedtest-cli-2.1.3-fix_429_errors.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/speedtest-cli/speedtest-cli-2.1.3-python_3.12_remove_deprecated_method.patch
 	cd $(DIR_APP) && python3 setup.py build
 	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)

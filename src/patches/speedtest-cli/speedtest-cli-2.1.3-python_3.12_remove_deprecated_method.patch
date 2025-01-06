@@ -1,0 +1,27 @@
+Patch originally from
+
+From: Lavender <keqing.hu@icloud.com>
+Date: Mon, 4 Dec 2023 15:45:07 +0000
+Subject: [PATCH] remove deprecated method in python3.12
+
+however this does not work together with other patches as none of them have been merged into speedtest-cli and this one clashed with a previous change.
+
+Adolf Belka <adolf.belka@ipfire.org> took the original patch and modified it to this version to work with the other patches.
+
+diff -Naur speedtest-cli-2.1.3.orig/speedtest.py speedtest-cli-2.1.3/speedtest.py
+--- speedtest-cli-2.1.3.orig/speedtest.py	2025-01-05 13:36:51.090504543 +0100
++++ speedtest-cli-2.1.3/speedtest.py	2025-01-05 13:42:27.952782400 +0100
+@@ -980,7 +980,12 @@
+         self.client = client or {}
+ 
+         self._share = None
+-        self.timestamp = f"{datetime.datetime.utcnow().isoformat()}Z"
++        # datetime.datetime.utcnow() is deprecated starting from 3.12
++        # but datetime.UTC is supported starting from 3.11
++        if sys.version_info.major >= 3 and sys.version_info.minor >= 11:
++            self.timestamp = f"{datetime.datetime.now(datetime.UTC).isoformat()}Z"
++        else:
++            self.timestamp = f"{datetime.datetime.utcnow().isoformat()}Z"
+         self.bytes_received = 0
+         self.bytes_sent = 0
+ 
