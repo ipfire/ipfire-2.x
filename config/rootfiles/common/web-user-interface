@@ -89,7 +89,7 @@ srv/web/ipfire/cgi-bin/webaccess.cgi
 #srv/web/ipfire/cgi-bin/wiographs.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
-srv/web/ipfire/cgi-bin/wlanap.cgi
+#srv/web/ipfire/cgi-bin/wlanap.cgi
 srv/web/ipfire/cgi-bin/zoneconf.cgi
 #srv/web/ipfire/html
 srv/web/ipfire/html/blob.gif
