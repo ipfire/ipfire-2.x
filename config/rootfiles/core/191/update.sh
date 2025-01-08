@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etci/init.d/squid stop
 
 # Extract files
 extract_files
@@ -77,6 +78,7 @@ telinit u
 /etc/init.d/sshd restart
 /etc/init.d/unbound restart
 /etc/init.d/suricata restart
+/etc/init.d/squid start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
