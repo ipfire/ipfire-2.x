@@ -965,7 +965,7 @@
 'drop proxy' => 'Suppression de tous les paquets qui ne sont pas adressés au proxy',
 'drop samba' => 'Suppression de tous les ports Microsoft 135, 137, 138, 139, 445, 1025',
 'drop spoofed martians' => 'Journaliser les paquets abandonnés usurpés et martiens',
-'drop wirelessforward' => 'Journaliser des paquets abandonnés sans fil transférés',
+'drop wirelessforward' => 'Journaliser les paquets abandonnés sans fil transférés',
 'drop wirelessinput' => 'Journaliser les paquets abandonnés sans fil entrants',
 'dst port' => 'Port de destination ',
 'dstprt range overlaps' => 'La plage de port de destination chevauche un port déjà défini.',
