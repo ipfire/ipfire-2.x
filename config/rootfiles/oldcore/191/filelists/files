@@ -1,5 +1,7 @@
+etc/rc.d/init.d/functions
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/dnsforward.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/backup/bin/backup.pl
+var/ipfire/ipblocklist/sources
