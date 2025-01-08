@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A BitTorrent client with multiple UIs
 
-VER        = 4.0.6
+VER        = 4.0.5
 
 THISAPP    = transmission-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,9 +34,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
-PAK_VER    = 24
+PAK_VER    = 25
 
-DEPS       = miniupnpc
+DEPS       =
 
 SERVICES   = transmission
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3eb1d851322299cb1b79c799f431c09db5aee1be0372fa2877e16508ca6f9e78ea42ed75520ab29a3325e62efcfca63a83559db73c39c981c9e2eddb403ef65a
+$(DL_FILE)_BLAKE2 = 60caa3bc615137b225d3ac3f25daa352c6960fcc848c91e5ea45488ae109d93b53e314e4683bd7c4ef3f9b2f364d796b6c5bb014ca647d3f44fb5c9df9f8c997
 
 install : $(TARGET)
 
@@ -81,7 +81,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/transmission-4.0.6-fix_for_miniupnpc-2.2.8.patch
 	cd $(DIR_APP) && cmake . \
 			-DCMAKE_INSTALL_PREFIX=/usr \
 			-DCMAKE_BUILD_TYPE=Release \
