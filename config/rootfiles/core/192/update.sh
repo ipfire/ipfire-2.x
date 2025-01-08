@@ -98,6 +98,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/suricata restart
 
 # Build initial ramdisks
 dracut --regenerate-all --force
