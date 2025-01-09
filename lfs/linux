@@ -168,7 +168,7 @@ else
 	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(KVER)
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(KVER)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(KVER)
-	cd $(DIR_APP) && make $(MAKETUNING) modules_install
+	cd $(DIR_APP) && make $(MAKETUNING) modules_install INSTALL_MOD_STRIP=1
 
 ifneq "$(BUILD_PLATFORM)" "x86"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
