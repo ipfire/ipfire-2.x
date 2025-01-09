@@ -25,6 +25,8 @@ use HTML::Entities();
 use File::Basename;
 use PDF::API2;
 use constant mm => 25.4 / 72;
+use File::LibMagic;
+use File::Copy;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -53,6 +55,7 @@ my $coupons = "${General::swroot}/captive/coupons";
 my %couponhash = ();
 
 my $logo = "${General::swroot}/captive/logo.dat";
+my $logotmp = "/tmp/logo.tmp";
 
 my %settings=();
 my %mainsettings;
@@ -92,13 +95,25 @@ if ($cgiparams{'ACTION'} eq "export-coupons") {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	my $file = $cgiparams{'logo'};
 	if ($file) {
-		# Check if the file extension is PNG/JPEG
 		chomp $file;
-
-		my ($name, $path, $ext) = fileparse($file, qr/\.[^.]*$/);
-		if ($ext ne ".png" && $ext ne ".jpg" && $ext ne ".jpeg") {
-			$errormessage = $Lang::tr{'Captive wrong ext'};
+		# Save logo to /tmp/ to carry out content type check
+		my ($filehandle) = CGI::upload("logo");
+		open(FILE, ">$logotmp");
+		binmode $filehandle;
+		while (<$filehandle>) {
+			print FILE;
 		}
+		close(FILE);
+		# Check if the file content type is PNG or JPEG
+		my $magic = File::LibMagic->new;
+		my $file_info = $magic->info_from_filename($logotmp);
+		my $file_mime_type = $file_info->{mime_type};
+		if ($file_mime_type ne "image/png" && $file_mime_type ne "image/jpeg") {
+			$errormessage = $Lang::tr{'Captive wrong type'}." - ".$file_mime_type;
+			# Remove temporary logo file if there was an error.
+			unlink $logotmp;
+		}
+
 	}
 
 	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
@@ -111,17 +126,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	if (!$errormessage){
 		#Check if we need to upload a new logo
 		if ($file) {
-			# Save logo
-			my ($filehandle) = CGI::upload("logo");
-
-			# XXX check filesize
-
-			open(FILE, ">$logo");
-			binmode $filehandle;
-			while (<$filehandle>) {
-				print FILE;
-			}
-			close(FILE);
+			# Move uploaded logo file from /tmp/
+			File::Copy::move $logotmp, $logo;
 		}
 
 		&General::writehash("$settingsfile", \%settings);
