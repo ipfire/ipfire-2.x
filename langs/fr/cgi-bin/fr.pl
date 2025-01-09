@@ -66,7 +66,7 @@
 'Captive voucher' => 'Coupon',
 'Captive vouchervalid' => 'Délai d\'expiration de ce coupon',
 'Captive vout' => 'Reçus émis',
-'Captive wrong ext' => 'Le fichier téléchargé a un mauvais type de fichier',
+'Captive wrong type' => 'Le fichier téléchargé a un mauvais type de fichier',
 'Choose Rule' => 'Choisissez <u>une</u> des règles suivantes.',
 'Class' => 'Classe',
 'Class was deleted' => 'Avec potentielles sous-classes effacées',

@@ -61,7 +61,7 @@
 'Captive voucher' => 'Coupon',
 'Captive vouchervalid' => 'Allowed time for this coupon',
 'Captive vout' => 'Issued Vouchers',
-'Captive wrong ext' => 'Uploaded file has wrong filetype',
+'Captive wrong type' => 'Uploaded file has wrong filetype',
 'Choose Rule' => 'Choose <u>one</u> of the following rules.',
 'Class' => 'Class',
 'Class was deleted' => 'with potential subclasses was deleted',

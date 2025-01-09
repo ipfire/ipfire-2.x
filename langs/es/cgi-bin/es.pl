@@ -61,7 +61,7 @@
 'Captive voucher' => 'Cup&oacute;n',
 'Captive vouchervalid' => 'Tiempo permitido para este cup&oacute;n',
 'Captive vout' => 'Cupones emitidos',
-'Captive wrong ext' => 'El archivo subido tiene un tipo de archivo incorrecto',
+'Captive wrong type' => 'El archivo subido tiene un tipo de archivo incorrecto',
 'Choose Rule' => 'Seleccione <u>una</u> de las siguientes reglas.',
 'Class' => 'Clase',
 'Class was deleted' => 'con subclases potenciales fué eliminado',

@@ -62,7 +62,7 @@
 'Captive voucher' => 'Gutschein',
 'Captive vouchervalid' => 'Erlaubter Zeitraum für Gutschein',
 'Captive vout' => 'Ausgegebene Gutscheine',
-'Captive wrong ext' => 'Die hochgeladene Datei ist vom falschen Dateityp',
+'Captive wrong type' => 'Die hochgeladene Datei ist vom falschen Dateityp',
 'Choose Rule' => 'Wählen Sie <u>eine</u> der untenstehenden Regeln aus.',
 'Class' => 'Klasse',
 'Class was deleted' => 'wurde mit eventuell vorhandenen Unterklassen gelöscht',

@@ -61,7 +61,7 @@
 'Captive voucher' => 'Kupon',
 'Captive vouchervalid' => 'Bu kupon için izin verilen süre',
 'Captive vout' => 'Verilen Kuponlar',
-'Captive wrong ext' => 'Yüklenen dosya yanlış dosya türüne sahip',
+'Captive wrong type' => 'Yüklenen dosya yanlış dosya türüne sahip',
 'Choose Rule' => 'Aşağıdaki kurallardan <u>birini</u> seçin.',
 'Class' => 'Sınıf',
 'Class was deleted' => 'Potansiyel alt sınıfları ile silindi',

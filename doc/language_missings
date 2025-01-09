@@ -314,7 +314,7 @@
 < Captive vouchervalid
 < Captive vout
 < Captive WiFi coupon
-< Captive wrong ext
+< Captive wrong type
 < check all
 < core update
 < cpu frequency
@@ -858,7 +858,7 @@
 < Captive vouchervalid
 < Captive vout
 < Captive WiFi coupon
-< Captive wrong ext
+< Captive wrong type
 < check all
 < cpu frequency
 < crypto error
@@ -1441,7 +1441,7 @@
 < Captive vouchervalid
 < Captive vout
 < Captive WiFi coupon
-< Captive wrong ext
+< Captive wrong type
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -2457,7 +2457,7 @@
 < Captive vouchervalid
 < Captive vout
 < Captive WiFi coupon
-< Captive wrong ext
+< Captive wrong type
 < ccd add
 < ccd choose net
 < ccd clientip
