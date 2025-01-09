@@ -2,9 +2,9 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2016  Alexander Marx alexander.marx@ipfire.org                #
+# Copyright (C) 2016-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
-# This program is free software you can redistribute it and/or modify         #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
 # the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
@@ -22,6 +22,7 @@
 use strict;
 use CGI;
 use File::Copy;
+use File::LibMagic;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -29,7 +30,11 @@ use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
 
+my $q = new CGI;
+my $magic = File::LibMagic->new;
+
 my $logo = "${General::swroot}/captive/logo.dat";
+my $file_info = $magic->info_from_filename($logo);
 
 # Send 404 if logo was not uploaded and exit
 if (!-e $logo) {
@@ -37,8 +42,8 @@ if (!-e $logo) {
 	exit(0);
 }
 
-print "Content-Type: application/octet-stream\n\n";
-
 # Send image data
+print $q->header(-type=>$file_info->{mime_type});
+binmode STDOUT;
 File::Copy::copy $logo, \*STDOUT;
 exit(0);
