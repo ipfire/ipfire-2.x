@@ -1759,6 +1759,7 @@ build_system() {
 	lfsmake2 perl-Net-Telnet
 	lfsmake2 perl-Capture-Tiny
 	lfsmake2 perl-Config-AutoConf
+	lfsmake2 perl-File-LibMagic
 	lfsmake2 perl-Object-Tiny
 	lfsmake2 perl-Archive-Peek-Libarchive
 	lfsmake2 python3-inotify
