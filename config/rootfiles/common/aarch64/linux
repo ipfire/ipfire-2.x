@@ -9071,6 +9071,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/HAVE_PREEMPT_DYNAMIC_KEY
 #lib/modules/KVER/build/include/config/HAVE_REGS_AND_STACK_ACCESS_API
 #lib/modules/KVER/build/include/config/HAVE_RSEQ
+#lib/modules/KVER/build/include/config/HAVE_RUST
 #lib/modules/KVER/build/include/config/HAVE_SAMPLE_FTRACE_DIRECT
 #lib/modules/KVER/build/include/config/HAVE_SAMPLE_FTRACE_DIRECT_MULTI
 #lib/modules/KVER/build/include/config/HAVE_SOFTIRQ_ON_OWN_STACK
@@ -11103,6 +11104,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/RT_GROUP_SCHED
 #lib/modules/KVER/build/include/config/RT_MUTEXES
 #lib/modules/KVER/build/include/config/RUSTC_LLVM_VERSION
+#lib/modules/KVER/build/include/config/RUSTC_SUPPORTS_ARM64
 #lib/modules/KVER/build/include/config/RUSTC_VERSION
 #lib/modules/KVER/build/include/config/RWSEM_SPIN_ON_OWNER
 #lib/modules/KVER/build/include/config/S2IO
