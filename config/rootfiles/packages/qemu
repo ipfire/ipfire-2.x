@@ -13,6 +13,7 @@ usr/bin/qemu-storage-daemon
 usr/bin/qemu-system-aarch64
 usr/bin/qemu-system-riscv64
 usr/bin/qemu-system-x86_64
+usr/bin/qemu-vmsr-helper
 usr/bin/qemu-x86_64
 usr/include/qemu-plugin.h
 usr/libexec/qemu-bridge-helper
@@ -56,6 +57,10 @@ usr/share/qemu/edk2-i386-code.fd
 usr/share/qemu/edk2-i386-secure-code.fd
 usr/share/qemu/edk2-i386-vars.fd
 usr/share/qemu/edk2-licenses.txt
+usr/share/qemu/edk2-loongarch64-code.fd
+usr/share/qemu/edk2-loongarch64-vars.fd
+usr/share/qemu/edk2-riscv-code.fd
+usr/share/qemu/edk2-riscv-vars.fd
 usr/share/qemu/edk2-x86_64-code.fd
 usr/share/qemu/edk2-x86_64-secure-code.fd
 usr/share/qemu/efi-e1000.rom
@@ -72,6 +77,7 @@ usr/share/qemu/firmware/50-edk2-x86_64-secure.json
 usr/share/qemu/firmware/60-edk2-aarch64.json
 usr/share/qemu/firmware/60-edk2-arm.json
 usr/share/qemu/firmware/60-edk2-i386.json
+usr/share/qemu/firmware/60-edk2-loongarch64.json
 usr/share/qemu/firmware/60-edk2-x86_64.json
 #usr/share/qemu/hppa-firmware.img
 #usr/share/qemu/hppa-firmware64.img
@@ -135,7 +141,6 @@ usr/share/qemu/qboot.rom
 usr/share/qemu/qemu-nsis.bmp
 usr/share/qemu/qemu_vga.ndrv
 #usr/share/qemu/s390-ccw.img
-#usr/share/qemu/s390-netboot.img
 #usr/share/qemu/skiboot.lid
 #usr/share/qemu/slof.bin
 usr/share/qemu/trace-events-all
