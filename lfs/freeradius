@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = RADIUS Server
 
-VER        = 3.2.5
+VER        = 3.2.6
 
 THISAPP    = freeradius-server-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = freeradius
-PAK_VER    = 22
+PAK_VER    = 23
 
 DEPS       = libtalloc samba
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 169dccd6f04b4503869912dec9423279cc18fc22fa3babf324747bdf0d80d3b4fa5460ac07f89f8d845bf664283a9772b483b8fcec990364fcaf71b673b6917c
+$(DL_FILE)_BLAKE2 = 0af7cdf7fb784f2d5019f3bcb06d1d44dca046c9a4513d780ab032367001b6a67e9ea17a3a5b4609b9d7b936647e60c96e35188ba9644c4360071ac8d021bd58
 
 install : $(TARGET)
 
