@@ -1,11 +1,11 @@
 #usr/bin/protoc
-#usr/bin/protoc-28.3.0
+#usr/bin/protoc-29.3.0
 #usr/bin/protoc-gen-upb
-#usr/bin/protoc-gen-upb-28.3.0
+#usr/bin/protoc-gen-upb-29.3.0
 #usr/bin/protoc-gen-upb_minitable
-#usr/bin/protoc-gen-upb_minitable-28.3.0
+#usr/bin/protoc-gen-upb_minitable-29.3.0
 #usr/bin/protoc-gen-upbdefs
-#usr/bin/protoc-gen-upbdefs-28.3.0
+#usr/bin/protoc-gen-upbdefs-29.3.0
 #usr/include/google
 #usr/include/google/protobuf
 #usr/include/google/protobuf/any.h
@@ -21,6 +21,7 @@
 #usr/include/google/protobuf/arenaz_sampler.h
 #usr/include/google/protobuf/compiler
 #usr/include/google/protobuf/compiler/code_generator.h
+#usr/include/google/protobuf/compiler/code_generator_lite.h
 #usr/include/google/protobuf/compiler/command_line_interface.h
 #usr/include/google/protobuf/compiler/cpp
 #usr/include/google/protobuf/compiler/cpp/enum.h
@@ -86,7 +87,6 @@
 #usr/include/google/protobuf/compiler/java/helpers.h
 #usr/include/google/protobuf/compiler/java/internal_helpers.h
 #usr/include/google/protobuf/compiler/java/java_features.pb.h
-#usr/include/google/protobuf/compiler/java/kotlin_generator.h
 #usr/include/google/protobuf/compiler/java/lite
 #usr/include/google/protobuf/compiler/java/lite/enum.h
 #usr/include/google/protobuf/compiler/java/lite/enum_field.h
@@ -105,6 +105,10 @@
 #usr/include/google/protobuf/compiler/java/names.h
 #usr/include/google/protobuf/compiler/java/options.h
 #usr/include/google/protobuf/compiler/java/shared_code_generator.h
+#usr/include/google/protobuf/compiler/kotlin
+#usr/include/google/protobuf/compiler/kotlin/file.h
+#usr/include/google/protobuf/compiler/kotlin/generator.h
+#usr/include/google/protobuf/compiler/kotlin/message.h
 #usr/include/google/protobuf/compiler/objectivec
 #usr/include/google/protobuf/compiler/objectivec/enum.h
 #usr/include/google/protobuf/compiler/objectivec/enum_field.h
@@ -144,6 +148,7 @@
 #usr/include/google/protobuf/compiler/rust/accessors/accessors.h
 #usr/include/google/protobuf/compiler/rust/accessors/default_value.h
 #usr/include/google/protobuf/compiler/rust/accessors/generator.h
+#usr/include/google/protobuf/compiler/rust/accessors/with_presence.h
 #usr/include/google/protobuf/compiler/rust/context.h
 #usr/include/google/protobuf/compiler/rust/crate_mapping.h
 #usr/include/google/protobuf/compiler/rust/enum.h
@@ -154,6 +159,7 @@
 #usr/include/google/protobuf/compiler/rust/relative_path.h
 #usr/include/google/protobuf/compiler/rust/rust_field_type.h
 #usr/include/google/protobuf/compiler/rust/rust_keywords.h
+#usr/include/google/protobuf/compiler/rust/upb_helpers.h
 #usr/include/google/protobuf/compiler/scc.h
 #usr/include/google/protobuf/compiler/subprocess.h
 #usr/include/google/protobuf/compiler/versions.h
@@ -191,6 +197,7 @@
 #usr/include/google/protobuf/generated_message_tctable_gen.h
 #usr/include/google/protobuf/generated_message_tctable_impl.h
 #usr/include/google/protobuf/generated_message_util.h
+#usr/include/google/protobuf/go_features.proto
 #usr/include/google/protobuf/has_bits.h
 #usr/include/google/protobuf/implicit_weak_message.h
 #usr/include/google/protobuf/inlined_string_field.h
@@ -206,6 +213,7 @@
 #usr/include/google/protobuf/io/zero_copy_stream.h
 #usr/include/google/protobuf/io/zero_copy_stream_impl.h
 #usr/include/google/protobuf/io/zero_copy_stream_impl_lite.h
+#usr/include/google/protobuf/java_features.proto
 #usr/include/google/protobuf/json
 #usr/include/google/protobuf/json/internal
 #usr/include/google/protobuf/json/internal/descriptor_traits.h
@@ -279,14 +287,6 @@
 #usr/include/google/protobuf/wire_format_lite.h
 #usr/include/google/protobuf/wrappers.pb.h
 #usr/include/google/protobuf/wrappers.proto
-#usr/include/java
-#usr/include/java/core
-#usr/include/java/core/src
-#usr/include/java/core/src/main
-#usr/include/java/core/src/main/resources
-#usr/include/java/core/src/main/resources/google
-#usr/include/java/core/src/main/resources/google/protobuf
-#usr/include/java/core/src/main/resources/google/protobuf/java_features.proto
 #usr/include/upb
 #usr/include/upb/base
 #usr/include/upb/base/descriptor_constants.h
@@ -378,6 +378,7 @@
 #usr/include/upb/reflection/def.hpp
 #usr/include/upb/reflection/def_pool.h
 #usr/include/upb/reflection/def_type.h
+#usr/include/upb/reflection/descriptor_bootstrap.h
 #usr/include/upb/reflection/enum_def.h
 #usr/include/upb/reflection/enum_reserved_range.h
 #usr/include/upb/reflection/enum_value_def.h
@@ -415,6 +416,7 @@
 #usr/include/upb/util/def_to_proto.h
 #usr/include/upb/util/required_fields.h
 #usr/include/upb/wire
+#usr/include/upb/wire/byte_size.h
 #usr/include/upb/wire/decode.h
 #usr/include/upb/wire/encode.h
 #usr/include/upb/wire/eps_copy_input_stream.h
@@ -423,7 +425,11 @@
 #usr/include/upb/wire/reader.h
 #usr/include/upb/wire/types.h
 #usr/include/upb_generator
-#usr/include/upb_generator/mangle.h
+#usr/include/upb_generator/common
+#usr/include/upb_generator/common/names.h
+#usr/include/upb_generator/minitable
+#usr/include/upb_generator/minitable/names.h
+#usr/include/upb_generator/minitable/names_internal.h
 #usr/include/utf8_range.h
 #usr/include/utf8_validity.h
 #usr/lib/cmake/protobuf
@@ -439,14 +445,15 @@
 #usr/lib/cmake/utf8_range/utf8_range-targets-noconfig.cmake
 #usr/lib/cmake/utf8_range/utf8_range-targets.cmake
 #usr/lib/libprotobuf-lite.so
-usr/lib/libprotobuf-lite.so.28.3.0
+usr/lib/libprotobuf-lite.so.29.3.0
 #usr/lib/libprotobuf.so
-usr/lib/libprotobuf.so.28.3.0
+usr/lib/libprotobuf.so.29.3.0
 #usr/lib/libprotoc.so
-usr/lib/libprotoc.so.28.3.0
+usr/lib/libprotoc.so.29.3.0
 #usr/lib/libupb.a
 usr/lib/libutf8_range.so
 usr/lib/libutf8_validity.so
 #usr/lib/pkgconfig/protobuf-lite.pc
 #usr/lib/pkgconfig/protobuf.pc
+#usr/lib/pkgconfig/upb.pc
 #usr/lib/pkgconfig/utf8_range.pc
