@@ -1874,6 +1874,7 @@ build_system() {
 	lfsmake2 libseccomp
 	lfsmake2 libslirp
 	lfsmake2 dtc
+	lfsmake2 python3-tomli
 	lfsmake2 qemu
 	lfsmake2 nagios_nrpe
 	lfsmake2 nagios-plugins
@@ -1939,7 +1940,6 @@ build_system() {
 	lfsmake2 python3-certifi
 	lfsmake2 python3-idna
 	lfsmake2 python3-requests
-	lfsmake2 python3-tomli
 	lfsmake2 python3-pep517
 	lfsmake2 python3-build
 	lfsmake2 python3-install
