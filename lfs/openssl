@@ -41,7 +41,7 @@ CONFIGURE_OPTIONS = \
 	--prefix=/usr \
 	--openssldir=/etc/ssl \
 	shared \
-	zlib-dynamic \
+	zlib \
 	enable-camellia \
 	enable-seed \
 	enable-rfc3779 \
