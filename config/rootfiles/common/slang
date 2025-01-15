@@ -27,7 +27,6 @@ usr/lib/slang/v2/modules/stats-module.so
 usr/lib/slang/v2/modules/sysconf-module.so
 usr/lib/slang/v2/modules/termios-module.so
 usr/lib/slang/v2/modules/varray-module.so
-usr/lib/slang/v2/modules/zlib-module.so
 #usr/share/doc/slang
 #usr/share/doc/slang/v2
 #usr/share/doc/slang/v2/COPYING
