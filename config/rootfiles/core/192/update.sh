@@ -88,6 +88,10 @@ rm -rvf \
 # Extract files
 extract_files
 
+# Remove the old version of zlib
+rm -rfv \
+	/lib/libz.so.1.3.1
+
 # update linker config
 ldconfig
 
