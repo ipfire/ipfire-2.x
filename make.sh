@@ -1834,6 +1834,7 @@ build_system() {
 	lfsmake2 xvid
 	lfsmake2 libmpeg2
 	lfsmake2 gnump3d
+	lfsmake2 libxxhash
 	lfsmake2 rsync
 	lfsmake2 rpcbind
 	lfsmake2 keyutils
@@ -2047,7 +2048,6 @@ build_system() {
 	lfsmake2 libplist
 	lfsmake2 nqptp
 	lfsmake2 shairport-sync
-	lfsmake2 libxxhash
 	lfsmake2 borgbackup
 	lfsmake2 knot
 	lfsmake2 spectre-meltdown-checker
