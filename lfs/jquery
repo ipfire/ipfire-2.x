@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.3
+VER        = 3.7.1
 
 THISAPP    = jquery-$(VER)
 DL_FILE    = $(THISAPP).min.js
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ff1c58cc4d8efb7f3c134d4da0d0b6960c83d09edeffc9cff96230733c9c35c259282cb335aa2ceea75ca9d6548721aedbe3dbac6b68fa0a91e405c06f72f1d6
+$(DL_FILE)_BLAKE2 = 3f2c08cb7af88731e896620c5d0a958b209b662e43cc91a8690dda93af360e98e81f8d111c2c71d801e02c81e3b37f733f3aea12765f7b67ef0892353f773cfb
 
 install : $(TARGET)
 
