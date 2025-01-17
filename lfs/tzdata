@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2024a
+VER        = 2025a
 TZDATA_VER = $(VER)
 TZCODE_VER = $(VER)
 
@@ -45,8 +45,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_BLAKE2 = 5ec49bbce704411a1d8b3f018b0d8f6c7de24c5600e0cb6c61a7ee29b4a49b1e502d23b40bce6584ea0aa9b66327321608cbabb994071ec4ca2b3a496aa2d621
-tzcode$(TZCODE_VER).tar.gz_BLAKE2 = f3b8d1e7735ad858d071df564a8e11ac4d252b97a5729fa6c282112ff3903f7d35897735920b4466a926ef647dc283356879134046805411c694efd3fd89b282
+tzdata$(TZDATA_VER).tar.gz_BLAKE2 = ea394e2369254858143d592912b6c2d691e2b2615a9d56461b78a335c33b89a6598a5b0ddbfac19ba5e8df91b67f7b7368dfcb861b7f2639bc6b92486c25f405
+tzcode$(TZCODE_VER).tar.gz_BLAKE2 = d4cf1202686e99c437ef4dfa371703f43d9e8ea2d74961989e2d97bef889e39074151a843aa360480e525cedf3a6c798a4b911a9bac90de9de9983b8ba177fd8
 
 install : $(TARGET)
 
