@@ -627,6 +627,7 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/antora/modules/ROOT/pages
 #usr/share/doc/freeradius/antora/modules/ROOT/pages/directories.adoc
 #usr/share/doc/freeradius/antora/modules/ROOT/pages/index.adoc
+#usr/share/doc/freeradius/antora/modules/ROOT/pages/radiusd_x.adoc
 #usr/share/doc/freeradius/antora/modules/concepts
 #usr/share/doc/freeradius/antora/modules/concepts/nav.adoc
 #usr/share/doc/freeradius/antora/modules/concepts/pages
