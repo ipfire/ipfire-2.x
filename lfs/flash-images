@@ -78,9 +78,9 @@ else
 endif
 
 # /boot:  512 MB - OFFSET
-# /    : 2176 MB * 2048 = 4456448
+# /    : 2560 MB * 2048 = 5242880
 S_BOOT := $(shell echo $$(( 1048576 - $(S_OFFSET) )))
-S_ROOT := 4456448
+S_ROOT := 5242880
 
 ifeq "$(EFI)" "1"
  S_EFI = 65536 # 32 MB
