@@ -74,6 +74,8 @@
 #usr/include/asm/types.h
 #usr/include/asm/ucontext.h
 #usr/include/asm/unistd.h
+#usr/include/asm/unistd_32.h
+#usr/include/asm/unistd_64.h
 #usr/include/drm
 #usr/include/drm/amdgpu_drm.h
 #usr/include/drm/armada_drm.h
@@ -91,6 +93,8 @@
 #usr/include/drm/nouveau_drm.h
 #usr/include/drm/omap_drm.h
 #usr/include/drm/panfrost_drm.h
+#usr/include/drm/panthor_drm.h
+#usr/include/drm/pvr_drm.h
 #usr/include/drm/qaic_accel.h
 #usr/include/drm/qxl_drm.h
 #usr/include/drm/radeon_drm.h
@@ -100,6 +104,7 @@
 #usr/include/drm/vgem_drm.h
 #usr/include/drm/virtgpu_drm.h
 #usr/include/drm/vmwgfx_drm.h
+#usr/include/drm/xe_drm.h
 #usr/include/headers_check.pl
 #usr/include/linux
 #usr/include/linux/acct.h
@@ -151,13 +156,14 @@
 #usr/include/linux/bcm933xx_hcs.h
 #usr/include/linux/bfs_fs.h
 #usr/include/linux/binfmts.h
+#usr/include/linux/bits.h
+#usr/include/linux/blkdev.h
 #usr/include/linux/blkpg.h
 #usr/include/linux/blktrace_api.h
 #usr/include/linux/blkzoned.h
 #usr/include/linux/bpf.h
 #usr/include/linux/bpf_common.h
 #usr/include/linux/bpf_perf_event.h
-#usr/include/linux/bpfilter.h
 #usr/include/linux/bpqether.h
 #usr/include/linux/bsg.h
 #usr/include/linux/bt-bmc.h
@@ -222,6 +228,7 @@
 #usr/include/linux/dma-buf.h
 #usr/include/linux/dma-heap.h
 #usr/include/linux/dns_resolver.h
+#usr/include/linux/dpll.h
 #usr/include/linux/dqblk_xfs.h
 #usr/include/linux/dvb
 #usr/include/linux/dvb/audio.h
@@ -245,6 +252,7 @@
 #usr/include/linux/ethtool_netlink.h
 #usr/include/linux/eventfd.h
 #usr/include/linux/eventpoll.h
+#usr/include/linux/exfat.h
 #usr/include/linux/ext4.h
 #usr/include/linux/f2fs.h
 #usr/include/linux/fadvise.h
@@ -353,7 +361,6 @@
 #usr/include/linux/ioam6_genl.h
 #usr/include/linux/ioam6_iptunnel.h
 #usr/include/linux/ioctl.h
-#usr/include/linux/iommu.h
 #usr/include/linux/iommufd.h
 #usr/include/linux/ioprio.h
 #usr/include/linux/ip.h
@@ -399,6 +406,7 @@
 #usr/include/linux/loadpin.h
 #usr/include/linux/loop.h
 #usr/include/linux/lp.h
+#usr/include/linux/lsm.h
 #usr/include/linux/lwtunnel.h
 #usr/include/linux/magic.h
 #usr/include/linux/major.h
@@ -408,8 +416,12 @@
 #usr/include/linux/max2175.h
 #usr/include/linux/mctp.h
 #usr/include/linux/mdio.h
+#usr/include/linux/media
 #usr/include/linux/media-bus-format.h
 #usr/include/linux/media.h
+#usr/include/linux/media/raspberrypi
+#usr/include/linux/media/raspberrypi/pisp_be_config.h
+#usr/include/linux/media/raspberrypi/pisp_common.h
 #usr/include/linux/mei.h
 #usr/include/linux/mei_uuid.h
 #usr/include/linux/membarrier.h
@@ -428,6 +440,7 @@
 #usr/include/linux/mpls.h
 #usr/include/linux/mpls_iptunnel.h
 #usr/include/linux/mptcp.h
+#usr/include/linux/mptcp_pm.h
 #usr/include/linux/mqueue.h
 #usr/include/linux/mroute.h
 #usr/include/linux/mroute6.h
@@ -613,12 +626,16 @@
 #usr/include/linux/nfsd/debug.h
 #usr/include/linux/nfsd/export.h
 #usr/include/linux/nfsd/stats.h
+#usr/include/linux/nfsd_netlink.h
 #usr/include/linux/nilfs2_api.h
 #usr/include/linux/nilfs2_ondisk.h
 #usr/include/linux/nitro_enclaves.h
 #usr/include/linux/nl80211-vnd-intel.h
 #usr/include/linux/nl80211.h
+#usr/include/linux/npcm-video.h
 #usr/include/linux/nsfs.h
+#usr/include/linux/nsm.h
+#usr/include/linux/ntsync.h
 #usr/include/linux/nubus.h
 #usr/include/linux/nvme_ioctl.h
 #usr/include/linux/nvram.h
@@ -628,6 +645,7 @@
 #usr/include/linux/openat2.h
 #usr/include/linux/openvswitch.h
 #usr/include/linux/packet_diag.h
+#usr/include/linux/papr_pdsm.h
 #usr/include/linux/param.h
 #usr/include/linux/parport.h
 #usr/include/linux/patchkey.h
@@ -761,7 +779,6 @@
 #usr/include/linux/tc_act/tc_gact.h
 #usr/include/linux/tc_act/tc_gate.h
 #usr/include/linux/tc_act/tc_ife.h
-#usr/include/linux/tc_act/tc_ipt.h
 #usr/include/linux/tc_act/tc_mirred.h
 #usr/include/linux/tc_act/tc_mpls.h
 #usr/include/linux/tc_act/tc_nat.h
@@ -783,6 +800,7 @@
 #usr/include/linux/tee.h
 #usr/include/linux/termios.h
 #usr/include/linux/thermal.h
+#usr/include/linux/thp7312.h
 #usr/include/linux/time.h
 #usr/include/linux/time_types.h
 #usr/include/linux/timerfd.h
@@ -796,6 +814,7 @@
 #usr/include/linux/tls.h
 #usr/include/linux/toshiba.h
 #usr/include/linux/tps6594_pfsm.h
+#usr/include/linux/trace_mmap.h
 #usr/include/linux/tty.h
 #usr/include/linux/tty_flags.h
 #usr/include/linux/types.h
@@ -820,6 +839,7 @@
 #usr/include/linux/usb/ch9.h
 #usr/include/linux/usb/charger.h
 #usr/include/linux/usb/functionfs.h
+#usr/include/linux/usb/g_hid.h
 #usr/include/linux/usb/g_printer.h
 #usr/include/linux/usb/g_uvc.h
 #usr/include/linux/usb/gadgetfs.h
@@ -847,6 +867,7 @@
 #usr/include/linux/vdpa.h
 #usr/include/linux/vduse.h
 #usr/include/linux/version.h
+#usr/include/linux/vesa.h
 #usr/include/linux/veth.h
 #usr/include/linux/vfio.h
 #usr/include/linux/vfio_ccw.h
@@ -904,6 +925,7 @@
 #usr/include/misc
 #usr/include/misc/cxl.h
 #usr/include/misc/fastrpc.h
+#usr/include/misc/mrvl_cn10k_dpi.h
 #usr/include/misc/ocxl.h
 #usr/include/misc/pvpanic.h
 #usr/include/misc/uacce
@@ -947,6 +969,8 @@
 #usr/include/rdma/rvt-abi.h
 #usr/include/rdma/siw-abi.h
 #usr/include/rdma/vmw_pvrdma-abi.h
+#usr/include/regulator
+#usr/include/regulator/regulator.h
 #usr/include/scsi
 #usr/include/scsi/cxlflash_ioctl.h
 #usr/include/scsi/fc
@@ -974,6 +998,7 @@
 #usr/include/sound/intel/avs
 #usr/include/sound/intel/avs/tokens.h
 #usr/include/sound/sb16_csp.h
+#usr/include/sound/scarlett2.h
 #usr/include/sound/sfnt_info.h
 #usr/include/sound/skl-tplg-interface.h
 #usr/include/sound/snd_ar_tokens.h
