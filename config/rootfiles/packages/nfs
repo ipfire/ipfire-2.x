@@ -1,7 +1,6 @@
 etc/rc.d/init.d/nfs-server
 sbin/mount.nfs
 sbin/mount.nfs4
-sbin/nfsdcltrack
 sbin/umount.nfs
 sbin/umount.nfs4
 #usr/include/nfsidmap.h
@@ -35,6 +34,7 @@ usr/sbin/nfsconf
 usr/sbin/nfsdcld
 usr/sbin/nfsdclddb
 usr/sbin/nfsdclnts
+usr/sbin/nfsdctl
 usr/sbin/nfsidmap
 usr/sbin/nfsiostat
 usr/sbin/nfsref
@@ -68,7 +68,7 @@ usr/sbin/start-statd
 #usr/share/man/man8/nfsdcld.8
 #usr/share/man/man8/nfsdclddb.8
 #usr/share/man/man8/nfsdclnts.8
-#usr/share/man/man8/nfsdcltrack.8
+#usr/share/man/man8/nfsdctl.8
 #usr/share/man/man8/nfsidmap.8
 #usr/share/man/man8/nfsiostat.8
 #usr/share/man/man8/nfsref.8
