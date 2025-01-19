@@ -19,11 +19,11 @@ usr/bin/metaflac
 #usr/lib/libFLAC++.la
 #usr/lib/libFLAC++.so
 usr/lib/libFLAC++.so.10
-usr/lib/libFLAC++.so.10.0.0
+usr/lib/libFLAC++.so.10.0.1
 #usr/lib/libFLAC.la
 #usr/lib/libFLAC.so
 usr/lib/libFLAC.so.12
-usr/lib/libFLAC.so.12.0.0
+usr/lib/libFLAC.so.12.1.0
 #usr/lib/pkgconfig/flac++.pc
 #usr/lib/pkgconfig/flac.pc
 #usr/share/aclocal/libFLAC++.m4
