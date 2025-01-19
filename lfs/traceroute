@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Packet route path tracing utility
 
-VER        = 2.1.5
+VER        = 2.1.6
 
 THISAPP    = traceroute-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = traceroute
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b2e99398b23d064f96319c9ca677589175f4bde64bce1f1d3236fc94f0ae3aa00499a2ef4a5c66c3a5815e09e16c534d049c36745119850c90c8af879ef66c6b
+$(DL_FILE)_BLAKE2 = 452daa7cbf5322981a36cc1e155447ea617ed4a0dfa9ef4f67ff7d2c36c7b9bc6145ddb1111eca5489ccc038f30fb0799def27efae1c385e043e9243339361cb
 
 install : $(TARGET)
 
