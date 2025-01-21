@@ -1,0 +1,2 @@
+var/ipfire/backup/bin/backup.pl
+var/ipfire/graphs.pl
