@@ -172,6 +172,8 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/sitemap.xml
 #usr/share/doc/ClamAV/html/theme-dawn.js
 #usr/share/doc/ClamAV/html/theme-tomorrow_night.js
+#usr/share/doc/ClamAV/html/toc.html
+#usr/share/doc/ClamAV/html/toc.js
 #usr/share/doc/ClamAV/html/tomorrow-night.css
 #var/ipfire/clamav
 var/ipfire/clamav/clamd.conf

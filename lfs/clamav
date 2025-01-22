@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Antivirus Toolkit
 
-VER        = 1.4.1
+VER        = 1.4.2
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 74
+PAK_VER    = 75
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 2cc31d5d4f33ddfffd01a46d88b09965ea8634fa711e5772a303d00c31efab2986727d6d26ca221f6518b80eb5ea3637c26dc0a2c32a493dd0a1cd43d2fd5d10
+$(DL_FILE)_BLAKE2 = 869f3375ff3da33c0a63607499d06b3312788cf8fdaa0f026553c0b12a23888b7f27a6eda9ffb0888c268faad6b552941cef0c3178ea86197eb92d4ce4f011e5
 
 
 install : $(TARGET)
@@ -101,7 +101,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-DAPP_CONFIG_DIRECTORY=/var/ipfire/clamav \
 		-DCURSES_LIBRARY=/usr/lib/libncurses.so \
 		-DDATABASE_DIRECTORY=$(DATABASE_DIR)
-
 	cd $(DIR_APP)/build && ninja $(MAKETUNING) && ninja install
 
 	mkdir -pv $(DATABASE_DIR)
