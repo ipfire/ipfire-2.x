@@ -2,14 +2,11 @@
 #usr/bin/gdb
 #usr/bin/gdb-add-index
 #usr/bin/gdbserver
-#usr/bin/run
+#usr/bin/gstack
 #usr/include/gdb
 #usr/include/gdb/jit-reader.h
 #usr/include/sim
 #usr/lib/libinproctrace.so
-#usr/include/sim/callback.h
-#usr/include/sim/sim.h
-#usr/lib/libsim.a
 #usr/share/gdb/python
 #usr/share/gdb/python/gdb
 #usr/share/gdb/python/gdb/FrameDecorator.py
@@ -19,7 +16,7 @@
 #usr/share/gdb/python/gdb/command/__init__.py
 #usr/share/gdb/python/gdb/command/explore.py
 #usr/share/gdb/python/gdb/command/frame_filters.py
-#usr/share/gdb/python/gdb/command/missing_debug.py
+#usr/share/gdb/python/gdb/command/missing_files.py
 #usr/share/gdb/python/gdb/command/pretty_printers.py
 #usr/share/gdb/python/gdb/command/prompt.py
 #usr/share/gdb/python/gdb/command/type_printers.py
@@ -33,6 +30,7 @@
 #usr/share/gdb/python/gdb/dap/evaluate.py
 #usr/share/gdb/python/gdb/dap/events.py
 #usr/share/gdb/python/gdb/dap/frames.py
+#usr/share/gdb/python/gdb/dap/globalvars.py
 #usr/share/gdb/python/gdb/dap/io.py
 #usr/share/gdb/python/gdb/dap/launch.py
 #usr/share/gdb/python/gdb/dap/locations.py
@@ -56,11 +54,13 @@
 #usr/share/gdb/python/gdb/function/caller_is.py
 #usr/share/gdb/python/gdb/function/strfns.py
 #usr/share/gdb/python/gdb/missing_debug.py
+#usr/share/gdb/python/gdb/missing_files.py
+#usr/share/gdb/python/gdb/missing_objfile.py
 #usr/share/gdb/python/gdb/printer
 #usr/share/gdb/python/gdb/printer/__init__.py
-#usr/share/gdb/python/gdb/printer/bound_registers.py
 #usr/share/gdb/python/gdb/printing.py
 #usr/share/gdb/python/gdb/prompt.py
+#usr/share/gdb/python/gdb/ptwrite.py
 #usr/share/gdb/python/gdb/styling.py
 #usr/share/gdb/python/gdb/types.py
 #usr/share/gdb/python/gdb/unwinder.py
@@ -102,4 +102,5 @@
 #usr/share/man/man1/gdb-add-index.1
 #usr/share/man/man1/gdb.1
 #usr/share/man/man1/gdbserver.1
+#usr/share/man/man1/gstack.1
 #usr/share/man/man5/gdbinit.5
