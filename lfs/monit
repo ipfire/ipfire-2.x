@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.34.3
+VER        = 5.34.4
 SUMMARY    = Utility for monitoring services on a Unix system
 
 THISAPP    = monit-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = monit
-PAK_VER    = 26
+PAK_VER    = 27
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 444bc0918fefc59214f9513fa134d4abea9cb0bbfc3e71fa4c3d76d9134821a54e1949bf89a4dc483593862a629a03ac347df9c12f07476c1fcbf2c2e2d4d507
+$(DL_FILE)_BLAKE2 = a61a63eab320cb39d9d90a877fa6d2f9c326e9629847c235cb44061ad69d9ae561d1c05c5ca0b50e263d3539ed39db64602741e88aa20697209c62bdb53f7516
 
 install : $(TARGET)
 
@@ -81,10 +81,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-	--prefix=/usr \
-	--sysconfdir=/etc \
-	--localstatedir=/var
-
+				--prefix=/usr \
+				--sysconfdir=/etc \
+				--localstatedir=/var
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
