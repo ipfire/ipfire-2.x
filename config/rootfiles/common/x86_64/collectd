@@ -186,6 +186,8 @@ usr/lib/collectd/ted.so
 usr/lib/collectd/thermal.so
 #usr/lib/collectd/threshold.la
 usr/lib/collectd/threshold.so
+#usr/lib/collectd/turbostat.la
+usr/lib/collectd/turbostat.so
 #usr/lib/collectd/ubi.la
 usr/lib/collectd/ubi.so
 #usr/lib/collectd/unixsock.la
