@@ -39,7 +39,7 @@ usr/bin/fc-validate
 #usr/lib/libfontconfig.la
 #usr/lib/libfontconfig.so
 usr/lib/libfontconfig.so.1
-usr/lib/libfontconfig.so.1.12.1
+usr/lib/libfontconfig.so.1.15.0
 #usr/lib/pkgconfig/fontconfig.pc
 #usr/share/fontconfig
 #usr/share/fontconfig/conf.avail
@@ -80,6 +80,8 @@ usr/lib/libfontconfig.so.1.12.1
 #usr/share/fontconfig/conf.avail/65-khmer.conf
 #usr/share/fontconfig/conf.avail/65-nonlatin.conf
 #usr/share/fontconfig/conf.avail/69-unifont.conf
+#usr/share/fontconfig/conf.avail/70-no-bitmaps-and-emoji.conf
+#usr/share/fontconfig/conf.avail/70-no-bitmaps-except-emoji.conf
 #usr/share/fontconfig/conf.avail/70-no-bitmaps.conf
 #usr/share/fontconfig/conf.avail/70-yes-bitmaps.conf
 #usr/share/fontconfig/conf.avail/80-delicious.conf

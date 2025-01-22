@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.15.0
+VER        = 2.16.0
 SUMMARY    = Library for configuring and customizing font access
 
 THISAPP    = fontconfig-$(VER)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 17c85fddc4ab84111c4f50afb89ecd8792c3aeaa2690b38fd39fca6f6cece69e9ce0cd3af8a2e54968c79ad1f9bee1e444699a13c068d9dfd3dfe1212ff37533
+$(DL_FILE)_BLAKE2 = 48d6fcbfe83f0a4c026a4f90d864a4195805e04cc6dd486bd18d68caa8b55fd51fc37822781298152d363b70dc103c9f8b216f6dc0193b2b192eb35565482ec4
 
 install : $(TARGET)
 
