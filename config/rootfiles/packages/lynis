@@ -1,6 +1,7 @@
 var/ipfire/lynis
 #var/ipfire/lynis/LICENSE
 #var/ipfire/lynis/db
+var/ipfire/lynis/db/control-links.db
 var/ipfire/lynis/db/fileperms.db
 var/ipfire/lynis/db/hints.db
 var/ipfire/lynis/db/integrity.db
@@ -87,6 +88,7 @@ var/ipfire/lynis/include/tests_firewalls
 var/ipfire/lynis/include/tests_hardening
 var/ipfire/lynis/include/tests_homedirs
 var/ipfire/lynis/include/tests_insecure_services
+var/ipfire/lynis/include/tests_kerberos
 var/ipfire/lynis/include/tests_kernel
 var/ipfire/lynis/include/tests_kernel_hardening
 var/ipfire/lynis/include/tests_ldap
@@ -118,4 +120,3 @@ var/ipfire/lynis/lynis
 #var/ipfire/lynis/plugins
 #var/ipfire/lynis/plugins/README
 var/ipfire/lynis/plugins/custom_plugin.template
-var/ipfire/lynis/software-eol.db
