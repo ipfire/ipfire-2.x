@@ -2183,7 +2183,15 @@ check_rootfiles_for_arch() {
 	# A list of files that are not scanned
 	# because they probably cause some false positives.
 	local excluded_files=(
+		abseil-cpp
+		cmake
+		gdb
+		liburcu
 		qemu
+		rust-memchr
+		rust-libc
+		rust-ppv-lite86
+		xfsprogs
 	)
 
 	# Exclude any architecture-specific directories
@@ -2198,9 +2206,9 @@ check_rootfiles_for_arch() {
 		args+=( "--exclude" "${x}" )
 	done
 
-	# Search for all files that contain the architecture, but exclude commented lines
+	# Search for all files that contain the architecture
 	local files=(
-		$(grep --files-with-matches -r "^[^#].*${arch}" "${args[@]}")
+		$(grep --files-with-matches -r "^.*${arch}" "${args[@]}")
 	)
 
 	local file
@@ -2518,6 +2526,11 @@ shell)
 	entershell
 	;;
 check)
+	# Check for rootfile consistency
+	if ! check_rootfiles; then
+		exiterror "Rootfiles are inconsistent"
+	fi
+
 	check_changed_rootfiles
 	;;
 clean)
