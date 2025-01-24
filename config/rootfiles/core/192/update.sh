@@ -85,6 +85,10 @@ rm -rvf \
 	/boot/dtb-* \
 	/lib/modules
 
+# remove old pppd libs
+rm -rvf \
+	/usr/lib/pppd
+
 # Extract files
 extract_files
 
