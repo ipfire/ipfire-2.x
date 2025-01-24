@@ -1,3 +1,5 @@
 etc/unbound/root.hints
+srv/web/ipfire/cgi-bin/captive/logo.cgi
+srv/web/ipfire/cgi-bin/captive.cgi
 var/ipfire/backup/bin/backup.pl
 var/ipfire/graphs.pl
