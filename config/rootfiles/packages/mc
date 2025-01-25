@@ -6,6 +6,7 @@ etc/mc/mc.emacs.keymap
 etc/mc/mc.ext.ini
 etc/mc/mc.keymap
 etc/mc/mc.menu
+etc/mc/mc.vim.keymap
 etc/mc/mcedit.menu
 etc/mc/sfs.ini
 usr/bin/mc
@@ -46,6 +47,7 @@ usr/libexec/mc/extfs.d/patchsetfs
 usr/libexec/mc/extfs.d/rpm
 usr/libexec/mc/extfs.d/rpms+
 usr/libexec/mc/extfs.d/s3+
+usr/libexec/mc/extfs.d/torrent
 usr/libexec/mc/extfs.d/trpm
 usr/libexec/mc/extfs.d/u7z
 usr/libexec/mc/extfs.d/uace
