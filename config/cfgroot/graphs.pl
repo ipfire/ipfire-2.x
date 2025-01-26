@@ -1094,7 +1094,7 @@ sub updatecpufreqgraph {
 	my $j = 11;
 	for(my $i = 0; $i < $cpucount; $i++) {
 		$j++; $j = 1 if $j > 20;
-		push(@command,"DEF:cpu".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpufreq/cpufreq-".$i.".rrd:value:AVERAGE"
+		push(@command,"DEF:cpu".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpufreq-".$i."/cpufreq.rrd:value:AVERAGE"
 				,"CDEF:cpu".$i."=cpu".$i."_,1000000,/"
 				,"LINE1:cpu".$i.$color{"color$j"}."A0:cpu ".$i." "
 				,"GPRINT:cpu".$i.":MAX:%3.0lf Mhz"
@@ -1132,7 +1132,7 @@ sub updatethermaltempgraph {
 
 	for(my $i = 0; $i < $thermalcount; $i++) {
 		my $j=$i+1;
-		push(@command,"DEF:temp".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/thermal-thermal_zone".$i."/temperature-temperature.rrd:value:AVERAGE"
+		push(@command,"DEF:temp".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/thermal-thermal_zone".$i."/temperature.rrd:value:AVERAGE"
 				,"CDEF:temp".$i."=temp".$i."_,1,/"
 				,"LINE3:temp".$i.$color{"color1$j"}."A0:Temp ".$i." "
 				,"GPRINT:temp".$i.":MAX:%3.0lf °C"
