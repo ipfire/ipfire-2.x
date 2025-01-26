@@ -111,10 +111,10 @@ ldconfig
 # be empty after the migration has been carried out.
 /var/ipfire/collectd-migrate-4-to-5.pl --indir /var/log/rrd/ > /tmp/rrd-migrate.sh
 sh /tmp/rrd-migrate.sh >/dev/null 2>&1
-	rm -rf \
-		/var/log/rrd/collectd/localhost/cpufreq
-		/var/log/rrd/collectd/localhost/interface
-		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperatur-temperatur.rrd
+rm -rvf \
+	/var/log/rrd/collectd/localhost/cpufreq
+	/var/log/rrd/collectd/localhost/interface
+	/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd
 
 # Start services
 /etc/init.d/collectd start

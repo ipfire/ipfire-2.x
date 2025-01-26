@@ -271,7 +271,7 @@ restore_backup() {
 	rm -rf \
 		/var/log/rrd/collectd/localhost/cpufreq
 		/var/log/rrd/collectd/localhost/interface
-		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperatur-temperatur.rrd
+		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd
 
 	# start collectd after restore
 	/etc/rc.d/init.d/collectd start
