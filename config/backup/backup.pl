@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -74,6 +74,10 @@ make_backup() {
 
 restore_backup() {
 	local filename="${1}"
+
+	# stop collectd to remove the rrd ramdisk for restore and convert
+	# the rrd's
+	/etc/rc.d/init.d/collectd stop
 
 	# remove all openvpn certs to prevent old unusable
 	# certificates being left in directory after a restore
@@ -264,9 +268,13 @@ restore_backup() {
 	# be empty after the migration has been carried out.
 	/var/ipfire/collectd-migrate-4-to-5.pl --indir /var/log/rrd/ > /tmp/rrd-migrate.sh
 	sh /tmp/rrd-migrate.sh >/dev/null 2>&1
-	if [ -d /var/log/rrd/collectd/localhost/interface/ ]; then
-		rm -Rf /var/log/rrd/collectd/localhost/interface/
-	fi
+	rm -rf \
+		/var/log/rrd/collectd/localhost/cpufreq
+		/var/log/rrd/collectd/localhost/interface
+		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperatur-temperatur.rrd
+
+	# start collectd after restore
+	/etc/rc.d/init.d/collectd start
 
 	return 0
 }

@@ -44,6 +44,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/collectd stop
 
 KVER="xxxKVERxxx"
 
@@ -105,17 +106,19 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
-# Start services
-/etc/init.d/suricata restart
-
 # Create collectd 4.x to 5.x migration script from rrd contents, run the script that
 # was created and then remove the old interface directory if it is present as it will
 # be empty after the migration has been carried out.
 /var/ipfire/collectd-migrate-4-to-5.pl --indir /var/log/rrd/ > /tmp/rrd-migrate.sh
 sh /tmp/rrd-migrate.sh >/dev/null 2>&1
-if [ -d /var/log/rrd/collectd/localhost/interface/ ]; then
-	rm -Rf /var/log/rrd/collectd/localhost/interface/
-fi
+	rm -rf \
+		/var/log/rrd/collectd/localhost/cpufreq
+		/var/log/rrd/collectd/localhost/interface
+		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperatur-temperatur.rrd
+
+# Start services
+/etc/init.d/collectd start
+/etc/init.d/suricata restart
 
 # Build initial ramdisks
 dracut --regenerate-all --force
