@@ -39,7 +39,7 @@ my %mainsettings = ();
 &Header::graph("$Lang::tr{'processors'}", "system.cgi", "cpu", "day");
 
 # CPU Frequency
-if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq/cpufreq-0.rrd"){
+if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq-0/cpufreq.rrd"){
 	&Header::graph("$Lang::tr{'cpu frequency'}", "system.cgi", "cpufreq", "day");
 }
 
