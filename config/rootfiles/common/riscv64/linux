@@ -8118,10 +8118,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/HAVE_IRQ_TIME_ACCOUNTING
 #lib/modules/KVER/build/include/config/HAVE_KCSAN_COMPILER
 #lib/modules/KVER/build/include/config/HAVE_KERNEL_GZIP
-#lib/modules/KVER/build/include/config/HAVE_KERNEL_LZ4
-#lib/modules/KVER/build/include/config/HAVE_KERNEL_LZMA
-#lib/modules/KVER/build/include/config/HAVE_KERNEL_LZO
-#lib/modules/KVER/build/include/config/HAVE_KERNEL_XZ
 #lib/modules/KVER/build/include/config/HAVE_KERNEL_ZSTD
 #lib/modules/KVER/build/include/config/HAVE_KPROBES
 #lib/modules/KVER/build/include/config/HAVE_KRETPROBES
@@ -8557,7 +8553,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/KALLSYMS
 #lib/modules/KVER/build/include/config/KALLSYMS_ALL
 #lib/modules/KVER/build/include/config/KCMP
-#lib/modules/KVER/build/include/config/KERNEL_XZ
+#lib/modules/KVER/build/include/config/KERNEL_GZIP
 #lib/modules/KVER/build/include/config/KERNFS
 #lib/modules/KVER/build/include/config/KEXEC
 #lib/modules/KVER/build/include/config/KEXEC_CORE
