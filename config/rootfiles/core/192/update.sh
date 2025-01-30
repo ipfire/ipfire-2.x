@@ -109,12 +109,28 @@ ldconfig
 # Create collectd 4.x to 5.x migration script from rrd contents, run the script that
 # was created and then remove the old interface directory if it is present as it will
 # be empty after the migration has been carried out.
+for i in $(seq 0 63);
+do
+	if [ -e /var/log/rrd/collectd/localhost/cpufreq/cpufreq-$i.rrd ]; then
+		mkdir -p /var/log/rrd/collectd/localhost/cpufreq-$i
+		mv -f /var/log/rrd/collectd/localhost/cpufreq/cpufreq-$i.rrd \
+			/var/log/rrd/collectd/localhost/cpufreq-$i/cpufreq.rrd
+	fi
+done
+if [ -e /var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd ]; then
+	mv -f /var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd \
+		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature.rrd
+fi
 /var/ipfire/collectd-migrate-4-to-5.pl --indir /var/log/rrd/ > /tmp/rrd-migrate.sh
 sh /tmp/rrd-migrate.sh >/dev/null 2>&1
 rm -rvf \
 	/var/log/rrd/collectd/localhost/cpufreq \
+	/var/log/rrd/collectd/localhost/disk-loop* \
+	/var/log/rrd/collectd/localhost/disk-sg* \
+	/var/log/rrd/collectd/localhost/disk-sr* \
+	/var/log/rrd/collectd/localhost/disk-ram* \
 	/var/log/rrd/collectd/localhost/interface \
-	/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd
+	/var/log/rrd/collectd/localhost/thermal-cooling_device*
 
 # Start services
 /etc/init.d/collectd start
