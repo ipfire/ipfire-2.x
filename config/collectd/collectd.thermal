@@ -1,13 +1,7 @@
 LoadPlugin thermal
 
 <Plugin thermal>
-	Device "cooling_device0"
-	Device "cooling_device1"
-	Device "cooling_device2"
-	Device "cooling_device3"
-	Device "cooling_device4"
-	Device "cooling_device5"
-	Device "cooling_device6"
-	Device "cooling_device7"
+	Device "/cooling_device[0-9]/"
+	Device "/cooling_device[0-9][0-9]/"
 	IgnoreSelected true
 </Plugin>
