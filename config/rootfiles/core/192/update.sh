@@ -130,6 +130,7 @@ rm -rvf \
 	/var/log/rrd/collectd/localhost/disk-sr* \
 	/var/log/rrd/collectd/localhost/disk-ram* \
 	/var/log/rrd/collectd/localhost/interface \
+	/var/log/rrd/collectd/localhost/processes* \
 	/var/log/rrd/collectd/localhost/thermal-cooling_device*
 
 # Start services
