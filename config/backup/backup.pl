@@ -272,11 +272,11 @@ restore_backup() {
 			mv -f /var/log/rrd/collectd/localhost/cpufreq/cpufreq-$i.rrd \
 				/var/log/rrd/collectd/localhost/cpufreq-$i/cpufreq.rrd
 		fi
-	done
-	if [ -e /var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd ]; then
-		mv -f /var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd \
-		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature.rrd
+		if [ -e /var/log/rrd/collectd/localhost/thermal-thermal_zone$i/temperature-temperature.rrd ]; then
+			mv -f /var/log/rrd/collectd/localhost/thermal-thermal_zone$i/temperature-temperature.rrd \
+			/var/log/rrd/collectd/localhost/thermal-thermal_zone$i/temperature.rrd
 	fi
+	done
 
 	# Create collectd 4.x to 5.x migration script from rrd contents, run the script that
 	# was created and then remove the old interface directory if it is present as it will

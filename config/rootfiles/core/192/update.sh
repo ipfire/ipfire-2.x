@@ -116,11 +116,11 @@ do
 		mv -f /var/log/rrd/collectd/localhost/cpufreq/cpufreq-$i.rrd \
 			/var/log/rrd/collectd/localhost/cpufreq-$i/cpufreq.rrd
 	fi
-done
-if [ -e /var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd ]; then
-	mv -f /var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature-temperature.rrd \
-		/var/log/rrd/collectd/localhost/thermal-thermal_zone*/temperature.rrd
+	if [ -e /var/log/rrd/collectd/localhost/thermal-thermal_zone$i/temperature-temperature.rrd ]; then
+		mv -f /var/log/rrd/collectd/localhost/thermal-thermal_zone$i/temperature-temperature.rrd \
+			/var/log/rrd/collectd/localhost/thermal-thermal_zone$i/temperature.rrd
 fi
+done
 /var/ipfire/collectd-migrate-4-to-5.pl --indir /var/log/rrd/ > /tmp/rrd-migrate.sh
 sh /tmp/rrd-migrate.sh >/dev/null 2>&1
 rm -rvf \
