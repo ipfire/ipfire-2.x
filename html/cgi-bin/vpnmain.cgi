@@ -2384,11 +2384,11 @@ END
 	#use default advanced value
 	$cgiparams{'IKE_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[18];
 	$cgiparams{'IKE_INTEGRITY'}		= 'sha2_512|sha2_256'; #[19];
-	$cgiparams{'IKE_GROUPTYPE'}             = 'curve448|curve25519|e521|e384|4096|3072'; #[20];
+	$cgiparams{'IKE_GROUPTYPE'}             = 'mlkem1024|mlkem768|mlkem512|curve448|curve25519|e521|e384|4096|3072'; #[20];
 	$cgiparams{'IKE_LIFETIME'}		= '3'; #[16];
 	$cgiparams{'ESP_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[21];
 	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
-	$cgiparams{'ESP_GROUPTYPE'}             = 'curve448|curve25519|e521|e384|4096|3072'; #[23];
+	$cgiparams{'ESP_GROUPTYPE'}             = 'mlkem1024|mlkem768|mlkem512|curve448|curve25519|e521|e384|4096|3072'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
 	$cgiparams{'COMPRESSION'}		= 'off'; #[13];
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
@@ -2769,7 +2769,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(curve448|curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|3072|4096|6144|8192)$/) {
+			if ($val !~ /^(mlkem(1024|768|512)|curve448|curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|3072|4096|6144|8192)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2810,7 +2810,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(curve448|curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|3072|4096|6144|8192|none)$/) {
+			if ($val !~ /^(mlkem(1024|768|512)|curve448|curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|3072|4096|6144|8192|none)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2950,6 +2950,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'IKE_INTEGRITY'}{'aesxcbc'} = '';
 	@temp = split('\|', $cgiparams{'IKE_INTEGRITY'});
 	foreach my $key (@temp) {$checked{'IKE_INTEGRITY'}{$key} = "selected='selected'"; }
+	$checked{'IKE_GROUPTYPE'}{'mlkem1024'} = '';
+	$checked{'IKE_GROUPTYPE'}{'mlkem768'} = '';
+	$checked{'IKE_GROUPTYPE'}{'mlkem512'} = '';
 	$checked{'IKE_GROUPTYPE'}{'curve448'} = '';
 	$checked{'IKE_GROUPTYPE'}{'curve25519'} = '';
 	$checked{'IKE_GROUPTYPE'}{'768'} = '';
@@ -2990,6 +2993,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'ESP_INTEGRITY'}{'aesxcbc'} = '';
 	@temp = split('\|', $cgiparams{'ESP_INTEGRITY'});
 	foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
+	$checked{'ESP_GROUPTYPE'}{'mlkem1024'} = '';
+	$checked{'ESP_GROUPTYPE'}{'mlkem768'} = '';
+	$checked{'ESP_GROUPTYPE'}{'mlkem512'} = '';
 	$checked{'ESP_GROUPTYPE'}{'curve448'} = '';
 	$checked{'ESP_GROUPTYPE'}{'curve25519'} = '';
 	$checked{'ESP_GROUPTYPE'}{'768'} = '';
@@ -3155,6 +3161,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<td class='boldbase' width="15%">$Lang::tr{'grouptype'}</td>
 			<td class='boldbase'>
 				<select name='IKE_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='mlkem1024' $checked{'IKE_GROUPTYPE'}{'mlkem1024'}>ML-KEM 1024 (256 bit)</option>
+					<option value='mlkem768' $checked{'IKE_GROUPTYPE'}{'mlkem768'}>ML-KEM 768 (192 bit)</option>
+					<option value='mlkem512' $checked{'IKE_GROUPTYPE'}{'mlkem512'}>ML-KEM 512 (128 bit)</option>
 					<option value='curve448' $checked{'IKE_GROUPTYPE'}{'curve448'}>Curve 448 (224 bit)</option>
 					<option value='curve25519' $checked{'IKE_GROUPTYPE'}{'curve25519'}>Curve 25519 (128 bit)</option>
 					<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
@@ -3178,6 +3187,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			</td>
 			<td class='boldbase'>
 				<select name='ESP_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='mlkem1024' $checked{'ESP_GROUPTYPE'}{'mlkem1024'}>ML-KEM 1024 (256 bit)</option>
+					<option value='mlkem768' $checked{'ESP_GROUPTYPE'}{'mlkem768'}>ML-KEM 768 (192 bit)</option>
+					<option value='mlkem512' $checked{'ESP_GROUPTYPE'}{'mlkem512'}>ML-KEM 512 (128 bit)</option>
 					<option value='curve448' $checked{'ESP_GROUPTYPE'}{'curve448'}>Curve 448 (224 bit)</option>
 					<option value='curve25519' $checked{'ESP_GROUPTYPE'}{'curve25519'}>Curve 25519 (128 bit)</option>
 					<option value='e521' $checked{'ESP_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
@@ -3755,7 +3767,9 @@ sub make_algos($$$$$) {
 				if ($mode eq "ike") {
 					push(@algo, $int);
 
-					if ($grp =~ m/^e(.*)$/) {
+					if ($grp =~ m/^mlkem(\d+)$/) {
+						push(@algo, "$grp");
+					} elsif ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
 					} elsif ($grp =~ m/curve(448|25519)/) {
 						push(@algo, "$grp");
@@ -3772,6 +3786,8 @@ sub make_algos($$$$$) {
 
 					if (!$pfs || $grp eq "none") {
 						# noop
+					} elsif ($grp =~ m/^mlkem(\d+)$/) {
+						push(@algo, "$grp");
 					} elsif ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
 					} elsif ($grp =~ m/curve(448|25519)/) {
