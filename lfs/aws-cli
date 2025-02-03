@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Amazon Web Services Command Line Interface
 
-VER        = 1.36.15
+VER        = 1.37.4
 
 THISAPP    = aws-cli-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = aws-cli
-PAK_VER    = 9
+PAK_VER    = 11
 
 DEPS       = python3-botocore python3-colorama python3-docutils python3-pyasn1 python3-rsa python3-s3transfer python3-six python3-yaml
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ad355829f2388c6035713308badf8239684a475e1c925838cfd16f88505f88d3c71b6f73d5d4335936d3aeae239cb78f08150fcfd36c7b15cbea8a61813786b6
+$(DL_FILE)_BLAKE2 = e0b5a2d1ff0e2dd73f75e1746eeed8106d02e2a6efabc1a9cb828207ed14e6ebe9f9acae728bb03854bc5fa062c8241211831c93ff0c96c32c964719fcc0b338
 
 install : $(TARGET)
 
@@ -83,5 +83,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && python3 setup.py build
 	cd $(DIR_APP) && python3 setup.py install --root=/
+
+	# Run the help command just to make sure it works as we need to make
+	# sure that we have a compatible version of python3-botocore
+	aws help
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
