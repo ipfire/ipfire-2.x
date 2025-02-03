@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.27.89
+VER        = 1.36.5
 SUMMARY    = Python interface for AWS
 
 THISAPP    = botocore-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-botocore
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = python3-dateutil python3-jmespath python3-urllib3
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b812a7833a9ce696c02a7ed541aa26803e493d45a13ea1ad3abc2118947f81580298b069c2596774ba4d04e095555bde5f33a3e70f9173605c1183ee46fec7c2
+$(DL_FILE)_BLAKE2 = 2dad209a50740e417b780ed6bd499e5c36e31563544b4c80b95688f36d444ca61a4bd405d793d64fb85bfa94fb783819e29e15f37d74bb5ce1a43ef385586d5d
 
 install : $(TARGET)
 
