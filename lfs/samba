@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
 PAK_VER    = 109
 
-DEPS       = avahi libtalloc perl-Parse-Yapp perl-JSON wsdd
+DEPS       = avahi libtalloc perl-Parse-Yapp wsdd
 
 SERVICES   = samba
 
