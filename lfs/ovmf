@@ -24,22 +24,16 @@
 
 include Config
 
-SUMMARY	   = Server side daemon and supporting files for libvirt
+SUMMARY    = Open Virtual Machine Firmware
 
-VER        = 10.10.0
-
-THISAPP    = libvirt-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+VER        = 2024.11-5
+THISAPP    = ovmf_$(VER)
+DL_FILE    = $(THISAPP)_all.deb
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 aarch64
-PROG       = libvirt
-PAK_VER    = 38
-
-DEPS       = ebtables libpciaccess ovmf qemu
-
-SERVICES   = libvirtd virtlogd
+PROG       = ovmf
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -49,9 +43,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8042ce1493c3ffd6e6deeb7d94d0744da18850fe416480487a57ffd33bf3390f587849f308aad12fd38c887628f90137ba717ea11ef7e0f73a97b157fa985a6e
+$(DL_FILE)_BLAKE2 = 466692251a4da0a2140b27b7c07db1a754624c21605d0439a7d50d650e07297392df6982d9c065cc3f4ef0536ee5308235a43f78aba69e216250fb6469f33c98
 
 install : $(TARGET)
+
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
@@ -59,7 +54,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
-	$(PAK)
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, b2sum
@@ -80,51 +75,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libvirt/0001-Change-default-behavior-of-libvirt-guests.sh-for-IPF.patch
-
-	cd $(DIR_APP) && meson \
-		--prefix=/usr \
-		--localstatedir=/var \
-		--sysconfdir=/etc \
-		-D docs=disabled \
-		-D sasl=disabled \
-		-D driver_vbox=disabled \
-		-D driver_lxc=disabled \
-		-D driver_esx=disabled \
-		-D driver_vmware=disabled \
-		-D driver_openvz=disabled \
-		-D firewalld=disabled \
-		-D driver_network=disabled \
-		-D driver_interface=enabled \
-		-D wireshark_dissector=disabled \
-		-D nls=disabled \
-		-D tests=disabled \
-		-D qemu_user=nobody \
-		-D qemu_group=kvm \
-		-D storage_dir=enabled \
-		-D storage_fs=enabled \
-		-D storage_lvm=enabled \
-		-D storage_iscsi=disabled \
-		-D storage_scsi=disabled \
-		-D storage_mpath=disabled \
-		-D storage_disk=disabled \
-		-D storage_rbd=disabled \
-		-D storage_gluster=disabled \
-		-D storage_zfs=disabled \
-		builddir/
-	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && ninja -C builddir/ install
-
-	#install initscripts
-	@$(call INSTALL_INITSCRIPTS,$(SERVICES))
-	mv /usr/libexec/libvirt-guests.sh /etc/rc.d/init.d/libvirt-guests
-
-	# Backup
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/libvirt /var/ipfire/backup/addons/includes/libvirt
-
-	# Install libvirtd.conf
-	cp -fv $(DIR_SRC)/config/libvirt/libvirtd.conf /etc/libvirt
+	@rm -rf $(DIR_APP) && mkdir -p $(DIR_APP)
+	cd $(DIR_APP) && ar xf $(DIR_DL)/$(DL_FILE)
+	tar xvf $(DIR_APP)/data.tar.xz -C /
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
