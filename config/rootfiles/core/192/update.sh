@@ -90,6 +90,27 @@ rm -rvf \
 rm -rvf \
 	/usr/lib/pppd
 
+# Remove dropped packages
+for package in cups cups-filters cups-pdf epson-inkjet-printer-escpr foomatic \
+	ghostscript gutenprint hplip lcdproc libyajl mpfire miniupnpc icinga; do
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+                stop_service "${package}"
+                for i in $(</opt/pakfire/db/rootfiles/${package}); do
+                        rm -rfv "/${i}"
+                done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
+# Remove packages from pakfire db (no addon anymore)
+for package in perl-JSON perl-MIME-Base64 ncat gnu-netcat; do
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # Extract files
 extract_files
 
