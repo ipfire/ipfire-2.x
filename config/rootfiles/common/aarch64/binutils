@@ -421,7 +421,7 @@ usr/lib/bfd-plugins/libdep.so
 #usr/lib/ldscripts/armelfb_linux_eabi.xwe
 #usr/lib/ldscripts/armelfb_linux_eabi.xwer
 #usr/lib/ldscripts/stamp
-usr/lib/libbfd-2.43.so
+usr/lib/libbfd-2.43.1.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -440,7 +440,7 @@ usr/lib/libctf.so.0.0.0
 #usr/lib/libgprofng.so
 usr/lib/libgprofng.so.0
 usr/lib/libgprofng.so.0.0.0
-usr/lib/libopcodes-2.43.so
+usr/lib/libopcodes-2.43.1.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
