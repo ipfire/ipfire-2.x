@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.40
+VER        = 2.41
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -82,7 +82,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8593cab5b2549b77159b6866fbb40b917e491fd5bc0814f7f85b6529166d78d4583436450c479b86cdfe468304fc4d2a9ba8294230a55dbc4c15e89c3ab6c000
+$(DL_FILE)_BLAKE2 = 4da62f489ba7a95bb069c2cfea8cf78e4d37e3a5f7e1736239670ba1dca12b69aa77bd00ced078c27d91b1e622c58cbd70258161a9d18c5b3bcc95863b8d744d
 
 install : $(TARGET)
 
@@ -127,8 +127,10 @@ endif
 		CFLAGS="$(CFLAGS) -fno-asynchronous-unwind-tables" \
 		$(DIR_APP)/configure $(EXTRA_CONFIG)
 
-	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
-		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+	cd $(DIR_SRC)/glibc-build && make \
+		PARALLELMFLAGS=$(MAKETUNING) \
+		CFLAGS="$(CFLAGS) -Wp,-U_FORTIFY_SOURCE" \
+		CXXFLAGS="$(CXXFLAGS) -Wp,-U_FORTIFY_SOURCE"
 
 	cd $(DIR_APP) && sed '/test-installation/s@\$$(PERL)@echo not running@' -i Makefile
 

@@ -109,6 +109,7 @@ usr/bin/locale
 #usr/include/bits/long-double.h
 #usr/include/bits/math-vector.h
 #usr/include/bits/mathcalls-helper-functions.h
+#usr/include/bits/mathcalls-macros.h
 #usr/include/bits/mathcalls-narrow.h
 #usr/include/bits/mathcalls.h
 #usr/include/bits/mathdef.h
@@ -124,7 +125,6 @@ usr/bin/locale
 #usr/include/bits/netdb.h
 #usr/include/bits/param.h
 #usr/include/bits/poll.h
-#usr/include/bits/platform/features.h
 #usr/include/bits/poll2.h
 #usr/include/bits/posix1_lim.h
 #usr/include/bits/posix2_lim.h
@@ -812,7 +812,7 @@ usr/lib/gconv
 #usr/lib/libc_nonshared.a
 #usr/lib/libdl.a
 #usr/lib/libg.a
-#usr/lib/libm-2.40.a
+#usr/lib/libm-2.41.a
 #usr/lib/libm.a
 #usr/lib/libm.so
 #usr/lib/libmcheck.a
@@ -8450,6 +8450,7 @@ usr/lib/locale
 #usr/share/info/libc.info-18
 #usr/share/info/libc.info-19
 #usr/share/info/libc.info-2
+#usr/share/info/libc.info-20
 #usr/share/info/libc.info-3
 #usr/share/info/libc.info-4
 #usr/share/info/libc.info-5

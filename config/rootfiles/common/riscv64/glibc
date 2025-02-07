@@ -108,6 +108,7 @@ usr/bin/locale
 #usr/include/bits/long-double.h
 #usr/include/bits/math-vector.h
 #usr/include/bits/mathcalls-helper-functions.h
+#usr/include/bits/mathcalls-macros.h
 #usr/include/bits/mathcalls-narrow.h
 #usr/include/bits/mathcalls.h
 #usr/include/bits/mathdef.h
@@ -8446,6 +8447,7 @@ usr/lib/locale
 #usr/share/info/libc.info-18
 #usr/share/info/libc.info-19
 #usr/share/info/libc.info-2
+#usr/share/info/libc.info-20
 #usr/share/info/libc.info-3
 #usr/share/info/libc.info-4
 #usr/share/info/libc.info-5
