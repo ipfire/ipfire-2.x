@@ -10,6 +10,11 @@
 #usr/bin/gp-display-text
 #usr/bin/gprof
 #usr/bin/gprofng
+#usr/bin/gprofng-archive
+#usr/bin/gprofng-collect-app
+#usr/bin/gprofng-display-html
+#usr/bin/gprofng-display-src
+#usr/bin/gprofng-display-text
 #usr/bin/ld
 #usr/bin/ld.bfd
 #usr/bin/nm
@@ -421,7 +426,7 @@ usr/bin/strings
 #usr/lib/ldscripts/elf64lriscv_lp64f.xwe
 #usr/lib/ldscripts/elf64lriscv_lp64f.xwer
 #usr/lib/ldscripts/stamp
-usr/lib/libbfd-2.43.so
+usr/lib/libbfd-2.44.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -440,7 +445,7 @@ usr/lib/libctf.so.0.0.0
 #usr/lib/libgprofng.so
 #usr/lib/libgprofng.so.0
 #usr/lib/libgprofng.so.0.0.0
-usr/lib/libopcodes-2.43.so
+usr/lib/libopcodes-2.44.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
@@ -449,6 +454,8 @@ usr/lib/libopcodes-2.43.so
 #usr/lib/libsframe.so
 usr/lib/libsframe.so.1
 usr/lib/libsframe.so.1.0.0
+#usr/share/doc/gprofng
+#usr/share/doc/gprofng/examples.tar.gz
 #usr/share/info/as.info
 #usr/share/info/bfd.info
 #usr/share/info/binutils.info
@@ -517,6 +524,7 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/locale/ka/LC_MESSAGES/ld.mo
 #usr/share/locale/ms
 #usr/share/locale/ms/LC_MESSAGES
+#usr/share/locale/ms/LC_MESSAGES/bfd.mo
 #usr/share/locale/ms/LC_MESSAGES/gprof.mo
 #usr/share/locale/nl/LC_MESSAGES/gprof.mo
 #usr/share/locale/nl/LC_MESSAGES/opcodes.mo
@@ -582,12 +590,12 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/man/man1/c++filt.1
 #usr/share/man/man1/dlltool.1
 #usr/share/man/man1/elfedit.1
-#usr/share/man/man1/gp-archive.1
-#usr/share/man/man1/gp-collect-app.1
-#usr/share/man/man1/gp-display-html.1
-#usr/share/man/man1/gp-display-src.1
-#usr/share/man/man1/gp-display-text.1
 #usr/share/man/man1/gprof.1
+#usr/share/man/man1/gprofng-archive.1
+#usr/share/man/man1/gprofng-collect-app.1
+#usr/share/man/man1/gprofng-display-html.1
+#usr/share/man/man1/gprofng-display-src.1
+#usr/share/man/man1/gprofng-display-text.1
 #usr/share/man/man1/gprofng.1
 #usr/share/man/man1/ld.1
 #usr/share/man/man1/nm.1
