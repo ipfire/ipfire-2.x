@@ -1,0 +1,192 @@
+From qemu-devel-bounces+berrange=redhat.com@nongnu.org Fri Oct 11 20:32:42 2024
+Delivered-To: berrange@gapps.redhat.com
+Received: by 2002:a05:612c:fcb:b0:49e:3967:5c with SMTP id kg11csp620284vqb;
+        Fri, 11 Oct 2024 12:32:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=2; AJvYcCXPcgyQ0/+OIS7vrT6LX5S6B3Hgz9IoezpGzlHzuQ86lhsSq6u4TrVfGwET6WFesjl4msgGP886/Q==@gapps.redhat.com
+X-Google-Smtp-Source: AGHT+IGI1MzgaHjMk041SIq3SzZGJRAF05keA8usOtLVfsqz+UnG8gS/7JH2MnqELZrotA/GJ+FI
+X-Received: by 2002:a05:6870:530c:b0:277:e35a:d2d5 with SMTP id 586e51a60fabf-2886e0d7223mr2593115fac.47.1728675162879;
+        Fri, 11 Oct 2024 12:32:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1728675162; cv=none;
+        d=google.com; s=arc-20240605;
+        b=alETPlokQysotchMz04b4QkeW4n7IaCvDHuYMZh698k8mF5RJMclj7AfzOWMyGXURw
+         kFfdMDxoHBlzWY9bTAGsH6EBkFDcJ9RyMs2Oy/exl09b3Zbt/LaW/PgqJZWi7DqZe7FD
+         Zo3bqW5OSwWxU/vpy6n8B4EV22uFeRNhdTlzj0nbU4h+YpUcUzXR++ssowqa367TMQ5s
+         THtVdddGT62AlbkeybdC/gTVxTt0RktEBMKTh+MzuZJ1rcgMb+pbG6h/XF5Iub2C+szk
+         EkyaW96aO1YTzalK4HCCL7cuCauVGvVShSjUfPFMqXRxvzVfFqn02zZh6C4AXb/a/gIT
+         YiXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:sender:errors-to:list-subscribe:list-help
+         :list-post:list-archive:list-unsubscribe:list-id:precedence
+         :mime-version:message-id:date:subject:cc:to:from:delivered-to;
+        bh=PO9IbOEY2YqKRkyInUx1mFCEKdNyF6F1Ade1P8ET5cM=;
+        fh=xgCffyEVvm6hjKwQ8pT/suARWWrEEvCTAvMVKpBgaZg=;
+        b=Q4fnfvzilypAHQRG6QbhiDXJWTDiP8dnRA4CB3fnXjC3sGRa+4+abHQkdOy6pMW4T9
+         HhCdtLquJqRIBSQNVEVZMN5bFDX+gIaEA6pmEbd8Sdi47dl2+VS7vP9dQWf/FOtrkGqg
+         D6K6DlbOdtzmdoTtWcI9Zm1eg6/98cVH2/hqzO/Ig1eI47UvIJpZtm3CMa3y5BgoJhmX
+         v1pxjLmbVwmOdo8YkXgT3bH5iAPwXjn8FU7q4Z+CX3XChIQksWGvkB+zR/d7xqsEEdTv
+         x85zJC/K4M9DAnuyJA2rIcrt/QUDHpdAPfcV2gDWr4IBhF27Ul9j6vjXzKNHaGjJxXbF
+         hFsw==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of qemu-devel-bounces+berrange=redhat.com@nongnu.org designates 209.51.188.17 as permitted sender) smtp.mailfrom="qemu-devel-bounces+berrange=redhat.com@nongnu.org"
+Return-Path: <qemu-devel-bounces+berrange=redhat.com@nongnu.org>
+Received: from us-smtp-inbound-delivery-1.mimecast.com (us-smtp-inbound-delivery-1.mimecast.com. [205.139.110.120])
+        by mx.google.com with ESMTPS id af79cd13be357-7b114998ee3si449329885a.281.2024.10.11.12.32.42
+        for <berrange@gapps.redhat.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:32:42 -0700 (PDT)
+Received-SPF: pass (google.com: domain of qemu-devel-bounces+berrange=redhat.com@nongnu.org designates 209.51.188.17 as permitted sender) client-ip=209.51.188.17;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of qemu-devel-bounces+berrange=redhat.com@nongnu.org designates 209.51.188.17 as permitted sender) smtp.mailfrom="qemu-devel-bounces+berrange=redhat.com@nongnu.org"
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-14-mwcDIPw2Ma-2fc8EyJ2Anw-1; Fri,
+ 11 Oct 2024 15:32:41 -0400
+X-MC-Unique: mwcDIPw2Ma-2fc8EyJ2Anw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A96C819560AE
+	for <berrange@gapps.redhat.com>; Fri, 11 Oct 2024 19:32:40 +0000 (UTC)
+Received: by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix)
+	id A3F151956089; Fri, 11 Oct 2024 19:32:40 +0000 (UTC)
+Delivered-To: berrange@redhat.com
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.23])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9EAE41955F42
+	for <berrange@redhat.com>; Fri, 11 Oct 2024 19:32:40 +0000 (UTC)
+Received: from us-smtp-inbound-delivery-1.mimecast.com (us-smtp-delivery-1.mimecast.com [205.139.110.120])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A35819560B5
+	for <berrange@redhat.com>; Fri, 11 Oct 2024 19:32:40 +0000 (UTC)
+Received: from lists.gnu.org (lists.gnu.org [209.51.188.17]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-656-VIioc_tgPx6dfe3wuTFP4A-1; Fri, 11 Oct 2024 15:32:38 -0400
+X-MC-Unique: VIioc_tgPx6dfe3wuTFP4A-1
+Received: from localhost ([::1] helo=lists1p.gnu.org)
+	by lists.gnu.org with esmtp (Exim 4.90_1)
+	(envelope-from <qemu-devel-bounces@nongnu.org>)
+	id 1szLMh-00020r-5j; Fri, 11 Oct 2024 15:31:55 -0400
+Received: from eggs.gnu.org ([2001:470:142:3::10])
+ by lists.gnu.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+ (Exim 4.90_1) (envelope-from <raj.khem@gmail.com>)
+ id 1szLMb-00020P-1q
+ for qemu-devel@nongnu.org; Fri, 11 Oct 2024 15:31:51 -0400
+Received: from mail-pl1-x635.google.com ([2607:f8b0:4864:20::635])
+ by eggs.gnu.org with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+ (Exim 4.90_1) (envelope-from <raj.khem@gmail.com>)
+ id 1szLMW-0003EY-RE
+ for qemu-devel@nongnu.org; Fri, 11 Oct 2024 15:31:46 -0400
+Received: by mail-pl1-x635.google.com with SMTP id
+ d9443c01a7336-20bb610be6aso25161715ad.1
+ for <qemu-devel@nongnu.org>; Fri, 11 Oct 2024 12:31:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1728675103; x=1729279903;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=PO9IbOEY2YqKRkyInUx1mFCEKdNyF6F1Ade1P8ET5cM=;
+ b=K3X31NNuvHdknW5P8UcnhDjhiG8YvVt80acZ9o0cp4OYATGyivVrgqlV16YtlE7nbP
+ c2GxVasHb4XHOFgQ/OS9twOzcL7BvXjTYuSlqOjY9QQ9Ng38MAMFgLpleBdUdi0JHrfh
+ vH2pyWqiWlGfPiDmnJWawogp9bgGCHsqyjPUtcw1LCUqNNx0sfyV98mwYq27/2m4POny
+ BQ0yFM/O7SF2EkZuaQwCJWPmH3fQatSgwEAq5u1SGy/Tn9a9GB4Iyolqgm4mMJBiful/
+ xoI0a2JEsYatNItIvqoWJ5uBgwrOZHldhxPZGCUP9cL5ecB1flcnPXHxLR4p0/kiQzuI
+ LzCw==
+X-Gm-Message-State: AOJu0YxWyAwGwQqYK1sZdfMljusz9BkH4fhylN1UvHETC7GDQDWtfFQS
+ zz40Z5A7yrfIoS4SkMLM2xTSe57qyfKfFPHRVJe68kPHnsvbdEUpZAecLqJ/
+X-Received: by 2002:a17:902:d2c5:b0:20c:a644:817f with SMTP id
+ d9443c01a7336-20ca6448261mr49539675ad.7.1728675103070; 
+ Fri, 11 Oct 2024 12:31:43 -0700 (PDT)
+Received: from apollo.hsd1.ca.comcast.net ([2601:646:9d80:4380::f083])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-20c8bc13551sm26871055ad.88.2024.10.11.12.31.42
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 11 Oct 2024 12:31:42 -0700 (PDT)
+From: Khem Raj <raj.khem@gmail.com>
+To: qemu-devel@nongnu.org
+Cc: Khem Raj <raj.khem@gmail.com>, Laurent Vivier <laurent@vivier.eu>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH v2] sched_attr: Do not define for glibc >= 2.41
+Date: Fri, 11 Oct 2024 12:31:40 -0700
+Message-ID: <20241011193140.1047648-1-raj.khem@gmail.com>
+MIME-Version: 1.0
+X-Spam_score_int: -20
+X-Spam_score: -2.1
+X-Spam_bar: --
+X-Spam_report: (-2.1 / 5.0 requ) BAYES_00=-1.9, DKIM_SIGNED=0.1,
+ DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, FREEMAIL_FROM=0.001,
+ RCVD_IN_DNSWL_NONE=-0.0001, SPF_HELO_NONE=0.001,
+ SPF_PASS=-0.001 autolearn=ham autolearn_force=no
+X-Spam_action: no action
+X-BeenThere: qemu-devel@nongnu.org
+X-Mailman-Version: 2.1.29
+Precedence: list
+List-Id: <qemu-devel.nongnu.org>
+List-Unsubscribe: <https://lists.nongnu.org/mailman/options/qemu-devel>,
+ <mailto:qemu-devel-request@nongnu.org?subject=unsubscribe>
+List-Archive: <https://lists.nongnu.org/archive/html/qemu-devel>
+List-Post: <mailto:qemu-devel@nongnu.org>
+List-Help: <mailto:qemu-devel-request@nongnu.org?subject=help>
+List-Subscribe: <https://lists.nongnu.org/mailman/listinfo/qemu-devel>,
+ <mailto:qemu-devel-request@nongnu.org?subject=subscribe>
+Errors-To: qemu-devel-bounces+berrange=redhat.com@nongnu.org
+Sender: qemu-devel-bounces+berrange=redhat.com@nongnu.org
+X-Mimecast-Impersonation-Protect: Policy=CLT - Impersonation Protection Definition;Similar Internal Domain=false;Similar Monitored External Domain=false;Custom External Domain=false;Mimecast External Domain=false;Newly Observed Domain=false;Internal User Name=false;Custom Display Name List=false;Reply-to Address Mismatch=false;Targeted Threat Dictionary=false;Mimecast Threat Dictionary=false;Custom Threat Dictionary=false
+X-Mimecast-Bulk-Signature: yes
+X-Mimecast-Spam-Signature: bulk
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: gmail.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
+Status: RO
+Content-Length: 1578
+Lines: 42
+
+glibc 2.41+ has added [1] definitions for sched_setattr and sched_getattr functions
+and struct sched_attr. Therefore, it needs to be checked for here as well before
+defining sched_attr
+
+Define sched_attr conditionally on SCHED_ATTR_SIZE_VER0
+
+Fixes builds with glibc/trunk
+
+[1] https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=21571ca0d70302909cf72707b2a7736cf12190a0;hp=298bc488fdc047da37482f4003023cb9adef78f8
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Cc: Laurent Vivier <laurent@vivier.eu>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+---
+v2: Use SCHED_ATTR_SIZE_VER0 instead of glibc version check
+
+ linux-user/syscall.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/linux-user/syscall.c b/linux-user/syscall.c
+index 1354e75694..caecbb765d 100644
+--- a/linux-user/syscall.c
++++ b/linux-user/syscall.c
+@@ -359,7 +359,8 @@ _syscall3(int, sys_sched_getaffinity, pid_t, pid, unsigned int, len,
+ #define __NR_sys_sched_setaffinity __NR_sched_setaffinity
+ _syscall3(int, sys_sched_setaffinity, pid_t, pid, unsigned int, len,
+           unsigned long *, user_mask_ptr);
+-/* sched_attr is not defined in glibc */
++/* sched_attr is not defined in glibc < 2.41 */
++#ifndef SCHED_ATTR_SIZE_VER0
+ struct sched_attr {
+     uint32_t size;
+     uint32_t sched_policy;
+@@ -372,6 +373,7 @@ struct sched_attr {
+     uint32_t sched_util_min;
+     uint32_t sched_util_max;
+ };
++#endif
+ #define __NR_sys_sched_getattr __NR_sched_getattr
+ _syscall4(int, sys_sched_getattr, pid_t, pid, struct sched_attr *, attr,
+           unsigned int, size, unsigned int, flags);
+
+
