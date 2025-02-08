@@ -111,6 +111,9 @@ for package in perl-JSON perl-MIME-Base64 ncat gnu-netcat; do
         rm -f "/opt/pakfire/db/rootfiles/${package}"
 done
 
+# Remove cups symlinks
+rm -rf /etc/rc.d/rc?.d/???cups
+
 # Extract files
 extract_files
 
