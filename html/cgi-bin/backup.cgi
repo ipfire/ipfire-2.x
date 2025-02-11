@@ -170,7 +170,7 @@ print <<END
 END
 ;
 my $MACHINE=`uname -m`;
-if ( ! ( $MACHINE =~ "arm" )) {
+if (( $MACHINE =~ "x86_64" )) {
 	print"		<input type='radio' name='BACKUPLOGS' value='iso' /> $Lang::tr{'generate iso'}<br/>"
 }
 print <<END

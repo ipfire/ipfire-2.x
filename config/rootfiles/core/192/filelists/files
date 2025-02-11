@@ -1,4 +1,5 @@
 etc/unbound/root.hints
+srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/captive/logo.cgi
 srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/system.cgi
