@@ -95,8 +95,6 @@ lib/firmware/intel-ucode/06-8e-09
 lib/firmware/intel-ucode/06-8e-0a
 lib/firmware/intel-ucode/06-8e-0b
 lib/firmware/intel-ucode/06-8e-0c
-lib/firmware/intel-ucode/06-8f-05
-lib/firmware/intel-ucode/06-8f-06
 lib/firmware/intel-ucode/06-8f-07
 lib/firmware/intel-ucode/06-8f-08
 lib/firmware/intel-ucode/06-96-01
@@ -117,10 +115,10 @@ lib/firmware/intel-ucode/06-a6-00
 lib/firmware/intel-ucode/06-a6-01
 lib/firmware/intel-ucode/06-a7-01
 lib/firmware/intel-ucode/06-aa-04
+lib/firmware/intel-ucode/06-af-03
 lib/firmware/intel-ucode/06-b7-01
 lib/firmware/intel-ucode/06-ba-02
 lib/firmware/intel-ucode/06-ba-03
-lib/firmware/intel-ucode/06-ba-08
 lib/firmware/intel-ucode/06-be-00
 lib/firmware/intel-ucode/06-bf-02
 lib/firmware/intel-ucode/06-bf-05
