@@ -159,7 +159,11 @@ rm -rvf \
 	/var/log/rrd/collectd/localhost/processes* \
 	/var/log/rrd/collectd/localhost/thermal-cooling_device*
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
+/etc/init.d/sshd restart
 /etc/init.d/collectd start
 /etc/init.d/suricata restart
 
