@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2024 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2025 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -48,6 +48,13 @@ ldconfig
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
+
+# Remove any entry for ABUSECH_BOTNETC2 from the ipblocklist modified file
+# and the associated ipblocklist files from the /var/lib/ipblocklist directory
+sed -i '/ABUSECH_BOTNETC2=/d' /var/ipfire/ipblocklist/modified
+if [ -e /var/lib/ipblocklist/ABUSECH_BOTNETC2.conf ]; then
+	rm /var/lib/ipblocklist/ABUSECH_BOTNETC2.conf
+fi
 
 # Apply local configuration to sshd_config
 
