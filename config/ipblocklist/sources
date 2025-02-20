@@ -128,11 +128,5 @@ our %sources = ( 'EMERGING_FWRULE' => { 'name'     => 'Emerging Threats Blocklis
 					 'info'     => 'https://blacklist.3coresec.net',
 					 'parser'   => 'ip-or-net-list',
 					 'rate'     => '1d',
-					 'category' => 'attacker' },
-	      'ABUSECH_BOTNETC2'  => { 'name'	=> 'ABUSE.ch Botnet C2 IP Blocklist',
-					   'url'	=> 'https://sslbl.abuse.ch/blacklist/sslipblacklist.txt',
-					   'info'	=> 'https://sslbl.abuse.ch/blacklist#botnet-c2-ips-csv',
-					   'parser'	=> 'ip-or-net-list',
-					   'rate'	=> '5m',
-					   'category'	=> 'reputation' }
+					 'category' => 'attacker' }
            );
