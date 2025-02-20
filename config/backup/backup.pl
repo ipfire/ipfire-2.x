@@ -252,15 +252,19 @@ restore_backup() {
 			-out /etc/httpd/server.crt &>/dev/null
 	fi
 
-	# Remove any entry for ALIENVAULT or SPAMHAUS_EDROP from the ipblocklist modified file
+	# Remove any entry for ALIENVAULT, SPAMHAUS_EDROP or ABUSECH_BOTNETC2 from the ipblocklist modified file
 	# and the associated ipblocklist files from the /var/lib/ipblocklist directory
 	sed -i '/ALIENVAULT=/d' /var/ipfire/ipblocklist/modified
 	sed -i '/SPAMHAUS_EDROP=/d' /var/ipfire/ipblocklist/modified
+	sed -i '/ABUSECH_BOTNETC2=/d' /var/ipfire/ipblocklist/modified
 	if [ -e /var/lib/ipblocklist/ALIENVAULT.conf ]; then
 		rm /var/lib/ipblocklist/ALIENVAULT.conf
 	fi
 	if [ -e /var/lib/ipblocklist/SPAMHAUS_EDROP.conf ]; then
 		rm /var/lib/ipblocklist/SPAMHAUS_EDROP.conf
+	fi
+	if [ -e /var/lib/ipblocklist/ABUSECH_BOTNETC2.conf ]; then
+		rm /var/lib/ipblocklist/ABUSECH_BOTNETC2.conf
 	fi
 
 	# The collectd directory structure was changed but not all changes
