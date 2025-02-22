@@ -54,6 +54,7 @@ ldconfig
 # Start services
 /etc/init.d/ipsec start
 /etc/init.d/squid start
+/etc/init.d/vnstat restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
