@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -50,6 +51,7 @@ ldconfig
 # Apply local configuration to sshd_config
 
 # Start services
+/etc/init.d/ipsec start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
