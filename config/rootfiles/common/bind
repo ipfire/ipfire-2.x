@@ -30,6 +30,7 @@ usr/bin/nsupdate
 #usr/include/dns/dsdigest.h
 #usr/include/dns/dyndb.h
 #usr/include/dns/ecs.h
+#usr/include/dns/ede.h
 #usr/include/dns/edns.h
 #usr/include/dns/enumclass.h
 #usr/include/dns/enumtype.h
