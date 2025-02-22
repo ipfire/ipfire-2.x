@@ -57,6 +57,13 @@ ldconfig
 /etc/init.d/squid start
 /etc/init.d/vnstat restart
 
+# Build initial ramdisks for updated intel-microcode
+case "$(uname -m)" in
+	x86_64)
+		dracut --regenerate-all --force
+		;;
+esac
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
