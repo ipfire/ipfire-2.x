@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/ipsec stop
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -52,6 +53,7 @@ ldconfig
 
 # Start services
 /etc/init.d/ipsec start
+/etc/init.d/squid start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
