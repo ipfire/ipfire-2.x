@@ -52,6 +52,7 @@ ldconfig
 # Apply local configuration to sshd_config
 
 # Start services
+/etc/init.d/apache restart
 /etc/init.d/ipsec start
 /etc/init.d/squid start
 /etc/init.d/vnstat restart
