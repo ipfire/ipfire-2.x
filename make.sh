@@ -1420,6 +1420,7 @@ build_system() {
 	lfsmake2 gmp
 	lfsmake2 mpfr
 	lfsmake2 libmpc
+	lfsmake2 pkg-config
 	lfsmake2 libxcrypt
 	lfsmake2 file
 	lfsmake2 gcc
@@ -1455,7 +1456,6 @@ build_system() {
 	lfsmake2 whois
 	lfsmake2 kbd
 	lfsmake2 less
-	lfsmake2 pkg-config
 	lfsmake2 procps
 	lfsmake2 make
 	lfsmake2 libpipeline
