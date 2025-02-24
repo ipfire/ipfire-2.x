@@ -315,7 +315,7 @@ usr/lib/python3.10/site-packages/botocore/data/budgets/2016-10-20/examples-1.jso
 usr/lib/python3.10/site-packages/botocore/data/budgets/2016-10-20/paginators-1.json
 usr/lib/python3.10/site-packages/botocore/data/budgets/2016-10-20/service-2.json
 usr/lib/python3.10/site-packages/botocore/data/ce
-sr/lib/python3.10/site-packages/botocore/data/ce/2017-10-25
+usr/lib/python3.10/site-packages/botocore/data/ce/2017-10-25
 usr/lib/python3.10/site-packages/botocore/data/ce/2017-10-25/endpoint-rule-set-1.json
 usr/lib/python3.10/site-packages/botocore/data/ce/2017-10-25/examples-1.json
 usr/lib/python3.10/site-packages/botocore/data/ce/2017-10-25/paginators-1.json
@@ -666,8 +666,8 @@ usr/lib/python3.10/site-packages/botocore/data/compute-optimizer/2019-11-01
 usr/lib/python3.10/site-packages/botocore/data/compute-optimizer/2019-11-01/endpoint-rule-set-1.json
 usr/lib/python3.10/site-packages/botocore/data/compute-optimizer/2019-11-01/examples-1.json
 usr/lib/python3.10/site-packages/botocore/data/compute-optimizer/2019-11-01/paginators-1.json
-usr/lib/python4.10/site-packages/botocore/data/compute-optimizer/2019-11-01/service-2.json
-usr/lib/python4.10/site-packages/botocore/data/config
+usr/lib/python3.10/site-packages/botocore/data/compute-optimizer/2019-11-01/service-2.json
+usr/lib/python3.10/site-packages/botocore/data/config
 usr/lib/python3.10/site-packages/botocore/data/config/2014-11-12
 usr/lib/python3.10/site-packages/botocore/data/config/2014-11-12/endpoint-rule-set-1.json
 usr/lib/python3.10/site-packages/botocore/data/config/2014-11-12/examples-1.json
