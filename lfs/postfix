@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A fast, secure, and flexible mailer
 
-VER        = 3.9.1
+VER        = 3.10.1
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 46
+PAK_VER    = 47
 
 DEPS       =
 
@@ -70,7 +70,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 78be7bf0f0d9e46429b40f98ddc98cac442cfdb404d77073346c973f3d0d4c52f299fc7f5d64bddaaf2db60dd234c52790f1efe4995faee8e2cd10c6f8e2096f
+$(DL_FILE)_BLAKE2 = ff2ff4a6fc61eb7f513124abc7a03f69b4c195967816a28a4708fbe7256e78959d499941747ef2fea7999bd2754e2e640e98e247a7870449cffb66ebf30ffee9
 
 install : $(TARGET)
 
