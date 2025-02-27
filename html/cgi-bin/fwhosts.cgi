@@ -1320,10 +1320,29 @@ sub showmenu {
 	&Header::openbox('100%', 'left',);
 	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
-	<br><br><table border='0' width='100%'>
-	<tr><td><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newlocationgrp'}' ></form></td>
-	<td align='right'><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' ></form></td></tr>
-	<tr><td colspan='6'></td></tr></table>
+	<br><br>
+	<table border='0' width='100%'>
+		<tr>
+			<td>
+			<form method='post'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwhost newlocationgrp'}'>
+			</form>
+			</td>
+			<td align='right'>
+			<form method='post'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}'>
+			</form>
+			</td>
+		</tr>
+		<tr>
+			<td colspan='6'>
+			</td>
+		</tr>
+	</table>
 END
 	&Header::closebox();
 
