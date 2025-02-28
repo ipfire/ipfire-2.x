@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.2.1
+VER        = 10.2.2
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f550f69a3db07e9b388e5e24fe94820e25c91aa5332bc32120194d268d1697fd1db2f5619119f030fd9774336757709b40416333a3f0f5beb9fa25e64f451134
+$(DL_FILE)_BLAKE2 = 95777f7aedc3a68e9873dd69d2c36b0235da31d95ad0327288f4fe11f35fe0ebcac827d3c7c9cc45bb0bbfdebfee246d0187c1d06bd9c44505868b9731715575
 
 install : $(TARGET)
 
