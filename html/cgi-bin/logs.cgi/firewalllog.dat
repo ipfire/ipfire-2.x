@@ -176,23 +176,25 @@ while ($gzindex >=0 && $loop) {
 		READ:while (<FILE>) {
 			my $line = $_;
 			if ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*IN=.*$/) {
-				# when standart viewing, just keep in memory the correct slice
-				# it starts a '$start' and size is $viewport
-				# If export, then keep all lines...
-				if ($cgiparams{'ACTION'} eq $Lang::tr{'export'}){
-					$log[$lines++] = "$line";
-				} else {
-					if ($lines++ < ($start + $Header::viewsize)) {
-						push(@log,"$line");
-						if (@log > $Header::viewsize) {
-							shift (@log);
+				unless ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:\sBLKLST.*IN=.*$/) {
+					# when standart viewing, just keep in memory the correct slice
+					# it starts a '$start' and size is $viewport
+					# If export, then keep all lines...
+					if ($cgiparams{'ACTION'} eq $Lang::tr{'export'}){
+						$log[$lines++] = "$line";
+					} else {
+						if ($lines++ < ($start + $Header::viewsize)) {
+							push(@log,"$line");
+							if (@log > $Header::viewsize) {
+								shift (@log);
+							}
+						#} else { dont do this optimisation, need to count lines !
+						#	$datetime = $maxtime; # we have read viewsize lines, stop main loop
+						#	last READ;	   # exit read file
 						}
-					#} else { dont do this optimisation, need to count lines !
-					#	$datetime = $maxtime; # we have read viewsize lines, stop main loop
-					#	last READ;	   # exit read file
 					}
+					$search_for_end = 1;	# we find the start of slice, can look for end now
 				}
-				$search_for_end = 1;	# we find the start of slice, can look for end now
 			} else {
 				if ($search_for_end == 1) {
 					#finish read files when date is over (test month equality only)
