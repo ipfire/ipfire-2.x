@@ -9,3 +9,4 @@ var/ipfire/qos/bin/*.pl
 var/ipfire/suricata/oinkmaster.conf
 var/ipfire/suricata/ruleset-sources
 var/ipfire/urlfilter/blacklists/*/*.db
+var/ipfire/urlfilter/bin/*.pl
