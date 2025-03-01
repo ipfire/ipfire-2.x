@@ -661,6 +661,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/ndr
 #usr/lib/python3.10/site-packages/samba/tests/ndr/gkdi.py
 #usr/lib/python3.10/site-packages/samba/tests/ndr/gmsa.py
+#usr/lib/python3.10/site-packages/samba/tests/ndr/sd.py
 #usr/lib/python3.10/site-packages/samba/tests/ndr/wbint.py
 #usr/lib/python3.10/site-packages/samba/tests/net_join.py
 #usr/lib/python3.10/site-packages/samba/tests/net_join_no_spnego.py
@@ -930,7 +931,6 @@ usr/lib/samba/libsmbpasswdparser-private-samba.so
 usr/lib/samba/libsocket-blocking-private-samba.so
 usr/lib/samba/libstable-sort-private-samba.so
 usr/lib/samba/libsys-rw-private-samba.so
-usr/lib/samba/libtalloc-private-samba.so
 usr/lib/samba/libtalloc-report-printf-private-samba.so
 usr/lib/samba/libtalloc-report-private-samba.so
 usr/lib/samba/libtdb-private-samba.so
@@ -939,6 +939,7 @@ usr/lib/samba/libtevent-private-samba.so
 usr/lib/samba/libtevent-util-private-samba.so
 usr/lib/samba/libtime-basic-private-samba.so
 usr/lib/samba/libtorture-private-samba.so
+usr/lib/samba/libutil-crypt-private-samba.so
 usr/lib/samba/libutil-reg-private-samba.so
 usr/lib/samba/libutil-setid-private-samba.so
 usr/lib/samba/libutil-tdb-private-samba.so
