@@ -233,7 +233,7 @@ sub callssl ($) {
 
 	if ($?) {
 		foreach my $line (split (/\n/, $retssl)) {
-			&General::log("ipsec", "$line") if (0); # 1 for verbose logging
+			&General::log("charon", "$line") if (0); # 1 for verbose logging
 			$ret .= '<br>' . &Header::escape($line);
 		}
 	}
@@ -244,7 +244,7 @@ sub callssl ($) {
 ### Obtain a CN from given cert
 ###
 sub getCNfromcert ($) {
-	#&General::log("ipsec", "Extracting name from $_[0]...");
+	#&General::log("charon", "Extracting name from $_[0]...");
 	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
 	$temp =~ /Subject:.*CN\s*=\s*(.*)[\n]/;
 	$temp = $1;
@@ -258,7 +258,7 @@ sub getCNfromcert ($) {
 ### Obtain Subject from given cert
 ###
 sub getsubjectfromcert ($) {
-	#&General::log("ipsec", "Extracting subject from $_[0]...");
+	#&General::log("charon", "Extracting subject from $_[0]...");
 	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
 	$temp =~ /Subject: (.*)[\n]/;
 	$temp = $1;
@@ -906,7 +906,7 @@ END
 		}
 		$cgiparams{'ROOTCERT_COUNTRY'} = $vpnsettings{'ROOTCERT_COUNTRY'} if (!$cgiparams{'ROOTCERT_COUNTRY'});
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload p12 file'}) {
-		&General::log("ipsec", "Importing from p12...");
+		&General::log("charon", "Importing from p12...");
 
 		unless (ref ($cgiparams{'FH'})) {
 			$errormessage = $Lang::tr{'there was no file upload'};
@@ -921,7 +921,7 @@ END
 		}
 
 		# Extract the CA certificate from the file
-		&General::log("ipsec", "Extracting caroot from p12...");
+		&General::log("charon", "Extracting caroot from p12...");
 		if (open(STDIN, "-|")) {
 			my $opt = " pkcs12 -legacy -cacerts -nokeys";
 			$opt .= " -in $filename";
@@ -934,7 +934,7 @@ END
 
 		# Extract the Host certificate from the file
 		if (!$errormessage) {
-			&General::log("ipsec", "Extracting host cert from p12...");
+			&General::log("charon", "Extracting host cert from p12...");
 			if (open(STDIN, "-|")) {
 				my $opt = " pkcs12 -legacy -clcerts -nokeys";
 				$opt .= " -in $filename";
@@ -948,7 +948,7 @@ END
 
 		# Extract the Host key from the file
 		if (!$errormessage) {
-			&General::log("ipsec", "Extracting private key from p12...");
+			&General::log("charon", "Extracting private key from p12...");
 			if (open(STDIN, "-|")) {
 				my $opt = " pkcs12 -legacy -nocerts -nodes";
 				$opt .= " -in $filename";
@@ -961,21 +961,21 @@ END
 		}
 
 		if (!$errormessage) {
-			&General::log("ipsec", "Moving cacert...");
+			&General::log("charon", "Moving cacert...");
 			unless(move("/tmp/newcacert", "${General::swroot}/ca/cacert.pem")) {
 				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 			}
 		}
 
 		if (!$errormessage) {
-			&General::log("ipsec", "Moving host cert...");
+			&General::log("charon", "Moving host cert...");
 			unless(move("/tmp/newhostcert", "${General::swroot}/certs/hostcert.pem")) {
 				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 			}
 		}
 
 		if (!$errormessage) {
-			&General::log("ipsec", "Moving private key...");
+			&General::log("charon", "Moving private key...");
 			unless(move("/tmp/newhostkey", "${General::swroot}/certs/hostkey.pem")) {
 				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 			}
@@ -997,7 +997,7 @@ END
 		# the private key for this CAROOT
 		# IPFire can only import certificates
 
-		&General::log("ipsec", "p12 import completed!");
+		&General::log("charon", "p12 import completed!");
 		&cleanssldatabase();
 		goto ROOTCERT_SUCCESS;
 
@@ -1083,7 +1083,7 @@ END
 
 		# Create the CA certificate
 		if (!$errormessage) {
-			&General::log("ipsec", "Creating cacert...");
+			&General::log("charon", "Creating cacert...");
 			if (open(STDIN, "-|")) {
 				my $opt = " req -x509 -sha256 -nodes";
 				$opt .= " -days 3650";
@@ -1106,7 +1106,7 @@ END
 
 		# Create the Host certificate request
 		if (!$errormessage) {
-			&General::log("ipsec", "Creating host cert...");
+			&General::log("charon", "Creating host cert...");
 			if (open(STDIN, "-|")) {
 				my $opt = " req -sha256 -nodes";
 				$opt .= " -newkey rsa:4096";
@@ -1129,7 +1129,7 @@ END
 
 		# Sign the host certificate request
 		if (!$errormessage) {
-			&General::log("ipsec", "Self signing host cert...");
+			&General::log("charon", "Self signing host cert...");
 
 			#No easy way for specifying the contain of subjectAltName without writing a config file...
 			my ($fh, $v3extname) = tempfile ('/tmp/XXXXXXXX');
@@ -1156,7 +1156,7 @@ END
 
 		# Create an empty CRL
 		if (!$errormessage) {
-			&General::log("ipsec", "Creating emptycrl...");
+			&General::log("charon", "Creating emptycrl...");
 			my $opt = " ca -gencrl";
 			$opt .= " -out ${General::swroot}/crls/cacrl.pem";
 			$errormessage = &callssl ($opt);
@@ -1925,7 +1925,7 @@ END
 		}
 
 		# Sign the certificate request
-		&General::log("ipsec", "Signing your cert $cgiparams{'NAME'}...");
+		&General::log("charon", "Signing your cert $cgiparams{'NAME'}...");
 		my $opt = " ca -md sha256 -days 825";
 		$opt .= " -batch -notext";
 		$opt .= " -in $filename";
@@ -1947,7 +1947,7 @@ END
 			goto VPNCONF_ERROR;
 		}
 	} elsif ($cgiparams{'AUTH'} eq 'pkcs12') {
-		&General::log("ipsec", "Importing from p12...");
+		&General::log("charon", "Importing from p12...");
 
 		unless (ref ($cgiparams{'FH'})) {
 			$errormessage = $Lang::tr{'there was no file upload'};
@@ -1962,7 +1962,7 @@ END
 		}
 
 		# Extract the CA certificate from the file
-		&General::log("ipsec", "Extracting caroot from p12...");
+		&General::log("charon", "Extracting caroot from p12...");
 		if (open(STDIN, "-|")) {
 			my $opt = " pkcs12 -legacy -cacerts -nokeys";
 			$opt .= " -in $filename";
@@ -1975,7 +1975,7 @@ END
 
 		# Extract the Host certificate from the file
 		if (!$errormessage) {
-			&General::log("ipsec", "Extracting host cert from p12...");
+			&General::log("charon", "Extracting host cert from p12...");
 			if (open(STDIN, "-|")) {
 				my $opt = " pkcs12 -legacy -clcerts -nokeys";
 				$opt .= " -in $filename";
@@ -1988,7 +1988,7 @@ END
 		}
 
 		if (!$errormessage) {
-			&General::log("ipsec", "Moving cacert...");
+			&General::log("charon", "Moving cacert...");
 			#If CA have new subject, add it to our list of CA
 			my $casubject = &Header::cleanhtml(getsubjectfromcert ('/tmp/newcacert'));
 			my @names;
@@ -2022,7 +2022,7 @@ END
 			}
 		}
 		if (!$errormessage) {
-			&General::log("ipsec", "Moving host cert...");
+			&General::log("charon", "Moving host cert...");
 			unless(move("/tmp/newhostcert", "${General::swroot}/certs/$cgiparams{'NAME'}cert.pem")) {
 				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 			}
@@ -2037,7 +2037,7 @@ END
 			unlink ("${General::swroot}/certs/$cgiparams{'NAME'}cert.pem");
 			goto VPNCONF_ERROR;
 		}
-		&General::log("ipsec", "p12 import completed!");
+		&General::log("charon", "p12 import completed!");
 	} elsif ($cgiparams{'AUTH'} eq 'certfile') {
 		if ($cgiparams{'KEY'}) {
 			$errormessage = $Lang::tr{'cant change certificates'};
@@ -2055,7 +2055,7 @@ END
 		}
 
 		# Verify the certificate has a valid CA and move it
-		&General::log("ipsec", "Validating imported cert against our known CA...");
+		&General::log("charon", "Validating imported cert against our known CA...");
 		my $validca = 1; #assume ok
 		my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ca/cacert.pem", "$filename");
 		if (! grep(/: OK/, @test)) {
@@ -2160,7 +2160,7 @@ END
 		(my $state = $cgiparams{'CERT_STATE'}) =~ s/^\s*$/\./;
 
 		# Create the Client certificate request
-		&General::log("ipsec", "Creating a cert...");
+		&General::log("charon", "Creating a cert...");
 
 		if (open(STDIN, "-|")) {
 			my $opt = " req -nodes";
@@ -2187,7 +2187,7 @@ END
 		}
 
 		# Sign the client certificate request
-		&General::log("ipsec", "Signing the cert $cgiparams{'NAME'}...");
+		&General::log("charon", "Signing the cert $cgiparams{'NAME'}...");
 
 		#No easy way for specifying the contain of subjectAltName without writing a config file...
 		my ($fh, $v3extname) = tempfile ('/tmp/XXXXXXXX');
@@ -2221,7 +2221,7 @@ END
 		}
 
 		# Create the pkcs12 file
-		&General::log("ipsec", "Packing a pkcs12 file...");
+		&General::log("charon", "Packing a pkcs12 file...");
 		$opt = " pkcs12 -legacy -export";
 		$opt .= " -inkey ${General::swroot}/certs/$cgiparams{'NAME'}key.pem";
 		$opt .= " -in ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
@@ -3834,7 +3834,7 @@ sub make_subnets($$) {
 sub regenerate_host_certificate() {
 	my $errormessage = "";
 
-	&General::log("ipsec", "Regenerating host certificate...");
+	&General::log("charon", "Regenerating host certificate...");
 
 	# Create a CSR based on the existing certificate
 	my $opt = " x509 -x509toreq -copy_extensions copyall";
@@ -3845,7 +3845,7 @@ sub regenerate_host_certificate() {
 
 	# Revoke the old certificate
 	if (!$errormessage) {
-		&General::log("ipsec", "Revoking the old host cert...");
+		&General::log("charon", "Revoking the old host cert...");
 
 		my $opt = " ca -revoke ${General::swroot}/certs/hostcert.pem";
 		$errormessage = &callssl($opt);
@@ -3853,7 +3853,7 @@ sub regenerate_host_certificate() {
 
 	# Sign the host certificate request
 	if (!$errormessage) {
-		&General::log("ipsec", "Self signing host cert...");
+		&General::log("charon", "Self signing host cert...");
 
 		my $opt = " ca -md sha256 -days 825";
 		$opt .= " -batch -notext";
