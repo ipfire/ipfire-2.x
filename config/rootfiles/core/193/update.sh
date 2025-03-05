@@ -35,10 +35,12 @@ done
 /etc/init.d/ipsec stop
 /etc/init.d/squid stop
 
+# Remove files
+rm -rfv \
+	/usr/share/vim/vim91
+
 # Extract files
 extract_files
-
-# Remove files
 
 # update linker config
 ldconfig
