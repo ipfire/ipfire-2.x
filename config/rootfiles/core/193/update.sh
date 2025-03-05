@@ -37,7 +37,19 @@ done
 
 # Remove files
 rm -rfv \
-	/usr/share/vim/vim91
+	/usr/share/vim/vim91 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b00 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b01 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b02 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b03 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b04 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b05 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b06 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b07 \
+	/lib/firmware/ath11k/WCN6750/hw1.0/wpss.b08 \
+	/lib/firmware/intel/ice/ddp/ice-1.3.36.0.pkg \
+	/lib/firmware/intel/ice/ddp-comms/ice_comms-1.3.45.0.pkg \
+	/lib/firmware/intel/ice/ddp-wireless_edge/ice_wireless_edge-1.3.13.0.pkg
 
 # Extract files
 extract_files
