@@ -22,17 +22,8 @@ download() {
 	# Install
 	pushd "linux-firmware-${version}" &>/dev/null
 
-	case "${version}" in
-		2023*)
-			target="install"
-			;;
-		*)
-			target="install-nodedup"
-			;;
-	esac
-
 	# Install to a new directory
-	if ! make "${target}" DESTDIR="${install}"; then
+	if ! make install DESTDIR="${install}"; then
 		echo "${0}: Could not install ${version}" >&2
 		popd &>/dev/null
 		return 1
