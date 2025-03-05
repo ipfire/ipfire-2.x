@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 20240811
+VER        = 20250211
 
 THISAPP    = linux-firmware-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1866fb7ab54db0f253cb875f23a24efe4ea3432e0ab134d51289221e0284db596de655ea50c04bc0c8e4e6a12295a0214d7c92ebbde54d5e2a2993fb3b85ffef
+$(DL_FILE)_BLAKE2 = 65531857e4225dca6f8acbc84f539b2f44c8aac3f0949ee1c6b54596c1232738ee0a98ca5025e0b6fe60862fe2d7d20b708854f917d2da9b708a7a5d6f41ab6b
 
 install : $(TARGET)
 
@@ -72,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	mkdir -p /lib/firmware
-	cd $(DIR_APP) && make install-nodedup
+	cd $(DIR_APP) && make install
 
 	# Hardlink any identical files
 	hardlink -c -vv /lib/firmware
