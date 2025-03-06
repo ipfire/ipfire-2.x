@@ -245,13 +245,16 @@ sub callssl ($) {
 ###
 sub getCNfromcert ($) {
 	#&General::log("charon", "Extracting name from $_[0]...");
-	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
-	$temp =~ /Subject:.*CN\s*=\s*(.*)[\n]/;
-	$temp = $1;
-	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST = / S = /;
-	$temp =~ s/,//g;
-	$temp =~ s/\'//g;
+	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$_[0]");
+	my $temp;
+	foreach my $line (@output) {
+		$line =~ /Subject:.*CN\s*=\s*(.*)[\n]/;
+		$temp = $1;
+		$temp =~ s+/Email+, E+;
+		$temp =~ s/ ST = / S = /;
+		$temp =~ s/,//g;
+		$temp =~ s/\'//g;
+	}
 	return $temp;
 }
 ###
@@ -259,11 +262,14 @@ sub getCNfromcert ($) {
 ###
 sub getsubjectfromcert ($) {
 	#&General::log("charon", "Extracting subject from $_[0]...");
-	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
-	$temp =~ /Subject: (.*)[\n]/;
-	$temp = $1;
-	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST = / S = /;
+	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$_[0]");
+	my $temp;
+	foreach my $line (@output) {
+		$line =~ /Subject: (.*)[\n]/;
+		$temp = $1;
+		$temp =~ s+/Email+, E+;
+		$temp =~ s/ ST = / S = /;
+	}
 	return $temp;
 }
 ###
@@ -644,8 +650,8 @@ END
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload ca certificate'}) {
 	&General::readhasharray("${General::swroot}/vpn/caconfig", \%cahash);
 
-	if ($cgiparams{'CA_NAME'} !~ /^[a-zA-Z0-9]+$/) {
-		$errormessage = $Lang::tr{'name must only contain characters'};
+	if ($cgiparams{'CA_NAME'} !~ /^[a-zA-Z0-9 ]*$/) {
+		$errormessage = $Lang::tr{'ca name must only contain characters and spaces'};
 		goto UPLOADCA_ERROR;
 	}
 
