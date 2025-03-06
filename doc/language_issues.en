@@ -360,6 +360,7 @@ WARNING: untranslated string: bytes received = Bytes Received
 WARNING: untranslated string: bytes sent = Bytes Sent
 WARNING: untranslated string: ca certificate = CA Certificate
 WARNING: untranslated string: ca name = CA name
+WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: cached = cached
 WARNING: untranslated string: cached memory = Cached Memory  
 WARNING: untranslated string: cached swap = Cached Swap

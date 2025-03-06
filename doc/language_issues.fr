@@ -968,6 +968,7 @@ WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: bypassed = Bypassed
+WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: core notice 3 = available.
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: enable disable client = unknown string

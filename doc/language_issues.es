@@ -1003,6 +1003,7 @@ WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
 WARNING: untranslated string: bypassed = Bypassed
+WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range

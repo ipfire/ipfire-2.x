@@ -892,6 +892,7 @@ WARNING: untranslated string: bit = bit
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bypassed = Bypassed
+WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
 WARNING: untranslated string: cake profile bridged-vcmux 24 = Bridged VC-MUX (24 bytes)
