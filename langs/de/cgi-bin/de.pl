@@ -2044,6 +2044,7 @@
 'password' => 'Passwort:',
 'password contains illegal characters' => 'Passwort enthält ungültige(s) Zeichen.',
 'password crypting key' => 'Schlüssel wird mit dem Passwort chiffriert',
+'password has quotation mark' => 'Kennwort enthält ein unzulässiges doppeltes Anführungszeichen.',
 'password not set' => 'Passwort nicht angegeben.',
 'password too short' => 'Passwort ist zu kurz.',
 'passwords do not match' => 'Die Passwörter stimmen nicht überein.',

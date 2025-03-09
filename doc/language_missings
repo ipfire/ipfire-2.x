@@ -150,6 +150,7 @@
 < openvpn cert expires soon
 < openvpn cert has expired
 < ovpn roadwarrior server
+< password has quotation mark
 < processors
 < regenerate host certificate
 < reg_file_data_sampling
@@ -193,6 +194,7 @@
 < load average
 < oops something went wrong
 < ovpn roadwarrior server
+< password has quotation mark
 < processors
 < reg_file_data_sampling
 < scanned
@@ -593,6 +595,7 @@
 < pakfire tree testing
 < pakfire tree unstable
 < pak update
+< password has quotation mark
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -2064,6 +2067,7 @@
 < pakfire tree testing
 < pakfire tree unstable
 < pak update
+< password has quotation mark
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -3084,6 +3088,7 @@
 < pakfire tree testing
 < pakfire tree unstable
 < pak update
+< password has quotation mark
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -3595,6 +3600,7 @@
 < pakfire tree testing
 < pakfire tree unstable
 < pak update
+< password has quotation mark
 < please reboot to apply your changes
 < processors
 < processor vulnerability mitigations

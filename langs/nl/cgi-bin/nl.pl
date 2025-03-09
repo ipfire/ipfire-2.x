@@ -1712,6 +1712,7 @@
 'password' => 'Wachtwoord:',
 'password contains illegal characters' => 'Wachtwoord bevat ongeldige tekens.',
 'password crypting key' => 'Wachtwoord codeert de sleutel',
+'password has quotation mark' => 'Wachtwoord bevat een ongeldig dubbel aanhalingsteken.',
 'password not set' => 'Wachtwoord niet ingesteld.',
 'password too short' => 'Wachtwoord is te kort.',
 'passwords do not match' => 'Wachtwoorden komen niet overeen.',

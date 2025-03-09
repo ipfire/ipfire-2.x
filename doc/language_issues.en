@@ -1480,6 +1480,7 @@ WARNING: untranslated string: pap or chap = PAP or CHAP
 WARNING: untranslated string: parentclass = Parentclass
 WARNING: untranslated string: parentclass add = Add parentclass
 WARNING: untranslated string: password = Password:
+WARNING: untranslated string: password has quotation mark = Password contains an illegal double quotation mark.
 WARNING: untranslated string: password not set = Password not set.
 WARNING: untranslated string: password too short = Password is too short.
 WARNING: untranslated string: passwords do not match = Passwords do not match.

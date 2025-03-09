@@ -1066,6 +1066,7 @@ WARNING: untranslated string: openvpn cert expires soon = Expires Soon
 WARNING: untranslated string: openvpn cert has expired = Expired
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: pakfire ago = ago.
+WARNING: untranslated string: password has quotation mark = Password contains an illegal double quotation mark.
 WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate

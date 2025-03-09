@@ -1269,6 +1269,7 @@ WARNING: untranslated string: pakfire tree = Repository
 WARNING: untranslated string: pakfire tree stable = Stable
 WARNING: untranslated string: pakfire tree testing = Testing
 WARNING: untranslated string: pakfire tree unstable = Unstable
+WARNING: untranslated string: password has quotation mark = Password contains an illegal double quotation mark.
 WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
 WARNING: untranslated string: pptp netconfig = My Net Config
 WARNING: untranslated string: pptp peer = Peer

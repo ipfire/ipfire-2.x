@@ -2108,6 +2108,7 @@
 'password' => 'Password:',
 'password contains illegal characters' => 'Password contains illegal characters.',
 'password crypting key' => 'Password crypting the key',
+'password has quotation mark' => 'Password contains an illegal double quotation mark.',
 'password not set' => 'Password not set.',
 'password too short' => 'Password is too short.',
 'passwords do not match' => 'Passwords do not match.',
