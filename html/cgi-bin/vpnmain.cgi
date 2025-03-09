@@ -2149,6 +2149,10 @@ END
 			$errormessage = $Lang::tr{'password too short'};
 			goto VPNCONF_ERROR;
 		}
+		if ($cgiparams{'CERT_PASS1'} =~ /["]/) {
+			$errormessage = $Lang::tr{'password has quotation mark'};
+			goto VPNCONF_ERROR;
+		}
 		if ($cgiparams{'CERT_PASS1'} ne $cgiparams{'CERT_PASS2'}) {
 			$errormessage = $Lang::tr{'passwords do not match'};
 			goto VPNCONF_ERROR;
@@ -2226,7 +2230,7 @@ END
 		$opt .= " -inkey ${General::swroot}/certs/$cgiparams{'NAME'}key.pem";
 		$opt .= " -in ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
 		$opt .= " -name \"$cgiparams{'NAME'}\"";
-		$opt .= " -passout pass:$cgiparams{'CERT_PASS1'}";
+		$opt .= " -passout pass:\"$cgiparams{'CERT_PASS1'}\"";
 		$opt .= " -certfile ${General::swroot}/ca/cacert.pem";
 		$opt .= " -caname \"$vpnsettings{'ROOTCERT_ORGANIZATION'} CA\"";
 		$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}.p12";
