@@ -1096,7 +1096,6 @@ lib/firmware/bnx2x/bnx2x-e2-7.13.1.0.fw
 lib/firmware/bnx2x/bnx2x-e2-7.13.11.0.fw
 lib/firmware/bnx2x/bnx2x-e2-7.13.15.0.fw
 lib/firmware/bnx2x/bnx2x-e2-7.13.21.0.fw
-lib/firmware/brcm
 lib/firmware/brcm/BCM-0a5c-6410.hcd
 lib/firmware/brcm/BCM-0bb4-0306.hcd
 lib/firmware/brcm/bcm4329-fullmac-4.bin
