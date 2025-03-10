@@ -29,14 +29,13 @@ SUMMARY    = Advanced Linux Sound Architecture
 VER        = 1.2.13
 UVER       = 1.2.13
 CVER       = 1.2.13
-FVER       = 1.2.4
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 21
+PAK_VER    = 22
 
 DEPS       =
 
@@ -48,17 +47,15 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) alsa-utils-$(UVER).tar.bz2 alsa-firmware-$(FVER).tar.bz2 alsa-ucm-conf-$(CVER).tar.bz2
+objects = $(DL_FILE) alsa-utils-$(UVER).tar.bz2 alsa-ucm-conf-$(CVER).tar.bz2
 
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
-alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 alsa-ucm-conf-$(CVER).tar.bz2 = $(DL_FROM)/alsa-ucm-conf-$(CVER).tar.bz2
 
 $(DL_FILE)_BLAKE2 = 1723ca5f191525e050f05423fb9ccf4501e4f20490d01b0c068493bbce279d3a067e8d0e5f52f9c76c2eaecb4c2b3fc42690193b88c313461fce2aec390175b3
 alsa-utils-$(UVER).tar.bz2_BLAKE2 = 9bc2bf8e21fb9308c2eabc6612da0848f9ddba45acb8bf8453d9cff7f73fa0267495430a150ea53b28fab8afb69a51e487e8b253dc7501e17d77ea3f6e90bcf7
-alsa-firmware-$(FVER).tar.bz2_BLAKE2 = 0f844f6cc4859b72635f24d347b4c790469aee39aa60d9addb2c168dcf06b48e7e3cbba26ff21c7e1f5aa355641eec7ab934cb09bfac8ca116a6ac6a7db9d548
 alsa-ucm-conf-$(CVER).tar.bz2_BLAKE2 = 87e4bf2285961e316ca853e9245e02447ea9e60fa506e124c072e2b6ed71345fc0c30b19bf8c849f8123a6b95a4facd22225eafccba8164266961110a60ef44c
 
 install : $(TARGET)
@@ -94,7 +91,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_SRC)/alsa*
 	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar xfj $(DIR_DL)/alsa-utils-$(UVER).tar.bz2
-	cd $(DIR_APP) && tar xfj $(DIR_DL)/alsa-firmware-$(FVER).tar.bz2
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
@@ -102,9 +98,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/alsa-utils-$(UVER) && ./configure --disable-xmlto
 	cd $(DIR_APP)/alsa-utils-$(UVER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/alsa-utils-$(UVER) && make install
-	cd $(DIR_APP)/alsa-firmware-$(FVER) && ./configure
-	cd $(DIR_APP)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP)/alsa-firmware-$(FVER) && make install
 	cd $(DIR_APP) && tar xfj $(DIR_DL)/alsa-ucm-conf-$(CVER).tar.bz2 \
 		-C /usr/share/alsa --strip-components=1 --wildcards "*/ucm2"
 	# install initscript
