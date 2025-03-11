@@ -1,0 +1,71 @@
+diff -Naur libloc-0.9.18.orig/configure.ac libloc-0.9.18/configure.ac
+--- libloc-0.9.18.orig/configure.ac	2025-03-10 12:07:35.000000000 +0100
++++ libloc-0.9.18/configure.ac	2025-03-11 12:38:58.112546283 +0100
+@@ -265,18 +265,10 @@
+ AC_PATH_PROG(PERL, perl, no)
+ AC_SUBST(PERL)
+ 
+-AX_PROG_PERL_MODULES(Config ExtUtils::MakeMaker,, AC_MSG_WARN(Need some Perl modules))
++AX_PROG_PERL_MODULES(ExtUtils::MakeMaker,, AC_MSG_WARN(Need some Perl modules))
+ 
+ AC_ARG_ENABLE(perl, AS_HELP_STRING([--disable-perl], [do not build the perl modules]), [],[enable_perl=yes])
+ AM_CONDITIONAL(ENABLE_PERL, test "$enable_perl" = "yes")
+-AS_IF([test "$enable_perl" = "yes"],
+-      [
+-       PERL_MODPATH=$($PERL -MConfig -e 'print $Config{installvendorarch}')
+-       PERL_MANPATH=$($PERL -MConfig -e 'print $Config{installvendorman3dir}')
+-       AC_SUBST(PERL_MODPATH)
+-       AC_SUBST(PERL_MANPATH)
+-       ],
+-)
+ 
+ dnl Checking for libresolv
+ case "${host}" in
+@@ -323,6 +315,4 @@
+ 	  Lua shared path:	${LUA_INSTALL_LMOD}
+ 	  Lua module path:	${LUA_INSTALL_CMOD}
+ 	  Perl:			${enable_perl}
+-	  Perl module path:     ${PERL_MODPATH}
+-	  Perl manual path:     ${PERL_MANPATH}
+ ])
+diff -Naur libloc-0.9.18.orig/Makefile.am libloc-0.9.18/Makefile.am
+--- libloc-0.9.18.orig/Makefile.am	2025-03-10 12:07:35.000000000 +0100
++++ libloc-0.9.18/Makefile.am	2025-03-11 12:47:38.043250613 +0100
+@@ -325,8 +325,7 @@
+ 	@test -e $(builddir)/src/perl/t/Location.t || ln -s --relative $(srcdir)/src/perl/t/Location.t $(builddir)/src/perl/t/
+ 	@test -e $(builddir)/src/perl/typemap || ln -s --relative $(srcdir)/src/perl/typemap $(builddir)/src/perl/
+ 
+-	cd $(builddir)/src/perl && $(PERL) Makefile.PL NO_PACKLIST=1 NO_PERLLOCAL=1 \
+-		INSTALLDIRS=vendor \
++	cd $(builddir)/src/perl && $(PERL) Makefile.PL PREFIX="$(prefix)" \
+ 		INC="-I$(abs_srcdir)/src" LIBS="-L$(abs_builddir)/src/.libs -lloc"
+ 	cd $(builddir)/src/perl && $(MAKE)
+ 	touch build-perl
+@@ -338,20 +337,20 @@
+ 
+ .PHONY: install-perl
+ install-perl: build-perl
+-	cd $(builddir)/src/perl && $(MAKE) install DESTDIR=$(DESTDIR)
++	cd $(builddir)/src/perl && $(MAKE) install DESTIDR=$(DESTDIR)
+ 
+ .PHONY: clean-perl
+ clean-perl:
+ 	cd $(builddir)/src/perl && $(MAKE) distclean
+-	rm -f build-perl
++	rm build-perl
+ 
+ .PHONY: uninstall-perl
+ uninstall-perl:
+-	rm -vf \
+-		$(DESTDIR)/@PERL_MODPATH@/Location.pm \
+-		$(DESTDIR)/@PERL_MODPATH@/auto/Location/Location.so \
+-		$(DESTDIR)/@PERL_MANPATH@/Location.3pm
+-	-rmdir $(DESTDIR)/@PERL_MODPATH@/auto/Location
++	rm -rvf \
++		$(DESTDIR)/$(prefix)/lib/*/perl/*/Location.pm \
++		$(DESTDIR)/$(prefix)/lib/*/perl/*/auto/Location \
++		$(DESTDIR)/$(prefix)/lib/*/perl/*/perllocal.pod \
++		$(DESTDIR)/$(prefix)/man/man3/Location.3pm
+ 
+ bin_SCRIPTS = \
+ 	src/scripts/location \

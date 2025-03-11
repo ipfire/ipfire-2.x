@@ -13,6 +13,7 @@ usr/bin/location
 #usr/include/libloc/format.h
 #usr/include/libloc/libloc.h
 #usr/include/libloc/network-list.h
+#usr/include/libloc/network-tree.h
 #usr/include/libloc/network.h
 #usr/include/libloc/private.h
 #usr/include/libloc/resolv.h
@@ -22,6 +23,8 @@ usr/bin/location
 #usr/lib/libloc.so
 usr/lib/libloc.so.1
 usr/lib/libloc.so.1.0.3
+#usr/lib/lua/5.4/location.la
+usr/lib/lua/5.4/location.so
 usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Location.pm
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Location
 #usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Location/.packlist
@@ -35,7 +38,6 @@ usr/lib/python3.10/site-packages/location/__init__.py
 usr/lib/python3.10/site-packages/location/downloader.py
 usr/lib/python3.10/site-packages/location/export.py
 usr/lib/python3.10/site-packages/location/i18n.py
-#usr/lib/python3.10/site-packages/location/importer.py
 usr/lib/python3.10/site-packages/location/logger.py
 usr/share/bash-completion/completions/location
 #usr/share/locale/de/LC_MESSAGES/libloc.mo

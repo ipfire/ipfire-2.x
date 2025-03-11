@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.17
-DB_DATE    = 2024-04-16
+VER        = 0.9.18
+DB_DATE    = 2025-03-11
 DB_TIME    = 03:45
 
 THISAPP    = libloc-$(VER)
@@ -44,8 +44,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE)-$(DB_TIME).db.xz
 
-$(DL_FILE)_BLAKE2 = b0bf860ebaccd3cb49c58c066c430f7a1f936a2029957db9b88e22c04240af0268a8f6388e8ca512102f14033037a2ab8bbb93fe83e525b9859c790c5c382df4
-location-$(DB_DATE).db.xz_BLAKE2 = f60ca7c2e3ac7cb7e6dc94501f0028dfb76f65330ba4f35934addc65bac8af9b3ce0149956aa3ca9211c9843b34d94255328af840d250f1e4612d9af90e7b6e9
+$(DL_FILE)_BLAKE2 = ccb730684c98756ef318f0cd5698b42ee4a997083811025ac5bf650798efb70dca97e1638b3f20da5d7b38a204fe5214a87fa7b61b8b70d71e6c8ad0577b0839
+location-$(DB_DATE).db.xz_BLAKE2 = adce971179f19c28906842ac08e5b90d55f73d91e0ffa27f98777c1ce8882dc9c4d1df1e9d45e06cf829e010a927f973d98830105c3aca58a86be7a172974861
 
 install : $(TARGET)
 
@@ -80,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
 
 	# https://lists.ipfire.org/pipermail/development/2022-November/014763.html
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.17-Revert-Install-Perl-files-to-Perl-vendor-directory.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.18-Revert-Install-Perl-files-to-Perl-vendor-directory.patch
 
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
