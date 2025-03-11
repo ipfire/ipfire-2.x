@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Enterprise-ready Network Backup Software
 
-VER        = 13.0.4
+VER        = 15.0.2
 
 THISAPP    = bacula-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bacula
-PAK_VER    = 13
+PAK_VER    = 14
 
 DEPS       =
 
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e54a754280178f74f97fdbb3c91a596b632d80739fedd5f847d183f0852ea9e82bba55ad9a745ee1ceb945bd527d33b117bc3c866783bd3073166bd20607a72a
+$(DL_FILE)_BLAKE2 = 1dd0722ce2bb6363936ed9cc9df1b6d842945f17277c77f40884bafc4b0a254c5fdd2c21bd200c6ca8b77c8eb718a319552e50135c9925d2b4ad81a64ab819d2
 
 install : $(TARGET)
 
