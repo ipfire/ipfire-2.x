@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -118,13 +118,15 @@ sub download_and_create_blocklist($) {
 	use LWP::UserAgent;
 
 	# Create a user agent for downloading the blacklist
+	# Define the User Agent string
 	# Limit the download size for safety
+	my $user_agent = &General::MakeUserAgent();
 	my $ua = LWP::UserAgent->new (
 		ssl_opts => {
 			SSL_ca_file     => '/etc/ssl/cert.pem',
 			verify_hostname => 1,
 		},
-
+		agent => $user_agent,
 		max_size => $max_dl_bytes,
 	);
 
