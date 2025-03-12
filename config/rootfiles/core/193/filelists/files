@@ -1,3 +1,4 @@
+srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/backup/exclude
