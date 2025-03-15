@@ -313,9 +313,9 @@ usr/lib/perl5/5.36.0/IPC/Open2.pm
 usr/lib/perl5/5.36.0/IPC/Open3.pm
 #usr/lib/perl5/5.36.0/Internals.pod
 #usr/lib/perl5/5.36.0/JSON
-#usr/lib/perl5/5.36.0/JSON/PP
-#usr/lib/perl5/5.36.0/JSON/PP.pm
-#usr/lib/perl5/5.36.0/JSON/PP/Boolean.pm
+usr/lib/perl5/5.36.0/JSON/PP
+usr/lib/perl5/5.36.0/JSON/PP.pm
+usr/lib/perl5/5.36.0/JSON/PP/Boolean.pm
 #usr/lib/perl5/5.36.0/Locale
 #usr/lib/perl5/5.36.0/Locale/Maketext
 #usr/lib/perl5/5.36.0/Locale/Maketext.pm
