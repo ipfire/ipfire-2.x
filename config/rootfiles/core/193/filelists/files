@@ -1,4 +1,7 @@
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/lib/perl5/5.36.0/JSON/PP
+usr/lib/perl5/5.36.0/JSON/PP.pm
+usr/lib/perl5/5.36.0/JSON/PP/Boolean.pm
 var/ipfire/backup/exclude
