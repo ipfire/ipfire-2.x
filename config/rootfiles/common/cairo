@@ -17,13 +17,13 @@
 #usr/lib/cairo/libcairo-trace.so
 #usr/lib/libcairo-gobject.so
 usr/lib/libcairo-gobject.so.2
-usr/lib/libcairo-gobject.so.2.11802.2
+usr/lib/libcairo-gobject.so.2.11804.4
 #usr/lib/libcairo-script-interpreter.so
 usr/lib/libcairo-script-interpreter.so.2
-usr/lib/libcairo-script-interpreter.so.2.11802.2
+usr/lib/libcairo-script-interpreter.so.2.11804.4
 #usr/lib/libcairo.so
 usr/lib/libcairo.so.2
-usr/lib/libcairo.so.2.11802.2
+usr/lib/libcairo.so.2.11804.4
 #usr/lib/pkgconfig/cairo-fc.pc
 #usr/lib/pkgconfig/cairo-ft.pc
 #usr/lib/pkgconfig/cairo-gobject.pc
