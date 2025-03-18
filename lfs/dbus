@@ -26,14 +26,14 @@ include Config
 
 SUMMARY    = D-Bus Message Bus System
 
-VER        = 1.16.0
+VER        = 1.16.2
 THISAPP    = dbus-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dbus
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a5a3ebe777c1c0296ba7240f9ed29ad329a6578a05baf10a469ce8c7d243791d35aca42a70d04cdd88feea238d081c3c8b0db444df24abcf7ce5ffe9187a0440
+$(DL_FILE)_BLAKE2 = ddca8abdd5df70b24d51293a262cda3f9e69681b31ae8bb560a6286ca6f2dc0c420dc5322a61bb142a77b2b5f86bdafcc6bf84b0d78af9610af7a78763b8b8fb
 
 install : $(TARGET)
 
