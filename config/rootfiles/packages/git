@@ -14,6 +14,7 @@ usr/libexec/git-core/git-annotate
 usr/libexec/git-core/git-apply
 usr/libexec/git-core/git-archimport
 usr/libexec/git-core/git-archive
+usr/libexec/git-core/git-backfill
 usr/libexec/git-core/git-bisect
 usr/libexec/git-core/git-blame
 usr/libexec/git-core/git-branch
