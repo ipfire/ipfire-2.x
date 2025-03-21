@@ -4,4 +4,7 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/lib/perl5/5.36.0/JSON/PP
 usr/lib/perl5/5.36.0/JSON/PP.pm
 usr/lib/perl5/5.36.0/JSON/PP/Boolean.pm
+var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
+var/ipfire/ipblocklist/sources
+var/ipfire/ipblocklist-functions.pl
