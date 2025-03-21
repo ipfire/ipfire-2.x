@@ -144,8 +144,8 @@ usr/lib/libndr-standard.so
 usr/lib/libndr-standard.so.0
 usr/lib/libndr-standard.so.0.0.1
 usr/lib/libndr.so
-+usr/lib/libndr.so.6
-+usr/lib/libndr.so.6.0.0
+usr/lib/libndr.so.6
+usr/lib/libndr.so.6.0.0
 usr/lib/libnetapi.so
 usr/lib/libnetapi.so.1
 usr/lib/libnetapi.so.1.0.0
@@ -626,7 +626,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kpasswd_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/lockout_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/ms_kile_client_principal_lookup_tests.py
-+usr/lib/python3.10/site-packages/samba/tests/krb5/netlogon.py
+#usr/lib/python3.10/site-packages/samba/tests/krb5/netlogon.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/nt_hash_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/pac_align_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/pkinit_tests.py
@@ -1028,8 +1028,6 @@ var/lib/samba/private
 var/lib/samba/winbindd_privileged
 var/log/samba
 var/spool/samba
--usr/lib/libndr.so.5
--usr/lib/libndr.so.5.0.0
--srv/web/ipfire/cgi-bin/samba.cgi
--var/ipfire/menu.d/EX-samba.menu
--usr/local/bin/sambactrl
+srv/web/ipfire/cgi-bin/samba.cgi
+var/ipfire/menu.d/EX-samba.menu
+usr/local/bin/sambactrl
