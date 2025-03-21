@@ -696,7 +696,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/py_credentials.py
 #usr/lib/python3.10/site-packages/samba/tests/registry.py
 #usr/lib/python3.10/site-packages/samba/tests/reparsepoints.py
-+usr/lib/python3.10/site-packages/samba/tests/rust.py
+#usr/lib/python3.10/site-packages/samba/tests/rust.py
 #usr/lib/python3.10/site-packages/samba/tests/s3_net_join.py
 #usr/lib/python3.10/site-packages/samba/tests/s3idmapdb.py
 #usr/lib/python3.10/site-packages/samba/tests/s3param.py
@@ -933,7 +933,7 @@ usr/lib/samba/libsmbpasswdparser-private-samba.so
 usr/lib/samba/libsocket-blocking-private-samba.so
 usr/lib/samba/libstable-sort-private-samba.so
 usr/lib/samba/libsys-rw-private-samba.so
-+usr/lib/samba/libtalloc-private-samba.so
+usr/lib/samba/libtalloc-private-samba.so
 usr/lib/samba/libtalloc-report-printf-private-samba.so
 usr/lib/samba/libtalloc-report-private-samba.so
 usr/lib/samba/libtdb-private-samba.so
