@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.21.4
+VER        = 4.22.0
 SUMMARY    = A SMB/CIFS File, Print, and Authentication Server
 
 THISAPP    = samba-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 111
+PAK_VER    = 112
 
 DEPS       = avahi libtalloc perl-Parse-Yapp wsdd
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 37c3b924799369dfe7a9ac208d3e470d4c41c45eb725f973e6948c3581523abe5fe768ea0a82e38c5a1cf5ad238896ddfd1783a1adebc9fa6d42fbb6769e9bdb
+$(DL_FILE)_BLAKE2 = 27997ad025cbdc246c906bb05bf1c67749decc8e760c68cd4837b5121295613824b11f0eea91de6e7cb551ccc5193d189d5742dc7096305565ca8794baa7b585
 
 install : $(TARGET)
 
