@@ -2079,6 +2079,7 @@
 'pakfire finished' => '¡Pakfire ha terminado! Volviendo...',
 'pakfire finished error' => '¡Pakfire ha terminado! Ocurrieron errores, verifique la salida del registro antes de continuar.',
 'pakfire health check' => 'Verificar disponibilidad del espejo (ping):',
+'pakfire install' => 'Instalar',
 'pakfire install description' => 'Por favor elija uno o más elementos de la siguiente lista y haga click en el signo + para instalar',
 'pakfire install package' => 'Ud. desea instalar los siguientes paquetes:',
 'pakfire installed addons' => 'Complementos instalados:',

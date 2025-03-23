@@ -613,6 +613,7 @@ WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
+WARNING: translation string unused: pakfire install
 WARNING: translation string unused: pakfire register
 WARNING: translation string unused: pakfire update daily
 WARNING: translation string unused: pakfire updates

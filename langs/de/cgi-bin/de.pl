@@ -2016,6 +2016,7 @@
 'pakfire finished' => 'Pakfire ist fertig! Kehre zurück...',
 'pakfire finished error' => 'Pakfire ist fertig! Fehler sind aufgetreten, bitte überprüfen Sie die Log-Ausgabe, bevor Sie fortfahren.',
 'pakfire health check' => 'Mirrors auf Erreichbarkeit prüfen (Ping):',
+'pakfire install' => 'Installieren',
 'pakfire install description' => 'Wählen Sie ein oder mehrere Pakete zur Installation aus und drücken Sie auf das plus-Symbol.',
 'pakfire install package' => 'Sie möchten folgende Pakete installieren: ',
 'pakfire installed addons' => 'Installierte Add-ons:',

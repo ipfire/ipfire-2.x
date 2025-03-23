@@ -2077,6 +2077,7 @@
 'pakfire finished' => 'Pakfire a fini ! Retour...',
 'pakfire finished error' => 'Pakfire a fini ! Des erreurs se sont produites, veuillez vérifier les rapports système des journaux avant de continuer.',
 'pakfire health check' => 'Vérifier si le miroir est accessible (ping) :',
+'pakfire install' => 'Installer',
 'pakfire install description' => 'Veuillez choisir un ou plusieurs modules dans la liste ci-dessous<br>et cliquer sur le signe PLUS pour le(s) installer.',
 'pakfire install package' => 'Vous souhaitez installer le(s) module(s) suivant(s) : ',
 'pakfire installed addons' => 'Modules installés :',

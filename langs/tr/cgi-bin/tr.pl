@@ -1859,6 +1859,7 @@
 'pakfire core update auto' => 'Otomatik olarak çekirdek ve eklenti güncelleştirmelerini yükle:',
 'pakfire core update level' => 'Çekirdek-Güncelleme-Seviyesi',
 'pakfire health check' => 'Yansımanın ulaşılabilir olup olmadığını kontrol et (ping):',
+'pakfire install' => 'Yükle',
 'pakfire install description' => 'Aşağıdaki listeden bir veya daha fazla öğeyi seçtikten sonra eklemek için artı simgesine tıklayınız.',
 'pakfire install package' => 'Aşağıdaki paketleri yüklemek istediniz: ',
 'pakfire installed addons' => 'Kurulu eklentiler:',

@@ -1690,6 +1690,7 @@
 'pakfire core update auto' => 'Installeer core- en extensie-updates automatisch:',
 'pakfire core update level' => 'Core-updateniveau',
 'pakfire health check' => 'Controleer of de mirror bereikbaar is  (ping):',
+'pakfire install' => 'Installeren',
 'pakfire install description' => 'Kies een of meer items uit de lijst hieronder en klik op de plus om te installeren.',
 'pakfire install package' => 'U wilt de volgende pakketten installeren: ',
 'pakfire installed addons' => 'Geïnstalleerde add-ons:',

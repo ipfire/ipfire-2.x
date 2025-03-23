@@ -2082,6 +2082,7 @@
 'pakfire finished' => 'Pakfire has finished! Returning...',
 'pakfire finished error' => 'Pakfire has finished! Errors occurred, please check the log output before proceeding.',
 'pakfire health check' => 'Check if mirror is reachable (ping):',
+'pakfire install' => 'Install',
 'pakfire install description' => 'Please choose one or more items from the list below and click the plus to install.',
 'pakfire install package' => 'You want to install the following packages: ',
 'pakfire installed addons' => 'Installed Add-ons:',

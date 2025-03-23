@@ -1715,6 +1715,7 @@
 'pakfire core update auto' => 'Install core and addon updates automatically:',
 'pakfire core update level' => 'Core-Update-Level',
 'pakfire health check' => 'Controllare se il mirror è raggiungibile (ping):',
+'pakfire install' => 'Installare',
 'pakfire install description' => 'Si prega di scegliere uno o più elementi dalla lista qui sotto e fai clic sul segno più per installare.',
 'pakfire install package' => 'You want to install the following packages: ',
 'pakfire installed addons' => 'Addons installati:',

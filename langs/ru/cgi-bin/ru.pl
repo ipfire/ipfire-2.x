@@ -1350,6 +1350,7 @@
 'pakfire core update auto' => 'Устанавливать обновления ядра и аддонов автоматически:',
 'pakfire core update level' => 'Уровень обновления системы',
 'pakfire health check' => 'Пинговать зеркало на доступность:',
+'pakfire install' => 'Установить',
 'pakfire install description' => 'Пожалуйста, укажите один или несколько элементов в списке ниже и нажмите плюсик для установки.',
 'pakfire install package' => 'Вы собираетесь установить следующие пакеты: ',
 'pakfire installed addons' => 'Установленные Аддоны:',

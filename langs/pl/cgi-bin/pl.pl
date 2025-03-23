@@ -1355,6 +1355,7 @@
 'pakfire core update auto' => 'Instaluj aktualizacje jądra automatycznie:',
 'pakfire core update level' => 'Aktualizacja jądra',
 'pakfire health check' => 'Sprawdź czy mirror jest dostępny (ping):',
+'pakfire install' => 'Instaluj',
 'pakfire install description' => 'Proszę wybrać jedną lub kilka pozycji z poniższej listy, a następnie kliknąć plus aby zainstalować.',
 'pakfire install package' => 'Zamierzasz zainstalować następujące pakiety: ',
 'pakfire installed addons' => 'Zainstalowane dodatki:',
