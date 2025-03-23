@@ -616,6 +616,7 @@ WARNING: translation string unused: pakfire health check
 WARNING: translation string unused: pakfire register
 WARNING: translation string unused: pakfire update daily
 WARNING: translation string unused: pakfire updates
+WARNING: translation string unused: pakfire upgrade
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length

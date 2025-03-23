@@ -2037,6 +2037,7 @@
 'pakfire uninstall package' => 'Sie möchten folgende Pakete deinstallieren: ',
 'pakfire update daily' => 'Täglich nach Updates suchen:',
 'pakfire updates' => 'Zur Verfügung stehende Updates:',
+'pakfire upgrade' => 'Upgrade',
 'pakfire working' => 'Pakfire führt gerade eine Aufgabe aus... Bitte warten Sie, bis diese erfolgreich beendet wurde.',
 'pap or chap' => 'PAP oder CHAP',
 'parentclass' => 'Elternklasse',

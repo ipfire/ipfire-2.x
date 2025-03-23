@@ -1370,6 +1370,7 @@
 'pakfire uninstall package' => 'Zamierzasz odinstalować następujące pakiety: ',
 'pakfire update daily' => 'Szukaj aktualizacje codziennie:',
 'pakfire updates' => 'Dostępne aktualizacje:',
+'pakfire upgrade' => 'Aktualizacja',
 'pakfire working' => 'Pakfire pracuje ... Proszę poczekać na zakończenie wszystkich operacji.',
 'pap or chap' => 'PAP lub CHAP',
 'parentclass' => 'Klasa nadrzędna',

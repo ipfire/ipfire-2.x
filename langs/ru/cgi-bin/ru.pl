@@ -1365,6 +1365,7 @@
 'pakfire uninstall package' => 'Вы собираетесь удалить следующие пакеты: ',
 'pakfire update daily' => 'Ежедневный поиск обновлений:',
 'pakfire updates' => 'Доступное обновление:',
+'pakfire upgrade' => 'Апгрейд',
 'pakfire working' => 'Pakfire работает ... Пожалуйста дождитесь успешного завершения процедуры.',
 'pap or chap' => 'PAP или CHAP',
 'parentclass' => 'Родительский класс',

@@ -2100,6 +2100,7 @@
 'pakfire uninstall package' => 'Desea desinstalar los siguientes paquetes:',
 'pakfire update daily' => 'Buscar actualizaciones diariamente:',
 'pakfire updates' => 'Actualización disponible:',
+'pakfire upgrade' => 'Actualizar',
 'pakfire working' => 'Pakfire está trabajando… Por favor espere hasta que todas las operaciones se hallan completado exitosamente.',
 'pap or chap' => 'PAP o CHAP',
 'parentclass' => 'Clase principal',

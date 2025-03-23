@@ -1874,6 +1874,7 @@
 'pakfire uninstall package' => 'Aşağıdaki paketleri kaldırmak istiyorum: ',
 'pakfire update daily' => 'Günlük güncellemeleri ara:',
 'pakfire updates' => 'Mevcut Güncelleme:',
+'pakfire upgrade' => 'Yükselt',
 'pakfire working' => 'Pakfire çalışıyor ... Tüm işlemler başarıyla tamamlanana kadar bekleyin.',
 'pap or chap' => 'PAP veya CHAP',
 'parentclass' => 'Ana Sınıf',

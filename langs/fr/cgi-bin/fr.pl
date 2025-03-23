@@ -2098,6 +2098,7 @@
 'pakfire uninstall package' => 'Vous souhaitez désinstaller le(s) module(s) suivant(s) : ',
 'pakfire update daily' => 'Rechercher des mises à jour quotidiennes :',
 'pakfire updates' => 'Mise à jour disponible :',
+'pakfire upgrade' => 'Améliorer',
 'pakfire working' => 'Pakfire est en cours de traitement... Veuillez attendre que tout soit terminé.',
 'pap or chap' => 'PAP ou CHAP',
 'parentclass' => 'Classe parent',
