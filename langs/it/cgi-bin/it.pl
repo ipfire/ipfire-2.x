@@ -1730,6 +1730,7 @@
 'pakfire uninstall description' => 'Si prega di scegliere uno o più elementi dalla lista qui sotto e fare clic sul meno per disinstallare..',
 'pakfire uninstall package' => 'You want to uninstall the following packages: ',
 'pakfire update daily' => 'Ricerca gli aggiornamenti una volta al giorno:',
+'pakfire updates' => 'Aggiornamenti Disponibili',
 'pakfire upgrade' => 'Aggiornamento',
 'pakfire working' => 'Pakfire sta lavorando... Per favore attendi il termine delle operazioni',
 'pap or chap' => 'PAP or CHAP',

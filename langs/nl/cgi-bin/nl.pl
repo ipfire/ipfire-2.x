@@ -1705,7 +1705,7 @@
 'pakfire uninstall description' => 'Kies een of meer items uit de lijst hieronder en klik op de min om te deinstalleren.',
 'pakfire uninstall package' => 'U wilt de volgende pakketten deinstalleren: ',
 'pakfire update daily' => 'Zoek dagelijks naar updates:',
-'pakfire updates' => 'Beschikbare update:',
+'pakfire updates' => 'Beschikbare Updates',
 'pakfire upgrade' => 'Upgrade',
 'pakfire working' => 'Pakfire is bezig ... Wacht a.u.b. totdat alle handelingen succesvol zijn afgerond.',
 'pap or chap' => 'PAP of CHAP',

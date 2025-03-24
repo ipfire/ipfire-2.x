@@ -2098,7 +2098,7 @@
 'pakfire uninstall description' => 'Veuillez choisir un ou plusieurs modules dans la liste ci-dessous<br>et cliquer sur le signe MOINS pour le(s) désinstaller.',
 'pakfire uninstall package' => 'Vous souhaitez désinstaller le(s) module(s) suivant(s) : ',
 'pakfire update daily' => 'Rechercher des mises à jour quotidiennes :',
-'pakfire updates' => 'Mise à jour disponible :',
+'pakfire updates' => 'Mises à jour Disponibles',
 'pakfire upgrade' => 'Améliorer',
 'pakfire working' => 'Pakfire est en cours de traitement... Veuillez attendre que tout soit terminé.',
 'pap or chap' => 'PAP ou CHAP',

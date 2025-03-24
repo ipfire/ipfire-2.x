@@ -1874,7 +1874,7 @@
 'pakfire uninstall description' => 'Aşağıdaki listeden bir veya daha fazla öğeyi seçtikten sonra kaldırmak için eksi simgesine tıklayınız.',
 'pakfire uninstall package' => 'Aşağıdaki paketleri kaldırmak istiyorum: ',
 'pakfire update daily' => 'Günlük güncellemeleri ara:',
-'pakfire updates' => 'Mevcut Güncelleme:',
+'pakfire updates' => 'Mevcut Güncellemeler',
 'pakfire upgrade' => 'Yükselt',
 'pakfire working' => 'Pakfire çalışıyor ... Tüm işlemler başarıyla tamamlanana kadar bekleyin.',
 'pap or chap' => 'PAP veya CHAP',

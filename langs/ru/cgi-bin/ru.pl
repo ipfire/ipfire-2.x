@@ -1365,7 +1365,7 @@
 'pakfire uninstall description' => 'Пожалуйста, укажите один или несколько элементов в списке ниже и нажмите минус для удаления.',
 'pakfire uninstall package' => 'Вы собираетесь удалить следующие пакеты: ',
 'pakfire update daily' => 'Ежедневный поиск обновлений:',
-'pakfire updates' => 'Доступное обновление:',
+'pakfire updates' => 'Доступное Обновление',
 'pakfire upgrade' => 'Апгрейд',
 'pakfire working' => 'Pakfire работает ... Пожалуйста дождитесь успешного завершения процедуры.',
 'pap or chap' => 'PAP или CHAP',

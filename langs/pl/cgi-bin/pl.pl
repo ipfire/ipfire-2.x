@@ -1370,7 +1370,7 @@
 'pakfire uninstall description' => 'Proszę wybrać jedną lub kilka pozycji z poniższej listy, a następnie kliknąć minus aby odinstalować.',
 'pakfire uninstall package' => 'Zamierzasz odinstalować następujące pakiety: ',
 'pakfire update daily' => 'Szukaj aktualizacje codziennie:',
-'pakfire updates' => 'Dostępne aktualizacje:',
+'pakfire updates' => 'Dostępne Aktualizacje',
 'pakfire upgrade' => 'Aktualizacja',
 'pakfire working' => 'Pakfire pracuje ... Proszę poczekać na zakończenie wszystkich operacji.',
 'pap or chap' => 'PAP lub CHAP',

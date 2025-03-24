@@ -2100,7 +2100,7 @@
 'pakfire uninstall description' => 'Por favor elija uno o más elementos de la siguiente lista y haga click en el signo - para desinstalar',
 'pakfire uninstall package' => 'Desea desinstalar los siguientes paquetes:',
 'pakfire update daily' => 'Buscar actualizaciones diariamente:',
-'pakfire updates' => 'Actualización disponible:',
+'pakfire updates' => 'Actualizaciones Disponibles',
 'pakfire upgrade' => 'Actualizar',
 'pakfire working' => 'Pakfire está trabajando… Por favor espere hasta que todas las operaciones se hallan completado exitosamente.',
 'pap or chap' => 'PAP o CHAP',

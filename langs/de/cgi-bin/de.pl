@@ -2037,7 +2037,7 @@
 'pakfire uninstall description' => 'Wählen Sie ein oder mehrere Pakete zur Deinstallation aus und drücken Sie auf das minus-Symbol.',
 'pakfire uninstall package' => 'Sie möchten folgende Pakete deinstallieren: ',
 'pakfire update daily' => 'Täglich nach Updates suchen:',
-'pakfire updates' => 'Zur Verfügung stehende Updates:',
+'pakfire updates' => 'Verfügbare Updates',
 'pakfire upgrade' => 'Upgrade',
 'pakfire working' => 'Pakfire führt gerade eine Aufgabe aus... Bitte warten Sie, bis diese erfolgreich beendet wurde.',
 'pap or chap' => 'PAP oder CHAP',
