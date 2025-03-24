@@ -1724,6 +1724,7 @@
 'pakfire last serverlist update' => 'Ultimo aggiornamento della lista server',
 'pakfire last update' => 'Ultimo aggiornamento di sistema effettuato',
 'pakfire possible dependency' => ' There may be depending packages, here is a list of packages that need to be installed.',
+'pakfire refresh list' => 'Aggiorna le Liste',
 'pakfire register' => 'Registrati sul pakfire-server:',
 'pakfire system state' => 'Stato del Sistema',
 'pakfire uninstall all' => 'Vuoi disinstallare i seguenti pacchetti?',

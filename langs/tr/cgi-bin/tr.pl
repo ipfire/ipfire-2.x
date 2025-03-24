@@ -1868,6 +1868,7 @@
 'pakfire last serverlist update' => 'Son sunucu listesi güncellemesi',
 'pakfire last update' => 'Son güncelleme',
 'pakfire possible dependency' => ' Yüklenemesi gereken paketlerin yüklenebilmesi için buradaki paketlere ihtiyaç duyulabilir.',
+'pakfire refresh list' => 'Listeyi Yenile',
 'pakfire register' => 'Pakfire sunucusuna kayıt:',
 'pakfire system state' => 'Sistem durumu',
 'pakfire uninstall all' => 'Aşağıdaki paketleri kaldırmak istiyor musunuz?',

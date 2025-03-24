@@ -1699,6 +1699,7 @@
 'pakfire last serverlist update' => 'Laatste serverlijst update gemaakt',
 'pakfire last update' => 'Laatste update gemaakt',
 'pakfire possible dependency' => ' Er kunnen pakketafhankelijkheden zijn, hier is een lijst met pakketten die moeten worden geïnstalleerd.',
+'pakfire refresh list' => 'Ververs Lijst',
 'pakfire register' => 'Registreer bij de pakfire-server:',
 'pakfire system state' => 'Systeemstatus',
 'pakfire uninstall all' => 'Wilt u de volgende pakketten verwijderen?',

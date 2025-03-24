@@ -1359,6 +1359,7 @@
 'pakfire last serverlist update' => 'Обновление серверных списков',
 'pakfire last update' => 'Последнее обновление',
 'pakfire possible dependency' => ' There may be depending packages, here is a list of packages that need to be installed.',
+'pakfire refresh list' => 'Обновить Список',
 'pakfire register' => 'Регистрировать на pakfire-сервере:',
 'pakfire system state' => 'Статус системы',
 'pakfire uninstall all' => 'Вы хотите удалить следующие пакеты?',

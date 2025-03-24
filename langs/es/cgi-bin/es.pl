@@ -2089,6 +2089,7 @@
 'pakfire last serverlist update' => 'Última lista de actualización de servidor hecha',
 'pakfire last update' => 'Última actualización realizada',
 'pakfire possible dependency' => 'Puede haber paquetes con dependencias, aquí está una lista de paquetes que necesitan ser instalados.',
+'pakfire refresh list' => 'Refrescar Lista',
 'pakfire register' => 'Registrar en el servidor pakfire:',
 'pakfire return' => 'Regresar a Pakfire',
 'pakfire system state' => 'Estado del sistema',

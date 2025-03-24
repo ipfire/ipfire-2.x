@@ -2087,6 +2087,7 @@
 'pakfire last serverlist update' => 'Dernière mise à jour de la liste des serveurs : ',
 'pakfire last update' => 'Dernière mise à jour : ',
 'pakfire possible dependency' => 'Il y a peut-être des dépendances, voici la liste des paquets qu\'il faut (dés)installer.',
+'pakfire refresh list' => 'Actualiser la Liste',
 'pakfire register' => 'S\'inscrire au serveur pakfire :',
 'pakfire return' => 'Retour à Pakfire',
 'pakfire system state' => 'Statut système PakFire ',

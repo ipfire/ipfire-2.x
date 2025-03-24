@@ -1364,6 +1364,7 @@
 'pakfire last serverlist update' => 'Ostatnia aktualizacja listy serwerów:',
 'pakfire last update' => 'Ostatnia aktualizacja:',
 'pakfire possible dependency' => ' Pewne pakiety mogą wymagać zależności. Oto lista pakietów które muszę zostać zainstalowane.',
+'pakfire refresh list' => 'Odśwież Listę',
 'pakfire register' => 'Register at pakfire-server:',
 'pakfire system state' => 'Status systemu',
 'pakfire uninstall all' => 'Czy chcesz odinstalować następujące pakiety?',

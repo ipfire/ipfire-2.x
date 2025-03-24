@@ -2092,6 +2092,7 @@
 'pakfire last serverlist update' => 'Last server list update made',
 'pakfire last update' => 'Last update made',
 'pakfire possible dependency' => ' There may be depending packages, here is a list of packages that need to be installed.',
+'pakfire refresh list' => 'Refresh List',
 'pakfire register' => 'Register at pakfire-server:',
 'pakfire return' => 'Return to Pakfire',
 'pakfire system state' => 'System Status',

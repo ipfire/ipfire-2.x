@@ -2026,6 +2026,7 @@
 'pakfire last serverlist update' => 'Letztes Serverlisten Update ist',
 'pakfire last update' => 'Letztes Update ist',
 'pakfire possible dependency' => ' Möglicherweise haben diese Pakete Abhängigkeiten, d.h. andere Pakete müssen zusätzlich installiert werden. Dazu sehen Sie unten eine Liste.',
+'pakfire refresh list' => 'Liste aktualisieren',
 'pakfire register' => 'Registrierung am Pakfire-Server:',
 'pakfire return' => 'Zurück zu Pakfire',
 'pakfire system state' => 'System Status',
