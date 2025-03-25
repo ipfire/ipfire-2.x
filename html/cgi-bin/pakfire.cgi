@@ -302,7 +302,7 @@ END
 					<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
 					<input type='hidden' name='FORCE' value='on' />
 					<input type='hidden' name='ACTION' value='install' />
-					<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/go-next.png' />
+					<input type='image' alt='$Lang::tr{'pakfire install'}' title='$Lang::tr{'pakfire install'}' src='/images/go-next.png' />
 				</form>
 			</td>
 			<td align='left'>
@@ -380,7 +380,7 @@ if ("$pakfire_status{'RebootRequired'}" eq "yes") {
 
 print <<END;
 		<tr><td class="heading">$Lang::tr{'pakfire system state'}:</td>
-			<td class="heading">$Lang::tr{'available updates'}:</td></tr>
+			<td class="heading">$Lang::tr{'pakfire updates'}:</td></tr>
 
 		<tr><td><strong>$Lang::tr{'pakfire core update level'}: $pakfire_status{'Release'}</strong>
 				<hr>
@@ -392,7 +392,7 @@ print <<END;
 				</div>
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='ACTION' value='update' />
-					<input type='submit' value='$Lang::tr{'calamaris refresh list'}' />
+					<input type='submit' value='$Lang::tr{'pakfire refresh list'}' />
 				</form>
 			</td>
 			<td>
@@ -414,7 +414,7 @@ END
 	print <<END;
 					</select>
 					<input type='hidden' name='ACTION' value='upgrade' />
-					<input type='image' alt='$Lang::tr{'upgrade'}' title='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
+					<input type='image' alt='$Lang::tr{'pakfire upgrade'}' title='$Lang::tr{'pakfire upgrade'}' src='/images/document-save.png' />
 				 </form>
 			</td>
 		</tr>
@@ -434,7 +434,7 @@ END
 	print <<END;
 					</select>
 					<input type='hidden' name='ACTION' value='install' />
-					<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/list-add.png' />
+					<input type='image' alt='$Lang::tr{'pakfire install'}' title='$Lang::tr{'pakfire install'}' src='/images/list-add.png' />
 				</form>
 			</td>
 			<td style="padding:5px 10px 20px 20px" align="center"><p>$Lang::tr{'pakfire uninstall description'}</p>
