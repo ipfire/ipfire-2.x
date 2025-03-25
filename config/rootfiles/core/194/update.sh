@@ -34,6 +34,10 @@ done
 # Stop services
 
 # Remove files
+rm -vf \
+	/usr/bin/idn \
+	/usr/lib/libidn.so.12 \
+	/usr/lib/libidn.so.12.6.5
 
 # Extract files
 extract_files
