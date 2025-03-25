@@ -1247,13 +1247,6 @@ END
 	exit(0);
 
 	ROOTCERT_SUCCESS:
-
-# Increment the serial number to 02 after root and host certificates are
-# created so that cert regeneration works.
-	open(FILE, ">${General::swroot}/certs/serial");
-	print FILE "02";
-	close FILE;
-
 	if (&vpnenabled) {
 		&General::system('/usr/local/bin/ipsecctrl', 'S');
 		sleep $sleepDelay;
