@@ -120,18 +120,18 @@ if(($cgiparams{'ACTION'} ne '') && ($pagemode eq $PM_DEFAULT)) {
 	if(&_is_pakfire_busy()) {
 		$errormessage = $Lang::tr{'pakfire already busy'};
 		$pagemode = $PM_LOGREAD; # Running Pakfire instance found, switch to log viewer mode
-	} elsif(($cgiparams{'ACTION'} eq 'install') && ($cgiparams{'FORCE'} eq 'on')) {
+	} elsif(($cgiparams{'ACTION'} eq $Lang::tr{'pakfire install'}) && ($cgiparams{'FORCE'} eq 'on')) {
 		my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
 		&_http_pagemode_redirect($PM_LOGREAD, 1);
-	} elsif(($cgiparams{'ACTION'} eq 'remove') && ($cgiparams{'FORCE'} eq 'on')) {
+	} elsif(($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) && ($cgiparams{'FORCE'} eq 'on')) {
 		my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
 		&_http_pagemode_redirect($PM_LOGREAD, 1);
-	} elsif($cgiparams{'ACTION'} eq 'update') {
+	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'pakfire refresh list'}) {
 		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
 		&_http_pagemode_redirect($PM_LOGREAD, 1);
-	} elsif($cgiparams{'ACTION'} eq 'upgrade') {
+	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'pakfire upgrade'}) {
 		&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
 		&_http_pagemode_redirect($PM_LOGREAD, 1);
 	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -161,16 +161,11 @@ my $extraHead = <<END
 	/* Main screen */
 	table#pfmain {
 		width: 100%;
-		border-style: hidden;
 		table-layout: fixed;
-	}
-
-	#pfmain td {
-		padding: 5px 20px 0;
 		text-align: center;
 	}
-	#pfmain tr:not(:last-child) > td {
-		padding-bottom: 1.5em;
+	#pfmain td {
+		padding: 0px 20px;
 	}
 	#pfmain tr > td.heading {
 		padding: 0;
@@ -207,7 +202,6 @@ my $extraHead = <<END
 		margin-top: 0.7em;
 		padding-top: 0.7em;
 		border-top: 0.5px solid $Header::bordercolour;
-
 		text-align: left;
 		min-height: 15em;
 		overflow-x: auto;
@@ -280,36 +274,40 @@ END
 
 # Show Pakfire install/remove dependencies and confirm form
 # (_is_pakfire_busy status was checked before and can be omitted)
-if (($cgiparams{'ACTION'} eq 'install') && ($pagemode eq $PM_DEFAULT)) {
+if (($cgiparams{'ACTION'} eq $Lang::tr{'pakfire install'}) && ($pagemode eq $PM_DEFAULT)) {
 	&Header::openbox("100%", "center", $Lang::tr{'request'});
 
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 	print <<END;
-	<table style="width: 100%"><tr><td colspan='2'><p>$Lang::tr{'pakfire install package'} <strong>@{pkgs}</strong><br>
-		$Lang::tr{'pakfire possible dependency'}</p>
-		<pre>
+	<table style="width: 100%">
+		<tr>
+			<td>
+			<p>$Lang::tr{'pakfire install package'} <strong>@{pkgs}</strong><br>$Lang::tr{'pakfire possible dependency'}</p>
+			<pre>
 END
 	foreach (@output) {
 		$_ =~ s/\\[[0-1]\;[0-9]+m//g;
 		print "$_\n";
 	}
 	print <<END;
-		</pre></td></tr>
-		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}</td></tr>
-		<tr><td colspan='2'>&nbsp;</td></tr>
-		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
-					<input type='hidden' name='FORCE' value='on' />
-					<input type='hidden' name='ACTION' value='install' />
-					<input type='image' alt='$Lang::tr{'pakfire install'}' title='$Lang::tr{'pakfire install'}' src='/images/go-next.png' />
-				</form>
+			</pre>
 			</td>
-			<td align='left'>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='hidden' name='ACTION' value='' />
-					<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
-				</form>
+		</tr>
+		<tr>
+			<td>$Lang::tr{'pakfire accept all'}</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td align='center'>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
+			<input type='hidden' name='FORCE' value='on' />
+			<input type='submit' name='ACTION' value='$Lang::tr{'pakfire install'}'/>
+			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}'/>
+			</form>
 			</td>
 		</tr>
 	</table>
@@ -319,36 +317,40 @@ END
 	&Header::closepage();
 	exit;
 
-} elsif (($cgiparams{'ACTION'} eq 'remove') && ($pagemode eq $PM_DEFAULT)) {
+} elsif (($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) && ($pagemode eq $PM_DEFAULT)) {
 	&Header::openbox("100%", "center", $Lang::tr{'request'});
 
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 	print <<END;
-	<table style="width: 100%"><tr><td colspan='2'><p>$Lang::tr{'pakfire uninstall package'} <strong>@{pkgs}</strong><br>
-		$Lang::tr{'pakfire possible dependency'}</p>
-		<pre>
+	<table style="width: 100%">
+		<tr>
+			<td colspan='2'>
+			<p>$Lang::tr{'pakfire uninstall package'} <strong>@{pkgs}</strong><br>$Lang::tr{'pakfire possible dependency'}</p>
+			<pre>
 END
 	foreach (@output) {
 		$_ =~ s/\\[[0-1]\;[0-9]+m//g;
 		print "$_\n";
 	}
 	print <<END;
-		</pre></td></tr>
-		<tr><td colspan='2'>$Lang::tr{'pakfire uninstall all'}</td></tr>
-		<tr><td colspan='2'>&nbsp;</td></tr>
-		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
-					<input type='hidden' name='FORCE' value='on' />
-					<input type='hidden' name='ACTION' value='remove' />
-					<input type='image' alt='$Lang::tr{'uninstall'}' title='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
-				</form>
+			</pre>
 			</td>
-			<td align='left'>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='hidden' name='ACTION' value='' />
-					<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
-				</form>
+		</tr>
+		<tr>
+			<td colspan='2'>$Lang::tr{'pakfire uninstall all'}</td>
+		</tr>
+		<tr>
+			<td colspan='2'>&nbsp;</td>
+		</tr>
+		<tr>
+			<td align='center'>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
+			<input type='hidden' name='FORCE' value='on' />
+			<input type='submit' name='ACTION' value='$Lang::tr{'remove'}'/>
+			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}'/>
+			</form>
 			</td>
 		</tr>
 	</table>
@@ -374,30 +376,36 @@ $selected{"TREE"}{$pakfiresettings{"TREE"}} = "selected";
 print <<END;
 	<table id="pfmain">
 END
-if ("$pakfire_status{'RebootRequired'}" eq "yes") {
-	print "\t\t<tr><td colspan='2'><a href='/cgi-bin/shutdown.cgi'>$Lang::tr{'needreboot'}!</a></td></tr>\n";
+if ($pakfire_status{'RebootRequired'} eq "yes")
+{
+	print <<END;
+		<tr>
+			<td colspan='2' style='padding-bottom:20px'>
+			<a href='/cgi-bin/shutdown.cgi'>$Lang::tr{'needreboot'}!</a>
+			</td>
+		</tr>
+END
 }
 
 print <<END;
-		<tr><td class="heading">$Lang::tr{'pakfire system state'}:</td>
-			<td class="heading">$Lang::tr{'pakfire updates'}:</td></tr>
+		<tr>
+			<td class="heading">$Lang::tr{'pakfire system state'}:</td>
+			<td class="heading">$Lang::tr{'pakfire updates'}:</td>
+		</tr>
 
-		<tr><td><strong>$Lang::tr{'pakfire core update level'}: $pakfire_status{'Release'}</strong>
-				<hr>
-				<div class="pflist">
-					$Lang::tr{'pakfire last update'} $pakfire_status{'LastUpdate'} $Lang::tr{'pakfire ago'}<br>
-					$Lang::tr{'pakfire last serverlist update'} $pakfire_status{'LastServerListUpdate'} $Lang::tr{'pakfire ago'}<br>
-					$Lang::tr{'pakfire last core list update'} $pakfire_status{'LastCoreListUpdate'} $Lang::tr{'pakfire ago'}<br>
-					$Lang::tr{'pakfire last package update'} $pakfire_status{'LastPakListUpdate'} $Lang::tr{'pakfire ago'}
-				</div>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='hidden' name='ACTION' value='update' />
-					<input type='submit' value='$Lang::tr{'pakfire refresh list'}' />
-				</form>
+		<tr>
+			<td style='padding-top: 15px'>
+			<strong>$Lang::tr{'pakfire core update level'}: $pakfire_status{'Release'}</strong>
+			<hr>
+			<div class="pflist">
+				$Lang::tr{'pakfire last update'} $pakfire_status{'LastUpdate'} $Lang::tr{'pakfire ago'}<br>
+				$Lang::tr{'pakfire last serverlist update'} $pakfire_status{'LastServerListUpdate'} $Lang::tr{'pakfire ago'}<br>
+				$Lang::tr{'pakfire last core list update'} $pakfire_status{'LastCoreListUpdate'} $Lang::tr{'pakfire ago'}<br>
+				$Lang::tr{'pakfire last package update'} $pakfire_status{'LastPakListUpdate'} $Lang::tr{'pakfire ago'}
+			</div>
 			</td>
-			<td>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<select name="UPDPAKS" class="pflist" size="5" disabled>
+			<td style='padding-top: 15px'>
+			<select class="pflist" style="height: 103px" size="5" disabled>
 END
 
 	if ("$pakfire_status{'CoreUpdateAvailable'}" eq "yes") {
@@ -412,18 +420,44 @@ END
 	}
 
 	print <<END;
-					</select>
-					<input type='hidden' name='ACTION' value='upgrade' />
-					<input type='image' alt='$Lang::tr{'pakfire upgrade'}' title='$Lang::tr{'pakfire upgrade'}' src='/images/document-save.png' />
-				 </form>
+			</select>
 			</td>
 		</tr>
-		<tr><td class="heading">$Lang::tr{'pakfire available addons'}</td>
-			<td class="heading">$Lang::tr{'pakfire installed addons'}</td></tr>
+		<tr>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<td style='padding-bottom: 15px'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'pakfire refresh list'}' />
+			</td>
+			<td style='padding-bottom: 15px'>
+END
 
-		<tr><td style="padding:5px 10px 20px 20px" align="center"><p>$Lang::tr{'pakfire install description'}</p>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<select name="INSPAKS" class="pflist" size="10" multiple>
+        if (($pakfire_status{'CoreUpdateAvailable'} eq "yes") || ($pakfire_status{'PakUpdatesAvailable'} > 0))
+        {
+                print "<input type='submit' name='ACTION' value='$Lang::tr{'pakfire upgrade'}'/>\n";
+        } else {
+                print "<input disabled type='submit' name='ACTION' value='$Lang::tr{'pakfire upgrade'}'/>\n";
+        }
+
+	print <<END;
+			</td>
+			</form>
+		</tr>
+		<tr>
+			<td class="heading">$Lang::tr{'pakfire available addons'}</td>
+			<td class="heading">$Lang::tr{'pakfire installed addons'}</td>
+		</tr>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<tr>
+			<td style='padding-top: 15px; padding-bottom: 5px'>
+			$Lang::tr{'pakfire install description'}
+			</td>
+			<td style='padding-top: 15px; padding-bottom: 5px'>
+			$Lang::tr{'pakfire uninstall description'}
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<select name="INSPAKS" class="pflist" style="height:206px" size="10" multiple onchange="document.getElementById('installbutton').disabled=false">
 END
 
 	my %notinstalledlist = &Pakfire::dblist("notinstalled");
@@ -432,14 +466,10 @@ END
 	}
 
 	print <<END;
-					</select>
-					<input type='hidden' name='ACTION' value='install' />
-					<input type='image' alt='$Lang::tr{'pakfire install'}' title='$Lang::tr{'pakfire install'}' src='/images/list-add.png' />
-				</form>
+			</select>
 			</td>
-			<td style="padding:5px 10px 20px 20px" align="center"><p>$Lang::tr{'pakfire uninstall description'}</p>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<select name="DELPAKS" class="pflist" size="10" multiple>
+			<td>
+			<select name="DELPAKS" class="pflist" style="height:206px" size="10" multiple onchange="document.getElementById('removebutton').disabled=false">
 END
 
 	my %installedlist = &Pakfire::dblist("installed");
@@ -448,12 +478,18 @@ END
 	}
 
 	print <<END;
-					</select>
-					<input type='hidden' name='ACTION' value='remove' />
-					<input type='image' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' src='/images/list-remove.png' />
-				</form>
+			</select>
 			</td>
 		</tr>
+		<tr>
+			<td style='padding-bottom: 5px'>
+			<input disabled type='submit' id='installbutton' name='ACTION' value='$Lang::tr{'pakfire install'}'/>
+			</td>
+			<td style='padding-bottom: 5px'>
+			<input disabled type='submit' id='removebutton' name='ACTION' value='$Lang::tr{'remove'}'/>
+			</td>
+		</tr>
+		</form>
 	</table>
 END
 

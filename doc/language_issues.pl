@@ -18,6 +18,7 @@ WARNING: translation string unused: Subclass
 WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Utilization on
 WARNING: translation string unused: Verbose
+WARNING: translation string unused: abort
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
 WARNING: translation string unused: accounting
@@ -738,6 +739,7 @@ WARNING: translation string unused: tripwirewarningpolicy
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
+WARNING: translation string unused: uninstall
 WARNING: translation string unused: unix charset
 WARNING: translation string unused: unix group
 WARNING: translation string unused: unix password sync
