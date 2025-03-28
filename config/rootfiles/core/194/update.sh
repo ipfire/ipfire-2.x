@@ -52,6 +52,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/ipsec restart
 /etc/init.d/suricata restart
 
 # This update needs a reboot...
