@@ -539,7 +539,6 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
-WARNING: translation string unused: pakfire confirm updates
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire dependencies found
 WARNING: translation string unused: pakfire health check
@@ -547,7 +546,6 @@ WARNING: translation string unused: pakfire no dependencies found
 WARNING: translation string unused: pakfire register
 WARNING: translation string unused: pakfire resolvedeps wait
 WARNING: translation string unused: pakfire update daily
-WARNING: translation string unused: pakfire updating
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length

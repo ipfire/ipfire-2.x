@@ -131,7 +131,7 @@ if(($cgiparams{'ACTION'} ne '') && ($pagemode eq $PM_DEFAULT)) {
 	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'pakfire refresh list'}) {
 		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
 		&_http_pagemode_redirect($PM_LOGREAD, 1);
-	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'pakfire upgrade'}) {
+	} elsif(($cgiparams{'ACTION'} eq $Lang::tr{'pakfire upgrade'}) && ($cgiparams{'FORCE'} eq 'on')) {
 		&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
 		&_http_pagemode_redirect($PM_LOGREAD, 1);
 	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -361,6 +361,71 @@ END
 	exit;
 }
 
+# Show Pakfire upgrades to be done and confirm
+# (_is_pakfire_busy status was checked before and can be omitted)
+if (($cgiparams{'ACTION'} eq $Lang::tr{'pakfire upgrade'}) && ($pagemode eq $PM_DEFAULT))
+{
+	&Header::openbox("100%", "center", $Lang::tr{'pakfire upgrade'});
+
+	print "$Lang::tr{'pakfire updating'}";
+	my @output = &General::system_output("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
+	%pakfire_status = &Pakfire::status();
+	print "<br><br>";
+
+	if (grep(/ERROR/, @output))
+	{
+		print "<pre>";
+		foreach (@output)
+		{
+			if ($_ =~ /ERROR/)
+			{
+				print "$_";
+			}
+		}
+		print "</pre>";
+		print "<br>";
+	}
+
+	if ($pakfire_status{'CoreUpdateAvailable'} eq "yes")
+	{
+		print "$Lang::tr{'core update'} -- $pakfire_status{'CoreVersion'} -- $Lang::tr{'release'}: $pakfire_status{'Release'} -> $pakfire_status{'AvailableRelease'}<br>";
+	}
+
+	if ($pakfire_status{'PakUpdatesAvailable'} > 0)
+	{
+		my %upgradelist = &Pakfire::dblist("upgrade");
+		foreach my $pak (sort keys %upgradelist)
+		{
+			print "$Lang::tr{'pak update'}: $pak -- $Lang::tr{'version'}: $upgradelist{$pak}{'ProgVersion'} -> $upgradelist{$pak}{'AvailableProgVersion'} -- $Lang::tr{'release'}: $upgradelist{$pak}{'Release'} -> $upgradelist{$pak}{'AvailableRelease'}<br>";
+		}
+	}
+
+	print <<END;
+		<br>
+		<table style='width:100%'>
+			<tr>
+				<td>$Lang::tr{'pakfire confirm upgrades'}</td>
+			</tr>
+			<tr>
+				<td><br></td>
+			</tr>
+			<tr>
+				<td align='center'>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='hidden' name='FORCE' value='on' />
+				<input type='submit' name='ACTION' value='$Lang::tr{'pakfire upgrade'}'/>
+				<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}'/>
+				</form>
+			</td>
+			</tr>
+		</table>
+END
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
+}
+
 # Show Pakfire main page
 my %selected=();
 my %checked=();
@@ -390,7 +455,7 @@ END
 print <<END;
 		<tr>
 			<td class="heading">$Lang::tr{'pakfire system state'}:</td>
-			<td class="heading">$Lang::tr{'pakfire updates'}:</td>
+			<td class="heading">$Lang::tr{'pakfire upgrades'}</td>
 		</tr>
 
 		<tr>
