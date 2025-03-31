@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.4.0
+VER        = 11.0.0
 
 THISAPP    = harfbuzz-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 21a2ed81ead5f06658c6153ad756631aacf5522bf58cdc5a54585cc03b0562c634ecabcd686fa76d2dda3497eb1a7d9e10c771e29da62c5946438d9ed8c46075
+$(DL_FILE)_BLAKE2 = 0775321ea24a257d6609f59e9f0fa7129416575938ff11e16f9df2a33bd9391e0dc20bf4be75131f1b8e15961dc04e3fef1d6ff88de71c556a9aab7889f0a185
 
 install : $(TARGET)
 
