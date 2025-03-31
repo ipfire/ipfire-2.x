@@ -481,22 +481,22 @@ iptables_red_up() {
 			iptables -t nat -A REDNAT -i "${GREEN_DEV}" -o "${IFACE}" -j RETURN
 		fi
 
-		local NO_MASQ_NETWORKS
+		local NO_MASQ_NETWORKS=()
 
 		if [ "${MASQUERADE_GREEN}" = "off" ]; then
-			NO_MASQ_NETWORKS="${NO_MASQ_NETWORKS} ${GREEN_NETADDRESS}/${GREEN_NETMASK}"
+			NO_MASQ_NETWORKS+=( "${GREEN_NETADDRESS}/${GREEN_NETMASK}" )
 		fi
 
 		if [ "${MASQUERADE_BLUE}" = "off" ]; then
-			NO_MASQ_NETWORKS="${NO_MASQ_NETWORKS} ${BLUE_NETADDRESS}/${BLUE_NETMASK}"
+			NO_MASQ_NETWORKS+=( "${BLUE_NETADDRESS}/${BLUE_NETMASK}" )
 		fi
 
 		if [ "${MASQUERADE_ORANGE}" = "off" ]; then
-			NO_MASQ_NETWORKS="${NO_MASQ_NETWORKS} ${ORANGE_NETADDRESS}/${ORANGE_NETMASK}"
+			NO_MASQ_NETWORKS+=( "${ORANGE_NETADDRESS}/${ORANGE_NETMASK}" )
 		fi
 
 		local network
-		for network in ${NO_MASQ_NETWORKS}; do
+		for network in ${NO_MASQ_NETWORKS[@]}; do
 			iptables -t nat -A REDNAT -s "${network}" -o "${IFACE}" -j RETURN
 		done
 
