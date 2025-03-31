@@ -2,12 +2,13 @@ bin/kill
 bin/ps
 #lib/libproc2.la
 #lib/libproc2.so
-lib/libproc2.so.0
-lib/libproc2.so.0.0.2
+lib/libproc2.so.1
+lib/libproc2.so.1.0.0
 #lib/pkgconfig
 #lib/pkgconfig/libproc2.pc
 sbin/sysctl
 usr/bin/free
+usr/bin/hugetop
 usr/bin/pgrep
 usr/bin/pidof
 usr/bin/pidwait
@@ -46,6 +47,7 @@ usr/bin/watch
 #usr/share/locale/vi/LC_MESSAGES/procps-ng.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/procps-ng.mo
 #usr/share/man/man1/free.1
+#usr/share/man/man1/hugetop.1
 #usr/share/man/man1/kill.1
 #usr/share/man/man1/pgrep.1
 #usr/share/man/man1/pidof.1

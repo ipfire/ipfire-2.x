@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = v4.0.4
+VER        = 4.0.5
 
-THISAPP    = procps-$(VER)
+THISAPP    = procps-v$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0ce3c6291e17ae6dcfb15a144689b9be481d3d9728372822a8f2119446ad844100f98e15e559266c2472aa128e381d1cf495348f5adb90ac393f4de4b7185a5b
+$(DL_FILE)_BLAKE2 = d028db29afba60b2678f8b790493a9425e3149b3699e463d2b789f7831d6942d59fcecfa18559477b304ad73112d2ea6279d40064b7b9a5ce3d2dcc6347ea421
 
 install : $(TARGET)
 
