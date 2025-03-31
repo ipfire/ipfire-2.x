@@ -1,1 +1,4 @@
+etc/rc.d/init.d/firewall
+etc/rc.d/init.d/functions
+srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
