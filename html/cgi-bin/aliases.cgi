@@ -615,6 +615,9 @@ sub SortDataFile
 sub BuildConfiguration {
     # Restart service associated with this
     &General::system('/usr/local/bin/setaliases');
+
+    # Reload the firewall for REDNAT rules
+    &General::firewall_reload();
 }
 
 #
