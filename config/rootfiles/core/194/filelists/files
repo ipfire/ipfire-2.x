@@ -4,3 +4,5 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 etc/ssl/openssl.cnf
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+var/ipfire/backup/include
+var/ipfire/backup/bin/backup.pl
