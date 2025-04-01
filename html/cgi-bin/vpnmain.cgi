@@ -1595,17 +1595,25 @@ END
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 
-	if ($confighash{$cgiparams{'KEY'}}) {
-		unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
-		unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-		delete $confighash{$cgiparams{'KEY'}};
-		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
-		&writeipsecfiles();
-		&General::system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
-	} else {
-		$errormessage = $Lang::tr{'invalid key'};
-	}
-	&General::firewall_reload();
+        if ($confighash{$cgiparams{'KEY'}}) {
+                # Revoke the removed certificate
+                if (!$errormessage) {
+                        &General::log("charon", "Revoking the removed client cert...");
+                        my $opt = " ca -revoke ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem";
+                        $errormessage = &callssl($opt);
+                        unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+                        unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+                        delete $confighash{$cgiparams{'KEY'}};
+                        &General::writehasharray("${General::swroot}/vpn/config", \%confighash);
+                        &writeipsecfiles();
+                        &General::system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
+                } else {
+                        goto VPNCONF_ERROR;
+                }
+        } else {
+                $errormessage = $Lang::tr{'invalid key'};
+        }
+        &General::firewall_reload();
 ###
 ### Choose between adding a host-net or net-net connection
 ###
