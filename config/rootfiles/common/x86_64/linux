@@ -7965,6 +7965,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/DRM_BRIDGE
 #lib/modules/KVER/build/include/config/DRM_BUDDY
 #lib/modules/KVER/build/include/config/DRM_CIRRUS_QEMU
+#lib/modules/KVER/build/include/config/DRM_CLIENT_SELECTION
+#lib/modules/KVER/build/include/config/DRM_CLIENT_SETUP
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_DP_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDCP_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDMI_HELPER
@@ -8461,7 +8463,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/GENERIC_ENTRY
 #lib/modules/KVER/build/include/config/GENERIC_GETTIMEOFDAY
 #lib/modules/KVER/build/include/config/GENERIC_IOMAP
-#lib/modules/KVER/build/include/config/GENERIC_IRQ_CHIP
 #lib/modules/KVER/build/include/config/GENERIC_IRQ_EFFECTIVE_AFF_MASK
 #lib/modules/KVER/build/include/config/GENERIC_IRQ_INJECTION
 #lib/modules/KVER/build/include/config/GENERIC_IRQ_MATRIX_ALLOCATOR
@@ -9219,7 +9220,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/L2TP_IP
 #lib/modules/KVER/build/include/config/L2TP_V3
 #lib/modules/KVER/build/include/config/LAN743X
-#lib/modules/KVER/build/include/config/LAN966X_OIC
 #lib/modules/KVER/build/include/config/LCD_CLASS_DEVICE
 #lib/modules/KVER/build/include/config/LCD_PLATFORM
 #lib/modules/KVER/build/include/config/LDM_PARTITION
@@ -9363,6 +9363,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/MDIO_THUNDER
 #lib/modules/KVER/build/include/config/MD_AUTODETECT
 #lib/modules/KVER/build/include/config/MD_BITMAP_FILE
+#lib/modules/KVER/build/include/config/MD_LINEAR
 #lib/modules/KVER/build/include/config/MD_RAID0
 #lib/modules/KVER/build/include/config/MD_RAID1
 #lib/modules/KVER/build/include/config/MD_RAID10
@@ -12346,6 +12347,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/drm/drm_buddy.h
 #lib/modules/KVER/build/include/drm/drm_cache.h
 #lib/modules/KVER/build/include/drm/drm_client.h
+#lib/modules/KVER/build/include/drm/drm_client_setup.h
 #lib/modules/KVER/build/include/drm/drm_color_mgmt.h
 #lib/modules/KVER/build/include/drm/drm_connector.h
 #lib/modules/KVER/build/include/drm/drm_crtc.h
@@ -12362,6 +12364,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/drm/drm_exec.h
 #lib/modules/KVER/build/include/drm/drm_fb_dma_helper.h
 #lib/modules/KVER/build/include/drm/drm_fb_helper.h
+#lib/modules/KVER/build/include/drm/drm_fbdev_client.h
 #lib/modules/KVER/build/include/drm/drm_fbdev_dma.h
 #lib/modules/KVER/build/include/drm/drm_fbdev_shmem.h
 #lib/modules/KVER/build/include/drm/drm_fbdev_ttm.h
@@ -13693,6 +13696,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/linux/cache.h
 #lib/modules/KVER/build/include/linux/cacheflush.h
 #lib/modules/KVER/build/include/linux/cacheinfo.h
+#lib/modules/KVER/build/include/linux/call_once.h
 #lib/modules/KVER/build/include/linux/can
 #lib/modules/KVER/build/include/linux/can/bittiming.h
 #lib/modules/KVER/build/include/linux/can/can-ml.h
@@ -21569,7 +21573,6 @@ lib/modules/KVER/kernel
 #lib/modules/KVER/kernel/drivers/iommu
 #lib/modules/KVER/kernel/drivers/iommu/virtio-iommu.ko.xz
 #lib/modules/KVER/kernel/drivers/irqchip
-#lib/modules/KVER/kernel/drivers/irqchip/irq-lan966x-oic.ko.xz
 #lib/modules/KVER/kernel/drivers/irqchip/irq-madera.ko.xz
 #lib/modules/KVER/kernel/drivers/leds
 #lib/modules/KVER/kernel/drivers/leds/leds-apu.ko.xz
@@ -21626,6 +21629,7 @@ lib/modules/KVER/kernel
 #lib/modules/KVER/kernel/drivers/md/dm-writecache.ko.xz
 #lib/modules/KVER/kernel/drivers/md/dm-zero.ko.xz
 #lib/modules/KVER/kernel/drivers/md/dm-zoned.ko.xz
+#lib/modules/KVER/kernel/drivers/md/linear.ko.xz
 #lib/modules/KVER/kernel/drivers/md/persistent-data
 #lib/modules/KVER/kernel/drivers/md/persistent-data/dm-persistent-data.ko.xz
 #lib/modules/KVER/kernel/drivers/md/raid0.ko.xz
