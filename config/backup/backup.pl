@@ -307,9 +307,6 @@ restore_backup() {
 	# start collectd after restore
 	/etc/rc.d/init.d/collectd start
 
-	# Reload ipsec certificates and secrets after doing a restore
-	&General::system('/usr/local/bin/ipsecctrl', 'R');
-
 	return 0
 }
 
