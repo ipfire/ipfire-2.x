@@ -573,7 +573,6 @@ boot/dtb-KVER
 #boot/dtb-KVER/synaptics/berlin4ct-stb.dtb
 boot/vmlinuz-KVER
 #etc/cpufreq-bench.conf
-etc/modprobe.d/framebuffer.conf
 etc/modprobe.d/ipv6.conf
 #lib/modules
 #lib/modules/KVER

@@ -2,7 +2,6 @@ boot/System.map-KVER
 boot/config-KVER
 boot/vmlinuz-KVER
 #etc/cpufreq-bench.conf
-etc/modprobe.d/framebuffer.conf
 etc/modprobe.d/ipv6.conf
 #lib/modules
 #lib/modules/KVER

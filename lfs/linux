@@ -229,19 +229,6 @@ endif
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
-	# disable drm by install drm to /bin/false because i915 ignore blacklisting
-	echo install drm /bin/false > /etc/modprobe.d/framebuffer.conf
-
-	# Blacklist old framebuffer modules
-	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
-	done
-	# Blacklist new drm framebuffer modules
-	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/gpu/drm -name *.ko.xz); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
-	done
-	sed -i -e "s|.ko.xz||g" /etc/modprobe.d/framebuffer.conf
-
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
 
