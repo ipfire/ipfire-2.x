@@ -43,7 +43,7 @@ my @vpns=();
 
 my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*/ -not  -path *openvpn-UNDEF*  -not -path *openvpn-*n2n* -name *.rrd 2>/dev/null|sort`;
 foreach (@vpngraphs){
-	if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive.rrd/){
+	if($_ =~ /(.*)\/openvpn-(.*)\/if_octets.rrd/){
 		push(@vpns,$2);
 	}
 }
