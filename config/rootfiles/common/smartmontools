@@ -30,3 +30,4 @@ usr/sbin/update-smart-drivedb
 #usr/share/man/man8/update-smart-drivedb.8
 #usr/share/smartmontools
 usr/share/smartmontools/drivedb.h
+etc/fcron.monthly/smart-drivedb
