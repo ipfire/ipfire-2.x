@@ -41,7 +41,7 @@ usr/bin/xzmore
 #usr/lib/liblzma.la
 #usr/lib/liblzma.so
 usr/lib/liblzma.so.5
-usr/lib/liblzma.so.5.8.0
+usr/lib/liblzma.so.5.8.1
 #usr/lib/pkgconfig/liblzma.pc
 #usr/share/doc/xz
 #usr/share/doc/xz/AUTHORS
