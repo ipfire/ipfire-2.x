@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.15.0
+VER        = 0.15.1
 
 THISAPP    = userspace-rcu-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3502cd0acd6e8e1370a2fd369207a305b3138b0db3186a37a9511bcf2f9ba362787274b030b0138111fe1d4805acd95bbae00c4d2332f1a0761f02bdc7f89e38
+$(DL_FILE)_BLAKE2 = c2b20099a4a9284f44031bb2d5f87ab03292896739115fdc741493d7f7c714b306a1981c1ff8164fb39ddf200634ddefdb757582b4891aa04cadd9dd8b51260a
 
 install : $(TARGET)
 

@@ -95,6 +95,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/nstat.8
 #usr/share/man/man8/rdma-dev.8
 #usr/share/man/man8/rdma-link.8
+#usr/share/man/man8/rdma-monitor.8
 #usr/share/man/man8/rdma-resource.8
 #usr/share/man/man8/rdma-statistic.8
 #usr/share/man/man8/rdma-system.8
@@ -171,4 +172,3 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/vdpa-dev.8
 #usr/share/man/man8/vdpa-mgmtdev.8
 #usr/share/man/man8/vdpa.8
-#var/lib/arpd

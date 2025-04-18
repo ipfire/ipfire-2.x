@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Seccomp (mode 2) helper library
 
-VER        = 2.5.5
+VER        = 2.6.0
 
 THISAPP    = libseccomp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libseccomp
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d770cee1f3e02fbbcd9f25655b360ab38160ad800e2829a67f2b9da62b095a90be99ac851a67344cf95bd6810a6268da4655dc1d37d996e58239c4999eb41998
+$(DL_FILE)_BLAKE2 = 45c4f4dd67db5848bb536613e8929633f95cfbeb8738525381a76631187e7b0fc2c02f1a103579cd0f4135e9c175250fe2d784b85cc85424ec3125b4dafcf11c
 
 install : $(TARGET)
 
@@ -82,9 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar vxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--disable-static
-
+				--prefix=/usr \
+				--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

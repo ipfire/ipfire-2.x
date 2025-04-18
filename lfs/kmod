@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 34
+VER        = 34.2
 
 # https://www.kernel.org/pub/linux/utils/kernel/kmod/
 
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 115e7e84efd33bfc3e16b57a27ba8cb1b56056800b4d86664188cf2a5d7a5f59484b1b536b6760d153fec5ca89c9da5fd7a1df31a3c9d95e1c6cec9afd3eb1fe
+$(DL_FILE)_BLAKE2 = 73e7664ef882f5d17985230797d619716b52adfbd39761579a375cdda1f516a0e120b8e3a753983d44b4cff08d3109737aca0b19283549c53a6cc2772f7ae812
 
 install : $(TARGET)
 

@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tshark
 DEPS       = c-ares
-PAK_VER    = 23
+PAK_VER    = 24
 
 SERVICES   =
 

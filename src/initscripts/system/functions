@@ -935,3 +935,18 @@ readhash() {
 		printf -v "${array}[${key}]" "%s" "${val}"
 	done < "${file}"
 }
+
+# Returns all enabled aliases
+get_aliases() {
+	local address
+	local enabled
+	local rest
+
+	local IFS=,
+
+	while read -r address enabled rest; do
+		if [ "${enabled}" = "on" ]; then
+			echo "${address}"
+		fi
+	done < /var/ipfire/ethernet/aliases
+}

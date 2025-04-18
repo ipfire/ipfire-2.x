@@ -144,8 +144,8 @@ usr/lib/libndr-standard.so
 usr/lib/libndr-standard.so.0
 usr/lib/libndr-standard.so.0.0.1
 usr/lib/libndr.so
-usr/lib/libndr.so.5
-usr/lib/libndr.so.5.0.0
+usr/lib/libndr.so.6
+usr/lib/libndr.so.6.0.0
 usr/lib/libnetapi.so
 usr/lib/libnetapi.so.1
 usr/lib/libnetapi.so.1.0.0
@@ -626,6 +626,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kpasswd_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/lockout_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/ms_kile_client_principal_lookup_tests.py
+#usr/lib/python3.10/site-packages/samba/tests/krb5/netlogon.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/nt_hash_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/pac_align_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/pkinit_tests.py
@@ -695,6 +696,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/py_credentials.py
 #usr/lib/python3.10/site-packages/samba/tests/registry.py
 #usr/lib/python3.10/site-packages/samba/tests/reparsepoints.py
+#usr/lib/python3.10/site-packages/samba/tests/rust.py
 #usr/lib/python3.10/site-packages/samba/tests/s3_net_join.py
 #usr/lib/python3.10/site-packages/samba/tests/s3idmapdb.py
 #usr/lib/python3.10/site-packages/samba/tests/s3param.py
@@ -931,6 +933,7 @@ usr/lib/samba/libsmbpasswdparser-private-samba.so
 usr/lib/samba/libsocket-blocking-private-samba.so
 usr/lib/samba/libstable-sort-private-samba.so
 usr/lib/samba/libsys-rw-private-samba.so
+usr/lib/samba/libtalloc-private-samba.so
 usr/lib/samba/libtalloc-report-printf-private-samba.so
 usr/lib/samba/libtalloc-report-private-samba.so
 usr/lib/samba/libtdb-private-samba.so

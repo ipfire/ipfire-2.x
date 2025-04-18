@@ -50,6 +50,7 @@ sbin/swapon
 sbin/switch_root
 sbin/wipefs
 sbin/zramctl
+#usr/bin/bits
 #usr/bin/cal
 usr/bin/chmem
 usr/bin/choom
@@ -58,6 +59,7 @@ usr/bin/choom
 #usr/bin/colcrt
 #usr/bin/colrm
 #usr/bin/column
+#usr/bin/coresched
 usr/bin/eject
 usr/bin/enosys
 usr/bin/exch
@@ -258,6 +260,7 @@ usr/sbin/rtcwake
 #usr/share/doc/util-linux
 #usr/share/doc/util-linux/getopt-example.bash
 #usr/share/doc/util-linux/getopt-example.tcsh
+#usr/share/man/man1/bits.1
 #usr/share/man/man1/cal.1
 #usr/share/man/man1/choom.1
 #usr/share/man/man1/chrt.1
@@ -265,6 +268,7 @@ usr/sbin/rtcwake
 #usr/share/man/man1/colcrt.1
 #usr/share/man/man1/colrm.1
 #usr/share/man/man1/column.1
+#usr/share/man/man1/coresched.1
 #usr/share/man/man1/dmesg.1
 #usr/share/man/man1/eject.1
 #usr/share/man/man1/enosys.1

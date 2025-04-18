@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -200,27 +200,6 @@ sub cleanssldatabase {
 	unlink ("${General::swroot}/certs/index.txt.old");
 	unlink ("${General::swroot}/certs/index.txt.attr.old");
 	unlink ("${General::swroot}/certs/serial.old");
-	unlink ("${General::swroot}/certs/01.pem");
-}
-sub newcleanssldatabase {
-	if (! -s "${General::swroot}/certs/serial" ) {
-		open(FILE, ">${General::swroot}/certs/serial");
-		print FILE "01";
-		close FILE;
-	}
-	if (! -s ">${General::swroot}/certs/index.txt") {
-		open(FILE, ">${General::swroot}/certs/index.txt");
-		close(FILE);
-	}
-	if (! -s ">${General::swroot}/certs/index.txt.attr") {
-		open(FILE, ">${General::swroot}/certs/index.txt.attr");
-		print FILE "unique_subject = yes";
-		close(FILE);
-	}
-	unlink ("${General::swroot}/certs/index.txt.old");
-	unlink ("${General::swroot}/certs/index.txt.attr.old");
-	unlink ("${General::swroot}/certs/serial.old");
-#	unlink ("${General::swroot}/certs/01.pem");		numbering evolves. Wrong place to delete
 }
 
 ###
@@ -889,8 +868,6 @@ END
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate root/host certificates'} ||
 	$cgiparams{'ACTION'} eq $Lang::tr{'upload p12 file'}) {
 
-	&newcleanssldatabase();
-
 	if (-f "${General::swroot}/ca/cacert.pem") {
 		$errormessage = $Lang::tr{'valid root certificate already exists'};
 		goto ROOTCERT_SKIP;
@@ -1004,7 +981,6 @@ END
 		# IPFire can only import certificates
 
 		&General::log("charon", "p12 import completed!");
-		&cleanssldatabase();
 		goto ROOTCERT_SUCCESS;
 
 	} elsif ($cgiparams{'ROOTCERT_COUNTRY'} ne '') {
@@ -1170,7 +1146,6 @@ END
 
 		# Successfully build CA / CERT!
 		if (!$errormessage) {
-			&cleanssldatabase();
 			goto ROOTCERT_SUCCESS;
 		}
 
@@ -1620,17 +1595,25 @@ END
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 
-	if ($confighash{$cgiparams{'KEY'}}) {
-		unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
-		unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-		delete $confighash{$cgiparams{'KEY'}};
-		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
-		&writeipsecfiles();
-		&General::system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
-	} else {
-		$errormessage = $Lang::tr{'invalid key'};
-	}
-	&General::firewall_reload();
+        if ($confighash{$cgiparams{'KEY'}}) {
+                # Revoke the removed certificate
+                if (!$errormessage) {
+                        &General::log("charon", "Revoking the removed client cert...");
+                        my $opt = " ca -revoke ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem";
+                        $errormessage = &callssl($opt);
+                        unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+                        unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+                        delete $confighash{$cgiparams{'KEY'}};
+                        &General::writehasharray("${General::swroot}/vpn/config", \%confighash);
+                        &writeipsecfiles();
+                        &General::system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
+                } else {
+                        goto VPNCONF_ERROR;
+                }
+        } else {
+                $errormessage = $Lang::tr{'invalid key'};
+        }
+        &General::firewall_reload();
 ###
 ### Choose between adding a host-net or net-net connection
 ###
@@ -1933,11 +1916,9 @@ END
 		if ( $errormessage = &callssl ($opt) ) {
 			unlink ($filename);
 			unlink ("${General::swroot}/certs/$cgiparams{'NAME'}cert.pem");
-			&cleanssldatabase();
 			goto VPNCONF_ERROR;
 		} else {
 			unlink ($filename);
-			&cleanssldatabase();
 		}
 
 		$cgiparams{'CERT_NAME'} = getCNfromcert ("${General::swroot}/certs/$cgiparams{'NAME'}cert.pem");
@@ -2220,7 +2201,6 @@ END
 		} else {
 			unlink ($v3extname);
 			unlink ("${General::swroot}/certs/$cgiparams{'NAME'}req.pem");
-			&cleanssldatabase();
 		}
 
 		# Create the pkcs12 file

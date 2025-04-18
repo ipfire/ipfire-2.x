@@ -26,14 +26,14 @@ include Config
 
 SUMMARY    = Open Virtual Machine Firmware
 
-VER        = 2024.11-5
+VER        = 2025.02-1
 THISAPP    = ovmf_$(VER)
 DL_FILE    = $(THISAPP)_all.deb
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ovmf
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 466692251a4da0a2140b27b7c07db1a754624c21605d0439a7d50d650e07297392df6982d9c065cc3f4ef0536ee5308235a43f78aba69e216250fb6469f33c98
+$(DL_FILE)_BLAKE2 = 4c4ea2b043407c409b8d075bbae70d5bcbc6285e811e6a7aefa58fa9e9c607bba5acf3f21adfb71f86516e1b49cef87296b62225d733ff5d46e685b8c0c6bca6
 
 install : $(TARGET)
 

@@ -82,6 +82,9 @@
 < oops something went wrong
 < optional
 < ovpn roadwarrior server
+< pakfire dependencies found
+< pakfire no dependencies found
+< pakfire resolvedeps wait
 < quick control
 < random number generator daemon
 < regenerate host certificate

@@ -307,6 +307,12 @@ restore_backup() {
 	# start collectd after restore
 	/etc/rc.d/init.d/collectd start
 
+        # Restart ipsec if enabled
+        # This will ensure that the restored certs and secrets etc are loaded and used
+        if [ $(grep -c "ENABLED=on" /var/ipfire/vpn/settings) -eq 1  ] ; then
+                /usr/local/bin/ipsecctrl S
+        fi
+
 	return 0
 }
 
