@@ -50,6 +50,7 @@ require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/network-functions.pl';
 require '/var/ipfire/lang.pl';
 require '/var/ipfire/header.pl';
+require '/var/ipfire/http-client-functions.pl';
 require '/usr/lib/wio/wio-lib.pl';
 require '/usr/lib/wio/wio-graphs.pl';
 
@@ -1163,7 +1164,7 @@ close (FILE);
 		@temp = split (/\,/, $_);
 
 		if ( $temp[7] eq "on" ) {
-			$bgcolor = ( &General::DyndnsServiceSync (&General::GetDyndnsRedIP,$temp[1],$temp[2]) ? "$Header::colourgreen" : "$Header::colourred" );
+			$bgcolor = ( &General::DyndnsServiceSync (&HTTPClient::GetDyndnsRedIP,$temp[1],$temp[2]) ? "$Header::colourgreen" : "$Header::colourred" );
 		}
 		else {
 			$bgcolor = "blue";
