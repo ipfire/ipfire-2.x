@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Music Player Daemon
 
-VER        = 0.23.17
+VER        = 0.24.3
 
 THISAPP    = mpd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 43
+PAK_VER    = 44
 # SUP_ARCH   = aarch64 x86_64
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr fmt
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3a789244ebe38a181e0e63e32b7a3a6dd0b5f8ea081355d61dda82ba7d5788bbe5f4bf55abb3e5036be54442373d857442fc12f4b66bd9ee0c8e7051bf1f70af
+$(DL_FILE)_BLAKE2 = 4981f89341bc936da18b2052bf03e593fc6a72e4fdf644afd4125261798ef5698f4dce242cfe3959a83170efa328f5fa3cc65dbddbc4fdf90667fb3e9656a520
 
 install : $(TARGET)
 
