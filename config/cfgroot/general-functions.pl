@@ -17,7 +17,6 @@ package General;
 use strict;
 use Socket;
 use IO::Socket;
-use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
 
 $General::version = 'VERSION';
@@ -959,26 +958,6 @@ sub findhasharraykey {
 	     return $i;
 	}
     }
-}
-
-sub FetchPublicIp {
-    my %proxysettings;
-    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-        my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
-        Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
-    }
-    my $user_agent = &MakeUserAgent();
-    my ($out, $response) = Net::SSLeay::get_http(  'checkip4.dns.lightningwirelabs.com',
-                				    80,
-        					    "/",
-						    Net::SSLeay::make_headers('User-Agent' => $user_agent )
-						);
-    if ($response =~ m%HTTP/1\.. 200 OK%) {
-	$out =~ /Your IP address is: (\d+.\d+.\d+.\d+)/;
-	return $1;
-    }
-    return '';
 }
 
 #
