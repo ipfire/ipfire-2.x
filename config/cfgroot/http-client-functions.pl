@@ -89,6 +89,10 @@ sub downloader (%) {
 	$etagprefix = $args{"ETAGPREFIX"} if (exists($args{"ETAGPREFIX"}));
 	my $max_size = $args{"MAXSIZE"} if (exists($args{"MAXSIZE"}));
 
+	# Timeout defaults to 60 Seconds if not set.
+	my $timeout = 60;
+	$timeout = $args{"TIMEOUT"} if (exists($args{"TIMEOUT"}));
+
 	# Abort with error "no url", if no URL has been given.
 	die "downloader: No URL has been given." unless ($url);
 
@@ -110,8 +114,9 @@ sub downloader (%) {
 		},
 	);
 
-	# Set timeout to 10 seconds.
-	$ua->timeout(10);
+	# Set the timeout to the configured value.
+	# Defaults to 60 seconds if not set.
+	$ua->timeout($timeout);
 
 	# Assign maximum download size if set.
 	$ua->max_size($max_size) if ($max_size);
