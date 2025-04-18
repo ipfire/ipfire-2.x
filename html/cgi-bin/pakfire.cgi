@@ -275,7 +275,7 @@ END
 # Show Pakfire install/remove dependencies and confirm form
 # (_is_pakfire_busy status was checked before and can be omitted)
 if (($cgiparams{'ACTION'} eq $Lang::tr{'pakfire install'}) && ($pagemode eq $PM_DEFAULT)) {
-	&Header::openbox("100%", "center", $Lang::tr{'request'});
+	&Header::openbox("100%", "center", $Lang::tr{'pakfire install'});
 
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -318,7 +318,7 @@ END
 	exit;
 
 } elsif (($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) && ($pagemode eq $PM_DEFAULT)) {
-	&Header::openbox("100%", "center", $Lang::tr{'request'});
+	&Header::openbox("100%", "center", $Lang::tr{'remove'});
 
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -416,7 +416,7 @@ if (($cgiparams{'ACTION'} eq $Lang::tr{'pakfire upgrade'}) && ($pagemode eq $PM_
 				<input type='submit' name='ACTION' value='$Lang::tr{'pakfire upgrade'}'/>
 				<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}'/>
 				</form>
-			</td>
+				</td>
 			</tr>
 		</table>
 END

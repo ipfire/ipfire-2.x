@@ -1572,7 +1572,6 @@ WARNING: untranslated string: remote subnet is invalid = Remote subnet is invali
 WARNING: untranslated string: remove = Remove
 WARNING: untranslated string: remove ca certificate = Remove CA certificate
 WARNING: untranslated string: remove x509 = Remove x509
-WARNING: untranslated string: request = Request
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field
 WARNING: untranslated string: reset = Reset
