@@ -307,4 +307,34 @@ sub FetchPublicIp {
 	return;
 }
 
+#
+# This sub returns the red IP used to compare in DyndnsServiceSync
+#
+sub GetDyndnsRedIP {
+	my %settings;
+
+	# Read-in ddns settings.
+	&General::readhash("${General::swroot}/ddns/settings", \%settings);
+
+	# Try to grab the address from the local-ipaddress file.
+	my $ip = &General::grab_address_from_file("${General::swroot}/red/local-ipaddress") or return 'unavailable';
+
+	# 100.64.0.0/10 is reserved for dual-stack lite (http://tools.ietf.org/html/rfc6598).
+	if (&General::IpInSubnet ($ip,'10.0.0.0','255.0.0.0') ||
+		&General::IpInSubnet ($ip,'172.16.0.0.','255.240.0.0') ||
+		&General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0') ||
+		&General::IpInSubnet ($ip,'100.64.0.0', '255.192.0.0'))
+	{
+		if ($settings{'BEHINDROUTER'} eq 'FETCH_IP') {
+			# Call function to omit the real address.
+			my $RealIP = &FetchPublicIp;
+
+			# Check if the grabbed address is valid.
+			$ip = (&General::validip ($RealIP) ?  $RealIP : 'unavailable');
+		}
+	}
+
+	return $ip;
+}
+
 1;

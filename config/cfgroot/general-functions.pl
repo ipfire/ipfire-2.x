@@ -998,31 +998,6 @@ sub DyndnsServiceSync ($;$;$) {
     }
     return 0;
 }
-#
-# This sub returns the red IP used to compare in DyndnsServiceSync
-#
-sub GetDyndnsRedIP {
-    my %settings;
-    &General::readhash("${General::swroot}/ddns/settings", \%settings);
-
-    open(IP, "${General::swroot}/red/local-ipaddress") or return 'unavailable';
-    my $ip = <IP>;
-    close(IP);
-    chomp $ip;
-
-    # 100.64.0.0/10 is reserved for dual-stack lite (http://tools.ietf.org/html/rfc6598).
-    if (&General::IpInSubnet ($ip,'10.0.0.0','255.0.0.0') ||
-        &General::IpInSubnet ($ip,'172.16.0.0.','255.240.0.0') ||
-        &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0') ||
-        &General::IpInSubnet ($ip,'100.64.0.0', '255.192.0.0'))
-    {
-	if ($settings{'BEHINDROUTER'} eq 'FETCH_IP') {
-    	    my $RealIP = &General::FetchPublicIp;
-	    $ip = (&General::validip ($RealIP) ?  $RealIP : 'unavailable');
-	}
-    }
-    return $ip;
-}
 
 # Translate ICMP code to text
 # ref: http://www.iana.org/assignments/icmp-parameters
