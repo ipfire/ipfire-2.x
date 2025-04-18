@@ -76,6 +76,7 @@ $(TARGET) :
 
 	# Copy initial configfiles
 	cp $(DIR_SRC)/config/cfgroot/header.pl			$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/http-client-functions.pl   $(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/network-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/location-functions.pl	$(CONFIG_ROOT)/
