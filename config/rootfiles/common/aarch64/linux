@@ -9546,6 +9546,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/LCD_CLASS_DEVICE
 #lib/modules/KVER/build/include/config/LCD_PLATFORM
 #lib/modules/KVER/build/include/config/LDM_PARTITION
+#lib/modules/KVER/build/include/config/LD_CAN_USE_KEEP_IN_OVERLAY
 #lib/modules/KVER/build/include/config/LD_IS_BFD
 #lib/modules/KVER/build/include/config/LD_ORPHAN_WARN
 #lib/modules/KVER/build/include/config/LD_ORPHAN_WARN_LEVEL
