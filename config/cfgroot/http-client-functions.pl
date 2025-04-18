@@ -287,4 +287,24 @@ sub downloader (%) {
 	}
 }
 
+#
+# Tiny function to grab the public red IPv4 address using LWL.
+#
+sub FetchPublicIp {
+	# URL to grab the public IP.
+	my $url = "https://checkip4.dns.lightningwirelabs.com";
+
+	# Call downloader to fetch the public IP.
+	my $response = &downloader("URL" => $url);
+
+	# Omit the address from the resonse message.
+	if ($response =~ /Your IP address is: (\d+.\d+.\d+.\d+)/) {
+		# Return the address.
+		return $1;
+	}
+
+	# Unable to grab the address - Return nothing.
+	return;
+}
+
 1;
