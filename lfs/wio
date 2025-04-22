@@ -32,7 +32,7 @@ THISAPP    = wio-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wio
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       =
 

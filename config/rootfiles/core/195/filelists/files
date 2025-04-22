@@ -1,0 +1,4 @@
+srv/web/ipfire/cgi-bin/ddns.cgi
+var/ipfire/general-functions.pl
+var/ipfire/http-client-functions.pl
+var/ipfire/ids-functions.pl
