@@ -186,18 +186,18 @@ sub load_peer($) {
 		"KEEPALIVE"             => $peers{$key}[12],
 	);
 
-	return %peer;
+	return \%peer;
 }
 
 sub get_peer_by_name($) {
 	my $name = shift;
 
 	foreach my $key (keys %peers) {
-		my %peer = &load_peer($key);
+		my $peer = &load_peer($key);
 
 		# Return the peer if the name matches
-		if ($peer{"NAME"} eq $name) {
-			return %peer;
+		if ($peer->{"NAME"} eq $name) {
+			return $peer;
 		}
 	}
 
@@ -373,15 +373,15 @@ sub generate_peer_configuration($$) {
 	my @conf = ();
 
 	# Load the peer
-	my %peer = &load_peer($key);
+	my $peer = &load_peer($key);
 
 	# Return if we could not find the peer
-	return undef unless (%peer);
+	return undef unless ($peer);
 
 	my @allowed_ips = ();
 
 	# Convert all subnets into CIDR notation
-	foreach my $subnet ($peer{'LOCAL_SUBNETS'}) {
+	foreach my $subnet ($peer->{'LOCAL_SUBNETS'}) {
 		my $netaddress = &Network::get_netaddress($subnet);
 		my $prefix     = &Network::get_prefix($subnet);
 
@@ -395,32 +395,32 @@ sub generate_peer_configuration($$) {
 	my $endpoint = &get_endpoint();
 
 	# Net-2-Net
-	if ($peer{'TYPE'} eq "net") {
+	if ($peer->{'TYPE'} eq "net") {
 		# Derive our own public key
-		my $public_key = &derive_public_key($peer{'PRIVATE_KEY'});
+		my $public_key = &derive_public_key($peer->{'PRIVATE_KEY'});
 
 		push(@conf,
 			"[Interface]",
 			"PrivateKey = $private_key",
-			"Port = $peer{'ENDPOINT_PORT'}",
+			"Port = $peer->{'ENDPOINT_PORT'}",
 			"",
 			"[Peer]",
-			"Endpoint = ${endpoint}:$peer{'PORT'}",
+			"Endpoint = ${endpoint}:$peer->{'PORT'}",
 			"PublicKey = $public_key",
-			"PresharedKey = $peer{'PSK'}",
+			"PresharedKey = $peer->{'PSK'}",
 			"AllowedIPs = " . join(", ", @allowed_ips),
-			"PersistentKeepalive = $peer{'KEEPALIVE'}",
+			"PersistentKeepalive = $peer->{'KEEPALIVE'}",
 		);
 
 	# Host-2-Net
-	} elsif ($peer{'TYPE'} eq "host") {
+	} elsif ($peer->{'TYPE'} eq "host") {
 		# Fetch any DNS servers for hosts
 		my @dns = split(/\|/, $settings{'CLIENT_DNS'});
 
 		push(@conf,
 			"[Interface]",
 			"PrivateKey = $private_key",
-			"Address = $peer{'CLIENT_ADDRESS'}",
+			"Address = $peer->{'CLIENT_ADDRESS'}",
 		);
 
 		# Optionally add DNS servers
@@ -436,7 +436,7 @@ sub generate_peer_configuration($$) {
 			"[Peer]",
 			"Endpoint = ${endpoint}:$settings{'PORT'}",
 			"PublicKey = $settings{'PUBLIC_KEY'}",
-			"PresharedKey = $peer{'PSK'}",
+			"PresharedKey = $peer->{'PSK'}",
 			"AllowedIPs = " . join(", ", @allowed_ips),
 			"PersistentKeepalive = $DEFAULT_KEEPALIVE",
 		));

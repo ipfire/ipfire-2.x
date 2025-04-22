@@ -1202,13 +1202,13 @@ EOF
 			# Sort peers by name
 			foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
 				# Load the peer
-				my %peer = &Wireguard::load_peer($key);
+				my $peer = &Wireguard::load_peer($key);
 
 				# Is this peer selected?
-				my $selected = ($fwdfwsettings{$fwdfwsettings{$grp}} eq $peer{'NAME'}) ? "selected" : "";
+				my $selected = ($fwdfwsettings{$fwdfwsettings{$grp}} eq $peer->{'NAME'}) ? "selected" : "";
 
 				print <<EOF;
-					<option value="$peer{'NAME'}" $selected>$peer{'NAME'}</option>
+					<option value="$peer->{'NAME'}" $selected>$peer->{'NAME'}</option>
 EOF
 			}
 

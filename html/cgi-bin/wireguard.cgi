@@ -332,7 +332,7 @@ END
 	my $key = $cgiparams{'KEY'};
 
 	# Load the existing peer
-	my %peer = &Wireguard::load_peer($key);
+	my $peer = &Wireguard::load_peer($key);
 
 	# Check if the name is valid
 	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
@@ -432,7 +432,7 @@ END
 		# 3 = Public Key
 		$cgiparams{"PUBLIC_KEY"},
 		# 4 = Private Key
-		$peer{"PRIVATE_KEY"},
+		$peer->{"PRIVATE_KEY"},
 		# 5 = Port
 		$cgiparams{"PORT"},
 		# 6 = Endpoint Address
@@ -581,7 +581,7 @@ END
 		&Header::openpage($Lang::tr{'wireguard'}, 1, '');
 
 		# Load the peer
-		my %peer = &Wireguard::load_peer($key);
+		my $peer = &Wireguard::load_peer($key);
 
 		# Generate the client configuration
 		my $config = &Wireguard::generate_peer_configuration($key, $private_key);
@@ -614,10 +614,10 @@ END
 		$config = &MIME::Base64::encode_base64($config);
 
 		# Open a new box
-		&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer{'NAME'}");
+		&Header::openbox('100%', '', "$Lang::tr{'wg peer configuration'}: $peer->{'NAME'}");
 
 		# Make the filename for files
-		my $filename = &Header::normalize($peer{'NAME'}) . ".conf";
+		my $filename = &Header::normalize($peer->{'NAME'}) . ".conf";
 
 		print <<END;
 			<div class="text-center">
