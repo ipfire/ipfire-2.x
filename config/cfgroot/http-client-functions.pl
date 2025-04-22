@@ -293,11 +293,11 @@ sub downloader (%) {
 }
 
 #
-# Tiny function to grab the public red IPv4 address using LWL.
+# Tiny function to grab the public red IPv4 address using an online service.
 #
 sub FetchPublicIp {
 	# URL to grab the public IP.
-	my $url = "https://checkip4.dns.lightningwirelabs.com";
+	my $url = "https://checkip4.ipfire.org";
 
 	# Call downloader to fetch the public IP.
 	my $response = &downloader("URL" => $url);
