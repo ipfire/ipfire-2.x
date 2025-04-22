@@ -1365,6 +1365,7 @@
 'fwhost type' => 'Type',
 'fwhost used' => 'Used',
 'fwhost welcome' => 'Over here, you can group single hosts, networks and services together, which will creating new rules more easy and faster.',
+'fwhost wg peers' => 'WireGuard Peers',
 'fwhost wo subnet' => '(without subnet)',
 'g.dtm' => 'TO BE REMOVED',
 'g.lite' => 'TO BE REMOVED',

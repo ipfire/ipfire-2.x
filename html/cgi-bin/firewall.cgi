@@ -1185,6 +1185,40 @@ END
 
 	#End left table. start right table (vpn)
 	print"</tr></table></td><td valign='top'><table width='95%' border='0' align='right'><tr>";
+
+	# WireGuard Peers
+	if (%Wireguard::peers || $optionsfw{'SHOWDROPDOWN'} eq 'on') {
+		print <<EOF;
+			<tr>
+				<td>
+					<input type='radio' name='$grp' id='wg_host_$srctgt' value='wg_host_$srctgt' $checked{$grp}{'wg_host_'.$srctgt}>
+				</td>
+				<td nowrap='nowrap' width='16%'>
+					$Lang::tr{'fwhost wg peers'}
+				</td>
+				<td nowrap='nowrap' width='1%' align='right'>
+					<select name='wg_host_$srctgt' style='width:200px;'>"
+EOF
+			# Sort peers by name
+			foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
+				# Load the peer
+				my %peer = &Wireguard::load_peer($key);
+
+				# Is this peer selected?
+				my $selected = ($fwdfwsettings{$fwdfwsettings{$grp}} eq $peer{'NAME'}) ? "selected" : "";
+
+				print <<EOF;
+					<option value="$peer{'NAME'}" $selected>$peer{'NAME'}</option>
+EOF
+			}
+
+			print <<EOF;
+					</select>
+				</td>
+			</tr>
+EOF
+	}
+
 	# CCD networks
 	if( ! -z $configccdnet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
 		print"<td width='1%'><input type='radio' name='$grp' id='ovpn_net_$srctgt' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_net_$srctgt' style='width:200px;'>";

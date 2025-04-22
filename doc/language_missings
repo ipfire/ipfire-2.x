@@ -62,6 +62,7 @@
 < error the to date has to be later than the from date
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
+< fwhost wg peers
 < g.dtm
 < g.lite
 < hostile networks in
@@ -184,6 +185,7 @@
 < extrahd not configured
 < extrahd not mounted
 < fwdfw syn flood protection
+< fwhost wg peers
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
@@ -291,6 +293,7 @@
 < endpoint port
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
+< fwhost wg peers
 < g.dtm
 < g.lite
 < hostile networks total
@@ -592,6 +595,7 @@
 < fwhost cust locationgroup
 < fwhost cust locationlocation
 < fwhost newlocationgrp
+< fwhost wg peers
 < fw red
 < generate ptr
 < guaranteed bandwidth
@@ -1199,6 +1203,7 @@
 < fwhost cust locationgroup
 < fwhost cust locationlocation
 < fwhost newlocationgrp
+< fwhost wg peers
 < fw red
 < generate ptr
 < guardian
@@ -2101,6 +2106,7 @@
 < fwhost type
 < fwhost used
 < fwhost welcome
+< fwhost wg peers
 < fwhost wo subnet
 < fw red
 < fw rules reload notice
@@ -3179,6 +3185,7 @@
 < fwhost type
 < fwhost used
 < fwhost welcome
+< fwhost wg peers
 < fwhost wo subnet
 < fw red
 < fw rules reload notice
@@ -3860,6 +3867,7 @@
 < foreshadow
 < fwdfw all subnets
 < fwdfw syn flood protection
+< fwhost wg peers
 < fw red
 < generate ptr
 < hardware vulnerabilities

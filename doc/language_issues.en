@@ -966,6 +966,7 @@ WARNING: untranslated string: fwhost stdnet = Standard networks:
 WARNING: untranslated string: fwhost type = Type
 WARNING: untranslated string: fwhost used = Used
 WARNING: untranslated string: fwhost welcome = Over here, you can group single hosts, networks and services together, which will creating new rules more easy and faster.
+WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: gateway = Gateway
 WARNING: untranslated string: gateway ip = Gateway IP
 WARNING: untranslated string: generate a certificate = Generate a certificate:
