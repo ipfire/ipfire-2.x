@@ -189,6 +189,22 @@ sub load_peer($) {
 	return %peer;
 }
 
+sub get_peer_by_name($) {
+	my $name = shift;
+
+	foreach my $key (keys %peers) {
+		my %peer = &load_peer($key);
+
+		# Return the peer if the name matches
+		if ($peer{"NAME"} eq $name) {
+			return %peer;
+		}
+	}
+
+	# Return undefined if nothing was found
+	return undef;
+}
+
 sub name_is_valid($) {
 	my $name = shift;
 

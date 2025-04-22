@@ -2586,10 +2586,10 @@ END
 			@tmpsrc=();
 			@tmptgt=();
 			#check if vpn hosts/nets have been deleted
-			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){
+			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /^wg_/ || $$hash{$key}[3] =~ /ovpn/i){
 				push (@tmpsrc,$$hash{$key}[4]);
 			}
-			if($$hash{$key}[5] =~ /ipsec/i || $$hash{$key}[5] =~ /ovpn/i){
+			if($$hash{$key}[5] =~ /ipsec/i || $$hash{$key}[5] =~ /^wg_/ || $$hash{$key}[5] =~ /ovpn/i){
 				push (@tmptgt,$$hash{$key}[6]);
 			}
 			foreach my $host (@tmpsrc){
@@ -2609,6 +2609,10 @@ END
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
 					}
+				} elsif ($$hash{$key}[3] eq 'wg_host_src') {
+					if (!defined &Wireguard::get_peer_by_name($host)) {
+						$coloryellow = 'on';
+					}
 				}
 			}
 			foreach my $host (@tmptgt){
@@ -2627,6 +2631,10 @@ END
 				}elsif($$hash{$key}[5] eq 'ovpn_host_tgt'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
+					}
+				} elsif ($$hash{$key}[3] eq 'wg_host_tgt') {
+					if (!defined &Wireguard::get_peer_by_name($host)) {
+						$coloryellow = 'on';
 					}
 				}
 			}
