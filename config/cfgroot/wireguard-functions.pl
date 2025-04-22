@@ -184,6 +184,7 @@ sub load_peer($) {
 		"LOCAL_SUBNETS"         => &decode_subnets($peers{$key}[10]),
 		"PSK"                   => $peers{$key}[11],
 		"KEEPALIVE"             => $peers{$key}[12],
+		"INTERFACE"				=> ($type eq "host") ? "wg0" : "wg${key}",
 	);
 
 	return \%peer;
