@@ -1548,6 +1548,10 @@ sub getcolor
 			}
 		}
 		#VPN networks
+		if ($nettype eq 'wg_host_src' || $nettype eq 'wg_host_tgt'){
+			$tdcolor="style='background-color: $Header::colourwg;color:white;'";
+			return;
+		}
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
 			$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
 			return;
