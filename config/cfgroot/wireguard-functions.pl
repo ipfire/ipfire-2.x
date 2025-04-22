@@ -303,7 +303,7 @@ sub decode_subnets($) {
 	# Split the string
 	my @subnets = split(/\|/, $subnets);
 
-	return @subnets;
+	return \@subnets;
 }
 
 sub pool_is_in_use($) {

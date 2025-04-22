@@ -134,8 +134,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Fetch type
 	my $type = $Wireguard::peers{$key}[1];
 
-	my @remote_subnets = &Wireguard::decode_subnets($Wireguard::peers{$key}[8]);
-	my @local_subnets  = &Wireguard::decode_subnets($Wireguard::peers{$key}[10]);
+	my $remote_subnets = &Wireguard::decode_subnets($Wireguard::peers{$key}[8]);
+	my $local_subnets  = &Wireguard::decode_subnets($Wireguard::peers{$key}[10]);
 
 	# Flush CGI parameters & load configuration
 	%cgiparams = (
@@ -148,9 +148,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"PORT"				=> $Wireguard::peers{$key}[5],
 		"ENDPOINT_ADDRESS"	=> $Wireguard::peers{$key}[6],
 		"ENDPOINT_PORT"		=> $Wireguard::peers{$key}[7],
-		"REMOTE_SUBNETS"	=> join(", ", @remote_subnets),
+		"REMOTE_SUBNETS"	=> join(", ", @$remote_subnets),
 		"REMARKS"			=> &MIME::Base64::decode_base64($Wireguard::peers{$key}[9]),
-		"LOCAL_SUBNETS"		=> join(", ", @local_subnets),
+		"LOCAL_SUBNETS"		=> join(", ", @$local_subnets),
 		"PSK"				=> $Wireguard::peers{$key}[11],
 		"KEEPALIVE"			=> $Wireguard::peers{$key}[12],
 	);
