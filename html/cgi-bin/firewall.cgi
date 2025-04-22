@@ -1191,13 +1191,13 @@ END
 		print <<EOF;
 			<tr>
 				<td>
-					<input type='radio' name='$grp' id='wg_host_$srctgt' value='wg_host_$srctgt' $checked{$grp}{'wg_host_'.$srctgt}>
+					<input type='radio' name='$grp' id='wg_peer_$srctgt' value='wg_peer_$srctgt' $checked{$grp}{'wg_peer_'.$srctgt}>
 				</td>
 				<td nowrap='nowrap' width='16%'>
 					$Lang::tr{'fwhost wg peers'}
 				</td>
 				<td nowrap='nowrap' width='1%' align='right'>
-					<select name='wg_host_$srctgt' style='width:200px;'>"
+					<select name='wg_peer_$srctgt' style='width:200px;'>"
 EOF
 			# Sort peers by name
 			foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
@@ -1548,7 +1548,7 @@ sub getcolor
 			}
 		}
 		#VPN networks
-		if ($nettype eq 'wg_host_src' || $nettype eq 'wg_host_tgt'){
+		if ($nettype eq 'wg_peer_src' || $nettype eq 'wg_peer_tgt'){
 			$tdcolor="style='background-color: $Header::colourwg;color:white;'";
 			return;
 		}
@@ -2609,7 +2609,7 @@ END
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
 					}
-				} elsif ($$hash{$key}[3] eq 'wg_host_src') {
+				} elsif ($$hash{$key}[3] eq 'wg_peer_src') {
 					if (!defined &Wireguard::get_peer_by_name($host)) {
 						$coloryellow = 'on';
 					}
@@ -2632,7 +2632,7 @@ END
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
 					}
-				} elsif ($$hash{$key}[3] eq 'wg_host_tgt') {
+				} elsif ($$hash{$key}[3] eq 'wg_peer_tgt') {
 					if (!defined &Wireguard::get_peer_by_name($host)) {
 						$coloryellow = 'on';
 					}
