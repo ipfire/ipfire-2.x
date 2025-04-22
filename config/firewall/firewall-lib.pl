@@ -95,9 +95,9 @@ sub get_srvgrp_prot
 	my $icmp;
 	foreach my $key (sort {$a <=> $b} keys %customservicegrp){
 		if($customservicegrp{$key}[0] eq $val){
-			if (&get_srv_prot($customservicegrp{$key}[2]) eq 'TCP'){ 
+			if (&get_srv_prot($customservicegrp{$key}[2]) eq 'TCP'){
 				$tcp=1;
-			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'UDP'){ 
+			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'UDP'){
 				$udp=1;
 			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'ICMP'){
 				$icmp=1;
@@ -112,7 +112,7 @@ sub get_srvgrp_prot
 	if ($icmp eq '1'){push (@ips,'ICMP');}
 	my $back=join(",",@ips);
 	return $back;
-	
+
 }
 sub get_srv_port
 {
@@ -147,7 +147,7 @@ sub get_srvgrp_port
 	}elsif ($prot eq 'ICMP'){
 		$back="--icmp-type ";
 	}
-	
+
 	$back.=join(",",@ips);
 	return $back;
 }
@@ -205,7 +205,7 @@ sub get_ovpn_host_ip
 }
 sub get_ovpn_net_ip
 {
-	
+
 	my $val=shift;
 	my $field=shift;
 	foreach my $key (sort {$a <=> $b} keys %ccdnet){
@@ -222,8 +222,8 @@ sub get_grp_ip
 		if ($customgrp{$key}[0] eq $val){
 			&get_address($customgrp{$key}[3],$src);
 		}
-	}		
-	
+	}
+
 }
 sub get_std_net_ip
 {
@@ -270,7 +270,7 @@ sub get_net_ip
 	foreach my $key (sort {$a <=> $b} keys %customnetwork){
 		if($customnetwork{$key}[0] eq $val){
 			return "$customnetwork{$key}[1]/$customnetwork{$key}[2]";
-		}  
+		}
 	}
 }
 sub get_host_ip
@@ -288,7 +288,7 @@ sub get_host_ip
 			}elsif($customhost{$key}[1] eq 'mac' && $src eq 'tgt'){
 				return "none";
 			}
-		}  
+		}
 	}
 }
 sub get_addresses
