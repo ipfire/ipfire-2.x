@@ -112,11 +112,15 @@ sub logger {
 
 sub usage {
   &Pakfire::message("Usage: pakfire <install|remove> [options] <pak(s)>");
-  &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
-  &Pakfire::message("               <upgrade> - Installs the latest version of all paks.");
-  &Pakfire::message("               <list> [installed/notinstalled/upgrade] - Outputs a list with all, installed, available or upgradeable paks.");
+  &Pakfire::message("               <update> - Contact the servers for new lists of paks.");
+  &Pakfire::message("               <upgrade> - Install the latest version of all paks.");
+  &Pakfire::message("               <list> [installed|notinstalled|upgrade] - Output a list");
+  &Pakfire::message("                 of all, installed, available or upgradeable paks.");
   &Pakfire::message("               <info> <pak> [<pak> ...] - Output pak metadata.");
-  &Pakfire::message("               <status> - Outputs a summary about available core upgrades, updates and a required reboot");
+  &Pakfire::message("               <resolvedeps> <pak> [<pak> ...] - Resolve and output pak");
+  &Pakfire::message("                 dependencies.");
+  &Pakfire::message("               <status> - Output a summary of available core upgrades,");
+  &Pakfire::message("                 updates and a required reboot.");
   &Pakfire::message("");
   &Pakfire::message("       Global options:");
   &Pakfire::message("               --non-interactive --> Enables the non-interactive mode.");
