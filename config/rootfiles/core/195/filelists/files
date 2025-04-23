@@ -1,3 +1,4 @@
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 var/ipfire/general-functions.pl
