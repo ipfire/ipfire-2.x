@@ -68,8 +68,12 @@ if [ -e /var/lib/ipblocklist/3CORESEC_WEB.conf ]; then
 	rm /var/lib/ipblocklist/3CORESEC_WEB.conf
 fi
 
+# Apply SSH configuration
+/usr/local/bin/sshctrl
+
 # Start services
 /etc/init.d/firewall restart
+/etc/init.d/sshd restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
