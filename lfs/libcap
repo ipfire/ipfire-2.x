@@ -6,7 +6,7 @@
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
 # the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
+# (at your option) any later301c74ceae00e915f70ff8f0a32c86a5ddf405a00522f4299390e4e0b6bc4270fc7e3c4ba5c53db2ddc5f7de6a97b43e310097a4ecc1d678f721f9dfa53cef53 version.                                         #
 #                                                                             #
 # This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.75
+VER        = 2.76
 
 THISAPP    = libcap-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 88071f0ff6f786f42777853a03ae116b1175769b14b715dd1b3def7414fcf118dea56f80e14dc467f72d3cb1a091ab95fc2fc0a240552fedfbbb95a9fc94f2db
+$(DL_FILE)_BLAKE2 = 301c74ceae00e915f70ff8f0a32c86a5ddf405a00522f4299390e4e0b6bc4270fc7e3c4ba5c53db2ddc5f7de6a97b43e310097a4ecc1d678f721f9dfa53cef53
 
 install : $(TARGET)
 
