@@ -36,7 +36,7 @@ usr/bin/fc-validate
 #usr/include/fontconfig/fcfreetype.h
 #usr/include/fontconfig/fcprivate.h
 #usr/include/fontconfig/fontconfig.h
-#usr/lib/libfontconfig.la
+#usr/lib/libfontconfig.a
 #usr/lib/libfontconfig.so
 usr/lib/libfontconfig.so.1
 usr/lib/libfontconfig.so.1.15.0
