@@ -95,9 +95,9 @@ sub get_srvgrp_prot
 	my $icmp;
 	foreach my $key (sort {$a <=> $b} keys %customservicegrp){
 		if($customservicegrp{$key}[0] eq $val){
-			if (&get_srv_prot($customservicegrp{$key}[2]) eq 'TCP'){ 
+			if (&get_srv_prot($customservicegrp{$key}[2]) eq 'TCP'){
 				$tcp=1;
-			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'UDP'){ 
+			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'UDP'){
 				$udp=1;
 			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'ICMP'){
 				$icmp=1;
@@ -112,7 +112,7 @@ sub get_srvgrp_prot
 	if ($icmp eq '1'){push (@ips,'ICMP');}
 	my $back=join(",",@ips);
 	return $back;
-	
+
 }
 sub get_srv_port
 {
@@ -147,7 +147,7 @@ sub get_srvgrp_port
 	}elsif ($prot eq 'ICMP'){
 		$back="--icmp-type ";
 	}
-	
+
 	$back.=join(",",@ips);
 	return $back;
 }
@@ -205,7 +205,7 @@ sub get_ovpn_host_ip
 }
 sub get_ovpn_net_ip
 {
-	
+
 	my $val=shift;
 	my $field=shift;
 	foreach my $key (sort {$a <=> $b} keys %ccdnet){
@@ -222,8 +222,8 @@ sub get_grp_ip
 		if ($customgrp{$key}[0] eq $val){
 			&get_address($customgrp{$key}[3],$src);
 		}
-	}		
-	
+	}
+
 }
 sub get_std_net_ip
 {
@@ -239,6 +239,8 @@ sub get_std_net_ip
 		return "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
 	}elsif($val eq 'RED'){
 		return "0.0.0.0/0";
+	}elsif($val eq 'WGRW'){
+		return $Wireguard::settings{'CLIENT_POOL'};
 	}elsif($val =~ /OpenVPN/i){
 		return "$ovpnsettings{'DOVPN_SUBNET'}";
 	}elsif($val =~ /IPsec/i){
@@ -259,6 +261,12 @@ sub get_interface
 	if($net eq "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}"){
 		return "$netsettings{'BLUE_DEV'}";
 	}
+
+	# Wireguard
+	if ($net eq $Wireguard::settings{'CLIENT_POOL'}) {
+		return "wg0";
+	}
+
 	if($net eq "0.0.0.0/0") {
 		return &get_external_interface();
 	}
@@ -270,7 +278,7 @@ sub get_net_ip
 	foreach my $key (sort {$a <=> $b} keys %customnetwork){
 		if($customnetwork{$key}[0] eq $val){
 			return "$customnetwork{$key}[1]/$customnetwork{$key}[2]";
-		}  
+		}
 	}
 }
 sub get_host_ip
@@ -288,7 +296,7 @@ sub get_host_ip
 			}elsif($customhost{$key}[1] eq 'mac' && $src eq 'tgt'){
 				return "none";
 			}
-		}  
+		}
 	}
 }
 sub get_addresses
@@ -383,6 +391,25 @@ sub get_address
 		my $host_address = &get_host_ip($value, $type);
 		if ($host_address) {
 			push(@ret, [$host_address, ""]);
+		}
+
+	# WireGuard Peers
+	} elsif ($key eq 'wg_peer' || $key eq 'wg_peer_src' || $key eq 'wg_peer_tgt') {
+		my $peer = &Wireguard::get_peer_by_name($value);
+		if (defined $peer) {
+			my $remotes;
+
+			# Select the remote IP addresses
+			if ($peer->{'TYPE'} eq 'host') {
+				$remotes = $peer->{'CLIENT_ADDRESS'};
+			} elsif ($peer->{'TYPE'} eq 'net') {
+				$remotes = $peer->{'REMOTE_SUBNETS'};
+			}
+
+			# Add all remotes
+			foreach my $remote (@$remotes) {
+				push(@ret, [$remote, $peer->{'INTERFACE'}]);
+			}
 		}
 
 	# OpenVPN networks.

@@ -246,6 +246,46 @@ network_address_in_network() {
 	[ "${address}" -ge "${netaddr}" -a "${address}" -le "${broadcast}" ]
 }
 
+# Takes a network and list of IP addresses and will return the first IP address
+# that is in the given network.
+first_address_in_network() {
+	local network="${1}"
+	shift
+
+	local addr
+	for addr in $@; do
+		if network_address_in_network "${addr}" "${network}"; then
+			echo "${addr}"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+# Returns the first of IPFire's own IP addresses that is in any of the given networks
+ipfire_address_in_networks() {
+	local addresses=()
+
+	local var
+	for var in GREEN_ADDRESS BLUE_ADDRESS ORANGE_ADDRESS; do
+		if [ -n "${!var}" ]; then
+			addresses+=( "${!var}" )
+		fi
+	done
+
+	local network
+	for network in $@; do
+		# Find and end after the first match
+		if first_address_in_network "${network}" "${addresses[@]}"; then
+			return 0
+		fi
+	done
+
+	# Nothing found
+	return 1
+}
+
 dhcpcd_get_pid() {
 		# This function returns the pid of a dhcpcd by a given
 		# network device, if a pidfile exists.

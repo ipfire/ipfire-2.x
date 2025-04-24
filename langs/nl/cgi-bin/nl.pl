@@ -778,7 +778,6 @@
 'donation' => 'Donatie',
 'donation-link' => 'https://www.paypal.com/en_US/GB/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong> wordt ontwikkeld en onderhouden door vrijwilligers in hun vrije tijd. Om dit project draaiend te houden, zouden we het erg op prijs stellen als u een kleine donatie maakt.',
-'done' => 'Doe het',
 'dos charset' => 'DOS tekenset',
 'down and up speed' => 'Voer uw down- en uploadsnelheid in<br /> en klik dan op <i>Opslaan</i>.',
 'downlink' => 'Downlink',

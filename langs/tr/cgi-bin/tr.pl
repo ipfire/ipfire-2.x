@@ -853,7 +853,6 @@
 'donation' => 'Bağış',
 'donation-link' => 'https://www.paypal.com/en_US/GB/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong> boş zamanlarında gönüllüer tarafından geliştirlmektedir. Bu projeyi ayakta tutmak için eğer bize destek olmak isterseniz küçük bir bağıştan mutluluk duyarız.',
-'done' => 'Yap',
 'dos charset' => 'DOS karakterleri',
 'down and up speed' => 'Gönderme hızı düştüğünde <i>Kaydet</i> düğmesine basın.',
 'downlink' => 'İndirme bağlantısı',

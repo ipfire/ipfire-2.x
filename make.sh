@@ -1706,6 +1706,7 @@ build_system() {
 	lfsmake2 ntfs-3g
 	lfsmake2 ethtool
 	lfsmake2 fcron
+	lfsmake2 wireguard-tools
 	lfsmake2 perl-ExtUtils-PkgConfig
 	lfsmake2 perl-GD
 	lfsmake2 perl-GD-Graph

@@ -698,7 +698,6 @@
 'donation' => 'Donation',
 'donation-link' => 'https://www.paypal.com/en_US/GB/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong> jest tworzony przez wolontariuszy w ich wolnym czasie. Jeżeli chcesz pomóc w dalszym rozwoju projektu możesz nas wspomóc dowolną kwotą. ',
-'done' => 'Do it',
 'dos charset' => 'Kodowanie DOS',
 'down and up speed' => 'Wprowadź parametry Twojego łącza - prędkość pobierania i wysyłania danych <br /> i naciśnij <i>Zapisz</i>.',
 'downlink speed' => 'Prędkość pobierania (kbit/sec)',

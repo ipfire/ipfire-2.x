@@ -176,7 +176,6 @@ WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: cpu frequency per
 WARNING: translation string unused: cpu usage per
-WARNING: translation string unused: create
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
 WARNING: translation string unused: current media
@@ -254,7 +253,6 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
-WARNING: translation string unused: done
 WARNING: translation string unused: dos charset
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
@@ -973,6 +971,7 @@ WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL
 WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: aliases default interface = - Default Interface -
+WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: autonomous system = Autonomous System
@@ -1037,6 +1036,7 @@ WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
+WARNING: untranslated string: done = Done
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
@@ -1069,6 +1069,9 @@ WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: enable otp = Enable OTP
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
+WARNING: untranslated string: endpoint = Endpoint
+WARNING: untranslated string: endpoint address = Endpoint Address
+WARNING: untranslated string: endpoint port = Endpoint Port
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
@@ -1105,6 +1108,7 @@ WARNING: untranslated string: fwhost cust locationgroup = Location Groups
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: fwhost newlocationgrp = Location Groups
+WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: generate ptr = Generate PTR
 WARNING: untranslated string: guardian = Guardian
 WARNING: untranslated string: guardian block a host = unknown string
@@ -1177,6 +1181,7 @@ WARNING: untranslated string: ids unable to download the ruleset = Unable to dow
 WARNING: untranslated string: ids visit provider website = Visit provider website
 WARNING: untranslated string: ids working = Changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: imei = IMEI
+WARNING: untranslated string: import connection = Import a Connection
 WARNING: untranslated string: imsi = IMSI
 WARNING: untranslated string: incoming compression in bytes per second = Incoming Compression
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
@@ -1184,6 +1189,8 @@ WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: interface mode = Interface
 WARNING: untranslated string: intrusion prevention system = Intrusion Prevention System
+WARNING: untranslated string: invalid endpoint = Invalid Endpoint
+WARNING: untranslated string: invalid endpoint address = Invalid Endpoint Address
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
 WARNING: untranslated string: invalid input for interface address = Invalid input for interface address
 WARNING: untranslated string: invalid input for interface mode = Invalid input for interface mode
@@ -1192,8 +1199,11 @@ WARNING: untranslated string: invalid input for local ip address = Invalid input
 WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
+WARNING: untranslated string: invalid ip address = Invalid IP Address
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
+WARNING: untranslated string: invalid keepalive interval = Invalid Keepalive Interval
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
+WARNING: untranslated string: invalid network = Invalid Network
 WARNING: untranslated string: ip basic info = Basic IP information
 WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: ipblocklist = IP Address Blocklists
@@ -1229,6 +1239,8 @@ WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: local ip address = Local IP Address
+WARNING: untranslated string: local port = Local Port
+WARNING: untranslated string: local subnets = Local Subnets
 WARNING: untranslated string: location = Location
 WARNING: untranslated string: locationblock = Location Block
 WARNING: untranslated string: locationblock block countries = Block countries
@@ -1240,6 +1252,9 @@ WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hos
 WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: log server protocol = protocol:
+WARNING: untranslated string: malformed preshared key = Malformed Pre-Shared Key
+WARNING: untranslated string: malformed private key = Malformed Private Key
+WARNING: untranslated string: malformed public key = Malformed Public Key
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN
 WARNING: untranslated string: masquerade orange = Masquerade ORANGE
@@ -1310,6 +1325,8 @@ WARNING: untranslated string: pptp route = PPTP Route
 WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: ptr = PTR
+WARNING: untranslated string: public key = Public Key
+WARNING: untranslated string: qr code = QR Code
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
@@ -1317,10 +1334,13 @@ WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampli
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
 WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
+WARNING: untranslated string: remarks = Remarks
+WARNING: untranslated string: remote subnets = Remote Subnets
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field
 WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
+WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
@@ -1400,6 +1420,35 @@ WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
 WARNING: untranslated string: warning = Warning
+WARNING: untranslated string: wg client pool = Client Pool
+WARNING: untranslated string: wg create host-to-net peer = Create A New Host-To-Net Peer
+WARNING: untranslated string: wg create net-to-net peer = Create A New Net-To-Net Peer
+WARNING: untranslated string: wg dns = DNS
+WARNING: untranslated string: wg download configuration file = Download the configuration file
+WARNING: untranslated string: wg edit host-to-net peer = Edit Host-To-Net Peer
+WARNING: untranslated string: wg edit net-to-net peer = Edit Net-To-Net Peer
+WARNING: untranslated string: wg host to net client settings = Host-To-Net Client Settings
+WARNING: untranslated string: wg invalid client dns = Invalid client DNS address
+WARNING: untranslated string: wg invalid client pool = Invalid client pool
+WARNING: untranslated string: wg invalid endpoint address = Invalid endpoint address
+WARNING: untranslated string: wg invalid endpoint port = Invalid endpoint port
+WARNING: untranslated string: wg invalid keepalive interval = Invalid Keepalive Interval (Must be between 0 and 65535)
+WARNING: untranslated string: wg invalid local subnet = Invalid local subnet
+WARNING: untranslated string: wg invalid name = Invalid name (Only letters, numbers, space and hyphen are allowed)
+WARNING: untranslated string: wg invalid psk = Invalid pre-shared key
+WARNING: untranslated string: wg invalid public key = Invalid public key
+WARNING: untranslated string: wg invalid remote subnet = Invalid remote subnet
+WARNING: untranslated string: wg keepalive interval = Keepalive Interval
+WARNING: untranslated string: wg leave empty to automatically select = Leave empty to automatically select
+WARNING: untranslated string: wg name is already used = The name is already in use
+WARNING: untranslated string: wg no local subnets = No local subnets given
+WARNING: untranslated string: wg no more free addresses in pool = No more free addresses in pool
+WARNING: untranslated string: wg no remote subnets = No remote subnets given
+WARNING: untranslated string: wg peer configuration = Peer Configuration
+WARNING: untranslated string: wg peer does not exist = Peer does not exist
+WARNING: untranslated string: wg rw peers = WireGuard Roadwarrior Peers
+WARNING: untranslated string: wg scan the qr code = Scan the QR code to import the WireGuard configuration into a mobile client.
+WARNING: untranslated string: wg warning configuration only shown once = Attention: This WireGuard configuration file will only be shown this one time as it contains private key material that is not being stored on IPFire.
 WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon

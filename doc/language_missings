@@ -6,6 +6,7 @@
 < access point name is required
 < advproxy update information
 < aliases default interface
+< allowed subnets
 < ansi t1.483
 < backup archive
 < backup clear archive
@@ -53,12 +54,15 @@
 < dhcp server enabled on blue interface
 < disable
 < dns could not add server
-< done
 < download apple profile
 < enable
+< endpoint
+< endpoint address
+< endpoint port
 < error the to date has to be later than the from date
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
+< fwhost wg peers
 < g.dtm
 < g.lite
 < hostile networks in
@@ -73,6 +77,7 @@
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < link-layer encapsulation
+< local subnets
 < log drop hostile in
 < log drop hostile out
 < netbios nameserver daemon
@@ -85,13 +90,18 @@
 < pakfire dependencies found
 < pakfire no dependencies found
 < pakfire resolvedeps wait
+< public key
+< qr code
 < quick control
 < random number generator daemon
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remarks
+< remote subnets
 < required
+< routing
 < samba server role member
 < samba server role standalone
 < shaping add options
@@ -108,6 +118,38 @@
 < user management
 < vpn configuration main
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg warning configuration only shown once
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
@@ -125,19 +167,25 @@
 < access point name is invalid
 < access point name is required
 < addon
+< allowed subnets
 < bypassed
 < ca name must only contain characters or spaces
 < cpu frequency
 < data transfer
 < dhcp fixed ip address in dynamic range
 < dns servers
+< done
 < downfall gather data sampling
+< endpoint
+< endpoint address
+< endpoint port
 < extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
 < extrahd not configured
 < extrahd not mounted
 < fwdfw syn flood protection
+< fwhost wg peers
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
@@ -145,22 +193,38 @@
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< import connection
+< invalid endpoint
+< invalid endpoint address
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
+< invalid network
 < ips throughput
 < last updated
 < load average
+< local port
+< local subnets
 < log drop hostile in
 < log drop hostile out
+< malformed preshared key
+< malformed private key
+< malformed public key
 < oops something went wrong
 < openvpn cert expires soon
 < openvpn cert has expired
 < ovpn roadwarrior server
 < password has quotation mark
 < processors
+< public key
+< qr code
 < regenerate host certificate
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remarks
+< remote subnets
+< routing
 < scanned
 < service boot setting unavailable
 < spec rstack overflow
@@ -170,6 +234,41 @@
 < transport mode does not support vti
 < warning
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < wireguard
 < wlanap
@@ -181,28 +280,50 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< allowed subnets
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
 < bypassed
 < ca name must only contain characters or spaces
 < data transfer
+< done
+< endpoint
+< endpoint address
+< endpoint port
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
+< fwhost wg peers
 < g.dtm
 < g.lite
 < hostile networks total
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
+< import connection
+< invalid endpoint
+< invalid endpoint address
+< invalid ip address
+< invalid keepalive interval
+< invalid network
 < ips throughput
 < last updated
 < load average
+< local port
+< local subnets
+< malformed preshared key
+< malformed private key
+< malformed public key
 < oops something went wrong
 < ovpn roadwarrior server
 < password has quotation mark
 < processors
+< public key
+< qr code
 < reg_file_data_sampling
+< remarks
+< remote subnets
+< routing
 < scanned
 < system time
 < timeformat
@@ -210,6 +331,41 @@
 < upload fcdsl.o
 < warning
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < wireguard
 < wlanap hide ssid
@@ -248,6 +404,7 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < autonomous system
 < available
@@ -368,6 +525,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < download apple profile
 < drop hostile
@@ -401,6 +559,9 @@
 < enable
 < enable otp
 < enable smt
+< endpoint
+< endpoint address
+< endpoint port
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
@@ -434,6 +595,7 @@
 < fwhost cust locationgroup
 < fwhost cust locationlocation
 < fwhost newlocationgrp
+< fwhost wg peers
 < fw red
 < generate ptr
 < guaranteed bandwidth
@@ -482,11 +644,14 @@
 < ids unsupported provider
 < ids visit provider website
 < ids working
+< import connection
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < inodes
 < interface mode
 < intrusion prevention system
+< invalid endpoint
+< invalid endpoint address
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -495,8 +660,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -540,6 +708,8 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -554,6 +724,9 @@
 < log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -610,6 +783,8 @@
 < processors
 < processor vulnerability mitigations
 < ptr
+< public key
+< qr code
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -620,9 +795,12 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -704,6 +882,41 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -792,6 +1005,7 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < atm device
 < autonomous system
@@ -916,6 +1130,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < download apple profile
 < download tls-auth key
@@ -951,6 +1166,9 @@
 < enable
 < enable otp
 < enable smt
+< endpoint
+< endpoint address
+< endpoint port
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
@@ -985,6 +1203,7 @@
 < fwhost cust locationgroup
 < fwhost cust locationlocation
 < fwhost newlocationgrp
+< fwhost wg peers
 < fw red
 < generate ptr
 < guardian
@@ -1033,12 +1252,15 @@
 < ids visit provider website
 < ids working
 < imei
+< import connection
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < inodes
 < interface mode
 < intrusion prevention system
+< invalid endpoint
+< invalid endpoint address
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -1047,8 +1269,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -1092,6 +1317,8 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -1106,6 +1333,9 @@
 < log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -1181,6 +1411,8 @@
 < processors
 < processor vulnerability mitigations
 < ptr
+< public key
+< qr code
 < random number generator daemon
 < rdns
 < rebooting ipfire fsck
@@ -1189,9 +1421,12 @@
 < reg_file_data_sampling
 < reiserfs warning1
 < reiserfs warning2
+< remarks
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -1274,6 +1509,41 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -1374,6 +1644,7 @@
 < age sminute
 < age ssecond
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < atm device
 < attention
@@ -1562,6 +1833,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < downlink
 < download apple profile
@@ -1606,6 +1878,9 @@
 < enable otp
 < enable smt
 < encryption
+< endpoint
+< endpoint address
+< endpoint port
 < entropy
 < entropy graphs
 < eol architecture warning
@@ -1831,6 +2106,7 @@
 < fwhost type
 < fwhost used
 < fwhost welcome
+< fwhost wg peers
 < fwhost wo subnet
 < fw red
 < fw rules reload notice
@@ -1887,6 +2163,7 @@
 < ids visit provider website
 < ids working
 < imei
+< import connection
 < imsi
 < incoming compression in bytes per second
 < incoming firewall access
@@ -1895,6 +2172,8 @@
 < integrity
 < interface mode
 < intrusion prevention system
+< invalid endpoint
+< invalid endpoint address
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -1905,8 +2184,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -1956,6 +2238,8 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -1971,6 +2255,9 @@
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -2089,7 +2376,9 @@
 < proxy reports today
 < proxy reports weekly
 < ptr
+< public key
 < qos enter bandwidths
+< qr code
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -2101,9 +2390,12 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -2260,6 +2552,41 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -2392,6 +2719,7 @@
 < age sminute
 < age ssecond
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < atm device
 < attention
@@ -2582,6 +2910,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < downlink
 < download apple profile
@@ -2627,6 +2956,9 @@
 < enable otp
 < enable smt
 < encryption
+< endpoint
+< endpoint address
+< endpoint port
 < entropy
 < entropy graphs
 < eol architecture warning
@@ -2853,6 +3185,7 @@
 < fwhost type
 < fwhost used
 < fwhost welcome
+< fwhost wg peers
 < fwhost wo subnet
 < fw red
 < fw rules reload notice
@@ -2910,6 +3243,7 @@
 < ids visit provider website
 < ids working
 < imei
+< import connection
 < imsi
 < incoming compression in bytes per second
 < incoming firewall access
@@ -2919,6 +3253,8 @@
 < integrity
 < interface mode
 < intrusion prevention system
+< invalid endpoint
+< invalid endpoint address
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -2929,8 +3265,11 @@
 < invalid input for mode
 < invalid input for subscription code
 < invalid input for valid till days
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
 < invalid logserver protocol
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -2980,6 +3319,8 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
+< local subnets
 < location
 < locationblock
 < locationblock block countries
@@ -2995,6 +3336,9 @@
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
+< malformed preshared key
+< malformed private key
+< malformed public key
 < masquerade blue
 < masquerade green
 < masquerade orange
@@ -3111,7 +3455,9 @@
 < proxy reports today
 < proxy reports weekly
 < ptr
+< public key
 < qos enter bandwidths
+< qr code
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -3123,9 +3469,12 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
+< remote subnets
 < required
 < required field
 < retbleed
+< routing
 < runmode
 < samba join a domain
 < samba join domain
@@ -3283,6 +3632,41 @@
 < week-graph
 < Weekly
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon
@@ -3395,6 +3779,7 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
+< allowed subnets
 < asn lookup failed
 < autonomous system
 < available
@@ -3453,6 +3838,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< done
 < downfall gather data sampling
 < download apple profile
 < drop hostile
@@ -3465,6 +3851,9 @@
 < enable
 < enable otp
 < enable smt
+< endpoint
+< endpoint address
+< endpoint port
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
@@ -3478,6 +3867,7 @@
 < foreshadow
 < fwdfw all subnets
 < fwdfw syn flood protection
+< fwhost wg peers
 < fw red
 < generate ptr
 < hardware vulnerabilities
@@ -3524,16 +3914,22 @@
 < ids unsupported provider
 < ids visit provider website
 < ids working
+< import connection
 < inodes
 < interface mode
 < intrusion prevention system
+< invalid endpoint
+< invalid endpoint address
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
 < invalid input for subscription code
+< invalid ip address
 < invalid ip or hostname
+< invalid keepalive interval
+< invalid network
 < ip basic info
 < ipblocklist
 < ipblocklist blocklist settings
@@ -3577,9 +3973,14 @@
 < link-layer encapsulation
 < load average
 < local ip address
+< local port
+< local subnets
 < log drop hostile in
 < log drop hostile out
 < log dropped conntrack invalids
+< malformed preshared key
+< malformed private key
+< malformed public key
 < meltdown
 < mitigated
 < mmio stale data
@@ -3616,6 +4017,8 @@
 < processors
 < processor vulnerability mitigations
 < ptr
+< public key
+< qr code
 < random number generator daemon
 < reboot fsck
 < rebooting ipfire fsck
@@ -3625,8 +4028,11 @@
 < reiserfs warning1
 < reiserfs warning2
 < release
+< remarks
+< remote subnets
 < required
 < retbleed
+< routing
 < runmode
 < samba server role member
 < samba server role standalone
@@ -3683,6 +4089,41 @@
 < warning
 < Weekly
 < wg
+< wg client configuration file
+< wg client pool
+< wg create host-to-net peer
+< wg create net-to-net peer
+< wg create peer
+< wg dns
+< wg download configuration
+< wg download configuration file
+< wg edit host-to-net peer
+< wg edit net-to-net peer
+< wg edit peer
+< wg host to net client settings
+< wg invalid client dns
+< wg invalid client pool
+< wg invalid endpoint address
+< wg invalid endpoint port
+< wg invalid keepalive interval
+< wg invalid local subnet
+< wg invalid name
+< wg invalid psk
+< wg invalid public key
+< wg invalid remote subnet
+< wg keepalive interval
+< wg leave empty to automatically select
+< wg name is already used
+< wg no local subnets
+< wg no more free addresses in pool
+< wg no remote subnets
+< wg peer configuration
+< wg peer does not exist
+< wg pre-shared key (optional)
+< wg rw peers
+< wg scan the qr code
+< wg show configuration qrcode
+< wg warning configuration only shown once
 < whitelisted
 < whois results from
 < winbind daemon

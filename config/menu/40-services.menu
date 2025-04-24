@@ -4,6 +4,12 @@
 			     	'title' => "$Lang::tr{'virtual private networking'}",
 			     	'enabled' => 1,
 			 	};
+    $subservices->{'15.wireguard'} = {
+				'caption' => $Lang::tr{'wireguard'},
+				'uri' => '/cgi-bin/wireguard.cgi',
+				'title' => "$Lang::tr{'wireguard'}",
+				'enabled' => 1,
+				};
     $subservices->{'20.openvpn'} = {
 				'caption' => 'OpenVPN',
 			     	'uri' => '/cgi-bin/ovpnmain.cgi',

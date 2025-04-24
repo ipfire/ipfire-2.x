@@ -54,6 +54,7 @@ esac
 
 HAVE_IPSEC="true"
 HAVE_OPENVPN="true"
+HAVE_WG="true"
 
 # INPUT
 
@@ -94,6 +95,14 @@ case "${HAVE_OPENVPN},${POLICY}" in
 	true,MODE1) ;;
 	true,*)
 		iptables -A POLICYIN -i tun+ -j ACCEPT
+		;;
+esac
+
+# WireGuard INPUT
+case "${HAVE_WG},${POLICY}" in
+	true,MODE1) ;;
+	true,*)
+		iptables -A POLICYIN -i wg+ -j ACCEPT
 		;;
 esac
 
@@ -148,6 +157,9 @@ case "${POLICY}" in
 
 		# Grant access for OpenVPN connections
 		iptables -A POLICYFWD -i tun+ -j ACCEPT
+
+		# Grant access for WireGuard
+		iptables -A POLICYFWD -i wg+ -j ACCEPT
 
 		if [ -n "${IFACE}" ]; then
 			if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
