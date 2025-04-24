@@ -21,6 +21,7 @@ usr/lib/openssh/sftp-server
 usr/lib/openssh/ssh-keysign
 usr/lib/openssh/ssh-pkcs11-helper
 usr/lib/openssh/ssh-sk-helper
+usr/lib/openssh/sshd-auth
 usr/lib/openssh/sshd-session
 usr/sbin/sshd
 #usr/share/man/man1/scp.1
