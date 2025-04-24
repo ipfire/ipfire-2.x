@@ -612,6 +612,7 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pakfire accept all
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire dependencies found
 WARNING: translation string unused: pakfire health check
