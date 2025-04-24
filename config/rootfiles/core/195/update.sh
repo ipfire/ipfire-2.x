@@ -41,6 +41,12 @@ extract_files
 # update linker config
 ldconfig
 
+# Create the Wireguard configuration directory
+if [ ! -d "/var/ipfire/wireguard" ]; then
+	mkdir -pv "/var/ipfire/wireguard"
+	chown nobody:nobody "/var/ipfire/wireguard"
+fi
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
@@ -48,6 +54,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/firewall restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
