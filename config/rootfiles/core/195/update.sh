@@ -53,6 +53,21 @@ fi
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Remove any entry for 3CORESEC_SSH, 3CORESEC_SCAN or 3CORESEC_WEB from the ipblocklist modified file
+# and the associated ipblocklist files from the /var/lib/ipblocklist directory
+sed -i '/3CORESEC_SSH=/d' /var/ipfire/ipblocklist/modified
+if [ -e /var/lib/ipblocklist/3CORESEC_SSH.conf ]; then
+	rm /var/lib/ipblocklist/3CORESEC_SSH.conf
+fi
+sed -i '/3CORESEC_SCAN=/d' /var/ipfire/ipblocklist/modified
+if [ -e /var/lib/ipblocklist/3CORESEC_SCAN.conf ]; then
+	rm /var/lib/ipblocklist/3CORESEC_SCAN.conf
+fi
+sed -i '/3CORESEC_WEB=/d' /var/ipfire/ipblocklist/modified
+if [ -e /var/lib/ipblocklist/3CORESEC_WEB.conf ]; then
+	rm /var/lib/ipblocklist/3CORESEC_WEB.conf
+fi
+
 # Start services
 /etc/init.d/firewall restart
 
