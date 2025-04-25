@@ -285,6 +285,12 @@ reload_firewall() {
 
 	iptables -F WGBLOCK
 
+	# Don't block any traffic from Roadwarrior peers
+	if [ -n "${CLIENT_POOL}" ]; then
+		iptables -A WGBLOCK -s "${CLIENT_POOL}" -i wg0 -j RETURN
+		iptables -A WGBLOCK -d "${CLIENT_POOL}" -o wg0 -j RETURN
+	fi
+
 	# Block all other traffic
 	iptables -A WGBLOCK -j REJECT --reject-with icmp-admin-prohibited
 }
