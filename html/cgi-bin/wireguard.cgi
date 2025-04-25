@@ -68,7 +68,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	if (&Wireguard::pool_is_in_use($Wireguard::settings{'CLIENT_POOL'})) {
 		# Ignore any changes if the pool is in use
 	} elsif (&Network::check_subnet($cgiparams{'CLIENT_POOL'})) {
-		$Wireguard::settings{'CLIENT_POOL'} = $cgiparams{'CLIENT_POOL'};
+		$Wireguard::settings{'CLIENT_POOL'} = &Network::normalize_network($cgiparams{'CLIENT_POOL'});
 	} elsif ($cgiparams{'CLIENT_POOL'} ne '') {
 		push(@errormessages, $Lang::tr{'wg invalid client pool'});
 	}
