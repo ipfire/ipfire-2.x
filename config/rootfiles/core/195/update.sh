@@ -44,7 +44,13 @@ ldconfig
 # Create the Wireguard configuration directory
 if [ ! -d "/var/ipfire/wireguard" ]; then
 	mkdir -pv "/var/ipfire/wireguard"
-	chown nobody:nobody "/var/ipfire/wireguard"
+
+	# Create some configuration files
+	touch /var/ipfire/wireguard/peers
+	touch /var/ipfire/wireguard/settings
+
+	# Everything needs to belong to nobody
+	chown -Rv nobody:nobody "/var/ipfire/wireguard"
 fi
 
 # Update Language cache
