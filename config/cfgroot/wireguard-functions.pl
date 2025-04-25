@@ -427,7 +427,7 @@ sub generate_peer_configuration($$) {
 		push(@conf,
 			"[Interface]",
 			"PrivateKey = $private_key",
-			"Address = $peer->{'CLIENT_ADDRESS'}",
+			"Address = @{ $peer->{'CLIENT_ADDRESS'} }",
 		);
 
 		# Optionally add DNS servers
