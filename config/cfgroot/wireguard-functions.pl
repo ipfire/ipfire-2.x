@@ -340,13 +340,14 @@ sub free_pool_addresses($$) {
 
 	# Collect all used addresses
 	foreach my $key (keys %peers) {
-		my $type    = $peers{$key}[1];
-		my $address = $peers{$key}[6];
+		my $peer = &load_peer($key);
 
 		# Only check hosts
-		next if ($type ne "host");
+		next if ($peer->{"TYPE"} ne "host");
 
-		push(@used_addresses, &Network::ip2bin($address));
+		foreach my $address (@{ $peer->{"CLIENT_ADDRESS"} }) {
+			push(@used_addresses, &Network::ip2bin($address));
+		}
 	}
 
 	# Fetch the first address
