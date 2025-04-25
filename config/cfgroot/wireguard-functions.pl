@@ -33,11 +33,17 @@ our $DEFAULT_KEEPALIVE  = 25;
 
 # Read the global configuration
 our %settings = ();
-&General::readhash("/var/ipfire/wireguard/settings", \%settings);
+
+if (-e "/var/ipfire/wireguard/settings") {
+	&General::readhash("/var/ipfire/wireguard/settings", \%settings);
+}
 
 # Read all peers
 our %peers = ();
-&General::readhasharray("/var/ipfire/wireguard/peers", \%peers);
+
+if (-e "/var/ipfire/wireguard/peers") {
+	&General::readhasharray("/var/ipfire/wireguard/peers", \%peers);
+}
 
 # Set any defaults
 &General::set_defaults(\%settings, {
