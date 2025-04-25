@@ -388,7 +388,7 @@ sub generate_peer_configuration($$) {
 	my @allowed_ips = ();
 
 	# Convert all subnets into CIDR notation
-	foreach my $subnet ($peer->{'LOCAL_SUBNETS'}) {
+	foreach my $subnet (@{ $peer->{'LOCAL_SUBNETS'} }) {
 		my $netaddress = &Network::get_netaddress($subnet);
 		my $prefix     = &Network::get_prefix($subnet);
 
