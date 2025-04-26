@@ -453,10 +453,13 @@ sub generate_peer_configuration($$) {
 	return join("\n", @conf);
 }
 
-sub parse_configuration($) {
+sub parse_configuration($$) {
+	my $name = shift;
 	my $fh = shift;
 
-	my %peer = ();
+	my %peer = (
+		"NAME" => $name,
+	);
 
 	# Collect any errors
 	my @errormessages = ();
@@ -464,6 +467,16 @@ sub parse_configuration($) {
 	my $section = undef;
 	my $key = undef;
 	my $val = undef;
+
+	# Check if the name is valid
+	unless (&Wireguard::name_is_valid($name)) {
+		push(@errormessages, $Lang::tr{'wg invalid name'});
+	}
+
+	# Check if the name is already taken
+	unless (&Wireguard::name_is_free($name)) {
+		push(@errormessages, $Lang::tr{'wg name is already used'});
+	}
 
 	while (<$fh>) {
 		# Remove line breaks
@@ -496,6 +509,14 @@ sub parse_configuration($) {
 					$peer{'CLIENT_ADDRESS'} = $val;
 				} else {
 					push(@errormessages, $Lang::tr{'invalid ip address'});
+				}
+
+			# Port
+			} elsif ($key eq "Port") {
+				if (&General::validport($val)) {
+					$peer{'PORT'} = $val;
+				} else {
+					push(@errormessages, $Lang::tr{'wg invalid endpoint port'});
 				}
 
 			# PrivateKey
@@ -536,7 +557,7 @@ sub parse_configuration($) {
 					}
 				}
 
-				$peer{'REMOTE_SUBNETS'} = join(", ", @networks);
+				$peer{'REMOTE_SUBNETS'} = \@networks;
 			# Endpoint
 			} elsif ($key eq "Endpoint") {
 				my $address = $val;
@@ -578,7 +599,7 @@ sub parse_configuration($) {
 		}
 	}
 
-	return %peer, @errormessages;
+	return \%peer, @errormessages;
 }
 
 sub get_free_port() {

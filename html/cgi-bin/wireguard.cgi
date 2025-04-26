@@ -164,6 +164,73 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		die "Unsupported type: $type";
 	}
 
+} elsif ($cgiparams{"ACTION"} eq "IMPORT") {
+	my @local_subnets = ();
+	my $peer;
+
+	# Parse the configuration file
+	($peer, @errormessages) = &Wireguard::parse_configuration($cgiparams{'NAME'}, $cgiparams{'FH'});
+
+	# Check local subnets
+	if (defined $cgiparams{'LOCAL_SUBNETS'}) {
+		@local_subnets = split(/,/, $cgiparams{'LOCAL_SUBNETS'});
+
+		foreach my $subnet (@local_subnets) {
+			$subnet =~ s/^\s+//g;
+			$subnet =~ s/\s+$//g;
+
+			unless (&Network::check_subnet($subnet)) {
+				push(@errormessages, $Lang::tr{'wg invalid local subnet'} . ": ${subnet}");
+			}
+		}
+	} else {
+		push(@errormessages, $Lang::tr{'wg no local subnets'});
+	}
+
+	# Show any error messages
+	goto IMPORT if (@errormessages);
+
+	# Allocate a new key
+	my $key = &General::findhasharraykey(\%Wireguard::peers);
+
+	# Save the connection
+	$Wireguard::peers{$key} = [
+		# 0 = Enabled
+		"on",
+		# 1 = Type
+		"net",
+		# 2 = Name
+		$peer->{"NAME"},
+		# 3 = Remote Public Key
+		$peer->{"PUBLIC_KEY"},
+		# 4 = Local Private Key
+		$peer->{"PRIVATE_KEY"},
+		# 5 = Port
+		$peer->{"PORT"},
+		# 6 = Endpoint Address
+		$peer->{"ENDPOINT_ADDRESS"},
+		# 7 = Endpoint Port
+		$peer->{"ENDPOINT_PORT"},
+		# 8 = Remote Subnets
+		&Wireguard::encode_subnets(@{ $peer->{"REMOTE_SUBNETS"} }),
+		# 9 = Remark
+		&Wireguard::encode_remarks($cgiparams{"REMARKS"}),
+		# 10 = Local Subnets
+		&Wireguard::encode_subnets(@local_subnets),
+		# 11 = PSK
+		$peer->{"PSK"},
+		# 12 = Keepalive
+		$peer->{"KEEPALIVE"} || $Wireguard::DEFAULT_KEEPALIVE,
+	];
+
+	# Store the configuration
+	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
+
+	# Reload if enabled
+	if ($Wireguard::settings{'ENABLED'} eq "on") {
+		&General::system("/usr/local/bin/wireguardctrl", "start");
+	}
+
 } elsif ($cgiparams{"ACTION"} eq "CREATE-PEER-NET") {
 	my @local_subnets = ();
 	my @remote_subnets = ();
@@ -666,12 +733,7 @@ END
 		goto CREATEHOST;
 
 	} elsif ($cgiparams{"TYPE"} eq "import") {
-		# Parse the configuration file
-		(%cgiparams, @errormessages) = &Wireguard::parse_configuration($cgiparams{'FH'});
-
-		# We basically don't support importing RW connections, so we always
-		# need to go and show the N2N editor.
-		goto EDITNET;
+		goto IMPORT;
 
 	# Ask the user what type they want
 	} else {
@@ -1003,8 +1065,6 @@ ADD:
 					<input type='radio' name='TYPE' value='import' />
 					$Lang::tr{'import connection'}
 				</label>
-
-				<input type='file' name='FH' />
 			</p>
 
 			<table class="form">
@@ -1015,6 +1075,87 @@ ADD:
 				</tr>
 			</table>
 	    </form>
+END
+
+	&Header::closebox();
+	&Header::closepage();
+
+	exit(0);
+
+IMPORT:
+	# Send HTTP Headers
+	&Header::showhttpheaders();
+
+	# Open the page
+	&Header::openpage($Lang::tr{'wireguard'}, 1, '');
+
+	# Show any error messages
+	&Header::errorbox(@errormessages);
+
+	# Open a new box
+	&Header::openbox('100%', '', $Lang::tr{'wg import peer'});
+
+	print <<END;
+		<form method="POST" ENCTYPE="multipart/form-data">
+			<input type="hidden" name="ACTION" value="IMPORT">
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'name'}
+					</td>
+
+					<td>
+						<input type="text" name="NAME"
+							value="$cgiparams{'NAME'}" required />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'remarks'}
+					</td>
+
+					<td>
+						<input type="text" name="REMARKS"
+							value="$cgiparams{'REMARKS'}" />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'configuration file'}
+					</td>
+
+					<td>
+						<input type='file' name='FH' required />
+					</td>
+				</tr>
+			</table>
+
+			<h6>$Lang::tr{'routing'}</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						$Lang::tr{'local subnets'}
+					</td>
+
+					<td>
+						<input type="text" name="LOCAL_SUBNETS"
+							value="$cgiparams{'LOCAL_SUBNETS'}" required />
+					</td>
+				</tr>
+			</table>
+
+			<table class="form">
+				<tr class="action">
+					<td colspan="2">
+						<input type='submit' value='$Lang::tr{'import'}' />
+					</td>
+				</tr>
+			</table>
+		</form>
 END
 
 	&Header::closebox();

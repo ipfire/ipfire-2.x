@@ -46,6 +46,7 @@
 < Captive invalid coupon
 < Captive please enter a coupon code
 < choose media
+< configuration file
 < could not connect to www ipfire org
 < cryptographic settings
 < data transfer
@@ -129,6 +130,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -170,6 +172,7 @@
 < allowed subnets
 < bypassed
 < ca name must only contain characters or spaces
+< configuration file
 < cpu frequency
 < data transfer
 < dhcp fixed ip address in dynamic range
@@ -246,6 +249,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -286,6 +290,7 @@
 < bewan adsl usb
 < bypassed
 < ca name must only contain characters or spaces
+< configuration file
 < data transfer
 < done
 < endpoint
@@ -343,6 +348,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -482,6 +488,7 @@
 < Captive WiFi coupon
 < Captive wrong type
 < check all
+< configuration file
 < core update
 < cpu frequency
 < crypto error
@@ -894,6 +901,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -1085,6 +1093,7 @@
 < Captive WiFi coupon
 < Captive wrong type
 < check all
+< configuration file
 < cpu frequency
 < crypto error
 < cryptographic settings
@@ -1521,6 +1530,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -1766,6 +1776,7 @@
 < ccd used
 < check all
 < community rules
+< configuration file
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -2564,6 +2575,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -2841,6 +2853,7 @@
 < ccd used
 < check all
 < community rules
+< configuration file
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -3644,6 +3657,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address
@@ -3802,6 +3816,7 @@
 < cake profile raw 0
 < ca name must only contain characters or spaces
 < Captive delete logo
+< configuration file
 < core update
 < cpu frequency
 < crypto error
@@ -4101,6 +4116,7 @@
 < wg edit net-to-net peer
 < wg edit peer
 < wg host to net client settings
+< wg import peer
 < wg invalid client dns
 < wg invalid client pool
 < wg invalid endpoint address

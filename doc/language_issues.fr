@@ -977,6 +977,7 @@ WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
+WARNING: untranslated string: configuration file = Configuration File
 WARNING: untranslated string: core notice 3 = available.
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: done = Done
@@ -1062,6 +1063,7 @@ WARNING: untranslated string: wg download configuration file = Download the conf
 WARNING: untranslated string: wg edit host-to-net peer = Edit Host-To-Net Peer
 WARNING: untranslated string: wg edit net-to-net peer = Edit Net-To-Net Peer
 WARNING: untranslated string: wg host to net client settings = Host-To-Net Client Settings
+WARNING: untranslated string: wg import peer = Import Peer
 WARNING: untranslated string: wg invalid client dns = Invalid client DNS address
 WARNING: untranslated string: wg invalid client pool = Invalid client pool
 WARNING: untranslated string: wg invalid endpoint address = Invalid endpoint address
