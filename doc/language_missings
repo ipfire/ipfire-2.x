@@ -46,7 +46,6 @@
 < Captive invalid coupon
 < Captive please enter a coupon code
 < choose media
-< configuration file
 < could not connect to www ipfire org
 < cryptographic settings
 < data transfer
@@ -57,9 +56,6 @@
 < dns could not add server
 < download apple profile
 < enable
-< endpoint
-< endpoint address
-< endpoint port
 < error the to date has to be later than the from date
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
@@ -78,7 +74,6 @@
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < link-layer encapsulation
-< local subnets
 < log drop hostile in
 < log drop hostile out
 < netbios nameserver daemon
@@ -91,8 +86,6 @@
 < pakfire dependencies found
 < pakfire no dependencies found
 < pakfire resolvedeps wait
-< public key
-< qr code
 < quick control
 < random number generator daemon
 < regenerate host certificate
@@ -100,7 +93,6 @@
 < reiserfs warning1
 < reiserfs warning2
 < remarks
-< remote subnets
 < required
 < routing
 < samba server role member
@@ -120,44 +112,9 @@
 < vpn configuration main
 < wg
 < wg client configuration file
-< wg client pool
-< wg create host-to-net peer
-< wg create net-to-net peer
 < wg create peer
-< wg dns
-< wg download configuration file
-< wg edit host-to-net peer
-< wg edit net-to-net peer
 < wg edit peer
-< wg host to net client settings
-< wg import peer
-< wg invalid client dns
-< wg invalid client pool
-< wg invalid endpoint address
-< wg invalid endpoint port
-< wg invalid keepalive interval
-< wg invalid local subnet
-< wg invalid name
-< wg invalid psk
-< wg invalid public key
-< wg invalid remote subnet
-< wg keepalive interval
-< wg missing allowed ips
-< wg missing endpoint address
-< wg missing endpoint port
-< wg missing port
-< wg missing private key
-< wg missing public key
-< wg name is already used
-< wg no local subnets
-< wg no more free addresses in pool
-< wg no remote subnets
-< wg peer configuration
-< wg peer does not exist
 < wg pre-shared key (optional)
-< wg rw peers
-< wg scan the qr code
-< wg warning configuration only shown once
 < winbind daemon
 < wireguard
 < wlanap 802.11w disabled
