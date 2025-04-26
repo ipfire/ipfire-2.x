@@ -212,6 +212,9 @@ generate_config() {
 		# Assign the local address
 		if [ -n "${local_address}" ]; then
 			ip addr add "${local_address}" dev "${intf}"
+
+			# Apply MASQUERADE
+			iptables -t nat -A WGNAT -o "${intf}" -j MASQUERADE
 		fi
 
 		echo "[Interface]"
@@ -287,6 +290,7 @@ generate_config() {
 reload_firewall() {
 	# Flush all previous rules
 	iptables -F WGINPUT
+	iptables -t nat -F WGNAT
 
 	if [ "${ENABLED}" = "on" ]; then
 		iptables -A WGINPUT -p udp --dport "${PORT}" -j ACCEPT

@@ -220,6 +220,10 @@ iptables_init() {
 	iptables -A INPUT   -i wg+ -j WGBLOCK
 	iptables -A FORWARD -i wg+ -j WGBLOCK
 
+	# NAT for WireGuard peers
+	iptables -t nat -N WGNAT
+	iptables -t nat -A POSTROUTING -j WGNAT
+
 	# Block OpenVPN transfer networks
 	iptables -N OVPNBLOCK
 	iptables -A INPUT   -i tun+ -j OVPNBLOCK
