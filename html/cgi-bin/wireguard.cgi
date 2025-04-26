@@ -334,6 +334,11 @@ END
 	# Load the existing peer
 	my $peer = &Wireguard::load_peer($key);
 
+	# Fail if we don't have the key
+	unless (defined $peer) {
+		die "Peer $key does not exist\n";
+	}
+
 	# Check if the name is valid
 	unless (&Wireguard::name_is_valid($cgiparams{"NAME"})) {
 		push(@errormessages, $Lang::tr{'wg invalid name'});
