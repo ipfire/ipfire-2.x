@@ -153,6 +153,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		"LOCAL_SUBNETS"		=> join(", ", @$local_subnets),
 		"PSK"				=> $Wireguard::peers{$key}[11],
 		"KEEPALIVE"			=> $Wireguard::peers{$key}[12],
+		"LOCAL_ADDRESS"			=> $Wireguard::peers{$key}[13],
 	);
 
 	# Jump to the editor
@@ -221,6 +222,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$peer->{"PSK"},
 		# 12 = Keepalive
 		$peer->{"KEEPALIVE"} || $Wireguard::DEFAULT_KEEPALIVE,
+		# 13 = Local Address
+		$peer->{"LOCAL_ADDRESS"},
 	];
 
 	# Store the configuration
@@ -338,6 +341,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$psk,
 		# 12 = Keepalive
 		$Wireguard::DEFAULT_KEEPALIVE,
+		# 13 = Local Address
+		"",
 	];
 
 	# Store the configuration
@@ -521,6 +526,8 @@ END
 		$cgiparams{"PSK"} || "",
 		# 12 = Keepalive
 		$cgiparams{"KEEPALIVE"} || 0,
+		# 13 = Local Address
+		"",
 	];
 
 	# Store the configuration
@@ -634,6 +641,8 @@ END
 		$cgiparams{"PSK"},
 		# 12 = Keepalive
 		0,
+		# 13 = Local Address
+		"",
 	];
 
 	# Store the configuration

@@ -148,6 +148,7 @@ generate_config() {
 	local local_subnets
 	local psk
 	local keepalive
+	local local_address
 	local _rest
 
 	# Handles the special case of the RW interface
@@ -166,7 +167,7 @@ generate_config() {
 		fi
 
 		while read -r id enabled type name pubkey privkey port endpoint_addr endpoint_port \
-				remote_subnets remarks local_subnets psk keepalive _rest; do
+				remote_subnets remarks local_subnets psk keepalive local_address _rest; do
 			# Skip peers that are not hosts or not enabled
 			[ "${type}" = "host" ] || continue
 			[ "${enabled}" = "on" ] || continue
@@ -194,7 +195,7 @@ generate_config() {
 	local remote_subnet
 
 	while read -r id enabled type name pubkey privkey port endpoint_addr endpoint_port \
-			remote_subnets remarks local_subnets psk keepalive _rest; do
+			remote_subnets remarks local_subnets psk keepalive local_address _rest; do
 		# Check for the matching connection
 		[ "${type}" = "net" ] || continue
 		[ "${intf}" = "wg${id}" ] || continue
@@ -204,6 +205,14 @@ generate_config() {
 
 		# Update the interface alias
 		ip link set "${intf}" alias "${name}"
+
+		# Flush any addresses
+		ip addr flush dev "${intf}"
+
+		# Assign the local address
+		if [ -n "${local_address}" ]; then
+			ip addr add "${local_address}" dev "${intf}"
+		fi
 
 		echo "[Interface]"
 

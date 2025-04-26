@@ -190,6 +190,7 @@ sub load_peer($) {
 		"LOCAL_SUBNETS"         => &decode_subnets($peers{$key}[10]),
 		"PSK"                   => $peers{$key}[11],
 		"KEEPALIVE"             => $peers{$key}[12],
+		"LOCAL_ADDRESS"         => $peers{$key}[13],
 		"INTERFACE"				=> ($type eq "host") ? "wg0" : "wg${key}",
 	);
 
@@ -506,7 +507,7 @@ sub parse_configuration($$) {
 			# Address
 			if ($key eq "Address") {
 				if (&Network::check_ip_address($val)) {
-					$peer{'CLIENT_ADDRESS'} = $val;
+					$peer{'LOCAL_ADDRESS'} = $val;
 				} else {
 					push(@errormessages, $Lang::tr{'invalid ip address'});
 				}
