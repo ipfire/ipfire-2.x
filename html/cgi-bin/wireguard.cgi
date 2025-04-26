@@ -1311,9 +1311,7 @@ EDITHOST:
 	# Set defaults
 	unless (defined $key) {
 		&General::set_defaults(\%cgiparams, {
-			"LOCAL_SUBNETS" =>
-				$Network::ethernet{"GREEN_NETADDRESS"}
-				. "/" . $Network::ethernet{"GREEN_NETMASK"},
+			"LOCAL_SUBNETS" => "0.0.0.0/0",
 		});
 	}
 
