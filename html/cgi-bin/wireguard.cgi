@@ -984,30 +984,28 @@ ADD:
 
 	print <<END;
 		<form method="POST" ENCTYPE="multipart/form-data">
-			<ul>
-				<li>
-					<label>
-						<input type='radio' name='TYPE' value='host' $disabled{'host'} />
-						$Lang::tr{'host to net vpn'}
-					</label>
-				</li>
+			<p>
+				<label>
+					<input type='radio' name='TYPE' value='host' $disabled{'host'} />
+					$Lang::tr{'host to net vpn'}
+				</label>
+			</p>
 
-				<li>
-					<label>
-						<input type='radio' name='TYPE' value='net' checked />
-						$Lang::tr{'net to net vpn'}
-					</label>
-				</li>
+			<p>
+				<label>
+					<input type='radio' name='TYPE' value='net' checked />
+					$Lang::tr{'net to net vpn'}
+				</label>
+			</p>
 
-				<li>
-					<label>
-						<input type='radio' name='TYPE' value='import' />
-						$Lang::tr{'import connection'}
-					</label>
+			<p>
+				<label>
+					<input type='radio' name='TYPE' value='import' />
+					$Lang::tr{'import connection'}
+				</label>
 
-					<input type='file' name='FH' />
-				</li>
-			</ul>
+				<input type='file' name='FH' />
+			</p>
 
 			<table class="form">
 				<tr class="action">
