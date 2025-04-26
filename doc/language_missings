@@ -142,6 +142,12 @@
 < wg invalid public key
 < wg invalid remote subnet
 < wg keepalive interval
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -262,6 +268,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -361,6 +373,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -914,6 +932,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -1543,6 +1567,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -2588,6 +2618,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -3670,6 +3706,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool
@@ -4129,6 +4171,12 @@
 < wg invalid remote subnet
 < wg keepalive interval
 < wg leave empty to automatically select
+< wg missing allowed ips
+< wg missing endpoint address
+< wg missing endpoint port
+< wg missing port
+< wg missing private key
+< wg missing public key
 < wg name is already used
 < wg no local subnets
 < wg no more free addresses in pool

@@ -599,6 +599,31 @@ sub parse_configuration($$) {
 		}
 	}
 
+	# Check if we have all required properties
+	unless (exists $peer{"PRIVATE_KEY"}) {
+		push(@errormessages, $Lang::tr{'wg missing private key'});
+	}
+
+	unless (exists $peer{"PUBLIC_KEY"}) {
+		push(@errormessages, $Lang::tr{'wg missing public key'});
+	}
+
+	unless (exists $peer{"REMOTE_SUBNETS"}) {
+		push(@errormessages, $Lang::tr{'wg missing allowed ips'});
+	}
+
+	unless (exists $peer{"PORT"}) {
+		push(@errormessages, $Lang::tr{'wg missing port'});
+	}
+
+	unless (exists $peer{"ENDPOINT_ADDRESS"}) {
+		push(@errormessages, $Lang::tr{'wg missing endpoint address'});
+	}
+
+	unless (exists $peer{"ENDPOINT_PORT"}) {
+		push(@errormessages, $Lang::tr{'wg missing endpoint port'});
+	}
+
 	return \%peer, @errormessages;
 }
 
