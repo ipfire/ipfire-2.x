@@ -1053,18 +1053,24 @@ ADD:
 		}
 	}
 
+	# Check the first available option
+	my %checked = (
+		"host" => ($disabled{"host"} eq "disabled") ? "" : "checked",
+		"net"  => ($disabled{"host"} eq "disabled") ? "checked" : "",
+	);
+
 	print <<END;
 		<form method="POST" ENCTYPE="multipart/form-data">
 			<p>
 				<label>
-					<input type='radio' name='TYPE' value='host' $disabled{'host'} />
+					<input type='radio' name='TYPE' value='host' $disabled{'host'} $checked{'host'} />
 					$Lang::tr{'host to net vpn'}
 				</label>
 			</p>
 
 			<p>
 				<label>
-					<input type='radio' name='TYPE' value='net' checked />
+					<input type='radio' name='TYPE' value='net' $checked{'net'} />
 					$Lang::tr{'net to net vpn'}
 				</label>
 			</p>
