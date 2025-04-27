@@ -506,11 +506,23 @@ sub parse_configuration($$) {
 		if ($section eq "Interface") {
 			# Address
 			if ($key eq "Address") {
-				if (&Network::check_ip_address($val)) {
-					$peer{'LOCAL_ADDRESS'} = $val;
-				} else {
+				my $address = &Network::get_netaddress($val);
+				my $prefix  = &Network::get_prefix($val);
+
+				# There must be an address
+				unless ($address) {
 					push(@errormessages, $Lang::tr{'invalid ip address'});
 				}
+
+				# If there was a prefix it must be /32
+				if (defined $prefix) {
+					unless ($prefix == 32) {
+						push(@errormessages, $Lang::tr{'invalid ip address'});
+					}
+				}
+
+				# Store the address
+				$peer{'LOCAL_ADDRESS'} = ${address};
 
 			# Port
 			} elsif ($key eq "Port") {
