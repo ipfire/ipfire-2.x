@@ -613,10 +613,6 @@ sub parse_configuration($$) {
 		push(@errormessages, $Lang::tr{'wg missing allowed ips'});
 	}
 
-	unless (exists $peer{"PORT"}) {
-		push(@errormessages, $Lang::tr{'wg missing port'});
-	}
-
 	unless (exists $peer{"ENDPOINT_ADDRESS"}) {
 		push(@errormessages, $Lang::tr{'wg missing endpoint address'});
 	}
