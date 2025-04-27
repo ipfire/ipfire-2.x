@@ -944,7 +944,7 @@ EOF
 
 			print <<END;
 				<tr>
-					<th scope="row">
+					<th scope="row" title="${pubkey}">
 						$name
 					</th>
 
