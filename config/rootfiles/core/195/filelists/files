@@ -1,4 +1,5 @@
 etc/fcron.cyclic/wg-dynamic
+etc/iproute2/rt_tables
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/wireguard

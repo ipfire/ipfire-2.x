@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Add table for static routing
 	echo "200	static" >> /etc/iproute2/rt_tables
+	echo "201	wg" >> /etc/iproute2/rt_tables
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

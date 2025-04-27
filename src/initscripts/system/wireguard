@@ -25,6 +25,9 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/wireguard/settings)
 
+# Mark all packets coming out of the WireGuard interfaces
+WG_MARK="0x00800000"
+
 interfaces() {
 	local id
 	local enabled
@@ -218,6 +221,7 @@ generate_config() {
 		fi
 
 		echo "[Interface]"
+		echo "FwMark = ${WG_MARK}"
 
 		if [ -n "${privkey}" ]; then
 			echo "PrivateKey = ${privkey}"
@@ -267,6 +271,12 @@ generate_config() {
 
 				ip route add "${args[@]}"
 			done
+
+			# Add a direct host route to the endpoint
+			if [ -s "/var/ipfire/red/remote-ipaddress" ]; then
+				ip route add table wg \
+					"${endpoint_addr}" via "$(</var/ipfire/red/remote-ipaddress)"
+			fi
 		fi
 
 		# Set keepalive
@@ -306,6 +316,14 @@ reload_firewall() {
 
 	# Block all other traffic
 	iptables -A WGBLOCK -j REJECT --reject-with icmp-admin-prohibited
+
+	# Flush any custom routes
+	ip route flush table wg 2>/dev/null
+
+	# Ensure that the table is being looked up
+	if ! ip rule | grep -q "lookup wg"; then
+		ip rule add table wg fwmark "${WG_MARK}"
+	fi
 }
 
 wg_start() {
