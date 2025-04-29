@@ -468,7 +468,7 @@ sub writeipsecfiles {
 			$psk_line = ($lconfighash{$key}[7] ? $lconfighash{$key}[7] : $localside) . " " ;
 			$psk_line .= $lconfighash{$key}[9] ? $lconfighash{$key}[9] : $lconfighash{$key}[10]; #remoteid or remote address?
 			if ($lconfighash{$key}[40] eq 'YES') {
-				my $decoded_psk = MIME::Base64::decode_base64($lconfighash{$key}[5]);
+				my $decoded_psk = &MIME::Base64::decode_base64($lconfighash{$key}[5]);
 				$psk_line .= " : PSK '$decoded_psk'\n";
 			} else {
 				$psk_line .= " : PSK '$lconfighash{$key}[5]'\n";
@@ -1662,6 +1662,10 @@ END
 		$cgiparams{'TYPE'}				= $confighash{$cgiparams{'KEY'}}[3];
 		$cgiparams{'AUTH'}				= $confighash{$cgiparams{'KEY'}}[4];
 		$cgiparams{'PSK'}				= $confighash{$cgiparams{'KEY'}}[5];
+		# Decode the PSK if it is base64-encoded
+		if ($cgiparams{'PSK'} && $confighash{$cgiparams{'KEY'}}[40] eq 'YES') {
+			$cgiparams{'PSK'} = &MIME::Base64::decode_base64($cgiparams{'PSK'});
+		}
 		$cgiparams{'LOCAL'}				= $confighash{$cgiparams{'KEY'}}[6];
 		$cgiparams{'LOCAL_ID'}			= $confighash{$cgiparams{'KEY'}}[7];
 		my @local_subnets = split(",", $confighash{$cgiparams{'KEY'}}[8]);
@@ -1879,7 +1883,6 @@ END
 		}
 
 		if ($cgiparams{'AUTH'} eq 'psk') {
-			$cgiparams{'BASE_64'} = 'YES';
 			if (! length($cgiparams{'PSK'}) ) {
 				$errormessage = $Lang::tr{'pre-shared key is too short'};
 				goto VPNCONF_ERROR;
@@ -2248,7 +2251,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 39) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 40) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -2258,13 +2261,10 @@ END
 	$confighash{$key}[3] = $cgiparams{'TYPE'};
 	if ($cgiparams{'AUTH'} eq 'psk') {
 		$confighash{$key}[4] = 'psk';
-		if ($cgiparams{'BASE_64'} eq 'YES') {
-			$confighash{$key}[5] = MIME::Base64::encode_base64($cgiparams{'PSK'}, "");
-			$confighash{$key}[40] = 'YES';
-		} else {
-			$confighash{$key}[5] = $cgiparams{'PSK'};
-			$confighash{$key}[40] = '';
-		}
+
+		# Always store the PSK base64-encoded, even if it wasn't base64 before
+		$confighash{$key}[5] = &MIME::Base64::encode_base64($cgiparams{'PSK'}, "");
+		$confighash{$key}[40] = 'YES';
 	} else {
 		$confighash{$key}[4] = 'cert';
 	}
