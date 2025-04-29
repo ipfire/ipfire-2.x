@@ -103,6 +103,11 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Increment ipsec serial file if x509 certificates present and no content in index.txt
+if [ -e "/var/ipfire/certs/hostcert.pm" ] && [ -z "/var/ipfire/certs/index.txt" ]; then
+    sed -i "s/01/02/" /var/ipfire/certs/serial
+fi
+
 # Start services
 /etc/init.d/ipsec restart
 /etc/init.d/suricata restart
