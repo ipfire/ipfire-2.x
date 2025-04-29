@@ -1833,7 +1833,6 @@ build_system() {
 	lfsmake2 soxr
 	lfsmake2 libshout
 	lfsmake2 xvid
-	lfsmake2 libmpeg2
 	lfsmake2 gnump3d
 	lfsmake2 libxxhash
 	lfsmake2 rsync
