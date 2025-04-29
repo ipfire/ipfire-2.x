@@ -11,6 +11,7 @@ srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/wireguard.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/lib/firewall/firewall-lib.pl
