@@ -307,6 +307,18 @@ restore_backup() {
 	# start collectd after restore
 	/etc/rc.d/init.d/collectd start
 
+	# Check if ipsec hosctcert.pem serial number is 1 and if the serial file does not contain 02
+	# In this case set the serial file to 02 and empty the index.txt file
+	ARR=()
+	while IFS= read -r line; do
+		ARR+=("$line")
+	done <<< "$(openssl x509 -in /var/ipfire/certs/hostcert.pem -noout -text)"
+       if [ $(echo ${ARR[3]} | sed -E 's,^[^0-9]*([0-9]+).*$,\1,') = 1 ] && \
+			[ $(expr $(cat "/var/ipfire/certs/serial") + 0) != 2 ]; then
+		sed -i "s/.*/02/" /var/ipfire/certs/serial
+		sed -i 'd' /var/ipfire/certs/index.txt
+	fi
+
         # Restart ipsec if enabled
         # This will ensure that the restored certs and secrets etc are loaded and used
         if [ $(grep -c "ENABLED=on" /var/ipfire/vpn/settings) -eq 1  ] ; then
