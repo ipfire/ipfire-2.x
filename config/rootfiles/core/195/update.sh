@@ -38,6 +38,19 @@ done
 # Extract files
 extract_files
 
+# Remove dropped packages
+for package in libmpeg2 xvid; do
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+                stop_service "${package}"
+                for i in $(</opt/pakfire/db/rootfiles/${package}); do
+                        rm -rfv "/${i}"
+                done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # update linker config
 ldconfig
 
