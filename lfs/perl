@@ -89,7 +89,8 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR) -Dlibs="-lpthread -lm" -Uloclibpth -Ulocincpth
+	cd $(DIR_APP) && ./configure.gnu --prefix=$(TOOLS_DIR) \
+		-des -Dlibs="-lpthread -lm" -Uloclibpth -Ulocincpth
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && cp -v perl cpan/podlators/scripts/pod2man $(TOOLS_DIR)/bin
 	cd $(DIR_APP) && mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VER)
