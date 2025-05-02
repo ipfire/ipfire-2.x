@@ -31,6 +31,9 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
+
 # Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
