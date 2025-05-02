@@ -40,7 +40,9 @@ DEPS       =
 
 SERVICES   = postfix
 
-CCARGS     = `getconf LFS_CFLAGS` \
+CCARGS     = \
+	-std=gnu17 \
+	`getconf LFS_CFLAGS` \
 	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
 	-DDEF_MANPAGE_DIR="'\"/usr/share/man\"'" \
 	-DNO_NIS
