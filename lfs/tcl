@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.0.1
+VER        = 8.6.14
 
 THISAPP    = tcl$(VER)
 DL_FILE    = $(THISAPP)-src.tar.gz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1eaaf5be34ad02ab6d576aae61783982a5959d8617d9b759e2f683ab67a2b005207572bd80a7a474f0d7e5f4f8f3203f95c09cbf124adff459c69dc976164c2e
+$(DL_FILE)_BLAKE2 = 7089747a4d539b46e710ecb795aa3cd5576243862fae3cf8e6f0efb15681174881396c0147071dca18421d9d95eb35557b17d623f0f63383476fe882cef35a61
 
 install : $(TARGET)
 
@@ -80,9 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/unix && make install
 ifneq "$(ROOT)" ""
 	cd $(DIR_APP)/unix && make install-private-headers
-	ln -sf tclsh9.0 $(TOOLS_DIR)/bin/tclsh
+	ln -sf tclsh8.6 $(TOOLS_DIR)/bin/tclsh
 else
-	ln -sf tclsh9.0 /usr/bin/tclsh
+	ln -sf tclsh8.6 /usr/bin/tclsh
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
