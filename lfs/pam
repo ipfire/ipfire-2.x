@@ -32,6 +32,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# Don't fail on any linker warnings
+# I don't actually know why this has suddenly come up as it is a linker issue,
+# however, this all started with the update to GCC 15 and happens on aarch64.
+CFLAGS += -Wl,--no-fatal-warnings
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
