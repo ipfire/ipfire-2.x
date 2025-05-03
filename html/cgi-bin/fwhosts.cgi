@@ -3027,11 +3027,15 @@ sub getipforgroup
 		my $peer = &Wireguard::get_peer_by_name($name);
 
 		if (defined $peer) {
+			my @addresses = ();
+
 			if ($peer->{"TYPE"} eq "host") {
-				return $peer->{"CLIENT_ADDRESS"};
+				push(@addresses, @{ $peer->{"CLIENT_ADDRESS"} });
 			} elsif ($peer->{"TYPE"} eq "net") {
-				return join(", ", @{ $peer->{"REMOTE_SUBNETS"} });
+				push(@addresses, @{ $peer->{"REMOTE_SUBNETS"} });
 			}
+
+			return join(", ", @addresses);
 		}
 	}
 
