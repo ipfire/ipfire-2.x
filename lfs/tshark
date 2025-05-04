@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Network Traffic Analyser
 
-VER        = 4.4.5
+VER        = 4.4.6
 
 THISAPP    = wireshark-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tshark
 DEPS       = c-ares
-PAK_VER    = 24
+PAK_VER    = 25
 
 SERVICES   =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0cefe4330d1d0e40b101c33d767796d4657ed1cf7fc652732663b99d5849ef0c2f5905b1c07137dc306c18d66240701eefd8f018bf78c078caa1a04f642048da
+$(DL_FILE)_BLAKE2 = e38e2e53cc058d24d08e047322333bafc281839e9c244f69b657ec184238b73fd2e793538fb375983487a3b25c8395fabee410062ac4ad51dfed4b81c4d06d88
 
 install : $(TARGET)
 
