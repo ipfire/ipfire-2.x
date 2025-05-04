@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.11
+VER        = 3.12
 
 THISAPP    = diffutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e3d78548d1fbee060a9e0a7ee93f4aebaa80a9ff15867f13e2f1d09672e2b1e8dcf01f264d5184c441bc81b0b1a797210cbf4a1f9b8ba061994066e710e79fc1
+$(DL_FILE)_BLAKE2 = 5b4593b39da71578d7f975603abe9359be215b9ac76548a6ab0d6e3838bb103c7ffcddf7fa01abcd5c6289db9a2f16b43aa3d5e846a9aa4b8db866763c2660de
 
 install : $(TARGET)
 
