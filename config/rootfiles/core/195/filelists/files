@@ -13,6 +13,8 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/wireguard.cgi
+srv/web/ipfire/cgi-bin/chpasswd.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/lib/firewall/firewall-lib.pl
 usr/local/bin/wireguardctrl
