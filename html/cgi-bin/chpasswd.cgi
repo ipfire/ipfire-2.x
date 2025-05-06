@@ -21,7 +21,7 @@
 
 use CGI qw(param);
 
-$swroot = "/var/ipfire";
+require '/var/ipfire/general-functions.pl';
 
 my %cgiparams;
 my %mainsettings;
@@ -30,8 +30,8 @@ my %proxysettings;
 $proxysettings{'NCSA_MIN_PASS_LEN'} = 6;
 
 ### Initialize environment
-&readhash("${swroot}/main/settings", \%mainsettings);
-&readhash("${swroot}/proxy/advanced/settings", \%proxysettings);
+&readhash("${General::swroot}/main/settings", \%mainsettings);
+&readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 $language = $mainsettings{'LANGUAGE'};
 
 ### Initialize language
@@ -40,12 +40,12 @@ if ($language =~ /^(\w+)$/) {$language = $1;}
  # Uncomment this to force a certain language:
  # $language='en';
  #
-require "${swroot}/langs/en.pl";
-require "${swroot}/langs/${language}.pl";
+require "${General::swroot}/langs/en.pl";
+require "${General::swroot}/langs/${language}.pl";
 
-my $userdb = "$swroot/proxy/advanced/ncsa/passwd";
+my $userdb = "$General::swroot/proxy/advanced/ncsa/passwd";
 
-&readhash("$swroot/ethernet/settings", \%netsettings);
+&readhash("$General::swroot/ethernet/settings", \%netsettings);
 
 my $success = 0;
 
