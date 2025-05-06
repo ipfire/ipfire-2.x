@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -20,8 +20,6 @@
 ###############################################################################
 
 use CGI qw(param);
-use Apache::Htpasswd;
-use Crypt::PasswdMD5;
 
 $swroot = "/var/ipfire";
 
@@ -76,21 +74,19 @@ if ($cgiparams{'SUBMIT'} eq $tr{'advproxy chgwebpwd change password'})
 		goto ERROR;
 	}
 
-	my $htpasswd = new Apache::Htpasswd("$userdb");
-
-	# Check if a user with this name exists
-	my $old_password = $htpasswd->fetchPass($cgiparams{'USERNAME'});
-	if (!$old_password) {
-		$errormessage = $tr{'advproxy errmsg invalid user'};
-		goto ERROR;
-	}
-
-	# Reset password
-	if (!$htpasswd->htpasswd($cgiparams{'USERNAME'}, $cgiparams{'NEW_PASSWORD_1'},
-			$cgiparams{'OLD_PASSWORD'})) {
-		$errormessage = $tr{'advproxy errmsg password incorrect'};
-		goto ERROR;
-	}
+       # Check if a user with this name and password exists in the userdb file
+       # and if it does then change the password to the new one
+       my $user = &General::system_output("grep", "$cgiparams{'USERNAME'}", "$userdb");
+       my $old_password = &General::system_output("/usr/bin/htpasswd", "-bv", "$userdb", "$cgiparams{'USERNAME'}", "$cgiparams{'OLD_PASSWORD'}");
+       if (!$user) {
+               $errormessage = $tr{'advproxy errmsg invalid user'};
+               goto ERROR;
+       } elsif (!old_password) {
+                $errormessage = $tr{'advproxy errmsg password incorrect'};
+                goto ERROR;
+       } else {
+               &General::system("/usr/bin/htpasswd", "-bB", "-C 10", "$userdb", "$cgiparams{'USERNAME'}", "$cgiparams{'NEW_PASSWORD_1'}");
+       }
 
 	$success = 1;
 	undef %cgiparams;
