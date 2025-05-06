@@ -93,6 +93,7 @@ fi
 # Start services
 /etc/init.d/firewall restart
 /etc/init.d/sshd restart
+/etc/init.d/unbound restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
