@@ -1713,7 +1713,6 @@ build_system() {
 	lfsmake2 perl-GD-TextUtil
 	lfsmake2 perl-Device-SerialPort
 	lfsmake2 perl-Device-Modem
-	lfsmake2 perl-Apache-Htpasswd
 	lfsmake2 perl-Parse-Yapp
 	lfsmake2 perl-Data-UUID
 	lfsmake2 perl-Try-Tiny
