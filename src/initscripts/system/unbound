@@ -598,7 +598,7 @@ case "$1" in
 		write_hosts_conf
 
 		# Call unbound-control and perform the reload
-		/usr/sbin/unbound-control -q reload
+		/usr/sbin/unbound-control -q fast_reload
 
 		# Dummy Resolve to wait for unbound
 		resolve "ping.ipfire.org" &>/dev/null
