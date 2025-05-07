@@ -19,6 +19,7 @@ srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/lib/firewall/firewall-lib.pl
 usr/local/bin/wireguardctrl
 usr/sbin/firewall-policy
+usr/sbin/setup
 var/ipfire/backup/bin/backup.pl
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
