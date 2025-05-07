@@ -81,7 +81,7 @@ if ($cgiparams{'SUBMIT'} eq $tr{'advproxy chgwebpwd change password'})
        if (!$user) {
                $errormessage = $tr{'advproxy errmsg invalid user'};
                goto ERROR;
-       } elsif (!old_password) {
+       } elsif (!$old_password) {
                 $errormessage = $tr{'advproxy errmsg password incorrect'};
                 goto ERROR;
        } else {
