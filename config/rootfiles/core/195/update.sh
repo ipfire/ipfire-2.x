@@ -34,6 +34,8 @@ done
 # Stop services
 
 # Remove files
+rm -rfv \
+	/usr/lib/perl5/site_perl/5.36.0/Apache/Htpasswd.pm
 
 # Extract files
 extract_files
