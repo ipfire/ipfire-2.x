@@ -36,6 +36,147 @@ find_interface() {
 	return 1;
 }
 
+write_config() {
+	# Header
+	echo "# Automatically generated configuration"
+	echo "# DO NOT EDIT"
+
+	# Enable logging
+	echo "logger_syslog=-1"
+	echo "logger_syslog_level=4"
+
+	# Use Netlink
+	echo "driver=nl80211"
+
+	# Set the country code
+	echo "country_code=${COUNTRY}"
+	echo "country3=0x49"
+
+	# Enable 802.11d and 802.11h
+	echo "ieee80211d=1"
+	echo "ieee80211h=1"
+
+	# Set the channel (if chosen)
+	if [ -n "${CHANNEL}" ]; then
+		echo "channel=${CHANNEL}"
+	fi
+
+	# Always advertise TPC
+	echo "local_pwr_constraint=3"
+	echo "spectrum_mgmt_required=1"
+
+	# Set mode
+	case "${HW_MODE}" in
+		ac)
+			echo "hw_mode=a"
+			echo "ieee80211ac=1"
+			echo "ieee80211n=1"
+			echo "wmm_enabled=1"
+			echo "vht_oper_chwidth=1"
+			;;
+		an|gn)
+			echo "hw_mode=${HW_MODE:0:1}"
+			echo "ieee80211n=1"
+			echo "wmm_enabled=1"
+			;;
+		*)
+			echo "Unsupported mode '${HW_MODE}'" >&2
+			return 1
+			;;
+	esac
+
+	# Set HT capabilities
+	if [ -n "${HTCAPS}" ]; then
+		echo "ht_capab=${HTCAPS}"
+	fi
+
+	# Set VHT capabilities
+	if [ -n "${VHTCAPS}" ]; then
+		echo "vht_capab=${VHTCAPS}"
+	fi
+
+	# Enable authentication
+	echo "auth_algs=1"
+
+	# Enable the control interface
+	echo "ctrl_interface=/var/run/hostapd"
+	echo "ctrl_interface_group=0"
+
+	# Disconnect clients that are too far away
+	echo "disassoc_low_ack=1"
+
+	# SSID
+	echo "ssid2=\"${SSID}\""
+	echo "utf8_ssid=1"
+
+	# Hide the SSID?
+	if [ "${HIDESSID}" = "on" ]; then
+		echo "ignore_broadcast_ssid=2"
+	fi
+
+	# Isolate clients?
+	if [ "${CLIENTISOLATION}" = "on" ]; then
+		echo "ap_isolate=1"
+	fi
+
+	# Disable neighbour scan?
+	if [ "${NOSCAN}" = "on" ]; then
+		echo "noscan=1"
+	else
+		echo "noscan=0"
+	fi
+
+	# Management Frame Protection (802.11w)
+	case "${IEEE80211W}" in
+		on)
+			echo "ieee80211w=2"
+			;;
+		optional)
+			echo "ieee80211w=1"
+			;;
+		*)
+			echo "ieee80211w=0"
+			;;
+	esac
+
+	# Encryption
+	case "${ENC}" in
+		wpa3)
+			echo "wpa=2"
+			echo "wpa_passphrase=${PWD}"
+			echo "wpa_key_mgmt=SAE"
+			echo "rsn_pairwise=CCMP"
+			;;
+		wpa2+3)
+			echo "wpa=2"
+			echo "wpa_passphrase=${PWD}"
+			echo "wpa_key_mgmt=WPA-PSK SAE"
+			echo "rsn_pairwise=CCMP"
+			;;
+		wpa2)
+			echo "wpa=2"
+			echo "wpa_passphrase=${PWD}"
+			echo "wpa_key_mgmt=WPA-PSK"
+			echo "rsn_pairwise=CCMP"
+			;;
+		wpa1+2)
+			echo "wpa=3"
+			echo "wpa_passphrase=${PWD}"
+			echo "wpa_key_mgmt=WPA-PSK"
+			echo "wpa_pairwise=TKIP"
+			echo "rsn_pairwise=CCMP"
+			;;
+		wpa1)
+			echo "wpa=1"
+			echo "wpa_passphrase=${PWD}"
+			echo "wpa_key_mgmt=WPA-PSK"
+			echo "wpa_pairwise=TKIP"
+			;;
+	esac
+
+	return 0
+}
+
 eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
@@ -43,6 +184,13 @@ case "${1}" in
 		interface="$(find_interface "${INTERFACE}")"
 		if [ -z "${interface}" ]; then
 			boot_mesg "Could not find interface with address ${INTERFACE} for wireless access point"
+			echo_failure
+			exit 1
+		fi
+
+		# Write the configuration
+		if ! write_config > /etc/hostapd.conf; then
+			boot_mesg "Failed to generate configuration"
 			echo_failure
 			exit 1
 		fi
@@ -65,6 +213,10 @@ case "${1}" in
 
 	status)
 		statusproc /usr/bin/hostapd
+		;;
+
+	show-config)
+		write_config
 		;;
 
 	*)
