@@ -36,12 +36,6 @@ find_interface() {
 	return 1;
 }
 
-CHANNEL="6"
-COUNTRY="00"
-TXPOWER="auto"
-INTERFACE="blue0"
-MACMODE="0"
-
 eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
