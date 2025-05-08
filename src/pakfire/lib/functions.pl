@@ -111,22 +111,28 @@ sub logger {
 }
 
 sub usage {
-  &Pakfire::message("Usage: pakfire <install|remove> [options] <pak(s)>");
-  &Pakfire::message("               <update> - Contact the servers for new lists of paks.");
-  &Pakfire::message("               <upgrade> - Install the latest version of all paks.");
-  &Pakfire::message("               <list> [installed|notinstalled|upgrade] - Output a list");
-  &Pakfire::message("                 of all, installed, available or upgradeable paks.");
-  &Pakfire::message("               <info> <pak> [<pak> ...] - Output pak metadata.");
-  &Pakfire::message("               <resolvedeps> <pak> [<pak> ...] - Resolve and output pak");
-  &Pakfire::message("                 dependencies.");
-  &Pakfire::message("               <status> - Output a summary of available core upgrades,");
-  &Pakfire::message("                 updates and a required reboot.");
-  &Pakfire::message("");
-  &Pakfire::message("       Global options:");
-  &Pakfire::message("               --non-interactive --> Enables the non-interactive mode.");
-  &Pakfire::message("                                     You won't see any question here.");
-  &Pakfire::message("                              -y --> Short for --non-interactive.");
-  &Pakfire::message("                     --no-colors --> Turns off the wonderful colors.");
+  &Pakfire::message("Usage: pakfire COMMAND [OPTIONS] [PACKAGE ...]");
+  &Pakfire::message("Manage IPFire add-on packages and updates.");
+  &Pakfire::message("PACKAGE:");
+  &Pakfire::message("  one or more add-on package names");
+  &Pakfire::message("COMMAND:");
+  &Pakfire::message("  install      - install one or more packages");
+  &Pakfire::message("  remove       - remove one or more packages");
+  &Pakfire::message("  update       - update the pakfire database");
+  &Pakfire::message("  upgrade      - upgrade all packages to the latest version");
+  &Pakfire::message("  list [installed | notinstalled | upgrade]");
+  &Pakfire::message("               - display a list of installed, notinstalled,");
+  &Pakfire::message("                 upgradeable or all packages");
+  &Pakfire::message("  info         - display metadata for one or more packages");
+  &Pakfire::message("  resolvedeps  - display dependencies for one or more packages");
+  &Pakfire::message("  status       - display pakfire database status,");
+  &Pakfire::message("                 available updates and whether a reboot");
+  &Pakfire::message("                 is required to complete any upgrades");
+  &Pakfire::message("OPTIONS:");
+  &Pakfire::message("  --no-colors             - turn off colors");
+  &Pakfire::message("  -y | --non-interactive  - automatic yes to prompts");
+  &Pakfire::message("  -f | --force            - for the update command, force");
+  &Pakfire::message("                            a pakfire database update");
   &Pakfire::message("");
   exit 1;
 }
