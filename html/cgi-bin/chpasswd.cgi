@@ -74,19 +74,14 @@ if ($cgiparams{'SUBMIT'} eq $tr{'advproxy chgwebpwd change password'})
 		goto ERROR;
 	}
 
-       # Check if a user with this name and password exists in the userdb file
-       # and if it does then change the password to the new one
-       my $user = &General::system_output("grep", "$cgiparams{'USERNAME'}", "$userdb");
-       my $old_password = &General::system_output("/usr/bin/htpasswd", "-bv", "$userdb", "$cgiparams{'USERNAME'}", "$cgiparams{'OLD_PASSWORD'}");
-       if (!$user) {
-               $errormessage = $tr{'advproxy errmsg invalid user'};
-               goto ERROR;
-       } elsif (!$old_password) {
-                $errormessage = $tr{'advproxy errmsg password incorrect'};
-                goto ERROR;
-       } else {
-               &General::system("/usr/bin/htpasswd", "-bB", "-C 10", "$userdb", "$cgiparams{'USERNAME'}", "$cgiparams{'NEW_PASSWORD_1'}");
-       }
+	# If the htpasswd verification status is 0 then update the database
+	# otherwise respond with an error message.
+	if (&General::system("/usr/bin/htpasswd", "-bv", "$userdb", "$cgiparams{'USERNAME'}", "$cgiparams{'OLD_PASSWORD'}") != 0) {
+		$errormessage = $tr{'advproxy errmsg invalid user/password'};
+		goto ERROR;
+	} else {
+		&General::system("/usr/bin/htpasswd", "-bB", "-C 10", "$userdb", "$cgiparams{'USERNAME'}", "$cgiparams{'NEW_PASSWORD_1'}");
+	}
 
 	$success = 1;
 	undef %cgiparams;
