@@ -66,12 +66,11 @@ WARNING: translation string unused: advproxy errmsg change fail
 WARNING: translation string unused: advproxy errmsg change success
 WARNING: translation string unused: advproxy errmsg invalid bdc
 WARNING: translation string unused: advproxy errmsg invalid pdc
-WARNING: translation string unused: advproxy errmsg invalid user
+WARNING: translation string unused: advproxy errmsg invalid user/password
 WARNING: translation string unused: advproxy errmsg no browser
 WARNING: translation string unused: advproxy errmsg no password
 WARNING: translation string unused: advproxy errmsg ntlm domain
 WARNING: translation string unused: advproxy errmsg ntlm pdc
-WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
@@ -1680,7 +1679,6 @@ WARNING: untranslated string: wg leave empty to automatically select = Leave emp
 WARNING: untranslated string: wg missing allowed ips = Missing AllowedIPs
 WARNING: untranslated string: wg missing endpoint address = Missing Endpoint Address
 WARNING: untranslated string: wg missing endpoint port = Missing Endpoint Port
-WARNING: untranslated string: wg missing port = Missing Port
 WARNING: untranslated string: wg missing private key = Missing Private Key
 WARNING: untranslated string: wg missing public key = Missing Public Key
 WARNING: untranslated string: wg name is already used = The name is already in use
