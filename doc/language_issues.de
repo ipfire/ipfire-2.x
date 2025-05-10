@@ -93,12 +93,11 @@ WARNING: translation string unused: advproxy errmsg change fail
 WARNING: translation string unused: advproxy errmsg change success
 WARNING: translation string unused: advproxy errmsg invalid bdc
 WARNING: translation string unused: advproxy errmsg invalid pdc
-WARNING: translation string unused: advproxy errmsg invalid user
+WARNING: translation string unused: advproxy errmsg invalid user/password
 WARNING: translation string unused: advproxy errmsg no browser
 WARNING: translation string unused: advproxy errmsg no password
 WARNING: translation string unused: advproxy errmsg ntlm domain
 WARNING: translation string unused: advproxy errmsg ntlm pdc
-WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
@@ -883,6 +882,7 @@ WARNING: translation string unused: week
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wg download configuration
+WARNING: translation string unused: wg missing port
 WARNING: translation string unused: wg show configuration qrcode
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
