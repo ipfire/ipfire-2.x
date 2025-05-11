@@ -1,0 +1,8 @@
+--- libid3tag/CMakeLists.txt.orig	2023-09-24 03:52:54.000000000 +0200
++++ libid3tag/CMakeLists.txt	2025-05-08 17:22:58.411633461 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1.0)
++cmake_minimum_required(VERSION 3.10)
+ project(id3tag VERSION 0.16.3)
+ 
+ option(BUILD_SHARED_LIBS "Build dynamic library" ON)
