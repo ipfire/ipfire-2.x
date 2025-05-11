@@ -1696,7 +1696,7 @@ build_system() {
 	lfsmake2 beep
 	lfsmake2 libssh
 	lfsmake2 libinih
-	lfsmake2 cdrkit
+	lfsmake2 xorriso
 	lfsmake2 dosfstools
 	lfsmake2 exfatprogs
 	lfsmake2 reiserfsprogs
