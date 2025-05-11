@@ -1,0 +1,9 @@
+--- json-c-0.18/apps/CMakeLists.txt.orig	2024-09-15 18:15:01.000000000 +0200
++++ json-c-0.18/apps/CMakeLists.txt	2025-05-06 19:08:35.807635404 +0200
+@@ -1,5 +1,5 @@
+ 
+-cmake_minimum_required(VERSION 2.8)  # see ../CMakeLists.txt for why 2.8
++cmake_minimum_required(VERSION 3.9...3.12)
+ 
+ if(POLICY CMP0075)
+     cmake_policy(SET CMP0075 NEW)
