@@ -275,33 +275,130 @@ END
 # Show Pakfire install/remove dependencies and confirm form
 # (_is_pakfire_busy status was checked before and can be omitted)
 if (($cgiparams{'ACTION'} eq $Lang::tr{'pakfire install'}) && ($pagemode eq $PM_DEFAULT)) {
-	&Header::openbox("100%", "center", $Lang::tr{'request'});
+	&Header::openbox("100%", "center", $Lang::tr{'pakfire install'});
 
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
-	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
+
 	print <<END;
-	<table style="width: 100%">
+        <table style="width: 100%">
 		<tr>
 			<td>
-			<p>$Lang::tr{'pakfire install package'} <strong>@{pkgs}</strong><br>$Lang::tr{'pakfire possible dependency'}</p>
+			$Lang::tr{'pakfire install package'}  <strong>
+END
+
+	foreach (my $i = 0; $i < $#pkgs; $i++)
+	{
+		print "$pkgs[$i], ";
+	}
+	print "$pkgs[$#pkgs]";
+
+	print <<END;
+			</strong>
+			<br><br>$Lang::tr{'pakfire check deps'}
 			<pre>
 END
-	foreach (@output) {
-		$_ =~ s/\\[[0-1]\;[0-9]+m//g;
-		print "$_\n";
+
+	# get dependencies from pakfire resolvedeps output
+	my @pkgs_deps;
+	my @errors;
+	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
+	foreach (@output)
+	{
+		if ($_ =~ /install/)
+		{
+			(my $package) = $_ =~ /.+:\s(.+):\s.+:\s.+/;
+			(my $dependency) = $_ =~ /.+:\s.+:\s.+:\s(.+)/;
+			push @pkgs_deps, "$package:$dependency";
+		}
+		if ($_ =~ /ERROR/)
+		{
+			push @errors, $_;
+		}
 	}
+
+	if (@errors)
+	{
+		chomp @errors;
+		print "\nErrors occurred:\n";
+		foreach (@errors)
+		{
+			print "$_\n";
+		}
+	}
+
+	# get dependencies from metafiles
+	my $instdir = "/opt/pakfire/db/installed";
+	my @inst_deps = deps_from_metafiles($instdir);
+	my $metadir = "/opt/pakfire/db/meta";
+	my @meta_deps = deps_from_metafiles($metadir);
+
+	my @all_deps = @inst_deps;
+	push @all_deps, @meta_deps;
+
+	my %dedupe;
+	@all_deps = grep { ! $dedupe{ $_ }++ } @all_deps;
+
+	# build dependencies tree
+	my @search = @pkgs_deps;
+	my @pkgs_deps_tree;
+	my @temp;
+	do
+	{
+		@temp = ();
+		foreach my $i (@search)
+		{
+			(my $child) = $i =~ /.+:(.+)/;
+			foreach my $j (@all_deps)
+			{
+				(my $all_deps_parent) = $j =~ /(.+):.+/;
+				(my $all_deps_child) = $j =~ /.+:(.+)/;
+				if ( $child eq $all_deps_parent )
+				{
+					push @temp, "$i:$all_deps_child";
+				}
+			}
+		}
+		push @pkgs_deps_tree, @temp;
+		@search = @temp;
+	} until ( ! (@search));
+
+	push @pkgs_deps, @pkgs_deps_tree;
+
+	@pkgs_deps = sort @pkgs_deps;
+
+	my @installed = get_package_names($instdir);
+
+	# display dependencies
+	print "\nPackage dependencies:\n";
+	foreach my $i (@pkgs)
+	{
+		print "\n  Package:  $i\n";
+		if (grep (/^$i/, @pkgs_deps))
+		{
+			foreach my $j (@pkgs_deps)
+			{
+				if (grep (/$i/, $j))
+				{
+					(my $child) = $j =~ /.+:(.+)/;
+					if (grep (/$child/, @installed))
+					{
+						print "            " . (arrow_format($j)) . "<span style='font-size:80%'> (already installed)</span>\n";
+					} else {
+						print "            " . (arrow_format($j)) . "\n";
+					}
+				}
+			}
+		} else {
+			print "            No dependencies found.\n";
+		}
+	}
+
 	print <<END;
 			</pre>
 			</td>
 		</tr>
 		<tr>
-			<td>$Lang::tr{'pakfire accept all'}</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td align='center'>
+			<td align='center' style='padding-top:8px;padding-bottom:4px'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
 			<input type='hidden' name='FORCE' value='on' />
@@ -318,7 +415,7 @@ END
 	exit;
 
 } elsif (($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) && ($pagemode eq $PM_DEFAULT)) {
-	&Header::openbox("100%", "center", $Lang::tr{'request'});
+	&Header::openbox("100%", "center", $Lang::tr{'remove'});
 
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -416,7 +513,7 @@ if (($cgiparams{'ACTION'} eq $Lang::tr{'pakfire upgrade'}) && ($pagemode eq $PM_
 				<input type='submit' name='ACTION' value='$Lang::tr{'pakfire upgrade'}'/>
 				<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}'/>
 				</form>
-			</td>
+				</td>
 			</tr>
 		</table>
 END
@@ -637,4 +734,72 @@ sub _http_pagemode_redirect {
 	if($switch_mode) {
 		$pagemode = $mode;
 	}
+}
+
+# search package metafiles in $dir and return array of
+# dependencies in parent:child format
+sub deps_from_metafiles
+{
+        my $dir = $_[0];
+        my @packages = ();
+        my @temp = ();
+        my @found_deps = ();
+        my @files = glob("$dir/meta-*");
+
+        foreach (@files)
+        {
+                (my $pak) = $_ =~ /.+\/meta\-([\w\-]+)$/;
+                push @packages, $pak;
+        }
+
+        foreach my $i (@packages)
+        {
+                open(META, "<", "$dir/meta-$i") or die "Cannot open file meta-$i:  $!";
+                my @data = <META>;
+                close(META);
+
+                my $line = '';
+                foreach (@data)
+                {
+                        $line = $_;
+                        last if (grep(/Dependencies:/, $line));
+                }
+
+                chomp $line;
+                @temp = split(' ', $line);
+                @temp = grep {$_ ne 'Dependencies:'} @temp;
+                foreach (@temp)
+                {
+                        push @found_deps, "$i:$_";
+                }
+        }
+        return @found_deps;
+}
+
+# return package names from a metafile directory
+sub get_package_names
+{
+        my $dir = $_[0];
+        my @files = ();
+        my @temp = glob("$dir/meta-*");
+        foreach (@temp)
+        {
+                (my $name) = $_ =~ /.+\/meta\-([\w\-]+)$/;
+                push @files, $name;
+        }
+        return @files;
+}
+
+# convert a string in 'parent:child:child...' format to
+# 'parent -> child -> child -> ...' format
+sub arrow_format
+{
+        my $line = '';
+        my @items = split(/:/, $_[0]);
+        foreach my $i (@items)
+        {
+                $line = $line . "$i -> ";
+        }
+        $line = substr($line, 0, -4);
+        return $line;
 }

@@ -184,7 +184,6 @@ WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: cpu frequency per
 WARNING: translation string unused: cpu usage per
-WARNING: translation string unused: create
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
 WARNING: translation string unused: current media
@@ -418,7 +417,6 @@ WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
 WARNING: translation string unused: ike lifetime
-WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
 WARNING: translation string unused: inactive
@@ -631,6 +629,7 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pakfire accept all
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire dependecies found
 WARNING: translation string unused: pakfire health check
@@ -684,6 +683,7 @@ WARNING: translation string unused: removable device advice
 WARNING: translation string unused: repeat
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: reportlevel
+WARNING: translation string unused: request
 WARNING: translation string unused: requested data
 WARNING: translation string unused: reserved dst port
 WARNING: translation string unused: reserved src port
@@ -895,6 +895,8 @@ WARNING: translation string unused: webradio playlist
 WARNING: translation string unused: week
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: wg download configuration
+WARNING: translation string unused: wg show configuration qrcode
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
@@ -937,6 +939,7 @@ WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
 WARNING: untranslated string: aliases default interface = - Default Interface -
+WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
@@ -965,6 +968,7 @@ WARNING: untranslated string: error the to date has to be later than the from da
 WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
+WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string
@@ -1015,8 +1019,10 @@ WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampli
 WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
 WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
+WARNING: untranslated string: remarks = Remarks
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: route config changed = unknown string
+WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: samba server role member = Domain Member

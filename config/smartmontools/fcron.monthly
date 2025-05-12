@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/sbin/update-smart-drivedb -q
+
+exit 0

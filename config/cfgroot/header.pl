@@ -17,6 +17,7 @@ use HTML::Entities();
 use Socket;
 use Time::Local;
 use Encode;
+use Unicode::Normalize;
 
 require "${General::swroot}/graphs.pl";
 
@@ -626,6 +627,18 @@ sub getcgihash {
 sub escape($) {
 	my $s = shift;
 	return HTML::Entities::encode_entities($s);
+}
+
+sub normalize($) {
+	my $s = shift;
+
+	# Remove any special characters
+	$s = &Unicode::Normalize::NFKD($s);
+
+	# Remove any whitespace and replace with dash
+	$s =~ s/\s+/\-/g;
+
+	return $s;
 }
 
 sub cleanhtml {

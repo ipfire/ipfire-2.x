@@ -87,6 +87,7 @@ srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/webaccess.cgi
 #srv/web/ipfire/cgi-bin/wio.cgi
 #srv/web/ipfire/cgi-bin/wiographs.cgi
+srv/web/ipfire/cgi-bin/wireguard.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 #srv/web/ipfire/cgi-bin/wlanap.cgi

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.9p2
+VER        = 10.0p1
 
 THISAPP    = openssh-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1b5bc09482b3a807ccfee52c86c6be3c363acf0c8e774862e0ae64f76bfeb4ce7cf29b3ed2f99c04c89bb4977da0cf50a7a175b15bf1d9925de1e03c66f8306d
+$(DL_FILE)_BLAKE2 = 4ce353adf75aade8f4b2a223ad13e2f92cd23d1e60b4ee52bad0eaf036571229438cd9760dfa99c0e10fa09a8ac47b2bfb04eb183fb7b9287ac564ec75316a75
 
 install : $(TARGET)
 
@@ -73,13 +73,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && autoconf
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--sysconfdir=/etc/ssh \
-		--libexecdir=/usr/lib/openssh \
-		--with-md5-passwords \
-		--with-privsep-path=/var/empty \
-		--with-superuser-path=/sbin:/usr/sbin:/bin:/usr/bin
-
+				--prefix=/usr \
+				--sysconfdir=/etc/ssh \
+				--libexecdir=/usr/lib/openssh \
+				--with-md5-passwords \
+				--with-privsep-path=/var/empty \
+				--with-superuser-path=/sbin:/usr/sbin:/bin:/usr/bin
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

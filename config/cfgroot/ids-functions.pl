@@ -27,6 +27,7 @@ package IDS;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/network-functions.pl";
+require "${General::swroot}/http-client-functions.pl";
 require "${General::swroot}/suricata/ruleset-sources";
 
 # Load perl module to deal with Archives.
@@ -43,15 +44,6 @@ use File::Path qw(rmtree);
 
 # Load module to get file stats.
 use File::stat;
-
-# Load module to deal with temporary files.
-use File::Temp;
-
-# Load module to deal with the date formats used by the HTTP protocol.
-use HTTP::Date;
-
-# Load the libwwwperl User Agent module.
-use LWP::UserAgent;
 
 # Load function from posix module to format time strings.
 use POSIX qw (strftime);
@@ -129,9 +121,6 @@ my $suricatactrl = "/usr/local/bin/suricatactrl";
 
 # Prefix for each downloaded ruleset.
 my $dl_rulesfile_prefix = "idsrules";
-
-# Temporary directory to download the rules files.
-my $tmp_dl_directory = "/var/tmp";
 
 # Temporary directory where the rulesets will be extracted.
 my $tmp_directory = "/tmp/ids_tmp";
@@ -299,61 +288,13 @@ sub checkdiskspace () {
 #
 ## This function is responsible for downloading the ruleset for a given provider.
 ##
-## * At first it initialize the downloader and sets an upstream proxy if configured.
-## * The next step will be to generate the final download url, by obtaining the URL for the desired
-##   ruleset and add the settings for the upstream proxy.
-## * Finally the function will grab the rule file or tarball from the server.
-##   It tries to reduce the amount of download by using the "If-Modified-Since" HTTP header.
-#
-## Return codes:
-##
-## * "no url" - If no download URL could be gathered for the provider.
-## * "not modified" - In case the already stored rules file is up to date.
-## * "incomplete download" - When the remote file size differs from the downloaded file size.
-## * "$error" - The error message generated from the LWP::User Agent module.
+## It uses the LWP-based downloader function from the general-functions.pl to
+## download the ruleset for a requested provider.
 #
 sub downloadruleset ($) {
 	my ($provider) = @_;
 
-	# The amount of download attempts before giving up and
-	# logging an error.
-	my $max_dl_attempts = 3;
-
-	# Read proxysettings.
-	my %proxysettings=();
-	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-
-	# Init the download module.
-	#
-	# Request SSL hostname verification and specify path
-	# to the CA file.
-	my $downloader = LWP::UserAgent->new(
-		ssl_opts => {
-			SSL_ca_file     => '/etc/ssl/cert.pem',
-			verify_hostname => 1,
-		}
-	);
-
-	# Set timeout to 10 seconds.
-	$downloader->timeout(10);
-
-	# Check if an upstream proxy is configured.
-	if ($proxysettings{'UPSTREAM_PROXY'}) {
-		my $proxy_url;
-
-		$proxy_url = "http://";
-
-		# Check if the proxy requires authentication.
-		if (($proxysettings{'UPSTREAM_USER'}) && ($proxysettings{'UPSTREAM_PASSWORD'})) {
-			$proxy_url .= "$proxysettings{'UPSTREAM_USER'}\:$proxysettings{'UPSTREAM_PASSWORD'}\@";
-		}
-
-		# Add proxy server address and port.
-		$proxy_url .= $proxysettings{'UPSTREAM_PROXY'};
-
-		# Setup proxy settings.
-		$downloader->proxy(['http', 'https'], $proxy_url);
-	}
+	my %settings = ();
 
 	# Grab the download url for the provider.
 	my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
@@ -371,141 +312,30 @@ sub downloadruleset ($) {
 	# Abort and return "no url", if no url could be determined for the provider.
 	return "no url" unless ($url);
 
-	# Pass the requested URL to the downloader.
-	my $request = HTTP::Request->new(GET => $url);
-
-	# Generate temporary file name, located in the tempoary download directory and with a suffix of ".tmp".
-	# The downloaded file will be stored there until some sanity checks are performed.
-	my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "$tmp_dl_directory/", UNLINK => 0 );
-	my $tmpfile = $tmp->filename();
+	# Pass the requested URL to the settings hash.
+	$settings{'URL'} = $url;
 
 	# Call function to get the final path and filename for the downloaded file.
 	my $dl_rulesfile = &_get_dl_rulesfile($provider);
 
-	# Check if the rulesfile already exits, because it has been downloaded in the past.
-	#
-	# In this case we are requesting the server if the remote file has been changed or not.
-	# This will be done by sending the modification time in a special HTTP header.
-	if (-f $dl_rulesfile) {
-		# Call stat on the file.
-		my $stat = stat($dl_rulesfile);
+	# Add the file information to the settings hash.
+	$settings{'FILE'} = $dl_rulesfile;
 
-		# Omit the mtime of the existing file.
-		my $mtime = $stat->mtime;
+	# Add Etag details to the settings hash.
+	$settings{'ETAGSFILE'} = $etags_file;
+	$settings{'ETAGPREFIX'} = $provider;
 
-		# Convert the timestamp into right format.
-		my $http_date = time2str($mtime);
+	# Call the downloader and pass the settings hash.
+	my $response = &HTTPClient::downloader(%settings);
 
-		# Add the If-Modified-Since header to the request to ask the server if the
-		# file has been modified.
-		$request->header( 'If-Modified-Since' => "$http_date" );
+	# Return the response message if the downloader provided one.
+	if ($response) {
+		return $response;
 	}
 
-	# Read-in Etags file for known Etags if the file is present.
-	my %etags = ();
-	&General::readhash("$etags_file", \%etags) if (-f $etags_file);
+	# Set correct ownership for the downloaded rules file.
+	&set_ownership("$dl_rulesfile");
 
-	# Check if an Etag for the current provider is stored.
-	if ($etags{$provider}) {
-		# Grab the stored tag.
-		my $etag = $etags{$provider};
-
-		# Add an "If-None-Match header to the request to ask the server if the
-		# file has been modified.
-		$request->header( 'If-None-Match' => $etag );
-	}
-
-	my $dl_attempt = 1;
-	my $response;
-
-	# Download and retry on failure.
-	while ($dl_attempt <= $max_dl_attempts) {
-		# Perform the request and save the output into the tmpfile.
-		$response = $downloader->request($request, $tmpfile);
-
-		# Check if the download was successfull.
-		if($response->is_success) {
-			# Break loop.
-			last;
-
-		# Check if the server responds with 304 (Not Modified).
-		} elsif ($response->code == 304) {
-			# Remove temporary file, if one exists.
-			unlink("$tmpfile") if (-e "$tmpfile");
-
-			# Return "not modified".
-			return "not modified";
-
-		# Check if we ran out of download re-tries.
-		} elsif ($dl_attempt eq $max_dl_attempts) {
-			# Obtain error.
-			my $error = $response->content;
-
-			# Remove temporary file, if one exists.
-			unlink("$tmpfile") if (-e "$tmpfile");
-
-			# Return the error message from response..
-			return "$error";
-		}
-
-		# Remove temporary file, if one exists.
-		unlink("$tmpfile") if (-e "$tmpfile");
-
-		# Increase download attempt counter.
-		$dl_attempt++;
-	}
-
-	# Obtain the connection headers.
-	my $headers = $response->headers;
-
-	# Get the timestamp from header, when the file has been modified the
-	# last time.
-	my $last_modified = $headers->last_modified;
-
-	# Get the remote size of the downloaded file.
-	my $remote_filesize = $headers->content_length;
-
-	# Grab the Etag from response it the server provides one.
-	if ($response->header('Etag')) {
-		# Add the Etag to the etags hash.
-		$etags{$provider} = $response->header('Etag');
-
-		# Write the etags file.
-		&General::writehash($etags_file, \%etags);
-	}
-
-	# Perform stat on the tmpfile.
-	my $stat = stat($tmpfile);
-
-	# Grab the local filesize of the downloaded tarball.
-	my $local_filesize = $stat->size;
-
-	# Check if both file sizes match.
-	if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
-		# Delete temporary file.
-		unlink("$tmpfile");
-
-		# Return "1" - false.
-		return "incomplete download";
-	}
-
-	# Overwrite the may existing rulefile or tarball with the downloaded one.
-	move("$tmpfile", "$dl_rulesfile");
-
-	# Check if we got a last-modified value from the server.
-	if ($last_modified) {
-		# Assign the last-modified timestamp as mtime to the
-		# rules file.
-		utime(time(), "$last_modified", "$dl_rulesfile");
-	}
-
-	# Delete temporary file.
-	unlink("$tmpfile");
-
-	# Set correct ownership for the tarball.
-	set_ownership("$dl_rulesfile");
-
-	# If we got here, everything worked fine. Return nothing.
 	return;
 }
 

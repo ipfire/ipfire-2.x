@@ -1102,7 +1102,9 @@ END
 	&Header::closesection();
 
 	# Throughput Graph
-	if (-e "/var/log/rrd/collectd/localhost/iptables-mangle-IPS/ipt_bytes-BYPASSED.rrd") {
+	if (-e "/var/log/rrd/collectd/localhost/iptables-mangle-IPS/ipt_bytes-BYPASSED.rrd"
+			&& -e "/var/log/rrd/collectd/localhost/iptables-mangle-IPS/ipt_bytes-SCANNED.rrd"
+			&& -e "/var/log/rrd/collectd/localhost/iptables-mangle-IPS/ipt_bytes-WHITELISTED.rrd") {
 		&Header::graph("$Lang::tr{'ips throughput'}", "ids.cgi", "ips-throughput", "day");
 	}
 

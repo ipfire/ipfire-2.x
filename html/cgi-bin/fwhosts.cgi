@@ -582,6 +582,13 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			$fwhostsettings{'grp_name'}='';
 			$fwhostsettings{'remark'}='';
 		}
+		# Fetch the address from a WireGuard Peer
+		if ($fwhostsettings{'grp2'} eq 'wg_peer' && $fwhostsettings{'WG_PEER'} ne ''){
+			@target=$fwhostsettings{'WG_PEER'};
+			$type='wg_peer';
+		}elsif ($fwhostsettings{'grp2'} eq 'wg_peer' && $fwhostsettings{'WG_PEER'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'};
+		}
 		#get address from  ovpn ccd static net
 		if ($fwhostsettings{'grp2'} eq 'ovpn_net' && $fwhostsettings{'OVPN_CCD_NET'} ne ''){
 			@target=$fwhostsettings{'OVPN_CCD_NET'};
@@ -1523,6 +1530,34 @@ END
 			print"</table>";
 			#Inner table right
 			print"</td><td align='right' style='vertical-align:top;'><table width='90%' border='0'>";
+			# WireGuard Peers
+			if (%Wireguard::peers) {
+				print <<EOF;
+					<tr>
+						<td style='width:15em;'>
+							<label>
+								<input type='radio' name='grp2' value='wg_peer' $checked{'grp2'}{'wg_peer'}>
+								$Lang::tr{'fwhost wg peers'}
+							</label>
+						</td>
+						<td style='text-align:right;'>
+							<select name='WG_PEER' style='width:16em;'>"
+EOF
+
+				foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
+					my $peer = &Wireguard::load_peer($key);
+
+					print <<EOF;
+								<option value="$peer->{"NAME"}">$peer->{"NAME"}</option>
+EOF
+				}
+
+				print <<EOF;
+							</select>
+						</td>
+					</tr>
+EOF
+			}
 			#OVPN networks
 			if (! -z $configccdnet){
 				print<<END;
@@ -1973,6 +2008,14 @@ sub getcolor
 			$tdcolor="<font style='color: $Header::colourred;'>$c</font>";
 			return $tdcolor;
 		}
+
+		# WireGuard Roadwarrior
+		if ($Wireguard::settings{'CLIENT_POOL'}) {
+			if (&Network::ip_address_in_network($sip, $Wireguard::settings{'CLIENT_POOL'})) {
+				return "<font style='color: $Header::colourwg;'>$c</font>"
+			}
+		}
+
 		#Check if IP is part of OpenVPN N2N subnet
 		foreach my $key (sort keys %ccdhost){
 			if ($ccdhost{$key}[3] eq 'net'){
@@ -2979,6 +3022,23 @@ sub getipforgroup
 		&deletefromgrp($name,$configgrp);
 	}
 
+	# WireGuard Peers
+	if ($type eq "wg_peer") {
+		my $peer = &Wireguard::get_peer_by_name($name);
+
+		if (defined $peer) {
+			my @addresses = ();
+
+			if ($peer->{"TYPE"} eq "host") {
+				push(@addresses, @{ $peer->{"CLIENT_ADDRESS"} });
+			} elsif ($peer->{"TYPE"} eq "net") {
+				push(@addresses, @{ $peer->{"REMOTE_SUBNETS"} });
+			}
+
+			return join(", ", @addresses);
+		}
+	}
+
 	#get address from ovpn ccd Net-2-Net
 	if ($type eq 'OpenVPN N-2-N'){
 		foreach my $key (keys %ccdhost) {
@@ -3054,6 +3114,9 @@ sub getipforgroup
 			my %hash=();
 			&General::readhash("${General::swroot}/ethernet/settings",\%hash);
 			return $hash{'ORANGE_NETADDRESS'}."/".&Network::convert_netmask2prefix($hash{'ORANGE_NETMASK'}) || $hash{'ORANGE_NETMASK'};
+		}
+		if ($name eq "WGRW") {
+			return $Wireguard::settings{'CLIENT_POOL'};
 		}
 		if ($name eq 'ALL'){
 			return "0.0.0.0/0";

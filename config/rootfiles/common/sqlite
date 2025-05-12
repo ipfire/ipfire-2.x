@@ -3,6 +3,6 @@ usr/bin/sqlite3
 #usr/include/sqlite3ext.h
 usr/lib/libsqlite3.so
 usr/lib/libsqlite3.so.0
-usr/lib/libsqlite3.so.3.49.1
+usr/lib/libsqlite3.so.3.49.2
 #usr/lib/pkgconfig/sqlite3.pc
 #usr/share/man/man1/sqlite3.1

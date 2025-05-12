@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -74,5 +74,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make BUILD_INFO='"($(NAME) $(VERSION))"' $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	
+	# Install cron job.
+	install -m 754 -v $(DIR_CONF)/smartmontools/fcron.monthly \
+		/etc/fcron.monthly/smart-drivedb
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

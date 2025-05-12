@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="194"							# Core Level (Filename)
+CORE="195"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -1706,13 +1706,13 @@ build_system() {
 	lfsmake2 ntfs-3g
 	lfsmake2 ethtool
 	lfsmake2 fcron
+	lfsmake2 wireguard-tools
 	lfsmake2 perl-ExtUtils-PkgConfig
 	lfsmake2 perl-GD
 	lfsmake2 perl-GD-Graph
 	lfsmake2 perl-GD-TextUtil
 	lfsmake2 perl-Device-SerialPort
 	lfsmake2 perl-Device-Modem
-	lfsmake2 perl-Apache-Htpasswd
 	lfsmake2 perl-Parse-Yapp
 	lfsmake2 perl-Data-UUID
 	lfsmake2 perl-Try-Tiny
@@ -1831,8 +1831,6 @@ build_system() {
 	lfsmake2 lame
 	lfsmake2 soxr
 	lfsmake2 libshout
-	lfsmake2 xvid
-	lfsmake2 libmpeg2
 	lfsmake2 gnump3d
 	lfsmake2 libxxhash
 	lfsmake2 rsync

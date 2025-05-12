@@ -33,6 +33,7 @@ no warnings 'uninitialized';
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/network-functions.pl';
+require '/var/ipfire/wireguard-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
@@ -875,8 +876,14 @@ sub checkrule
 					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target: $networkip2/$tcidr<br>";
 				}
 		}else{
+			$errormessage .= $sip;
+			$errormessage .= $scidr;
+
+			$errormessage .= $tip;
+			$errormessage .= $tcidr;
+
 			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) ){
-			$errormessage.=$Lang::tr{'fwdfw err samesub'};
+			$errormessage.=$Lang::tr{'fwdfw err samesub'} . $fwdfwsettings{'grp1'} .$fwdfwsettings{$fwdfwsettings{'grp1'}} . $fwdfwsettings{'grp2'} . $fwdfwsettings{$fwdfwsettings{'grp2'}};
 			}
 		}
 	}
@@ -1178,6 +1185,40 @@ END
 
 	#End left table. start right table (vpn)
 	print"</tr></table></td><td valign='top'><table width='95%' border='0' align='right'><tr>";
+
+	# WireGuard Peers
+	if (%Wireguard::peers || $optionsfw{'SHOWDROPDOWN'} eq 'on') {
+		print <<EOF;
+			<tr>
+				<td>
+					<input type='radio' name='$grp' id='wg_peer_$srctgt' value='wg_peer_$srctgt' $checked{$grp}{'wg_peer_'.$srctgt}>
+				</td>
+				<td nowrap='nowrap' width='16%'>
+					$Lang::tr{'fwhost wg peers'}
+				</td>
+				<td nowrap='nowrap' width='1%' align='right'>
+					<select name='wg_peer_$srctgt' style='width:200px;'>"
+EOF
+			# Sort peers by name
+			foreach my $key (sort { $Wireguard::peers{$a}[2] cmp $Wireguard::peers{$b}[2] } keys %Wireguard::peers) {
+				# Load the peer
+				my $peer = &Wireguard::load_peer($key);
+
+				# Is this peer selected?
+				my $selected = ($fwdfwsettings{$fwdfwsettings{$grp}} eq $peer->{'NAME'}) ? "selected" : "";
+
+				print <<EOF;
+					<option value="$peer->{'NAME'}" $selected>$peer->{'NAME'}</option>
+EOF
+			}
+
+			print <<EOF;
+					</select>
+				</td>
+			</tr>
+EOF
+	}
+
 	# CCD networks
 	if( ! -z $configccdnet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
 		print"<td width='1%'><input type='radio' name='$grp' id='ovpn_net_$srctgt' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_net_$srctgt' style='width:200px;'>";
@@ -1261,19 +1302,23 @@ sub get_ip
 		if ($fwdfwsettings{$grp} eq $val.'_addr'){
 			($a,$b)   = split (/\//, $fwdfwsettings{$fwdfwsettings{$grp}});
 		}elsif($fwdfwsettings{$grp} eq 'std_net_'.$val){
-			if ($fwdfwsettings{$fwdfwsettings{$grp}} =~ /Gr/i){
+			if ($fwdfwsettings{$fwdfwsettings{$grp}} eq "GREEN"){
 				$a=$netsettings{'GREEN_NETADDRESS'};
 				$b=&General::iporsubtocidr($netsettings{'GREEN_NETMASK'});
-			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} =~ /Ora/i){
+			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} eq "ORANGE"){
 				$a=$netsettings{'ORANGE_NETADDRESS'};
 				$b=&General::iporsubtocidr($netsettings{'ORANGE_NETMASK'});
-			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} =~ /Bl/i){
+			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} eq "BLUE"){
 				$a=$netsettings{'BLUE_NETADDRESS'};
 				$b=&General::iporsubtocidr($netsettings{'BLUE_NETMASK'});
-			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} =~ /OpenVPN/i){
+			}elsif($fwdfwsettings{$fwdfwsettings{$grp}} eq "OpenVPN-Dyn"){
 				&General::readhash("$configovpn",\%ovpnsettings);
 				($a,$b)   = split (/\//, $ovpnsettings{'DOVPN_SUBNET'});
 				$b=&General::iporsubtocidr($b);
+
+			# WireGuard
+			} elsif ($fwdfwsettings{$fwdfwsettings{$grp}} eq "WGRW") {
+				return $Wireguard::settings{'CLIENT_POOL'};
 			}
 		}elsif($fwdfwsettings{$grp} eq 'cust_net_'.$val){
 			&General::readhasharray("$confignet", \%customnetwork);
@@ -1424,6 +1469,9 @@ sub getcolor
 		}elsif ($val eq 'IPsec RW' ){
 			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 			return;
+		}elsif ($val eq "WGRW") {
+			$tdcolor="style='background-color: $Header::colourwg; color: white;'";
+			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &Header::orange_used() && &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
@@ -1490,8 +1538,20 @@ sub getcolor
 					}
 				}
 			}
+
+			# WireGuard Roadwarrior
+			if ($Wireguard::settings{'CLIENT_POOL'}) {
+				if (&Network::ip_address_in_network($c, $Wireguard::settings{'CLIENT_POOL'})) {
+					$tdcolor="style='background-color: $Header::colourwg; color:white;'";
+					return;
+				}
+			}
 		}
 		#VPN networks
+		if ($nettype eq 'wg_peer_src' || $nettype eq 'wg_peer_tgt'){
+			$tdcolor="style='background-color: $Header::colourwg;color:white;'";
+			return;
+		}
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
 			$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
 			return;
@@ -1500,6 +1560,7 @@ sub getcolor
 			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 			return;
 		}
+
 		#ALIASE
 		foreach my $alias (sort keys %aliases)
 		{
@@ -2525,10 +2586,10 @@ END
 			@tmpsrc=();
 			@tmptgt=();
 			#check if vpn hosts/nets have been deleted
-			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){
+			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /^wg_/ || $$hash{$key}[3] =~ /ovpn/i){
 				push (@tmpsrc,$$hash{$key}[4]);
 			}
-			if($$hash{$key}[5] =~ /ipsec/i || $$hash{$key}[5] =~ /ovpn/i){
+			if($$hash{$key}[5] =~ /ipsec/i || $$hash{$key}[5] =~ /^wg_/ || $$hash{$key}[5] =~ /ovpn/i){
 				push (@tmptgt,$$hash{$key}[6]);
 			}
 			foreach my $host (@tmpsrc){
@@ -2548,6 +2609,10 @@ END
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
 					}
+				} elsif ($$hash{$key}[3] eq 'wg_peer_src') {
+					if (!defined &Wireguard::get_peer_by_name($host)) {
+						$coloryellow = 'on';
+					}
 				}
 			}
 			foreach my $host (@tmptgt){
@@ -2566,6 +2631,10 @@ END
 				}elsif($$hash{$key}[5] eq 'ovpn_host_tgt'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
+					}
+				} elsif ($$hash{$key}[3] eq 'wg_peer_tgt') {
+					if (!defined &Wireguard::get_peer_by_name($host)) {
+						$coloryellow = 'on';
 					}
 				}
 			}

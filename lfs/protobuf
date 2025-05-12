@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 29.3
+VER        = 30.2
 
 THISAPP    = protobuf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8d37daac6f0d832e5bff5c56b9be73fce1fe016ca4e905f4c66d8fea20fabbee54a6be2c824f503d40f8492a4ec6280a539c454de9a118b69ebc57f2afe3d965
+$(DL_FILE)_BLAKE2 = 3a7d6bfa38500b16b1ce52b244fd9448fe7be2933a77224a1423a67e3ae3155846c0974ee1b6c579f6050f60b7784ace21b149b3cbdff2ef1e6bf954acbb1b51
 
 install : $(TARGET)
 
@@ -71,10 +71,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && cmake . \
-			-D CMAKE_INSTALL_PREFIX=/usr \
-			-D protobuf_BUILD_TESTS=OFF \
-			-D protobuf_BUILD_SHARED_LIBS=ON \
-			-D protobuf_ABSL_PROVIDER=package
+				-D CMAKE_INSTALL_PREFIX=/usr \
+				-D protobuf_BUILD_TESTS=OFF \
+				-D protobuf_BUILD_SHARED_LIBS=ON \
+				-D protobuf_ABSL_PROVIDER=package
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

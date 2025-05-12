@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -20,7 +20,6 @@
 ###############################################################################
 
 use strict;
-use Apache::Htpasswd;
 use Scalar::Util qw(looks_like_number);
 
 # enable only the following on debugging purpose
@@ -4050,15 +4049,7 @@ sub adduser
 		close(FILE);
 	} else {
 		&deluser($str_user);
-
-		my %htpasswd_options = (
-			passwdFile => "$userdb",
-			UseMD5 => 1,
-		);
-
-		my $htpasswd = new Apache::Htpasswd(\%htpasswd_options);
-
-		$htpasswd->htpasswd($str_user, $str_pass);
+		&General::system("/usr/bin/htpasswd", "-bB", "-C 10", "$userdb", "$str_user", "$str_pass");
 	}
 
 	if ($str_group eq 'standard') { open(FILE, ">>$stdgrp");

@@ -1,0 +1,393 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2024 Michael Tremer <michael.tremer@ipfire.org>               #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+. /etc/rc.d/init.d/networking/functions.network
+
+eval $(/usr/local/bin/readhash /var/ipfire/wireguard/settings)
+
+# Mark all packets coming out of the WireGuard interfaces
+WG_MARK="0x00800000"
+
+interfaces() {
+	local id
+	local enabled
+	local type
+	local _rest
+
+	local IFS=','
+
+	# wg0 will always be created for roadwarrior
+	echo "wg0"
+
+	while read -r id enabled type _rest; do
+		# Skip peers that are not enabled
+		[ "${enabled}" = "on" ] || continue
+
+		# Skip anything that isn't a net-to-net connection
+		[ "${type}" = "net" ] || continue
+
+		echo "wg${id}"
+	done < /var/ipfire/wireguard/peers
+
+	return 0
+}
+
+interface_is_rw() {
+	local intf="${1}"
+
+	[ "${intf}" = "wg0" ]
+}
+
+setup_interface() {
+	local intf="${1}"
+
+	# Create the interface if it does not exist
+	if [ ! -d "/sys/class/net/${intf}" ]; then
+		ip link add "${intf}" type wireguard || return $?
+	fi
+
+	# Set up the interface
+	ip link set "${intf}" up
+
+	# Set the MTU
+	if [ -n "${MTU}" ]; then
+		ip link set "${intf}" mtu "${MTU}" || return $?
+	fi
+
+	# Load the configuration into the kernel
+	wg syncconf "${intf}" <(generate_config "${intf}") || return $?
+
+	return 0
+}
+
+cleanup_interfaces() {
+	local interfaces=( "$(interfaces)" )
+
+	local intf
+	for intf in /sys/class/net/wg[0-9]*; do
+		[ -d "${intf}" ] || continue
+
+		# Remove the path
+		intf="${intf##*/}"
+
+		local found=0
+		local i
+
+		for i in ${interfaces[@]}; do
+			if [ "${intf}" = "${i}" ]; then
+				found=1
+				break
+			fi
+		done
+
+		if [ "${found}" -eq 0 ]; then
+			ip link del "${intf}"
+		fi
+	done
+
+	return 0
+}
+
+# Replaces 0.0.0.0/0 with 0.0.0.0/1 and 128.0.0.0/1 so that we can route all traffic
+# through a WireGuard tunnel.
+expand_subnets() {
+	local subnet
+
+	for subnet in $@; do
+		case "${subnet}" in
+			0.0.0.0/0|0.0.0.0/0.0.0.0)
+				echo -n "0.0.0.0/1,"
+				echo -n "128.0.0.0/1,"
+				;;
+
+			*)
+				echo -n "${subnet},"
+				;;
+		esac
+	done
+
+	return 0
+}
+
+generate_config() {
+	local intf="${1}"
+
+	# Flush all previously set routes
+	ip route flush dev "${intf}"
+
+	local IFS=','
+
+	local id
+	local enabled
+	local type
+	local name
+	local pubkey
+	local privkey
+	local port
+	local endpoint_addr
+	local endpoint_port
+	local remote_subnets
+	local remarks
+	local local_subnets
+	local psk
+	local keepalive
+	local local_address
+	local _rest
+
+	# Handles the special case of the RW interface
+	if interface_is_rw "${intf}"; then
+		echo "[Interface]"
+		echo "PrivateKey = ${PRIVATE_KEY}"
+
+		# Optionally set the port
+		if [ -n "${PORT}" ]; then
+			echo "ListenPort = ${PORT}"
+		fi
+
+		# Add the client pool
+		if [ -n "${CLIENT_POOL}" ]; then
+			ip route add "${CLIENT_POOL}" dev "${intf}"
+		fi
+
+		while read -r id enabled type name pubkey privkey port endpoint_addr endpoint_port \
+				remote_subnets remarks local_subnets psk keepalive local_address _rest; do
+			# Skip peers that are not hosts or not enabled
+			[ "${type}" = "host" ] || continue
+			[ "${enabled}" = "on" ] || continue
+
+			echo "[Peer]"
+			echo "PublicKey = ${pubkey}"
+
+			# Set PSK (if set)
+			if [ -n "${psk}" ]; then
+				echo "PresharedKey = ${psk}"
+			fi
+
+			# Set routes
+			if [ -n "${remote_subnets}" ]; then
+				echo "AllowedIPs = ${remote_subnets//|/, }"
+			fi
+
+			echo # newline
+		done < /var/ipfire/wireguard/peers
+
+		return 0
+	fi
+
+	local local_subnet
+	local remote_subnet
+
+	while read -r id enabled type name pubkey privkey port endpoint_addr endpoint_port \
+			remote_subnets remarks local_subnets psk keepalive local_address _rest; do
+		# Check for the matching connection
+		[ "${type}" = "net" ] || continue
+		[ "${intf}" = "wg${id}" ] || continue
+
+		# Skip peers that are not enabled
+		[ "${enabled}" = "on" ] || continue
+
+		# Update the interface alias
+		ip link set "${intf}" alias "${name}"
+
+		# Flush any addresses
+		ip addr flush dev "${intf}"
+
+		# Assign the local address
+		if [ -n "${local_address}" ]; then
+			ip addr add "${local_address}" dev "${intf}"
+
+			# Apply MASQUERADE
+			iptables -t nat -A WGNAT -o "${intf}" -j MASQUERADE
+		fi
+
+		echo "[Interface]"
+		echo "FwMark = ${WG_MARK}"
+
+		if [ -n "${privkey}" ]; then
+			echo "PrivateKey = ${privkey}"
+		fi
+
+		# Optionally set the port
+		if [ -n "${port}" ]; then
+			echo "ListenPort = ${port}"
+
+			# Open the port
+			iptables -A WGINPUT -p udp --dport "${port}" -j ACCEPT
+		fi
+
+		echo "[Peer]"
+		echo "PublicKey = ${pubkey}"
+
+		# Set PSK (if set)
+		if [ -n "${psk}" ]; then
+			echo "PresharedKey = ${psk}"
+		fi
+
+		# Set endpoint
+		if [ -n "${endpoint_addr}" ]; then
+			echo "Endpoint = ${endpoint_addr}${endpoint_port:+:}${endpoint_port}"
+		fi
+
+		# Set routes
+		if [ -n "${remote_subnets}" ]; then
+			echo "AllowedIPs = ${remote_subnets//|/, }"
+
+			# Apply the routes
+			local_subnets=( "${local_subnets//|/,}" )
+			remote_subnets=( "${remote_subnets//|/,}" )
+
+			# Find an IP address of the firewall that is inside the routed subnet
+			local src="$(ipfire_address_in_networks "${local_subnets[@]}")"
+
+			for remote_subnet in $(expand_subnets "${remote_subnets[@]}"); do
+				local args=(
+					"${remote_subnet}" "dev" "${intf}"
+				)
+
+				# Add the preferred source if we found one
+				if [ -n "${src}" ]; then
+					args+=( "src" "${src}" )
+				fi
+
+				ip route add "${args[@]}"
+			done
+
+			# Add a direct host route to the endpoint
+			if [ -s "/var/ipfire/red/remote-ipaddress" ]; then
+				ip route add table wg \
+					"${endpoint_addr}" via "$(</var/ipfire/red/remote-ipaddress)"
+			fi
+		fi
+
+		# Set keepalive
+		if [ -n "${keepalive}" ]; then
+			echo "PersistentKeepalive = ${keepalive}"
+		fi
+
+		# Set blocking rules
+		for local_subnet in ${local_subnets//|/ }; do
+			for remote_subnet in ${remote_subnets//|/ }; do
+				iptables -I WGBLOCK \
+					-s "${remote_subnet}" -d "${local_subnet}" -j RETURN
+			done
+		done
+
+		# There will only be one match, so we can break as soon we get here
+		break
+	done < /var/ipfire/wireguard/peers
+}
+
+reload_firewall() {
+	# Flush all previous rules
+	iptables -F WGINPUT
+	iptables -t nat -F WGNAT
+
+	if [ "${ENABLED}" = "on" ]; then
+		iptables -A WGINPUT -p udp --dport "${PORT}" -j ACCEPT
+	fi
+
+	iptables -F WGBLOCK
+
+	# Don't block any traffic from Roadwarrior peers
+	if [ -n "${CLIENT_POOL}" ]; then
+		iptables -A WGBLOCK -s "${CLIENT_POOL}" -i wg0 -j RETURN
+		iptables -A WGBLOCK -d "${CLIENT_POOL}" -o wg0 -j RETURN
+	fi
+
+	# Block all other traffic
+	iptables -A WGBLOCK -j REJECT --reject-with icmp-admin-prohibited
+
+	# Flush any custom routes
+	ip route flush table wg 2>/dev/null
+
+	# Ensure that the table is being looked up
+	if ! ip rule | grep -q "lookup wg"; then
+		ip rule add table wg fwmark "${WG_MARK}"
+	fi
+}
+
+wg_start() {
+	local failed=0
+	local intf
+
+	# Find all interfaces
+	local interfaces=( "$(interfaces)" )
+
+	# Shut down any unwanted interfaces
+	cleanup_interfaces
+
+	# Reload the firewall
+	reload_firewall
+
+	# Setup all interfaces
+	for intf in ${interfaces[@]}; do
+		setup_interface "${intf}" || failed=1
+	done
+
+	return ${failed}
+}
+
+wg_stop() {
+	local intf
+
+	# Reload the firewall
+	ENABLED=off reload_firewall
+
+	for intf in /sys/class/net/wg[0-9]*; do
+		ip link del "${intf##*/}"
+	done
+
+	return 0
+}
+
+case "${1}" in
+	start)
+		if [ "${ENABLED}" != "on" ]; then
+			exit 0
+		fi
+
+		boot_mesg "Starting WireGuard VPN..."
+		wg_start; evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping WireGuard VPN..."
+		wg_stop; evaluate_retval
+		;;
+
+	reload)
+		boot_mesg "Reloading WireGuard VPN..."
+		wg_start; evaluate_retval
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart}"
+		exit 1
+		;;
+esac

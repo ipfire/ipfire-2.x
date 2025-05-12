@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.4.7
+VER        = 3.4.8
 
 THISAPP    = libffi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0dd17b4fd358beb9842889168437443137445a5dba1f0a7e8669ae420d8efb927815c08602c1b1b141acfdfdbaa12b417863402a5c8df5f36519fd3e772d3f37
+$(DL_FILE)_BLAKE2 = 10b3d970dc598fb8689bca49751cda499ddc5216baf89d38625385b0d42d57f10d15cce3c4c044c9c73a4fce384c26f2a8e1b99269e9db1174c2631201c6bfd4
 
 install : $(TARGET)
 

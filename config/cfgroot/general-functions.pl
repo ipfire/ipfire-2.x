@@ -17,7 +17,6 @@ package General;
 use strict;
 use Socket;
 use IO::Socket;
-use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
 
 $General::version = 'VERSION';
@@ -25,6 +24,11 @@ $General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
 
 require "${General::swroot}/network-functions.pl";
+require "${General::swroot}/wireguard-functions.pl";
+
+# Load the main settings file
+our %mainsettings = ();
+&readhash("${General::swroot}/main/settings", \%mainsettings);
 
 # This function executes a shell command without forking a shell or do any other
 # Perl-voodoo before it. It deprecates the "system" command and is the only way
@@ -252,6 +256,13 @@ sub setup_default_networks
 			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NAME'} = "IPsec RW";
 			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NET'}  = $netaddress;
 		}
+	}
+
+	# WireGuard
+	if ($Wireguard::settings{'CLIENT_POOL'}) {
+		my $name = $Lang::tr{'wg rw peers'};
+
+		$defaultNetworks->{$name}{'NAME'} = "WGRW";
 	}
 }
 sub get_aliases
@@ -961,26 +972,6 @@ sub findhasharraykey {
     }
 }
 
-sub FetchPublicIp {
-    my %proxysettings;
-    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-        my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
-        Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
-    }
-    my $user_agent = &MakeUserAgent();
-    my ($out, $response) = Net::SSLeay::get_http(  'checkip4.dns.lightningwirelabs.com',
-                				    80,
-        					    "/",
-						    Net::SSLeay::make_headers('User-Agent' => $user_agent )
-						);
-    if ($response =~ m%HTTP/1\.. 200 OK%) {
-	$out =~ /Your IP address is: (\d+.\d+.\d+.\d+)/;
-	return $1;
-    }
-    return '';
-}
-
 #
 # Check if hostname.domain provided have IP provided
 # use gethostbyname to verify that
@@ -1018,31 +1009,6 @@ sub DyndnsServiceSync ($;$;$) {
 	}
     }
     return 0;
-}
-#
-# This sub returns the red IP used to compare in DyndnsServiceSync
-#
-sub GetDyndnsRedIP {
-    my %settings;
-    &General::readhash("${General::swroot}/ddns/settings", \%settings);
-
-    open(IP, "${General::swroot}/red/local-ipaddress") or return 'unavailable';
-    my $ip = <IP>;
-    close(IP);
-    chomp $ip;
-
-    # 100.64.0.0/10 is reserved for dual-stack lite (http://tools.ietf.org/html/rfc6598).
-    if (&General::IpInSubnet ($ip,'10.0.0.0','255.0.0.0') ||
-        &General::IpInSubnet ($ip,'172.16.0.0.','255.240.0.0') ||
-        &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0') ||
-        &General::IpInSubnet ($ip,'100.64.0.0', '255.192.0.0'))
-    {
-	if ($settings{'BEHINDROUTER'} eq 'FETCH_IP') {
-    	    my $RealIP = &General::FetchPublicIp;
-	    $ip = (&General::validip ($RealIP) ?  $RealIP : 'unavailable');
-	}
-    }
-    return $ip;
 }
 
 # Translate ICMP code to text

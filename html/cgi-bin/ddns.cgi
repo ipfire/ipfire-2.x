@@ -29,6 +29,7 @@ use experimental 'smartmatch';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/http-client-functions.pl";
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::table2colour}, ${Header::colouryellow} );
@@ -559,7 +560,7 @@ open(FILE, $datafile) or die "Unable to open $datafile.";
 close(FILE);
 
 # Get IP address of the red interface.
-my $ip = &General::GetDyndnsRedIP();
+my $ip = &HTTPClient::GetDyndnsRedIP();
 my $id = 0;
 my $toggle_enabled;
 
