@@ -34,6 +34,11 @@ done
 # Stop services
 
 # Remove files
+rm -rfv \
+	/usr/bin/genisoimage \
+	/usr/bin/mkhybrid \
+	/usr/lib/librols.so.* \
+	/usr/lib/libusual.so.*
 
 # Extract files
 extract_files
