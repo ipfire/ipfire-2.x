@@ -52,6 +52,16 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Build initial ramdisks for updated intel-microcode
+dracut --regenerate-all --force
+KVER="xxxKVERxxx"
+case "$(uname -m)" in
+	aarch64)
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}.img /boot/uInit-${KVER}
+		# dont remove initramfs because grub need this to boot.
+		;;
+esac
+
 # Apply SSH configuration
 #/usr/local/bin/sshctrl
 
