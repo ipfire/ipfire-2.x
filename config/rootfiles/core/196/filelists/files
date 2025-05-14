@@ -1,3 +1,4 @@
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 var/ipfire/langs/list
+var/ipfire/fwhosts/customservices
