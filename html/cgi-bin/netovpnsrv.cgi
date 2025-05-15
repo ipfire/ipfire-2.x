@@ -55,7 +55,7 @@ foreach my $key (sort {$vpnsettings{$a}[1] <=> $vpnsettings{$b}[1]} keys %vpnset
 
 my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*-n2n/ -not  -path *openvpn-UNDEF* -name *traffic.rrd 2>/dev/null|sort`;
 foreach (@vpngraphs){
-	if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive-traffic.rrd/){
+	if($_ =~ /(.*)\/openvpn-(.*)\/if_octets-traffic.rrd/){
 		push(@vpns,$2);
 	}
 }
