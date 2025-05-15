@@ -2,3 +2,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 var/ipfire/langs/list
 var/ipfire/fwhosts/customservices
+var/ipfire/graphs.pl
+srv/web/ipfire/cgi-bin/netexternal.cgi
+srv/web/ipfire/cgi-bin/netovpnsrv.cgi
+etc/rc.d/init.d/networking/red
