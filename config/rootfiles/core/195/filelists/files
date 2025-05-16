@@ -21,6 +21,7 @@ usr/local/bin/wireguardctrl
 usr/sbin/firewall-policy
 usr/sbin/setup
 var/ipfire/backup/bin/backup.pl
+var/ipfire/backup/include
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/http-client-functions.pl
