@@ -178,7 +178,7 @@ sub downloader (%) {
 	# Check if an file for etags has been given.
 	if ($etags_file) {
 		# Read-in Etags file for known Etags if the file is present.
-		&readhash("$etags_file", \%etags) if (-f $etags_file);
+		&General::readhash("$etags_file", \%etags) if (-f $etags_file);
 
 		# Check if an Etag for the requested file is stored.
 		if ($etags{$etagprefix}) {
