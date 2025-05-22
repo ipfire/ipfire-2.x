@@ -3,6 +3,9 @@ etc/iproute2/rt_tables
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/wireguard
+etc/rc.d/rc0.d/K70wireguard
+etc/rc.d/rc3.d/S50wireguard
+etc/rc.d/rc6.d/K70wireguard
 lib/udev/network-aqm
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ddns.cgi
