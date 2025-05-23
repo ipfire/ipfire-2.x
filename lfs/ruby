@@ -34,6 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 # https://mirror.cyberbits.eu/ruby/
 
+CFLAGS += -DRUBY_FUNCTION_NAME_STRING=__FUNCTION__
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
