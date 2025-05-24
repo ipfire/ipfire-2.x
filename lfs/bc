@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.07.1
+VER        = 1.08.1
 
 THISAPP    = bc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = dcedc193be5521aa0fa3a19746233ed65bc1fe8ef12e15155341706de6fbeecb6dd7ee4ab11e2d4b3aca2ae7097cce89e389b3573493bbc893e00b4ed3239594
+$(DL_FILE)_BLAKE2 = 93de02d7eafb2bd583e2d4ac4af7e2bfc28064f0afecb5c8e9e90559d2896a6bfbf3c520403a85cf76f51e15866b640df587b5ccabd4d98d2ed67f7bbf7c1153
 
 install : $(TARGET)
 
@@ -70,7 +70,11 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-readline --mandir=/usr/share/man --infodir=/usr/share/info
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr \
+				--with-readline \
+				--mandir=/usr/share/man \
+				--infodir=/usr/share/info
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
