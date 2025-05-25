@@ -6,3 +6,4 @@ var/ipfire/graphs.pl
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 etc/rc.d/init.d/networking/red
+var/ipfire/ipblocklist-functions.pl
