@@ -30,6 +30,7 @@ use Sort::Naturally;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/wireguard-functions.pl";
 require "/opt/pakfire/lib/functions.pl";
 
 my %cgiparams=();
@@ -39,7 +40,6 @@ my %netsettings=();
 my %ddnssettings=();
 my %proxysettings=();
 my %vpnsettings=();
-my %wgsettings=();
 my %vpnconfig=();
 my %ovpnconfig=();
 my $warnmessage = '';
@@ -61,7 +61,6 @@ $pppsettings{'PROFILENAME'} = 'None';
 &General::readhash("${General::swroot}/ddns/settings", \%ddnssettings);
 &General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 &General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
-&General::readhash("${General::swroot}/wireguard/settings", \%wgsettings);
 
 my %color = ();
 my %mainsettings = ();
@@ -373,9 +372,9 @@ print <<END;
 END
 }
 
-#check if WireGuard is running
-if ( $wgsettings{'ENABLED'} eq 'on' ) {
-print<<END;
+# Show WireGuard status
+if (&Wireguard::is_enabled()) {
+	print<<END;
 		<tr>
 			<td style='width:25%; text-align:center; background-color:$Header::colourwg;'>
 				<a href='/cgi-bin/wireguard.cgi' style='color:white'><b>$Lang::tr{'wg'}</b></a>
