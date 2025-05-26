@@ -52,6 +52,11 @@ if (-e "/var/ipfire/wireguard/peers") {
 	"CLIENT_DNS" => $Network::ethernet{'GREEN_ADDRESS'},
 });
 
+# Returns true if WireGuard is enabled
+sub is_enabled() {
+	return ($settings{'ENABLED'} eq "on");
+}
+
 # Returns the local endpoint
 sub get_endpoint() {
 	my $endpoint = $settings{'ENDPOINT'};
