@@ -1,9 +1,12 @@
 etc/rc.d/init.d/networking/red
+srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
+srv/web/ipfire/cgi-bin/wireguard.cgi
 var/ipfire/fwhosts/customservices
 var/ipfire/graphs.pl
 var/ipfire/ipblocklist-functions.pl
 var/ipfire/langs/list
+var/ipfire/wireguard-functions.pl
