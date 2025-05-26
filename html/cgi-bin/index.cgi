@@ -334,7 +334,7 @@ if (&Header::orange_used()) {
 				<a href='/cgi-bin/firewall.cgi' style='color:white'><b>$Lang::tr{'dmz'}</b></a>
 			</td>
 			<td style='width:30%; text-align:center;'>$netsettings{'ORANGE_ADDRESS'}/$sub</td>
-			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 		</tr>
 END
 	}
@@ -346,7 +346,7 @@ print<<END;
 				<a href='/cgi-bin/vpnmain.cgi' style='color:white'><b>$Lang::tr{'ipsec'}</b></a>
 			</td>
 			<td style='width:30%; text-align:center;'></td>
-			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 		</tr>
 END
 }
@@ -367,7 +367,7 @@ print <<END;
 			<a href='/cgi-bin/ovpnmain.cgi' style='color:white'><b>OpenVPN</b></a>
 		</td>
 		<td style='width:30%; text-align:center;'>$ovpnip</td>
-		<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+		<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 	</tr>
 END
 }
@@ -382,7 +382,7 @@ if (&Wireguard::is_enabled()) {
 				<a href='/cgi-bin/wireguard.cgi' style='color:white'><b>$Lang::tr{'wg'}</b></a>
 			</td>
 			<td style='width:30%; text-align:center;'>$network</td>
-			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
+			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
 		</tr>
 END
 }

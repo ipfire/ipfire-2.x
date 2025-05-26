@@ -1172,6 +1172,7 @@ WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: not affected = Not Affected
 WARNING: untranslated string: not validating = Not validating
+WARNING: untranslated string: online = Online
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: open connections = Open Connections
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon

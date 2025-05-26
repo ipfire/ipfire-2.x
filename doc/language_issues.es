@@ -1072,6 +1072,7 @@ WARNING: untranslated string: malformed preshared key = Malformed Pre-Shared Key
 WARNING: untranslated string: malformed private key = Malformed Private Key
 WARNING: untranslated string: malformed public key = Malformed Public Key
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: online = Online
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon
 WARNING: untranslated string: openvpn cert has expired = Expired

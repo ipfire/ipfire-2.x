@@ -1960,6 +1960,7 @@
 'one month' => 'One Month',
 'one week' => 'One Week',
 'one year' => 'One Year',
+'online' => 'Online',
 'online help en' => 'Online help (in english)',
 'only digits allowed in holdoff field' => 'Only digits allowed in holdoff field',
 'only digits allowed in max retries field' => 'Only digits allowed in max retries field.',

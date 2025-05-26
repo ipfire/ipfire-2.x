@@ -173,6 +173,7 @@
 < malformed preshared key
 < malformed private key
 < malformed public key
+< online
 < oops something went wrong
 < openvpn cert expires soon
 < openvpn cert has expired
@@ -285,6 +286,7 @@
 < malformed preshared key
 < malformed private key
 < malformed public key
+< online
 < oops something went wrong
 < ovpn roadwarrior server
 < password has quotation mark
@@ -729,6 +731,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -1362,6 +1365,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -2300,6 +2304,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -3390,6 +3395,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -4001,6 +4007,7 @@
 < not affected
 < not validating
 < okay
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
