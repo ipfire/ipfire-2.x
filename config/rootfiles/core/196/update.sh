@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/ipsec stop
 
 # Remove files
 rm -rfv \
@@ -65,7 +66,17 @@ esac
 # Apply SSH configuration
 #/usr/local/bin/sshctrl
 
+# Change IPsec configuration of existing connections using ML-KEM
+# to always make use of hybrid key exchange in conjunction with Curve 25519.
+sed -i -e "s@mlkem@x25519-ke1_mlkem@g" /var/ipfire/vpn/config
+
+# Apply changes to ipsec.conf
+/srv/web/ipfire/cgi-bin/vpnmain.cgi
+
 # Start services
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/rc.d/init.d/ipsec start
+fi
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
