@@ -379,7 +379,7 @@ if (&Wireguard::is_enabled()) {
 	print<<END;
 		<tr>
 			<td style='width:25%; text-align:center; background-color:$Header::colourwg;'>
-				<a href='/cgi-bin/wireguard.cgi' style='color:white'><b>$Lang::tr{'wg'}</b></a>
+				<a href='/cgi-bin/wireguard.cgi' style='color:white'><b>$Lang::tr{'wireguard'}</b></a>
 			</td>
 			<td style='width:30%; text-align:center;'>$network</td>
 			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>$Lang::tr{'online'}</td>
