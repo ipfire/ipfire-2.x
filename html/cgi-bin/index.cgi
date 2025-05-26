@@ -374,12 +374,14 @@ END
 
 # Show WireGuard status
 if (&Wireguard::is_enabled()) {
+	my $network = $Wireguard::settings{'CLIENT_POOL'};
+
 	print<<END;
 		<tr>
 			<td style='width:25%; text-align:center; background-color:$Header::colourwg;'>
 				<a href='/cgi-bin/wireguard.cgi' style='color:white'><b>$Lang::tr{'wg'}</b></a>
 			</td>
-			<td style='width:30%; text-align:center;'></td>
+			<td style='width:30%; text-align:center;'>$network</td>
 			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
 		</tr>
 END
