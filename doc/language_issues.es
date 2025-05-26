@@ -21,7 +21,6 @@ WARNING: translation string unused: Captive time
 WARNING: translation string unused: Captive voactive
 WARNING: translation string unused: Captive voucher
 WARNING: translation string unused: Captive vout
-WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: Daily
@@ -60,6 +59,7 @@ WARNING: translation string unused: add service
 WARNING: translation string unused: add subclass
 WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
+WARNING: translation string unused: addon
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: admin users
 WARNING: translation string unused: administrator user password
@@ -168,6 +168,7 @@ WARNING: translation string unused: bitrate
 WARNING: translation string unused: bleeding rules
 WARNING: translation string unused: blue access use hint
 WARNING: translation string unused: blue interface
+WARNING: translation string unused: ca name must only contain characters or spaces
 WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
 WARNING: translation string unused: calamaris report interval (in minutes)
@@ -237,11 +238,6 @@ WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
 WARNING: translation string unused: destination port overlaps
-WARNING: translation string unused: dh key move failed
-WARNING: translation string unused: dh key warn
-WARNING: translation string unused: dh key warn1
-WARNING: translation string unused: dh name is invalid
-WARNING: translation string unused: dh parameter
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -288,10 +284,8 @@ WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: dos charset
-WARNING: translation string unused: download dh parameter
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
-WARNING: translation string unused: drop output
 WARNING: translation string unused: dstprt range overlaps
 WARNING: translation string unused: dstprt within existing
 WARNING: translation string unused: dynamic dns client
@@ -345,13 +339,12 @@ WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
+WARNING: translation string unused: extrahd because it it outside the allowed mount path
 WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
-WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall hits per
-WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
@@ -412,10 +405,8 @@ WARNING: translation string unused: fwhost reset
 WARNING: translation string unused: fwhost wo subnet
 WARNING: translation string unused: g.dtm
 WARNING: translation string unused: g.lite
-WARNING: translation string unused: gen dh
 WARNING: translation string unused: gen static key
 WARNING: translation string unused: generate
-WARNING: translation string unused: generate dh key
 WARNING: translation string unused: generate tripwire keys and init
 WARNING: translation string unused: generatekeys
 WARNING: translation string unused: generatepolicy
@@ -438,7 +429,6 @@ WARNING: translation string unused: host
 WARNING: translation string unused: host allow
 WARNING: translation string unused: host configuration
 WARNING: translation string unused: host deny
-WARNING: translation string unused: hostile networks
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
@@ -447,12 +437,9 @@ WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
 WARNING: translation string unused: ids automatic rules update
 WARNING: translation string unused: ids preprocessor
-WARNING: translation string unused: ids rules license
-WARNING: translation string unused: ids rules license1
-WARNING: translation string unused: ids rules license2
-WARNING: translation string unused: ids rules license3
 WARNING: translation string unused: ids rules update
 WARNING: translation string unused: ids ruleset settings
+WARNING: translation string unused: ids unsupported provider
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -475,7 +462,6 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
-WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
 WARNING: translation string unused: invalid port list
@@ -495,10 +481,6 @@ WARNING: translation string unused: ipblocklist category scanner
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: ipsec no connections
 WARNING: translation string unused: iptable rules
-WARNING: translation string unused: isdn
-WARNING: translation string unused: isdn settings
-WARNING: translation string unused: isdn1
-WARNING: translation string unused: isdn2
 WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
 WARNING: translation string unused: kernel version
@@ -608,7 +590,6 @@ WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
 WARNING: translation string unused: nonetworkname
 WARNING: translation string unused: noservicename
-WARNING: translation string unused: not a valid dh key
 WARNING: translation string unused: not set
 WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
@@ -648,13 +629,8 @@ WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
-WARNING: translation string unused: ovpn dh
-WARNING: translation string unused: ovpn dh new key
-WARNING: translation string unused: ovpn dh parameters
-WARNING: translation string unused: ovpn dh upload
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
-WARNING: translation string unused: ovpn error dh
 WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
@@ -666,7 +642,6 @@ WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
-WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
 WARNING: translation string unused: ovpn_mtudisc
 WARNING: translation string unused: ovpn_processprio
@@ -794,8 +769,6 @@ WARNING: translation string unused: smbstart
 WARNING: translation string unused: smbstop
 WARNING: translation string unused: smtphost
 WARNING: translation string unused: smtpport
-WARNING: translation string unused: snort hits
-WARNING: translation string unused: snort working
 WARNING: translation string unused: socket options
 WARNING: translation string unused: sort ascending
 WARNING: translation string unused: sort descending
@@ -914,7 +887,6 @@ WARNING: translation string unused: updxlrtr update information
 WARNING: translation string unused: updxlrtr update notification
 WARNING: translation string unused: updxlrtr used by
 WARNING: translation string unused: upgrade
-WARNING: translation string unused: upload dh key
 WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload new ruleset
@@ -962,12 +934,18 @@ WARNING: translation string unused: webradio playlist
 WARNING: translation string unused: week
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: wg
+WARNING: translation string unused: wg client configuration file
+WARNING: translation string unused: wg create peer
+WARNING: translation string unused: wg download configuration
+WARNING: translation string unused: wg edit peer
+WARNING: translation string unused: wg missing port
+WARNING: translation string unused: wg pre-shared key (optional)
+WARNING: translation string unused: wg show configuration qrcode
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
 WARNING: translation string unused: wlan clients
-WARNING: translation string unused: wlanap access point
-WARNING: translation string unused: wlanap broadcast ssid
 WARNING: translation string unused: wlanap debugging
 WARNING: translation string unused: wlanap del interface
 WARNING: translation string unused: wlanap informations
@@ -979,6 +957,7 @@ WARNING: translation string unused: wlanap select interface
 WARNING: translation string unused: wlanap verbose
 WARNING: translation string unused: wlanap warnings
 WARNING: translation string unused: wlanap wlan card
+WARNING: translation string unused: wlanap wlan clients
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: wlanap wlan settings
 WARNING: translation string unused: xtaccess all error
@@ -1004,34 +983,14 @@ WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive clients = unknown string
-WARNING: untranslated string: access point name = Access Point Name
-WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
-WARNING: untranslated string: access point name is required = Access Point Name is required
-WARNING: untranslated string: allowed subnets = Allowed Subnets
-WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
-WARNING: untranslated string: configuration file = Configuration File
-WARNING: untranslated string: cpu frequency = CPU frequency
-WARNING: untranslated string: data transfer = Data Transfer
-WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: dns servers = DNS Servers
-WARNING: untranslated string: done = Done
-WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
-WARNING: untranslated string: endpoint = Endpoint
-WARNING: untranslated string: endpoint address = Endpoint Address
-WARNING: untranslated string: endpoint port = Endpoint Port
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: extrahd because it is outside the allowed mount path = unknown string
-WARNING: untranslated string: extrahd mounted = Mounted
-WARNING: untranslated string: extrahd no mount point given = No mount point given
-WARNING: untranslated string: extrahd not configured = Not configured
-WARNING: untranslated string: extrahd not mounted = Not mounted
-WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Protection (TCP only)
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
-WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string
@@ -1060,95 +1019,14 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
-WARNING: untranslated string: hostile networks in = From Hostile Networks
-WARNING: untranslated string: hostile networks out = To Hostile Networks
-WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
-WARNING: untranslated string: ids rulesets = Rulesets
-WARNING: untranslated string: import connection = Import a Connection
 WARNING: untranslated string: info messages = unknown string
-WARNING: untranslated string: invalid endpoint = Invalid Endpoint
-WARNING: untranslated string: invalid endpoint address = Invalid Endpoint Address
-WARNING: untranslated string: invalid ip address = Invalid IP Address
-WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
-WARNING: untranslated string: invalid keepalive interval = Invalid Keepalive Interval
-WARNING: untranslated string: invalid network = Invalid Network
-WARNING: untranslated string: ips throughput = Throughput
-WARNING: untranslated string: last updated = Last Updated
-WARNING: untranslated string: load average = Load Average
-WARNING: untranslated string: local port = Local Port
-WARNING: untranslated string: local subnets = Local Subnets
-WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
-WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
-WARNING: untranslated string: malformed preshared key = Malformed Pre-Shared Key
-WARNING: untranslated string: malformed private key = Malformed Private Key
-WARNING: untranslated string: malformed public key = Malformed Public Key
 WARNING: untranslated string: no data = unknown string
-WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
-WARNING: untranslated string: openvpn cert expires soon = Expires Soon
-WARNING: untranslated string: openvpn cert has expired = Expired
-WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: pakfire ago = ago.
-WARNING: untranslated string: password has quotation mark = Password contains an illegal double quotation mark.
-WARNING: untranslated string: processors = Processors
-WARNING: untranslated string: public key = Public Key
-WARNING: untranslated string: qr code = QR Code
-WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
-WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
-WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
-WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
-WARNING: untranslated string: remarks = Remarks
-WARNING: untranslated string: remote subnets = Remote Subnets
 WARNING: untranslated string: route config changed = unknown string
-WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
-WARNING: untranslated string: scanned = Scanned
-WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
-WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
-WARNING: untranslated string: system time = System Time (as of last page load)
-WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
-WARNING: untranslated string: total = Total
-WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
-WARNING: untranslated string: warning = Warning
-WARNING: untranslated string: wg client pool = Client Pool
-WARNING: untranslated string: wg create host-to-net peer = Create A New Host-To-Net Peer
-WARNING: untranslated string: wg create net-to-net peer = Create A New Net-To-Net Peer
-WARNING: untranslated string: wg dns = DNS
-WARNING: untranslated string: wg download configuration file = Download the configuration file
-WARNING: untranslated string: wg edit host-to-net peer = Edit Host-To-Net Peer
-WARNING: untranslated string: wg edit net-to-net peer = Edit Net-To-Net Peer
-WARNING: untranslated string: wg host to net client settings = Host-To-Net Client Settings
-WARNING: untranslated string: wg import peer = Import Peer
-WARNING: untranslated string: wg invalid client dns = Invalid client DNS address
-WARNING: untranslated string: wg invalid client pool = Invalid client pool
-WARNING: untranslated string: wg invalid endpoint address = Invalid endpoint address
-WARNING: untranslated string: wg invalid endpoint port = Invalid endpoint port
-WARNING: untranslated string: wg invalid keepalive interval = Invalid Keepalive Interval (Must be between 0 and 65535)
-WARNING: untranslated string: wg invalid local subnet = Invalid local subnet
-WARNING: untranslated string: wg invalid name = Invalid name (Only letters, numbers, space and hyphen are allowed)
-WARNING: untranslated string: wg invalid psk = Invalid pre-shared key
-WARNING: untranslated string: wg invalid public key = Invalid public key
-WARNING: untranslated string: wg invalid remote subnet = Invalid remote subnet
-WARNING: untranslated string: wg keepalive interval = Keepalive Interval
-WARNING: untranslated string: wg leave empty to automatically select = Leave empty to automatically select
-WARNING: untranslated string: wg missing allowed ips = Missing AllowedIPs
-WARNING: untranslated string: wg missing endpoint address = Missing Endpoint Address
-WARNING: untranslated string: wg missing endpoint port = Missing Endpoint Port
-WARNING: untranslated string: wg missing private key = Missing Private Key
-WARNING: untranslated string: wg missing public key = Missing Public Key
-WARNING: untranslated string: wg name is already used = The name is already in use
-WARNING: untranslated string: wg no local subnets = No local subnets given
-WARNING: untranslated string: wg no more free addresses in pool = No more free addresses in pool
-WARNING: untranslated string: wg no remote subnets = No remote subnets given
-WARNING: untranslated string: wg peer configuration = Peer Configuration
-WARNING: untranslated string: wg peer does not exist = Peer does not exist
-WARNING: untranslated string: wg rw peers = WireGuard Roadwarrior Peers
-WARNING: untranslated string: wg scan the qr code = Scan the QR code to import the WireGuard configuration into a mobile client.
-WARNING: untranslated string: wg warning configuration only shown once = Attention: This WireGuard configuration file will only be shown this one time as it contains private key material that is not being stored on IPFire.
-WARNING: untranslated string: whitelisted = Whitelisted
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string
@@ -1280,10 +1158,4 @@ WARNING: untranslated string: wio_wan_up = unknown string
 WARNING: untranslated string: wio_wanname = unknown string
 WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
-WARNING: untranslated string: wireguard = WireGuard
-WARNING: untranslated string: wlan client configuration = Wireless Client Configuration
-WARNING: untranslated string: wlanap = Wireless Access Point
 WARNING: untranslated string: wlanap clients = unknown string
-WARNING: untranslated string: wlanap hide ssid = Hide SSID
-WARNING: untranslated string: wlanap psk = Pre-Shared Key
-WARNING: untranslated string: wlanap wireless mode = Wireless Mode
