@@ -48,6 +48,7 @@ wakeonlan.cgi=configuration/network/wake-on-lan
 
 #	Services menu
 vpnmain.cgi=configuration/services/ipsec
+wireguard.cgi=configuration/services/wireguard
 ovpnmain.cgi=configuration/services/openvpn
 ddns.cgi=configuration/services/dyndns
 time.cgi=configuration/services/ntp
