@@ -68,10 +68,12 @@ esac
 
 # Change IPsec configuration of existing connections using ML-KEM
 # to always make use of hybrid key exchange in conjunction with Curve 25519.
-sed -i -e "s@mlkem@x25519-ke1_mlkem@g" /var/ipfire/vpn/config
+if ! grep -q "x25519-ke1_mlkem" /var/ipfire/vpn/config; then
+	sed -i -e "s@mlkem@x25519-ke1_mlkem@g" /var/ipfire/vpn/config
+fi
 
 # Apply changes to ipsec.conf
-/srv/web/ipfire/cgi-bin/vpnmain.cgi
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
 # Start services
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
