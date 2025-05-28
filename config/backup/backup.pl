@@ -331,6 +331,14 @@ restore_backup() {
 		sed -i 'd' /var/ipfire/certs/index.txt
 	fi
 
+	# Update MLKEM to only be used in combination with x25519
+	if ! grep -q "x25519-ke1_mlkem" /var/ipfire/vpn/config; then
+		sed -i -e "s@mlkem@x25519-ke1_mlkem@g" /var/ipfire/vpn/config
+
+		# Regenerate /etc/ipsec.conf
+		sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+	fi
+
         # Restart ipsec if enabled
         # This will ensure that the restored certs and secrets etc are loaded and used
         if [ $(grep -c "ENABLED=on" /var/ipfire/vpn/settings) -eq 1  ] ; then
