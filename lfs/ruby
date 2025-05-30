@@ -27,12 +27,12 @@ include Config
 VER        = 3.4.4
 
 THISAPP    = ruby-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-# https://mirror.cyberbits.eu/ruby/
+# https://www.ruby-lang.org/en/downloads/
 
 CFLAGS += -DRUBY_FUNCTION_NAME_STRING=__FUNCTION__
 
