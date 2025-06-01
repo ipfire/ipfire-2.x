@@ -1,0 +1,36 @@
+From 06a34f7db773e01efa8a90c5b4d912207a80dd60 Mon Sep 17 00:00:00 2001
+From: Daniel Borkmann <daniel@iogearbox.net>
+Date: Sun, 17 Nov 2024 22:20:30 +0100
+Subject: [PATCH] wireguard: device: support big tcp GSO
+
+Advertise GSO_MAX_SIZE as TSO max size in order support BIG TCP for wireguard.
+This helps to improve wireguard performance a bit when enabled as it allows
+wireguard to aggregate larger skbs in wg_packet_consume_data_done() via
+napi_gro_receive(), but also allows the stack to build larger skbs on xmit
+where the driver then segments them before encryption inside wg_xmit().
+We've seen a 15% improvement in TCP stream performance.
+
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Link: https://patch.msgid.link/20241117212030.629159-5-Jason@zx2c4.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ drivers/net/wireguard/device.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/wireguard/device.c b/drivers/net/wireguard/device.c
+index a2ba71fbbed46..6cf173a008e78 100644
+--- a/drivers/net/wireguard/device.c
++++ b/drivers/net/wireguard/device.c
+@@ -302,6 +302,8 @@ static void wg_setup(struct net_device *dev)
+ 	/* We need to keep the dst around in case of icmp replies. */
+ 	netif_keep_dst(dev);
+ 
++	netif_set_tso_max_size(dev, GSO_MAX_SIZE);
++
+ 	wg->dev = dev;
+ }
+ 
+-- 
+2.39.5
+

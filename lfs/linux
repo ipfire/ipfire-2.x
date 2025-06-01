@@ -134,6 +134,10 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
+	# Linux 6.13 backported patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-6.12-wireguard-device-omit-unnecessary-memset.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-6.12-wireguard-big-tcp-gso.patch
+
 	# Customise the release
 	cd $(DIR_APP) && echo "$(KVER_SUFFIX)" > localversion.10-$(SNAME)
 
