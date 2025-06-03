@@ -515,13 +515,10 @@ table.form tr.action td form {
 .tbl .status.is-stopped, .tbl .status.is-disconnected {
 	background-color: var(--color-red);
 	color: var(--color-red-invert);
-<<<<<<< HEAD
 }
 
 .tbl .status.is-fixed {
 	width: 33%;
-=======
->>>>>>> 630a49b8d (ovpnmain.cgi: Refactor the connection listing)
 }
 
 .tbl .status.is-connecting {
