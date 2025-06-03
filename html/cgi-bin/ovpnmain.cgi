@@ -4053,10 +4053,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto VPNCONF_ERROR;
 	}
-	if ($cgiparams{'EDIT_ADVANCED'} !~ /^(on|off)$/) {
-	    $errormessage = $Lang::tr{'invalid input'};
-	    goto VPNCONF_ERROR;
-	}
 
 	if ($cgiparams{'AUTH'} eq 'certreq') {
 	    if ($cgiparams{'KEY'}) {
@@ -4445,10 +4441,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	}
 
-	if ($cgiparams{'EDIT_ADVANCED'} eq 'on') {
-	    $cgiparams{'KEY'} = $key;
-	    $cgiparams{'ACTION'} = $Lang::tr{'advanced'};
-	}
 	goto VPNCONF_END;
     } else {
         $cgiparams{'ENABLED'} = 'on';
@@ -4477,10 +4469,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 	$checked{'OTP_STATE'}{$cgiparams{'OTP_STATE'}} = 'CHECKED';
-
-    $checked{'EDIT_ADVANCED'}{'off'} = '';
-    $checked{'EDIT_ADVANCED'}{'on'} = '';
-    $checked{'EDIT_ADVANCED'}{$cgiparams{'EDIT_ADVANCED'}} = 'CHECKED';
 
     $selected{'SIDE'}{'server'} = '';
     $selected{'SIDE'}{'client'} = '';
