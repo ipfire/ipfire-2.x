@@ -5020,7 +5020,7 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    open(FILE, $RW_STATUS);
+    open(FILE, "/usr/local/bin/openvpnctrl rw log |");
     my @status = <FILE>;
     close(FILE);
 
