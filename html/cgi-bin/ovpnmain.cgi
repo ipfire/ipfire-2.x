@@ -240,8 +240,10 @@ sub writeserverconf {
 	print CONF "# Topology\n";
 	print CONF "topology subnet\n\n";
 
-    my @tempovpnsubnet = split("\/",$vpnsettings{'DOVPN_SUBNET'});
-    print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
+    my $netaddress = &Network::get_netaddress($vpnsettings{'DOVPN_SUBNET'});
+    my $subnetmask = &Network::get_netmask($vpnsettings{'DOVPN_SUBNET'});
+
+    print CONF "server $netaddress $subnetmask\n";
     print CONF "tun-mtu $vpnsettings{'DMTU'}\n";
 
 	# Write custom routes
