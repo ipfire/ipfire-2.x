@@ -5020,9 +5020,14 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    open(FILE, "/usr/local/bin/openvpnctrl rw log |");
-    my @status = <FILE>;
-    close(FILE);
+    my @status = ();
+
+    # Only load status when the RW server is enabled
+    if ($vpnsettings{'ENABLED'} eq 'on') {
+	open(FILE, "/usr/local/bin/openvpnctrl rw log |");
+	@status = <FILE>;
+	close(FILE);
+    }
 
     $checked{'ENABLED'}{'off'} = '';
     $checked{'ENABLED'}{'on'} = '';
