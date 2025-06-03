@@ -29,6 +29,7 @@ bin/setfont
 lib/kbd/consolefonts/LatArCyrHeb-16+.psfu.gz
 lib/kbd/consolefonts/LatArCyrHeb-16.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-19.psfu.gz
+#lib/kbd/consolefonts/LatCyrHebKa-16_GIA.psfu.gz
 #lib/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 #lib/kbd/consolefonts/LatGrkCyr-8x16.psfu.gz
 #lib/kbd/consolefonts/LatKaCyrHeb-14.psfu.gz
@@ -315,6 +316,7 @@ lib/kbd/keymaps/i386
 #lib/kbd/keymaps/i386/azerty
 #lib/kbd/keymaps/i386/azerty/azerty.map.gz
 #lib/kbd/keymaps/i386/azerty/be-latin1.map.gz
+#lib/kbd/keymaps/i386/azerty/fr-afnor.map.gz
 #lib/kbd/keymaps/i386/azerty/fr-latin1.map.gz
 #lib/kbd/keymaps/i386/azerty/fr-latin9.map.gz
 #lib/kbd/keymaps/i386/azerty/fr-pc.map.gz
@@ -423,6 +425,7 @@ lib/kbd/keymaps/i386/include
 #lib/kbd/keymaps/i386/qwerty/et.map.gz
 #lib/kbd/keymaps/i386/qwerty/fa.map.gz
 #lib/kbd/keymaps/i386/qwerty/fi.map.gz
+#lib/kbd/keymaps/i386/qwerty/ge.map.gz
 #lib/kbd/keymaps/i386/qwerty/gr-pc.map.gz
 #lib/kbd/keymaps/i386/qwerty/gr.map.gz
 #lib/kbd/keymaps/i386/qwerty/hu101.map.gz
