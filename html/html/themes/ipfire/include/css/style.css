@@ -106,7 +106,7 @@ h6 {
 	font-size: 1em;
 }
 
-select, textarea, input[type=text], input[type=number] {
+select, textarea {
 	width: 100%;
 }
 
