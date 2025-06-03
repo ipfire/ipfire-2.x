@@ -73,6 +73,12 @@ case "${1}" in
 		statusproc /usr/sbin/openvpn
 		;;
 
+	log)
+		if [ -r "/var/run/openvpn-rw.log" ]; then
+			cat "/var/run/openvpn-rw.log"
+		fi
+		;;
+
 	*)
 		echo "Usage: ${0} {start|stop|reload|restart|status}"
 		exit 1

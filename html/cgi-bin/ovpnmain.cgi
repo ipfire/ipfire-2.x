@@ -3089,7 +3089,7 @@ END
 			</tr>
 END
 
-	open(FILE, $RW_STATUS) or die "Unable to open $RW_STATUS: $!";
+	open(FILE, "/usr/local/bin/openvpnctrl rw log |") or die "Unable to open $RW_STATUS: $!";
 	my @current = <FILE>;
 	close(FILE);
 
