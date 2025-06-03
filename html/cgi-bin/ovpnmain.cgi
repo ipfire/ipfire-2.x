@@ -5007,9 +5007,6 @@ END
      &Header::closebox();
 }
 	print "<div align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />";
-	if ($cgiparams{'KEY'}) {
-#	    print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced'}' />";
-	}
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' /></div></form>";
 	&Header::closebigbox();
 	&Header::closepage();
