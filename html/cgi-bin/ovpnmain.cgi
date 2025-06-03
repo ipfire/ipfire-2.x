@@ -5054,7 +5054,7 @@ END
 	&Header::ServiceStatus({
 		$Lang::tr{'ovpn roadwarrior server'} => {
 			"process" => "openvpn",
-			"pidfile" => "/var/run/openvpn.pid",
+			"pidfile" => "/var/run/openvpn-rw.pid",
 		}
 	});
 
