@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A fast, secure, and flexible mailer
 
-VER        = 3.10.1
+VER        = 3.10.2
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 47
+PAK_VER    = 48
 
 DEPS       =
 
@@ -72,7 +72,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ff2ff4a6fc61eb7f513124abc7a03f69b4c195967816a28a4708fbe7256e78959d499941747ef2fea7999bd2754e2e640e98e247a7870449cffb66ebf30ffee9
+$(DL_FILE)_BLAKE2 = b75fec52e837d43e0fa5d6ede3f44ccc62144133a2c433f536c566362b20a6a9b8a8cbf8e11f64d84fa751311cc9451158cda0edc212a0e45a9097530f41cea4
 
 install : $(TARGET)
 
@@ -112,20 +112,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sh postfix-install -non-interactive
 	## Install configuration
 	rm -vf /etc/postfix/main.cf.default
-	
+
 	# update main.cf parameters to prevent smtp smuggling attack
 	postconf -e 'smtpd_forbid_bare_newline = yes'
 	postconf -e 'smtpd_forbid_unauth_pipelining = yes'
 	postconf -e 'smtpd_data_restrictions = reject_unauth_pipelining'
 	postconf -e 'smtpd_discard_ehlo_keywords = chunking'
-	
+
 	mkdir -p /var/lib/postfix
 	chown postfix.root /var/lib/postfix
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/postfix \
 			 /var/ipfire/backup/addons/includes/postfix
 	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
-	
+
 	#install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
