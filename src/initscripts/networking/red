@@ -251,7 +251,7 @@ case "${1}" in
 			if [ "$TYPE" == "vdsl" ]; then
 				boot_mesg "Creating VLAN Interface ${DEVICE}.${INET_VLAN} ..."
 				modprobe 8021q
-				vconfig add ${DEVICE} ${INET_VLAN}
+				ip link add link ${DEVICE} name ${DEVICE}.${INET_VLAN} type vlan id ${INET_VLAN}
 				if [ -n "$MAC1" ]; then
 					boot_mesg "Setting mac address on ${DEVICE}.${INET_VLAN} to ${MAC1}"	
 					ip link set dev ${DEVICE}.${INET_VLAN} address ${MAC1}
@@ -276,7 +276,7 @@ case "${1}" in
 				if [ ! -f "$PIDFILE" ]; then
 					boot_mesg "Creating VLAN Interface ${DEVICE}.${IPTV_VLAN} ..."
 					modprobe 8021q
-					vconfig add ${DEVICE} ${IPTV_VLAN}
+					ip link add link ${DEVICE} name ${DEVICE}.${IPTV_VLAN} type vlan id ${IPTV_VLAN}
 					if [ -n "$MAC2" ]; then
 						boot_mesg "Setting mac address on ${DEVICE}.${IPTV_VLAN} to ${MAC2}"
 						ip link set dev ${DEVICE}.${IPTV_VLAN} address ${MAC2}
@@ -548,7 +548,7 @@ case "${1}" in
 				if echo "${link_status}" | grep -q UP; then
 					boot_mesg "Bringing down the ${DEVICE}.${INET_VLAN} interface..."
 					ip link set ${DEVICE}.${INET_VLAN} down
-					vconfig rem ${DEVICE}.${INET_VLAN}
+					ip link delete ${DEVICE}.${INET_VLAN}
 					evaluate_retval
 				fi
 			else
