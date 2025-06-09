@@ -1791,7 +1791,6 @@ build_system() {
 	lfsmake2 calamaris
 	lfsmake2 tcpdump
 	lfsmake2 traceroute
-	lfsmake2 vlan
 	lfsmake2 wireless
 	lfsmake2 pakfire
 	lfsmake2 lz4
