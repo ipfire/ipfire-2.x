@@ -1,0 +1,8 @@
+etc/fort
+etc/fort/config.json
+etc/fort/config.json.example
+etc/rc.d/init.d/fort-validator
+usr/bin/fort
+#usr/share/man/man8/fort.8
+var/ipfire/backup/addons/includes/fort-validator
+var/lib/fort
