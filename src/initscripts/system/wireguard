@@ -27,9 +27,6 @@ shopt -s nullglob
 
 eval $(/usr/local/bin/readhash /var/ipfire/wireguard/settings)
 
-# Mark all packets coming out of the WireGuard interfaces
-WG_MARK="0x00800000"
-
 interfaces() {
 	local id
 	local enabled
@@ -223,7 +220,6 @@ generate_config() {
 		fi
 
 		echo "[Interface]"
-		echo "FwMark = ${WG_MARK}"
 
 		if [ -n "${privkey}" ]; then
 			echo "PrivateKey = ${privkey}"
@@ -324,7 +320,7 @@ reload_firewall() {
 
 	# Ensure that the table is being looked up
 	if ! ip rule | grep -q "lookup wg"; then
-		ip rule add table wg fwmark "${WG_MARK}"
+		ip rule add table wg
 	fi
 }
 
