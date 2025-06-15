@@ -19,6 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+shopt -s nullglob
+
 . /etc/sysconfig/rc
 . ${rc_functions}
 . /etc/rc.d/init.d/networking/functions.network

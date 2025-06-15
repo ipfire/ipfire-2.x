@@ -416,7 +416,7 @@ sub generate_peer_configuration($$) {
 		push(@conf,
 			"[Interface]",
 			"PrivateKey = $private_key",
-			"Port = $peer->{'ENDPOINT_PORT'}",
+			"ListenPort = $peer->{'ENDPOINT_PORT'}",
 			"",
 			"[Peer]",
 			"Endpoint = ${endpoint}:$peer->{'PORT'}",
@@ -529,8 +529,8 @@ sub parse_configuration($$) {
 				# Store the address
 				$peer{'LOCAL_ADDRESS'} = ${address};
 
-			# Port
-			} elsif ($key eq "Port") {
+			# ListenPort
+			} elsif ($key eq "ListenPort") {
 				if (&General::validport($val)) {
 					$peer{'PORT'} = $val;
 				} else {
