@@ -88,6 +88,7 @@ rm -rvf \
 
 # Remove files
 rm -rfv \
+	/sbin/vconfig \
 	/usr/bin/genisoimage \
 	/usr/bin/mkhybrid \
 	/usr/lib/librols.so.* \
