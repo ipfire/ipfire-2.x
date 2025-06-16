@@ -11,5 +11,6 @@ usr/share/fort
 #usr/share/fort/tals/lacnic.tal
 #usr/share/fort/tals/ripe-ncc.tal
 #usr/share/man/man8/fort.8
+var/cache/fort
 var/ipfire/backup/addons/includes/fort-validator
 var/lib/fort

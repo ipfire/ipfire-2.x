@@ -111,6 +111,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		$(DIR_APP)/examples/tal/ripe-ncc.tal \
 		/usr/share/fort/tals
 
+	# Cache directory
+	mkdir -pv /var/cache/fort
+
 	# Install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 

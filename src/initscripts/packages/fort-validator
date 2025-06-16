@@ -32,6 +32,9 @@ ARGS=(
 
 	# Read TALs
 	--tal /usr/share/fort/tals
+
+	# Configure a cache directory
+	--local-repository /var/cache/fort
 )
 
 case "${1}" in
