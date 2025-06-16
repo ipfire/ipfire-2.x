@@ -38,6 +38,10 @@ ARGS=(
 
 	# Run as daemon
 	--daemon
+
+	# Listen on localhost
+	--server.address 127.0.0.1
+	--server.port 3323
 )
 
 case "${1}" in
