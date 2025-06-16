@@ -35,6 +35,9 @@ ARGS=(
 
 	# Configure a cache directory
 	--local-repository /var/cache/fort
+
+	# Run as daemon
+	--daemon
 )
 
 case "${1}" in
