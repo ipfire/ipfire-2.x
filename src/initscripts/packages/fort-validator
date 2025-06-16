@@ -29,6 +29,9 @@ ARGS=(
 	# Log to syslog
 	--log.output=syslog
 	--validation-log.output=syslog
+
+	# Read TALs
+	--tal /usr/share/fort/tals
 )
 
 case "${1}" in

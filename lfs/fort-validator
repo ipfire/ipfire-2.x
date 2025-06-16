@@ -101,6 +101,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -m 0644 $(DIR_APP)/examples/config.json \
 		/etc/fort/config.json.example
 
+	# Install TALs
+	mkdir -pv /usr/share/fort/tals
+	cd $(DIR_APP) && install -v -m 644 \
+		$(DIR_APP)/examples/tal/afrinic.tal \
+		$(DIR_APP)/examples/tal/apnic.tal \
+		$(DIR_APP)/examples/tal/arin.tal \
+		$(DIR_APP)/examples/tal/lacnic.tal \
+		$(DIR_APP)/examples/tal/ripe-ncc.tal \
+		/usr/share/fort/tals
+
 	# Install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
