@@ -22,10 +22,19 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+ARGS=(
+	# Load the configuration file
+	--configuration-file /etc/fort/config.json
+
+	# Log to syslog
+	--log.output=syslog
+	--validation-log.output=syslog
+)
+
 case "${1}" in
 	start)
 		boot_mesg "Starting fort RPKI validator..."
-		loadproc /usr/bin/fort --log.output=syslog --validation-log.output=syslog --configuration-file /etc/fort/config.json
+		loadproc /usr/bin/fort "${ARGS[@]}"
 		;;
 
 	stop)
