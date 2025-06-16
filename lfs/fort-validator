@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fort-validator
 PAK_VER    = 1
 
-DEPS       =
+DEPS       = rsync
 
 SERVICES   = fort-validator
 
