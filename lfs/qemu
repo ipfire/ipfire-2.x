@@ -27,7 +27,7 @@ include Config
 SUMMARY    = Machine emulator and virtualizer
 
 # If you update the version also qemu-ga !!!
-VER        = 9.2.0
+VER        = 10.0.2
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 45
+PAK_VER    = 46
 
 DEPS       = alsa libusbredir spice libseccomp libslirp
 
@@ -57,7 +57,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5800556f356e4324124e250c02a07857eef3a6f22995a819fe972061fa750ebf7233da64ae4c0a3e775b1639c870be4b7312d86d9866fedf2bc99074aad0a10a
+$(DL_FILE)_BLAKE2 = be4ddf050d2102cefded5b4967222df749ee8af92c2427c31a9b29b3800fac8bb328daf2c38d11aa307b51eb7d7243f9b064b3bf24d446a001e5520359ee83c3
 
 install : $(TARGET)
 
@@ -90,7 +90,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/qemu-9.2.0-sched-attr.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
