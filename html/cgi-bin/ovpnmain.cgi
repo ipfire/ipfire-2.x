@@ -1391,7 +1391,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     if ($errormessage ne ''){
 	goto SETTINGS_ERROR;
     }
-    if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
+    if ($cgiparams{'ENABLED'} !~ /^(on|off|)$/) {
         $errormessage = $Lang::tr{'invalid input'};
         goto SETTINGS_ERROR;
     }
