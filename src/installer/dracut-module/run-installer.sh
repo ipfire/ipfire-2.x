@@ -3,6 +3,9 @@
 # IPFire Installer RC
 #
 
+# wait for udev settle
+/bin/udevadm settle
+
 unattended=0
 if grep -q "installer.unattended" /proc/cmdline; then
 	unattended=1
