@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 6.12.33 Kernel Configuration
+# Linux/arm64 6.12.34 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 15.1.0"
 CONFIG_CC_IS_GCC=y
@@ -667,6 +667,7 @@ CONFIG_ACPI_APEI_SEA=y
 # CONFIG_ACPI_PFRUT is not set
 CONFIG_ACPI_IORT=y
 CONFIG_ACPI_GTDT=y
+# CONFIG_ACPI_AGDI is not set
 CONFIG_ACPI_APMT=y
 CONFIG_ACPI_PPTT=y
 CONFIG_ACPI_PCC=y
@@ -2015,7 +2016,7 @@ CONFIG_IMX_SCMI_MISC_EXT=m
 # end of ARM System Control and Management Interface Protocol
 
 # CONFIG_ARM_SCPI_PROTOCOL is not set
-# CONFIG_ARM_SDE_INTERFACE is not set
+CONFIG_ARM_SDE_INTERFACE=y
 # CONFIG_FIRMWARE_MEMMAP is not set
 CONFIG_DMIID=y
 # CONFIG_DMI_SYSFS is not set

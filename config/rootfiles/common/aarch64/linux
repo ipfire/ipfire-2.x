@@ -7694,6 +7694,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/ARM_SCMI_TRANSPORT_SMC
 #lib/modules/KVER/build/include/config/ARM_SCMI_TRANSPORT_VIRTIO
 #lib/modules/KVER/build/include/config/ARM_SCMI_TRANSPORT_VIRTIO_VERSION1_COMPLIANCE
+#lib/modules/KVER/build/include/config/ARM_SDE_INTERFACE
 #lib/modules/KVER/build/include/config/ARM_SMCCC_SOC_ID
 #lib/modules/KVER/build/include/config/ARM_SMC_WATCHDOG
 #lib/modules/KVER/build/include/config/ARM_SMMU
