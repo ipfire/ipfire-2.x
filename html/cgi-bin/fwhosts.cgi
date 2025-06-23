@@ -1932,7 +1932,7 @@ sub viewtablenet
 		}else{
 			print<<END;
 			<table width='100%' cellspacing='0' class='tbl'>
-			<tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost netaddress'}</b></th><th align='center'><b>$Lang::tr{'remark'}</b></th><th align='center'><b>$Lang::tr{'used'}</b></th><th></th><th></th><th width='3%'></th></tr>
+			<tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost netaddress'}</b></th><th align='center'><b>$Lang::tr{'remark'}</b></th><th align='center'><b>$Lang::tr{'used'}</b></th><th></th><th width='3%'></th></tr>
 END
 		}
 		my $count=0;
@@ -1953,11 +1953,7 @@ END
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
 			my $netcount=&getnetcount($customnetwork{$key}[0]);
 			my $netusedin=&getusedin($customnetwork{$key}[0]);
-			my $htmlparttouse="";
-			if ($netusedin) {
-				$htmlparttouse = "<input type='image' align='top' src='/images/info.gif' alt='$netusedin' title='$netusedin'>";
-			}
-			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&getcolor($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td><td>$htmlparttouse</td>";
+			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&getcolor($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col><span title='$netusedin'>$netcount x</span></td>";
 			print<<END;
 			<td width='1%' $col><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='editnet'>
@@ -2091,7 +2087,7 @@ sub viewtablehost
 		}else{
 		print<<END;
 		<table width='100%' cellspacing='0' class='tbl'>
-		<tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></th><th align='center'><b>$Lang::tr{'remark'}</b></th><th align='center'><b>$Lang::tr{'used'}</b></th><th></th><th></th><th width='3%'></th></tr>
+		<tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></th><th align='center'><b>$Lang::tr{'remark'}</b></th><th align='center'><b>$Lang::tr{'used'}</b></th><th></th><th width='3%'></th></tr>
 END
 	}
 		my $count=0;
@@ -2112,12 +2108,9 @@ END
 			my $hostcount=0;
 			$hostcount=&gethostcount($customhost{$key}[0]);
 			my $hostusedin=&getusedin($customhost{$key}[0]);
-			my $htmlparttouse="";
-			if ($hostusedin) {
-				$htmlparttouse = "<input type='image' align='top' src='/images/info.gif' alt='$hostusedin' title='$hostusedin'>";
-			}
-			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col >".&getcolor($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td><td>$htmlparttouse</td>";
-			print<<END;
+			my $color = &getcolor($ip);
+			print <<END;
+			<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col >$color</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col><span title="$hostusedin">$hostcount x</span></td>
 			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
@@ -2192,11 +2185,8 @@ sub viewtablegrp
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp;";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
 				my $netgrpcount=&getnetcount($grpname);
-				print "<b>$Lang::tr{'used'}:</b> $netgrpcount x ";
 				my $groupusedin=&getusedin($grpname);
-				if ($groupusedin) {
-					print "<input type='image' align='top' src='/images/info.gif' alt='$groupusedin' title='$groupusedin'>";
-				}
+				print "<b>$Lang::tr{'used'}:</b> <span title='$groupusedin'>$netgrpcount x</span>";
 				if($netgrpcount == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
@@ -2335,10 +2325,7 @@ sub viewtablelocationgrp
 			# Get group count.
 			my $locationgrpcount=&getlocationcount($grpname);
 			my $locationusedin=&getlocusedin($grpname);
-			print "<b>$Lang::tr{'used'}:</b> $locationgrpcount x ";
-			if ($locationusedin) {
-				print "<input type='image' align='top' src='/images/info.gif' alt='$locationusedin' title='$locationusedin'>";
-			}
+			print "<b>$Lang::tr{'used'}:</b> <span title='$locationusedin'>$locationgrpcount x</span>";
 			# Only display delete icon, if the group is not used by a firewall rule.
 			if($locationgrpcount == '0') {
 				print"<form method='post' style='display:inline'>\n";
@@ -2459,7 +2446,7 @@ sub viewtableservice
 		&General::readhasharray("$fwconfigout", \%fwout);
 		print<<END;
 			<table width='100%' cellspacing='0' class='tbl'>
-			<tr><th align='center'><b>$Lang::tr{'fwhost srv_name'}</b></th><th align='center'><b>$Lang::tr{'fwhost prot'}</b></th><th align='center'><b>$Lang::tr{'fwhost port'}</b></th><th align='center'><b>ICMP</b></th><th align='center'><b>$Lang::tr{'fwhost used'}</b></th><th></th><th></th><th width='3%'></th></tr>
+			<tr><th align='center'><b>$Lang::tr{'fwhost srv_name'}</b></th><th align='center'><b>$Lang::tr{'fwhost prot'}</b></th><th align='center'><b>$Lang::tr{'fwhost port'}</b></th><th align='center'><b>ICMP</b></th><th align='center'><b>$Lang::tr{'fwhost used'}</b></th><th></th><th width='3%'></th></tr>
 END
 		my $col='';
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0])} keys %customservice)
@@ -2481,14 +2468,10 @@ END
 			#Neuer count
 			$srvcount=&getsrvcount($customservice{$key}[0]);
 			my $serviceusedin=&getsrvusedin($customservice{$key}[0]);
-			my $htmlparttouse="";
-			if ($serviceusedin) {
-				$htmlparttouse="<input type='image' align='top' src='/images/info.gif' alt='$serviceusedin' title='$serviceusedin'>";
-			}
 			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
 			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
-			</td><td align='center' $col>$srvcount x</td><td>$htmlparttouse</td>
+			</td><td align='center' $col><span title='$serviceusedin'>$srvcount x</span></td>
 			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' /><input type='hidden' name='ACTION' value='editservice' />
 			<input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]' />
 			<input type='hidden' name='SRV_PORT' value='$customservice{$key}[1]' />
@@ -2560,11 +2543,8 @@ sub viewtableservicegrp
 				if($count >0){print"</table>";$count=1;}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp; ";
 				print "<b>$Lang::tr{'remark'}:</b>&nbsp; $remark " if ($remark ne '');
-				print "&nbsp; <b>$Lang::tr{'used'}:</b> $grpcount x ";
 				my $srvgrpusedin=&getsrvusedin($customservicegrp{$key}[0]);
-				if ($srvgrpusedin) {
-					print "<input type='image' align='top' src='/images/info.gif' alt='$srvgrpusedin' title='$srvgrpusedin'>";
-				}
+				print "&nbsp; <b>$Lang::tr{'used'}:</b> <span title='$srvgrpusedin'>$grpcount x</span>";
 				if($grpcount == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
