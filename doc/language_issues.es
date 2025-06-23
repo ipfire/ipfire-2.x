@@ -980,7 +980,6 @@ WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive clients = unknown string
-WARNING: untranslated string: Unused = Unused
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: dns servers = DNS Servers
 WARNING: untranslated string: enable disable client = unknown string

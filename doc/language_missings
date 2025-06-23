@@ -128,7 +128,6 @@
 < dns servers
 < ids provider eol
 < online
-< Unused
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -182,7 +181,6 @@
 < system time
 < timeformat
 < total
-< Unused
 < upload fcdsl.o
 < warning
 < wg
@@ -722,7 +720,6 @@
 < unblock all
 < uncheck all
 < unlimited
-< Unused
 < update ruleset
 < updxlrtr passive mode
 < uplink bit rate
@@ -1359,7 +1356,6 @@
 < unblock all
 < uncheck all
 < unlimited
-< Unused
 < update ruleset
 < updxlrtr passive mode
 < uplink bit rate
@@ -2402,7 +2398,6 @@
 < unblock all
 < uncheck all
 < unlimited
-< Unused
 < update ruleset
 < updxlrtr passive mode
 < updxlrtr sources
@@ -3491,7 +3486,6 @@
 < unblock all
 < uncheck all
 < unlimited
-< Unused
 < update ruleset
 < updxlrtr passive mode
 < updxlrtr sources
@@ -3981,7 +3975,6 @@
 < traffic stat title
 < transfers
 < transport mode does not support vti
-< Unused
 < update ruleset
 < updxlrtr passive mode
 < user management

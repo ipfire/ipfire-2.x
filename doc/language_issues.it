@@ -932,7 +932,6 @@ WARNING: untranslated string: Captive vouchervalid = Allowed time for this coupo
 WARNING: untranslated string: Captive wrong type = Uploaded file has wrong filetype
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
-WARNING: untranslated string: Unused = Unused
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required

@@ -120,7 +120,6 @@
 'The class number does not match the specified interface.' => 'The class number does not match the specified interface.',
 'The destination IP address is invalid.' => 'The destination IP address is invalid.',
 'The source IP address is invalid.' => 'The source IP address is invalid.',
-'Unused' => 'Unused',
 'Utilization on' => 'Utilization on',
 'Verbose' => 'Verbose:',
 'WakeOnLan' => 'Wake On Lan',
