@@ -1956,8 +1956,6 @@ END
 			my $htmlparttouse="";
 			if ($netusedin) {
 				$htmlparttouse = "<input type='image' align='top' src='/images/info.gif' alt='$netusedin' title='$netusedin'>";
-			} else {
-				$htmlparttouse = "<input type='image' align='top' src='/images/info.gif' alt='Unused' title='Unused'>";
 			}
 			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&getcolor($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td><td>$htmlparttouse</td>";
 			print<<END;
@@ -2117,8 +2115,6 @@ END
 			my $htmlparttouse="";
 			if ($hostusedin) {
 				$htmlparttouse = "<input type='image' align='top' src='/images/info.gif' alt='$hostusedin' title='$hostusedin'>";
-			} else {
-				$htmlparttouse = "<input type='image' align='top' src='/images/info.gif' alt='Unused' title='Unused'>";
 			}
 			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col >".&getcolor($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td><td>$htmlparttouse</td>";
 			print<<END;
@@ -2200,8 +2196,6 @@ sub viewtablegrp
 				my $groupusedin=&getusedin($grpname);
 				if ($groupusedin) {
 					print "<input type='image' align='top' src='/images/info.gif' alt='$groupusedin' title='$groupusedin'>";
-				} else {
-					print "<input type='image' align='top' src='/images/info.gif' alt='$Lang::tr{'Unused'}' title='$Lang::tr{'Unused'}'>";
 				}
 				if($netgrpcount == '0')
 				{
@@ -2344,8 +2338,6 @@ sub viewtablelocationgrp
 			print "<b>$Lang::tr{'used'}:</b> $locationgrpcount x ";
 			if ($locationusedin) {
 				print "<input type='image' align='top' src='/images/info.gif' alt='$locationusedin' title='$locationusedin'>";
-			} else {
-				print "<input type='image' align='top' src='/images/info.gif' alt='$Lang::tr{'Unused'}' title='$Lang::tr{'Unused'}'>";
 			}
 			# Only display delete icon, if the group is not used by a firewall rule.
 			if($locationgrpcount == '0') {
@@ -2492,8 +2484,6 @@ END
 			my $htmlparttouse="";
 			if ($serviceusedin) {
 				$htmlparttouse="<input type='image' align='top' src='/images/info.gif' alt='$serviceusedin' title='$serviceusedin'>";
-			} else {
-				$htmlparttouse="<input type='image' align='top' src='/images/info.gif' alt='$Lang::tr{'Unused'}' title='$Lang::tr{'Unused'}'>";
 			}
 			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
 			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
@@ -2574,8 +2564,6 @@ sub viewtableservicegrp
 				my $srvgrpusedin=&getsrvusedin($customservicegrp{$key}[0]);
 				if ($srvgrpusedin) {
 					print "<input type='image' align='top' src='/images/info.gif' alt='$srvgrpusedin' title='$srvgrpusedin'>";
-				} else {
-					print "<input type='image' align='top' src='/images/info.gif' alt='$Lang::tr{'Unused'}' title='$Lang::tr{'Unused'}'>";
 				}
 				if($grpcount == '0')
 				{
