@@ -1807,6 +1807,7 @@ build_system() {
 	lfsmake2 rpcsvc-proto
 	lfsmake2 lmdb
 	lfsmake2 samba
+	lfsmake2 iniparser
 	lfsmake2 netatalk
 	lfsmake2 sudo
 	lfsmake2 mc
