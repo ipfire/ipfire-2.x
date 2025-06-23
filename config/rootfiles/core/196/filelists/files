@@ -5,6 +5,7 @@ srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/wireguard.cgi
+usr/sbin/setup
 var/ipfire/backup/bin/backup.pl
 var/ipfire/fwhosts/customservices
 var/ipfire/graphs.pl
