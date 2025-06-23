@@ -78,6 +78,7 @@ WARNING: untranslated string: TOS rule = TOS rule
 WARNING: untranslated string: The class number does not match the specified interface. = The class number does not match the specified interface.
 WARNING: untranslated string: The destination IP address is invalid. = The destination IP address is invalid.
 WARNING: untranslated string: The source IP address is invalid. = The source IP address is invalid.
+WARNING: untranslated string: Unused = Unused
 WARNING: untranslated string: WakeOnLan = Wake On Lan
 WARNING: untranslated string: a ca certificate with this name already exists = A CA certificate with this name already exists.
 WARNING: untranslated string: a connection with this common name already exists = A connection with this common name already exists.

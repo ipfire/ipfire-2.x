@@ -925,6 +925,7 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Captive delete logo = Delete Logo
+WARNING: untranslated string: Unused = Unused
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required

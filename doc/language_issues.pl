@@ -848,6 +848,7 @@ WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
+WARNING: untranslated string: Unused = Unused
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required

@@ -122,6 +122,7 @@
 'The class number does not match the specified interface.' => 'Die Klassennummer passt nicht zum angegebenen Interface.',
 'The destination IP address is invalid.' => 'Die Ziel-IP-Adresse ist ungültig.',
 'The source IP address is invalid.' => 'Die Quell-IP-Adresse ist ungültig.',
+'Unused' => 'Unbenutzt',
 'Utilization on' => 'Auslastung auf',
 'Verbose' => 'Verbose',
 'WakeOnLan' => 'Wake On LAN',
