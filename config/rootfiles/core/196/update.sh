@@ -92,7 +92,8 @@ rm -rfv \
 	/usr/bin/genisoimage \
 	/usr/bin/mkhybrid \
 	/usr/lib/librols.so.* \
-	/usr/lib/libusual.so.*
+	/usr/lib/libusual.so.* \
+	/var/log/pakfire.log
 
 # Extract files
 extract_files
