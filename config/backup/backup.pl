@@ -345,6 +345,11 @@ restore_backup() {
                 /usr/local/bin/ipsecctrl S
         fi
 
+	if [ -e /var/log/pakfire.log ]; then
+		rm /var/log/pakfire.log
+	fi
+
+
 	return 0
 }
 
