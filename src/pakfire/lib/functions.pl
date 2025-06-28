@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022   IPFire Team   <info@ipfire.org>                   #
+# Copyright (C) 2007-2025   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -105,7 +105,6 @@ sub message {
 sub logger {
 	my $log = shift;
 	if ($log) {
-		#system("echo \"`date`: $log\" >> /var/log/pakfire.log");
 		system("logger -t pakfire \"$log\"");
 	}
 }
