@@ -1,4 +1,5 @@
 etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/wireguard
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
