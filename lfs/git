@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.49.0
+VER        = 2.50.0
 SUMMARY    = Fast, scalable, distributed revision control system
 
 THISAPP    = git-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = git
-PAK_VER    = 37
+PAK_VER    = 38
 
 DEPS       = perl-Authen-SASL perl-Net-SMTP-SSL
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c9a58cb4bcbc33d3c6ede2ce6e6131af3998669419c8d8e4317c52ee14ae4bfcdd209780c6dda31cd772bdb703096729de17f21579bf7f0bb830bc6c9e1d7ffd
+$(DL_FILE)_BLAKE2 = 2ee60be2d0e749e898016f44107473d6e4dc30f70c73a94b3433f5a479a5a8989d000ca4084fabd32a7d0ace0914136c5c023bd72946ef7003affd535a98b5ee
 
 install : $(TARGET)
 
@@ -81,11 +81,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--with-gitconfig=/etc/gitconfig \
-		--prefix=/usr \
-		--with-libpcre \
-		--with-curl \
-		--with-expat
+				--with-gitconfig=/etc/gitconfig \
+				--prefix=/usr \
+				--with-libpcre \
+				--with-curl \
+				--with-expat
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

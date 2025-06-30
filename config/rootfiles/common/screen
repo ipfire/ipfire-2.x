@@ -1,7 +1,6 @@
 etc/screenrc
 usr/bin/screen
-usr/bin/screen-5.0.0
-#usr/share/info/screen.info
+usr/bin/screen-5.0.1
 #usr/share/man/man1/screen.1
 #usr/share/screen
 #usr/share/screen/utf8encodings

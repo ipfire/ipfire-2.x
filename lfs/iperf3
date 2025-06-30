@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A tool to measure network performance
 
-VER        = 3.16
+VER        = 3.19
 
 THISAPP    = iperf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,11 +34,14 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = iperf3
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
 SERVICES   =
+
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4ca930b58c54d5ae5b0c8b14aca2556224ff2c7b943d32e65486dc2a7e1abd2d26b229e9f759358c326be8754e88a203e11a3ab0f029daa982375a880c3f1cbd
+$(DL_FILE)_BLAKE2 = b6f5e9bdef5ee3fc38bef893144bc6ad003ccbc7b3db4793dbd2aec5998faa55cac215a0db06ab37729dc1c05787ebacbf09db8a6e6517f82492a6c67ec3d9e6
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -81,7 +84,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

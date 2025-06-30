@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.28
+VER        = 1.0.29
 
 THISAPP    = libusb-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9bf506455fc1b981de155600936ab229f089ea28e58491076eab632455c4e814bf0336cd9326056a255508aa3956643c503af3ff2feda80bac036cf5cad86e80
+$(DL_FILE)_BLAKE2 = 74db11918fa704eae3a320838c84dd06427acd5e3f73263e965decd1a09f0a14ed2d1a3916bf7eada26ab1164a3955a9fa3bdff8e3294264c6f8e1137866652a
 
 install : $(TARGET)
 

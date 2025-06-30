@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.7.1
+VER        = 2.8.0
 
 THISAPP    = kbd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
 kbd-latarcyrheb-16-fixed.tar.bz2      = $(DL_FROM)/kbd-latarcyrheb-16-fixed.tar.bz2
 kbd-latsun-fonts.tar.bz2              = $(DL_FROM)/kbd-latsun-fonts.tar.bz2
 
-$(DL_FILE)_BLAKE2 = c817f78a0a377df5fcf2a6ba1608504fa875762db5bda1f061493e68ee6f6ef1fa085c0e440d74daeb6ad990ac48956caf7ab7f2a523b0d3b2480e69a9d810f5
+$(DL_FILE)_BLAKE2 = 3b1917e37bbb4f2a975cf1f6bbfeba6a6ee486378d770c3b0232c62c40fe758181a15799f9119e3e4eedbb356a0677b3fba4b0afef135d346801693a6ef432cc
 kbd-latarcyrheb-16-fixed.tar.bz2_BLAKE2  = d5c701333b9eae7e0c467aebee5b2217c3225dee615622f77e501569f1464a8c32380b2d4a522730db74a909e1ea746e660ea6849bbf48195af22bda73858d1b
 kbd-latsun-fonts.tar.bz2_BLAKE2	         = c3def1192331a65f3edcf608ca164370d2db0c61444f71fc83bf35cb86d417ae92582180ace853a3cf93e569a83a42fca054fbadbf7f5986a1abd17e8bb6691f
 

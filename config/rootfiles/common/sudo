@@ -115,6 +115,9 @@ usr/sbin/visudo
 #usr/share/locale/uk/LC_MESSAGES/sudoers.mo
 #usr/share/locale/vi/LC_MESSAGES/sudo.mo
 #usr/share/locale/vi/LC_MESSAGES/sudoers.mo
+#usr/share/locale/yue
+#usr/share/locale/yue/LC_MESSAGES
+#usr/share/locale/yue/LC_MESSAGES/sudo.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/sudo.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/sudoers.mo
 #usr/share/locale/zh_TW/LC_MESSAGES/sudo.mo

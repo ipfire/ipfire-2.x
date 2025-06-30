@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.12.23
+VER         = 6.12.34
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -69,7 +69,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 794c7fead01abd6e8e93e8f22e4b1c7b443bff8749445a4759d323f20534040cbe827d42ab47bd9af57f70309f91c92577ea655ed5de2a4035dda9aea8096add
+$(DL_FILE)_BLAKE2 = a1527edf5ea06d55ad4468341d2e8cc44406df1edfe1a619ece86692e42afe7f5919ee051942fc9e70c47d79bcd4f0fc2e54ae32c79392702d8493596dca1a83
 
 install : $(TARGET)
 
@@ -133,6 +133,10 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	cd $(DIR_APP) && cat patch $(DIR_SRC)/src/patches/linux/aarch64/* | patch -Np1
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
+
+	# Linux 6.13 backported patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-6.12-wireguard-device-omit-unnecessary-memset.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-6.12-wireguard-big-tcp-gso.patch
 
 	# Customise the release
 	cd $(DIR_APP) && echo "$(KVER_SUFFIX)" > localversion.10-$(SNAME)
@@ -224,19 +228,6 @@ endif
 
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
-
-	# disable drm by install drm to /bin/false because i915 ignore blacklisting
-	echo install drm /bin/false > /etc/modprobe.d/framebuffer.conf
-
-	# Blacklist old framebuffer modules
-	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
-	done
-	# Blacklist new drm framebuffer modules
-	for f in $$(find /lib/modules/$(KVER)/kernel/drivers/gpu/drm -name *.ko.xz); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
-	done
-	sed -i -e "s|.ko.xz||g" /etc/modprobe.d/framebuffer.conf
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf

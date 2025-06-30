@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3490200
+VER        = 3500100
 
 THISAPP    = sqlite-autoconf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 588e881e986c618d7321546a5b236fe68371898295d80ff54f8d7037e5ae28d5384808f85e395e3467aa3494f84234709a1e9310277d6f0866e4c750f04c2fbb
+$(DL_FILE)_BLAKE2 = 4c475415cddad5b86b6a7f48971d15a5b5df3685ef9514af2f435f2cba26ae8a2c942232c194a83b685a79f9edb2d748f5f38cb00af7d0c6fdd930d2b3953ea5
 
 install : $(TARGET)
 
@@ -71,8 +71,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-	                --prefix=/usr \
-	                --disable-static
+	                	--prefix=/usr \
+	                	--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

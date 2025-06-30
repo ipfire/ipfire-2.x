@@ -24,13 +24,16 @@
 
 include Config
 
-VER        = 5.45
+VER        = 5.45.4
 
 THISAPP    = expect$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-tools
+
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +43,7 @@ objects=$(DL_FILE)
 
 $(DL_FILE)        = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d7260d3b2ce1bcd72deef121e1f994f45bfa5397291692d794c9b8ad627d7ac183689ba00ba22f728853ac03b6b083fb6f283dc5c453aa991e04263c217be552
+$(DL_FILE)_BLAKE2 = a3a936e7644c922fdd474fa08c45926396ccce9a63e5f65f4d5e157f5160cfe4de47688734b39d13281d9548aac492810f19236e06563903d3d8081e4661048d
 
 install : $(TARGET)
 
@@ -71,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/expect-5.45.4-gcc14-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/expect-5.45.4-gcc15-1.patch
 	cd $(DIR_APP) && ./configure \
 			--prefix=$(TOOLS_DIR) \
 			--build=$(BUILDTARGET) \

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.1.1153
+VER        = 9.1.1406
 
 THISAPP    = vim-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c1960101aa5fdb0af6cbb878638d939bccad960097e50eda087e5a9078f7da248430c15bcf2af17bcee591d8b2d533800556ea5444491a51f213f78a685fbede
+$(DL_FILE)_BLAKE2 = e50d541d6e8a0cb7a332a3a09ff1794f7cd347b16f76bc3b71645d28eddb1472683b4be7a307653cce0a2a79c7c7703383bc481dae6d35818b9179f9be14926d
 
 install : $(TARGET)
 
@@ -77,11 +77,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vim/vim-9.1.0886_fix_hardening_crash.patch
 	cd $(DIR_APP) && echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--with-features=huge \
-		--enable-multibyte \
-		--enable-gui=no \
-		--disable-nls
+				--prefix=/usr \
+				--with-features=huge \
+				--enable-multibyte \
+				--enable-gui=no \
+				--disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

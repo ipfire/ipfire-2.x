@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="195"							# Core Level (Filename)
+CORE="196"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -32,7 +32,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER="20250222"
+TOOLCHAINVER="20250430"
 
 KVER_SUFFIX="-${SNAME}"
 
@@ -1696,7 +1696,7 @@ build_system() {
 	lfsmake2 beep
 	lfsmake2 libssh
 	lfsmake2 libinih
-	lfsmake2 cdrkit
+	lfsmake2 xorriso
 	lfsmake2 dosfstools
 	lfsmake2 exfatprogs
 	lfsmake2 reiserfsprogs
@@ -1791,7 +1791,6 @@ build_system() {
 	lfsmake2 calamaris
 	lfsmake2 tcpdump
 	lfsmake2 traceroute
-	lfsmake2 vlan
 	lfsmake2 wireless
 	lfsmake2 pakfire
 	lfsmake2 lz4
@@ -1808,6 +1807,7 @@ build_system() {
 	lfsmake2 rpcsvc-proto
 	lfsmake2 lmdb
 	lfsmake2 samba
+	lfsmake2 iniparser
 	lfsmake2 netatalk
 	lfsmake2 sudo
 	lfsmake2 mc
@@ -2085,6 +2085,7 @@ build_system() {
 	lfsmake2 btrfs-progs
 	lfsmake2 inotify-tools
 	lfsmake2 grub-btrfs
+	lfsmake2 fort-validator
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au

@@ -2326,6 +2326,7 @@ else
     print CLIENTCONF "auth-nocache\r\n";
 
     # Set a fake user name for authentication
+    print CLIENTCONF "auth-user-pass\r\n";
     print CLIENTCONF "auth-token-user USER\r\n";
     print CLIENTCONF "auth-token TOTP\r\n";
 

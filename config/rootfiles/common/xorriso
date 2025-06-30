@@ -1,0 +1,17 @@
+usr/bin/mkisofs
+#usr/bin/osirrox
+#usr/bin/xorrecord
+usr/bin/xorriso
+#usr/bin/xorriso-dd-target
+#usr/bin/xorriso-tcltk
+usr/bin/xorrisofs
+#usr/share/info/xorrecord.info
+#usr/share/info/xorriso-dd-target.info
+#usr/share/info/xorriso-tcltk.info
+#usr/share/info/xorriso.info
+#usr/share/info/xorrisofs.info
+#usr/share/man/man1/xorrecord.1
+#usr/share/man/man1/xorriso-dd-target.1
+#usr/share/man/man1/xorriso-tcltk.1
+#usr/share/man/man1/xorriso.1
+#usr/share/man/man1/xorrisofs.1

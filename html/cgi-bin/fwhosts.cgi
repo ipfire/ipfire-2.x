@@ -1952,7 +1952,8 @@ END
 			}
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
 			my $netcount=&getnetcount($customnetwork{$key}[0]);
-			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&getcolor($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td>";
+			my $netusedin=&getusedin($customnetwork{$key}[0]);
+			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&getcolor($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col><span title='$netusedin'>$netcount x</span></td>";
 			print<<END;
 			<td width='1%' $col><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='editnet'>
@@ -2106,8 +2107,10 @@ END
 			$customhost{$key}[4]=~s/\s+//g;
 			my $hostcount=0;
 			$hostcount=&gethostcount($customhost{$key}[0]);
-			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col >".&getcolor($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td>";
-			print<<END;
+			my $hostusedin=&getusedin($customhost{$key}[0]);
+			my $color = &getcolor($ip);
+			print <<END;
+			<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col >$color</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col><span title="$hostusedin">$hostcount x</span></td>
 			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
@@ -2182,7 +2185,8 @@ sub viewtablegrp
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp;";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
 				my $netgrpcount=&getnetcount($grpname);
-				print "<b>$Lang::tr{'used'}:</b> $netgrpcount x";
+				my $groupusedin=&getusedin($grpname);
+				print "<b>$Lang::tr{'used'}:</b> <span title='$groupusedin'>$netgrpcount x</span>";
 				if($netgrpcount == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
@@ -2320,8 +2324,8 @@ sub viewtablelocationgrp
 
 			# Get group count.
 			my $locationgrpcount=&getlocationcount($grpname);
-			print "<b>$Lang::tr{'used'}:</b> $locationgrpcount x";
-
+			my $locationusedin=&getlocusedin($grpname);
+			print "<b>$Lang::tr{'used'}:</b> <span title='$locationusedin'>$locationgrpcount x</span>";
 			# Only display delete icon, if the group is not used by a firewall rule.
 			if($locationgrpcount == '0') {
 				print"<form method='post' style='display:inline'>\n";
@@ -2463,10 +2467,11 @@ END
 END
 			#Neuer count
 			$srvcount=&getsrvcount($customservice{$key}[0]);
+			my $serviceusedin=&getsrvusedin($customservice{$key}[0]);
 			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
 			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
-			</td><td align='center' $col>$srvcount x</td>
+			</td><td align='center' $col><span title='$serviceusedin'>$srvcount x</span></td>
 			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' /><input type='hidden' name='ACTION' value='editservice' />
 			<input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]' />
 			<input type='hidden' name='SRV_PORT' value='$customservice{$key}[1]' />
@@ -2538,7 +2543,8 @@ sub viewtableservicegrp
 				if($count >0){print"</table>";$count=1;}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp; ";
 				print "<b>$Lang::tr{'remark'}:</b>&nbsp; $remark " if ($remark ne '');
-				print "&nbsp; <b>$Lang::tr{'used'}:</b> $grpcount x";
+				my $srvgrpusedin=&getsrvusedin($customservicegrp{$key}[0]);
+				print "&nbsp; <b>$Lang::tr{'used'}:</b> <span title='$srvgrpusedin'>$grpcount x</span>";
 				if($grpcount == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
@@ -2811,6 +2817,106 @@ sub getlocationcount
 	}
 	return $counter;
 }
+sub getlocusedin
+{
+	my $groupname=shift;
+	my $titletext="";
+
+	# Location groups are stored as "group:groupname" in the
+	# firewall settings files.
+	my $searchstring = join(':', "group",$groupname);
+
+	#Count services used in firewall - config
+	my $fwfwtext="";
+	# first set title if found
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[4] eq $searchstring){
+			$fwfwtext = "$Lang::tr{'firewall rules'}:";
+		}
+		if($fwfwd{$key1}[6] eq $searchstring){
+			$fwfwtext = "$Lang::tr{'firewall rules'}:";
+		}
+	}
+	# then add rule numbers
+	my @fwfwrules = ();
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[4] eq $searchstring){
+			push(@fwfwrules, $key1);
+		}
+		if($fwfwd{$key1}[6] eq $searchstring){
+			push(@fwfwrules, $key1);
+		}
+	}
+	my @fwfwarraysorted = sort { $a <=> $b } @fwfwrules;
+	foreach my $rule (@fwfwarraysorted)
+	{
+    	$fwfwtext .= "&#010- $rule";
+	}
+	#Count services used in firewall - input
+	my $fwintext="";
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[4] eq $searchstring){
+			$fwintext = "$Lang::tr{'incoming firewall access'}:";
+		}
+		if($fwinp{$key2}[6] eq $searchstring){
+			$fwintext = "$Lang::tr{'incoming firewall access'}:";
+		}
+	}
+	my @fwinrules = ();
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[4] eq $searchstring){
+			push(@fwinrules, $key2);
+		}
+		if($fwinp{$key2}[6] eq $searchstring){
+			push(@fwinrules, $key2);
+		}
+	}
+	my @fwinarraysorted = sort { $a <=> $b } @fwinrules;
+	foreach my $rule (@fwinarraysorted)
+	{
+    	$fwintext .= "&#010- $rule";
+	}
+	#Count services used in firewall - outgoing
+	my $fwouttext="";
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[4] eq $searchstring){
+			$fwouttext = "$Lang::tr{'outgoing firewall access'}:";
+		}
+		if($fwout{$key3}[6] eq $searchstring){
+			$fwouttext = "$Lang::tr{'outgoing firewall access'}:";
+		}
+	}
+	my @fwoutrules = ();
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[4] eq $searchstring){
+			push(@fwoutrules, $key3);
+		}
+		if($fwout{$key3}[6] eq $searchstring){
+			push(@fwoutrules, $key3);
+		}
+	}
+	my @fwoutarraysorted = sort { $a <=> $b } @fwoutrules;
+	foreach my $rule (@fwoutarraysorted)
+	{
+    	$fwouttext .= "&#010- $rule";
+	}
+	if ($fwfwtext) {
+		$titletext .= "$fwfwtext"
+	}
+	if ($fwintext) {
+		if ($titletext) {
+			$titletext .= "&#010 "
+		}
+		$titletext .= "$fwintext"
+	}
+	if ($fwouttext) {
+		if ($titletext) {
+			$titletext .= "&#010 "
+		}
+		$titletext .= "$fwouttext"
+	}
+	return $titletext;
+}
 sub getnetcount
 {
 	my $searchstring=shift;
@@ -2850,6 +2956,122 @@ sub getnetcount
 	}
 	return $srvcounter;
 }
+sub getusedin
+{
+	my $searchstring=shift;
+	my $titletext="";
+	my $groups=();
+	my $rules=();
+
+	#Count services used in Network/Host group
+	my $servicegrouptext="";
+	foreach my $key (keys %customgrp) {
+		if($customgrp{$key}[2] eq $searchstring){
+			$servicegrouptext = "$Lang::tr{'fwhost cust grp'}:";
+		}
+	}
+	foreach my $key (keys %customgrp) {
+		if($customgrp{$key}[2] eq $searchstring){
+			$servicegrouptext .= "&#010- $customgrp{$key}[0]";
+		}
+	}
+	#Count services used in firewall - config
+	my $fwfwtext="";
+	# first set title if found
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[4] eq $searchstring){
+			$fwfwtext = "$Lang::tr{'firewall rules'}:";
+		}
+		if($fwfwd{$key1}[6] eq $searchstring){
+			$fwfwtext = "$Lang::tr{'firewall rules'}:";
+		}
+	}
+	# then add rule numbers
+	my @fwfwrules = ();
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[4] eq $searchstring){
+			push(@fwfwrules, $key1);
+		}
+		if($fwfwd{$key1}[6] eq $searchstring){
+			push(@fwfwrules, $key1);
+		}
+	}
+	my @fwfwarraysorted = sort { $a <=> $b } @fwfwrules;
+	foreach my $rule (@fwfwarraysorted)
+	{
+    	$fwfwtext .= "&#010- $rule";
+	}
+	#Count services used in firewall - input
+	my $fwintext="";
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[4] eq $searchstring){
+			$fwintext = "$Lang::tr{'incoming firewall access'}:";
+		}
+		if($fwinp{$key2}[6] eq $searchstring){
+			$fwintext = "$Lang::tr{'incoming firewall access'}:";
+		}
+	}
+	my @fwinrules = ();
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[4] eq $searchstring){
+			push(@fwinrules, $key2);
+		}
+		if($fwinp{$key2}[6] eq $searchstring){
+			push(@fwinrules, $key2);
+		}
+	}
+	my @fwinarraysorted = sort { $a <=> $b } @fwinrules;
+	foreach my $rule (@fwinarraysorted)
+	{
+    	$fwintext .= "&#010- $rule";
+	}
+	#Count services used in firewall - outgoing
+	my $fwouttext="";
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[4] eq $searchstring){
+			$fwouttext = "$Lang::tr{'outgoing firewall access'}:";
+		}
+		if($fwout{$key3}[6] eq $searchstring){
+			$fwouttext = "$Lang::tr{'outgoing firewall access'}:";
+		}
+	}
+	my @fwoutrules = ();
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[4] eq $searchstring){
+			push(@fwoutrules, $key3);
+		}
+		if($fwout{$key3}[6] eq $searchstring){
+			push(@fwoutrules, $key3);
+		}
+	}
+	my @fwoutarraysorted = sort { $a <=> $b } @fwoutrules;
+	foreach my $rule (@fwoutarraysorted)
+	{
+    	$fwouttext .= "&#010- $rule";
+	}
+	if ($servicegrouptext) {
+		$titletext .= "$servicegrouptext"
+	}
+	if ($fwfwtext) {
+		if ($titletext) {
+			$titletext .= "&#010 "
+		}
+		$titletext .= "$fwfwtext"
+	}
+	if ($fwintext) {
+		if ($titletext) {
+			$titletext .= "&#010 "
+		}
+		$titletext .= "$fwintext"
+	}
+	if ($fwouttext) {
+		if ($titletext) {
+			$titletext .= "&#010 "
+		}
+		$titletext .= "$fwouttext"
+	}
+	return $titletext
+}
 sub getsrvcount
 {
 	my $searchstring=shift;
@@ -2879,6 +3101,100 @@ sub getsrvcount
 		}
 	}
 	return $srvcounter;
+}
+sub getsrvusedin
+{
+	my $searchstring=shift;
+	my $titletext="";
+	#Count services used in servicegroups
+	my $servicegrouptext="";
+	foreach my $key (keys %customservicegrp) {
+		if($customservicegrp{$key}[2] eq $searchstring){
+			$servicegrouptext = "$Lang::tr{'outgoing firewall access'}:";
+		}
+	}
+	foreach my $key (keys %customservicegrp) {
+		if($customservicegrp{$key}[2] eq $searchstring){
+			$servicegrouptext .= "&#010- $customservicegrp{$key}[0]";
+		}
+	}
+	my $fwfwtext="";
+	# first set title if found
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[15] eq $searchstring){
+			$fwfwtext = "$Lang::tr{'firewall rules'}:";
+		}
+	}
+	# then add rule numbers
+	my @fwfwrules = ();
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[15] eq $searchstring){
+			push(@fwfwrules, $key1);
+		}
+	}
+	my @fwfwarraysorted = sort { $a <=> $b } @fwfwrules;
+	foreach my $rule (@fwfwarraysorted)
+	{
+    	$fwfwtext .= "&#010- $rule";
+	}
+	#Count services used in firewall - input
+	my $fwintext="";
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[15] eq $searchstring){
+			$fwintext = "$Lang::tr{'incoming firewall access'}:";
+		}
+	}
+	my @fwinrules = ();
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[15] eq $searchstring){
+			push(@fwinrules, $key2);
+		}
+	}
+	my @fwinarraysorted = sort { $a <=> $b } @fwinrules;
+	foreach my $rule (@fwinarraysorted)
+	{
+    	$fwintext .= "&#010- $rule";
+	}
+	#Count services used in firewall - outgoing
+	my $fwouttext="";
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[15] eq $searchstring){
+			$fwouttext = "$Lang::tr{'outgoing firewall access'}:";
+		}
+	}
+	my @fwoutrules = ();
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[15] eq $searchstring){
+			push(@fwoutrules, $key3);
+		}
+	}
+	my @fwoutarraysorted = sort { $a <=> $b } @fwoutrules;
+	foreach my $rule (@fwoutarraysorted)
+	{
+    	$fwouttext .= "&#010- $rule";
+	}
+	if ($servicegrouptext ne '') {
+		$titletext .= "$servicegrouptext";
+	}
+	if ($fwfwtext ne '') {
+		if ($titletext) {
+			$titletext .= "&#010 ";
+		}
+		$titletext .= "$fwfwtext";
+	}
+	if ($fwintext ne '') {
+		if ($titletext) {
+			$titletext .= "&#010 ";
+		}
+		$titletext .= "$fwintext";
+	}
+	if ($fwouttext) {
+		if ($titletext ne '') {
+			$titletext .= "&#010 ";
+		}
+		$titletext .= "$fwouttext";
+	}
+	return $titletext
 }
 sub deletefromgrp
 {

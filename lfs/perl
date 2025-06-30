@@ -39,6 +39,9 @@ else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
 endif
 
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
+
 # Perl does not build with -j larger than 23
 MAX_PARALLELISM = 23
 
@@ -86,7 +89,8 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR) -Dlibs="-lpthread -lm" -Uloclibpth -Ulocincpth
+	cd $(DIR_APP) && ./configure.gnu --prefix=$(TOOLS_DIR) \
+		-des -Dlibs="-lpthread -lm" -Uloclibpth -Ulocincpth
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && cp -v perl cpan/podlators/scripts/pod2man $(TOOLS_DIR)/bin
 	cd $(DIR_APP) && mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VER)

@@ -1,4 +1,4 @@
-###############################################################################
+﻿###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.2.2
+VER        = 10.2.4
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 95777f7aedc3a68e9873dd69d2c36b0235da31d95ad0327288f4fe11f35fe0ebcac827d3c7c9cc45bb0bbfdebfee246d0187c1d06bd9c44505868b9731715575
+$(DL_FILE)_BLAKE2 = cdc5c345c58f24852ecf7e6655446f9385c860d9095cca8fa40eaae27a1d05dfad667e1e39af6ace2bd73acaa799210d6345462c90a88f89839912416263fdef
 
 install : $(TARGET)
 
@@ -71,11 +71,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-			--prefix="" \
-			--sysconfdir=/var/ipfire/dhcpc \
-			--dbdir=/var/ipfire/dhcpc \
-			--libexecdir=/var/ipfire/dhcpc \
-			--mandir=/usr/share/man
+				--prefix="" \
+				--sysconfdir=/var/ipfire/dhcpc \
+				--dbdir=/var/ipfire/dhcpc \
+				--libexecdir=/var/ipfire/dhcpc \
+				--mandir=/usr/share/man
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

@@ -45,6 +45,7 @@ dnsforward.cgi=configuration/network/dnsforward
 routing.cgi=configuration/network/static
 mac.cgi=configuration/network/mac-address
 wakeonlan.cgi=configuration/network/wake-on-lan
+aliases.cgi=configuration/network/aliases
 
 #	Services menu
 vpnmain.cgi=configuration/services/ipsec

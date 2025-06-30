@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(PROG)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libid3tag
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -81,10 +81,11 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libid3tag-0.16.3-allow_build_with_cmake-4.0.x.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && mkdir build
-	cd $(DIR_APP)/build && cmake ..		\
-		-DCMAKE_INSTALL_PREFIX=/usr
+	cd $(DIR_APP)/build && cmake .. \
+				-DCMAKE_INSTALL_PREFIX=/usr
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	@rm -rf $(DIR_APP)

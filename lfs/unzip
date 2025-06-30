@@ -32,6 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -70,10 +73,11 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/unzip-gnu89-build.patch
 	cd $(DIR_APP) && make -f unix/Makefile clean
-	cd $(DIR_APP)/unix && ./configure
+	cd $(DIR_APP)/unix && CFLAGS="$(CFLAGS)" ./configure
 	# ARM/x86_64 cannot use the x86 32 bit assembly code.
-	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux_noasm
+	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 generic_gcc
 	cd $(DIR_APP) && make prefix=/usr MANDIR=/usr/share/man/man1 -f unix/Makefile install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

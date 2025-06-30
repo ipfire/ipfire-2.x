@@ -32,6 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -71,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mpage25-config.patch
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && make $(MAKETUNING) RPM_OPT_FLAGS="$(CFLAGS)"
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

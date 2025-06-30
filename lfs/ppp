@@ -34,7 +34,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-CFLAGS    += -fno-strict-aliasing
+# Fix build with GCC 15
+CFLAGS    += -std=gnu17 -fno-strict-aliasing
 
 ###############################################################################
 # Top-level Rules

@@ -319,7 +319,7 @@ END
 	if (@errors)
 	{
 		chomp @errors;
-		print "\nErrors occurred:\n";
+		print "\n$Lang::tr{'pakfire errors'}\n";
 		foreach (@errors)
 		{
 			print "$_\n";
@@ -339,40 +339,24 @@ END
 	@all_deps = grep { ! $dedupe{ $_ }++ } @all_deps;
 
 	# build dependencies tree
-	my @search = @pkgs_deps;
-	my @pkgs_deps_tree;
-	my @temp;
-	do
-	{
-		@temp = ();
-		foreach my $i (@search)
-		{
-			(my $child) = $i =~ /.+:(.+)/;
-			foreach my $j (@all_deps)
-			{
-				(my $all_deps_parent) = $j =~ /(.+):.+/;
-				(my $all_deps_child) = $j =~ /.+:(.+)/;
-				if ( $child eq $all_deps_parent )
-				{
-					push @temp, "$i:$all_deps_child";
-				}
-			}
-		}
-		push @pkgs_deps_tree, @temp;
-		@search = @temp;
-	} until ( ! (@search));
-
+	my @pkgs_deps_tree = build_tree(\@pkgs_deps, \@all_deps);
 	push @pkgs_deps, @pkgs_deps_tree;
-
 	@pkgs_deps = sort @pkgs_deps;
 
 	my @installed = get_package_names($instdir);
 
-	# display dependencies
-	print "\nPackage dependencies:\n";
+	# display summary
+	print "\n$Lang::tr{'pakfire deps'}\n";
+	my $package_display;
+	if ($mainsettings{'LANGUAGE'} eq "ru")
+	{
+		$package_display = $Lang::tr{'pakfire package'} . " ";
+	} else {
+		$package_display = sprintf("%-10s", $Lang::tr{'pakfire package'});
+	}
 	foreach my $i (@pkgs)
 	{
-		print "\n  Package:  $i\n";
+		print "\n  $package_display  $i\n";
 		if (grep (/^$i/, @pkgs_deps))
 		{
 			foreach my $j (@pkgs_deps)
@@ -382,15 +366,38 @@ END
 					(my $child) = $j =~ /.+:(.+)/;
 					if (grep (/$child/, @installed))
 					{
-						print "            " . (arrow_format($j)) . "<span style='font-size:80%'> (already installed)</span>\n";
+						print "              " . (arrow_format($j)) . "<span style='font-size:80%'> ($Lang::tr{'pakfire installed'})</span>\n";
 					} else {
-						print "            " . (arrow_format($j)) . "\n";
+						print "              " . (arrow_format($j)) . "\n";
 					}
 				}
 			}
 		} else {
-			print "            No dependencies found.\n";
+			print "              $Lang::tr{'pakfire no deps'}\n";
 		}
+	}
+
+	my @pkgs_install = @pkgs;
+	foreach my $i (@pkgs_deps)
+	{
+		(my $child) = $i =~ /.+:(.+)/;
+		push @pkgs_install, $child;
+	}
+	my %dedupe;
+	@pkgs_install = grep { ! $dedupe{ $_ }++ } @pkgs_install;
+	foreach my $i (@installed)
+	{
+		if (grep (/$i/, @pkgs_install))
+		{
+			@pkgs_install = grep { $_ ne $i } @pkgs_install;
+		}
+	}
+	@pkgs_install = sort @pkgs_install;
+
+	print "\n$Lang::tr{'pakfire install package'}\n\n";
+	foreach (@pkgs_install)
+	{
+		print "              $_\n";
 	}
 
 	print <<END;
@@ -418,34 +425,190 @@ END
 	&Header::openbox("100%", "center", $Lang::tr{'remove'});
 
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
-	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
+
 	print <<END;
 	<table style="width: 100%">
 		<tr>
-			<td colspan='2'>
-			<p>$Lang::tr{'pakfire uninstall package'} <strong>@{pkgs}</strong><br>$Lang::tr{'pakfire possible dependency'}</p>
-			<pre>
+			<td>
+			$Lang::tr{'pakfire remove package'}  <strong>
 END
-	foreach (@output) {
-		$_ =~ s/\\[[0-1]\;[0-9]+m//g;
-		print "$_\n";
+        foreach (my $i = 0; $i < $#pkgs; $i++)
+        {
+                print "$pkgs[$i], ";
+        }
+        print "$pkgs[$#pkgs]";
+
+        print <<END;
+                        </strong>
+                        <br><br>$Lang::tr{'pakfire check deps'}
+                        <pre>
+END
+
+ 	# get dependencies from metafiles
+	my $instdir = "/opt/pakfire/db/installed";
+	my @inst_deps = deps_from_metafiles($instdir);
+
+	# get package dependencies
+	my @pkgs_deps;
+	foreach my $i (@pkgs)
+	{
+		foreach my $j (@inst_deps)
+		{
+			(my $child) = $j =~ /.+:(.+)/;
+			if (grep(/^$i/, $j))
+			{
+				push @pkgs_deps, "$i:$child";
+			}
+		}
 	}
-	print <<END;
+
+	# build dependencies tree
+	my @pkgs_deps_tree = build_tree(\@pkgs_deps, \@inst_deps);
+	push @pkgs_deps, @pkgs_deps_tree;
+	@pkgs_deps = sort @pkgs_deps;
+
+	# add dependencies to list of packages to remove
+	my @pkgs_list = @pkgs;
+	foreach (@pkgs_deps)
+	{
+		(my $child) = $_ =~ /.+:(.+)/;
+		push @pkgs_list, $child,
+	}
+
+	my %dedupe;
+	@pkgs_list = grep { ! $dedupe{ $_ }++ } @pkgs_list;
+	@pkgs_list = sort @pkgs_list;
+
+	# find packages in use elsewhere
+	# omit the package if it's in the list to be removed
+	my @pkgs_inuse;
+	foreach my $i (@pkgs_list)
+	{
+		foreach my $j (@inst_deps)
+		{
+			(my $parent) = $j =~ /(.+):.+/;
+			(my $child) = $j =~ /.+:(.+)/;
+			if (( $i eq $child ) && ( ! grep(/$parent/, @pkgs_list)))
+			{
+				push @pkgs_inuse, "$j";
+			}
+		}
+	}
+
+	# build dependencies tree
+	my @pkgs_inuse_tree = build_tree(\@pkgs_inuse, \@inst_deps);
+	push @pkgs_inuse, @pkgs_inuse_tree;
+	@pkgs_inuse = sort @pkgs_inuse;
+
+	# create list of packages to keep
+	my @pkgs_keep;
+	foreach (@pkgs_inuse)
+	{
+		(my $child) = $_ =~ /.+:(.+)/;
+		push @pkgs_keep, $child;
+	}
+
+	my %dedupe;
+	@pkgs_keep = grep { ! $dedupe{ $_ }++ } @pkgs_keep;
+	@pkgs_keep = sort @pkgs_keep;
+
+	# delete packages that are in use from list of packages to remove
+	my @pkgs_remove = @pkgs_list;
+	foreach my $i (@pkgs_keep)
+	{
+		@pkgs_remove = grep { $_ ne $i } @pkgs_remove;
+	}
+
+	# create list for pakfire remove command
+	my $remove_list = join('|', @pkgs_remove);
+
+	# display summary
+	print "\n$Lang::tr{'pakfire deps'}\n";
+	my $package_display;
+	if ($mainsettings{'LANGUAGE'} eq "ru")
+	{
+		$package_display = $Lang::tr{'pakfire package'} . " ";
+	} else {
+		$package_display = sprintf("%-10s", $Lang::tr{'pakfire package'});
+	}
+	foreach my $i (@pkgs)
+	{
+		print "\n  $package_display  $i\n";
+		if (grep (/^$i/, @pkgs_deps))
+		{
+			foreach my $j (@pkgs_deps)
+			{
+				if (grep (/^$i/, $j))
+				{
+					(my $child) = $j =~ /.+:(.+)/;
+					print "              " . (arrow_format($j)) . "\n";
+				}
+			}
+		} else {
+			print "              $Lang::tr{'pakfire no deps'}\n";
+		}
+	}
+
+	if (@pkgs_inuse)
+	{
+		print "\n$Lang::tr{'pakfire inuse'}\n\n";
+		foreach (@pkgs_inuse)
+		{
+			print "              " . (arrow_format($_)) . "\n";
+		}
+	}
+
+	if (@pkgs_keep)
+	{
+		print "\n$Lang::tr{'pakfire keep'}\n\n";
+		foreach (@pkgs_keep)
+		{
+			print "              $_\n";
+		}
+
+	}
+
+	if (@pkgs_remove)
+	{
+	        print "\n$Lang::tr{'pakfire remove package'}\n\n";
+		foreach (@pkgs_remove)
+		{
+			print "              $_\n";
+		}
+		print <<END;
+			</pre>
+			</td>
+		</tr>
+END
+	} else {
+		print <<END;
 			</pre>
 			</td>
 		</tr>
 		<tr>
-			<td colspan='2'>$Lang::tr{'pakfire uninstall all'}</td>
+			<td align='center' style='padding-top:0px;padding-bottom:8px;color:red'>
+			$Lang::tr{'pakfire no remove'}
+			</td>
 		</tr>
+END
+	}
+
+	print <<END;
 		<tr>
-			<td colspan='2'>&nbsp;</td>
-		</tr>
-		<tr>
-			<td align='center'>
+			<td align='center' style='padding-top:8px;padding-bottom:4px'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
+			<input type='hidden' name='DELPAKS' value='$remove_list' />
 			<input type='hidden' name='FORCE' value='on' />
-			<input type='submit' name='ACTION' value='$Lang::tr{'remove'}'/>
+END
+
+	if (@pkgs_remove)
+	{
+		print "<input type='submit' name='ACTION' value='$Lang::tr{'remove'}'/>";
+	} else {
+		print "<input disabled type='submit' name='ACTION' value='$Lang::tr{'remove'}'/>";
+	}
+
+	print <<END;
 			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}'/>
 			</form>
 			</td>
@@ -802,4 +965,38 @@ sub arrow_format
         }
         $line = substr($line, 0, -4);
         return $line;
+}
+
+# build dependencies tree from array of package
+# dependencies
+sub build_tree
+{
+	my $pref = $_[0];
+	my $dref = $_[1];
+	my @packages = @$pref;
+	my @deps = @$dref;
+	my @tree;
+	my @temp;
+
+	do
+	{
+		@temp = ();
+		foreach my $i (@packages)
+		{
+			(my $child) = $i =~ /.+:(.+)/;
+			foreach my $j (@deps)
+			{
+				(my $deps_parent) = $j =~ /(.+):.+/;
+				(my $deps_child) = $j =~ /.+:(.+)/;
+				if ( $child eq $deps_parent )
+				{
+					push @temp, "$i:$deps_child";
+				}
+			}
+		}
+		push @tree, @temp;
+		@packages = @temp;
+	} until ( ! (@packages));
+
+	return @tree;
 }
