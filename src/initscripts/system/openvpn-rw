@@ -54,7 +54,7 @@ case "${1}" in
 
 	stop)
 		boot_mesg "Stopping OpenVPN Authenticator..."
-		PIDFILE= killproc /usr/sbin/openvon-authenticator
+		PIDFILE= killproc /usr/sbin/openvpn-authenticator
 
 		boot_mesg "Stopping OpenVPN Roadwarrior Server..."
 		killproc /usr/sbin/openvpn
