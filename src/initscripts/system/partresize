@@ -87,7 +87,7 @@ case "${1}" in
 					# Enable also serial console on GRUB
 					echo "GRUB_TERMINAL=\"serial console\"" >> /etc/default/grub
 					echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
-					sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" /etc/default/grub
+					sed -i -e "s|console=tty1|console=ttyS0,115200n8|g" /etc/default/grub
 				fi
 
 				# Re-generate GRUB configuration

@@ -789,7 +789,7 @@ int main(int argc, char *argv[]) {
 		fprintf(f, "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=%d\"\n", SERIAL_BAUDRATE);
 		fclose(f);
 
-		replace(DESTINATION_MOUNT_PATH "/etc/default/grub", "panic=10", "panic=10 console=ttyS0,115200n8");
+		replace(DESTINATION_MOUNT_PATH "/etc/default/grub", "console=tty1", "console=ttyS0,115200n8");
 	}
 
 	/* novga */
