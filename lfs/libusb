@@ -25,6 +25,7 @@
 include Config
 
 VER        = 1.0.29
+# Ship nut when libusb is updated
 
 THISAPP    = libusb-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
