@@ -11,7 +11,6 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/wireguard.cgi
 usr/sbin/setup
 var/ipfire/backup/bin/backup.pl
-var/ipfire/fwhosts/customservices
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/ipblocklist-functions.pl
