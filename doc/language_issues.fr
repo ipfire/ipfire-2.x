@@ -337,7 +337,6 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
-WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
@@ -1022,6 +1021,7 @@ WARNING: untranslated string: local subnets = Local Subnets
 WARNING: untranslated string: malformed preshared key = Malformed Pre-Shared Key
 WARNING: untranslated string: malformed private key = Malformed Private Key
 WARNING: untranslated string: malformed public key = Malformed Public Key
+WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: online = Online
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
@@ -1030,6 +1030,7 @@ WARNING: untranslated string: password has quotation mark = Password contains an
 WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: public key = Public Key
 WARNING: untranslated string: qr code = QR Code
+WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: remarks = Remarks
 WARNING: untranslated string: remote subnets = Remote Subnets

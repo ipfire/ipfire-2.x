@@ -337,7 +337,6 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
-WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd because it it outside the allowed mount path
 WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
@@ -1018,9 +1017,11 @@ WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: online = Online
 WARNING: untranslated string: pakfire ago = ago.
+WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string

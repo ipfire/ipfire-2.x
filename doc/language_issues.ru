@@ -283,7 +283,6 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
-WARNING: translation string unused: extrahd
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall hits per
@@ -1392,6 +1391,7 @@ WARNING: untranslated string: masquerading = Masquerading
 WARNING: untranslated string: masquerading disabled = Masquerading disabled
 WARNING: untranslated string: masquerading enabled = Masquerading enabled
 WARNING: untranslated string: maximum = Maximum
+WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: minimum = Minimum
@@ -1485,6 +1485,7 @@ WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: public key = Public Key
 WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!
 WARNING: untranslated string: qr code = QR Code
+WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: reboot fsck = Reboot & run &lsquo;fsck&rsquo;
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check

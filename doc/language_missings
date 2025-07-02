@@ -76,6 +76,7 @@
 < link-layer encapsulation
 < log drop hostile in
 < log drop hostile out
+< mdstat
 < netbios nameserver daemon
 < no entries
 < notes
@@ -83,6 +84,7 @@
 < oops something went wrong
 < optional
 < ovpn roadwarrior server
+< quality of service
 < quick control
 < random number generator daemon
 < regenerate host certificate
@@ -127,7 +129,9 @@
 ############################################################################
 < dns servers
 < ids provider eol
+< mdstat
 < online
+< quality of service
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -166,6 +170,7 @@
 < malformed preshared key
 < malformed private key
 < malformed public key
+< mdstat
 < online
 < oops something went wrong
 < ovpn roadwarrior server
@@ -173,6 +178,7 @@
 < processors
 < public key
 < qr code
+< quality of service
 < reg_file_data_sampling
 < remarks
 < remote subnets
@@ -594,6 +600,7 @@
 < masquerading
 < masquerading disabled
 < masquerading enabled
+< mdstat
 < meltdown
 < messages
 < mitigated
@@ -647,6 +654,7 @@
 < ptr
 < public key
 < qr code
+< quality of service
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -1212,6 +1220,7 @@
 < masquerading
 < masquerading disabled
 < masquerading enabled
+< mdstat
 < meltdown
 < messages
 < mitigated
@@ -1284,6 +1293,7 @@
 < ptr
 < public key
 < qr code
+< quality of service
 < random number generator daemon
 < rdns
 < rebooting ipfire fsck
@@ -2146,6 +2156,7 @@
 < maximum
 < MB read
 < MB written
+< mdstat
 < meltdown
 < messages
 < minimum
@@ -2259,6 +2270,7 @@
 < public key
 < qos enter bandwidths
 < qr code
+< quality of service
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -3236,6 +3248,7 @@
 < maximum
 < MB read
 < MB written
+< mdstat
 < meltdown
 < messages
 < minimum
@@ -3347,6 +3360,7 @@
 < public key
 < qos enter bandwidths
 < qr code
+< quality of service
 < random number generator daemon
 < rdns
 < reboot fsck
@@ -3878,6 +3892,7 @@
 < malformed preshared key
 < malformed private key
 < malformed public key
+< mdstat
 < meltdown
 < mitigated
 < mmio stale data
@@ -3917,6 +3932,7 @@
 < ptr
 < public key
 < qr code
+< quality of service
 < random number generator daemon
 < reboot fsck
 < rebooting ipfire fsck
@@ -4068,3 +4084,47 @@
 < zoneconf val vlan tag assignment error
 < zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error
+############################################################################
+# Checking cgi-bin translations for language: tw                           #
+############################################################################
+< advproxy errmsg invalid user/password
+< aliases default interface
+< Captive wrong type
+< dns servers
+< guaranteed bandwidth
+< max bandwidth
+< online
+< pakfire confirm upgrades
+< pakfire deps
+< pakfire errors
+< pakfire installed
+< pakfire inuse
+< pakfire keep
+< pakfire no deps
+< pakfire no remove
+< pakfire package
+< pakfire remove package
+< pakfire updating
+< password has quotation mark
+############################################################################
+# Checking cgi-bin translations for language: zh                           #
+############################################################################
+< advproxy errmsg invalid user/password
+< aliases default interface
+< Captive wrong type
+< dns servers
+< guaranteed bandwidth
+< max bandwidth
+< online
+< pakfire confirm upgrades
+< pakfire deps
+< pakfire errors
+< pakfire installed
+< pakfire inuse
+< pakfire keep
+< pakfire no deps
+< pakfire no remove
+< pakfire package
+< pakfire remove package
+< pakfire updating
+< password has quotation mark

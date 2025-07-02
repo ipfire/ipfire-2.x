@@ -300,7 +300,6 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
-WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
@@ -1248,6 +1247,7 @@ WARNING: untranslated string: masquerade orange = Masquerade ORANGE
 WARNING: untranslated string: masquerading = Masquerading
 WARNING: untranslated string: masquerading disabled = Masquerading disabled
 WARNING: untranslated string: masquerading enabled = Masquerading enabled
+WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: mitigated = Mitigated
@@ -1315,6 +1315,7 @@ WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: public key = Public Key
 WARNING: untranslated string: qr code = QR Code
+WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
