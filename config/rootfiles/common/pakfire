@@ -17,4 +17,3 @@ opt/pakfire/pakfire
 opt/pakfire/tmp
 var/cache/pakfire
 var/log/pakfire
-var/log/pakfire.log

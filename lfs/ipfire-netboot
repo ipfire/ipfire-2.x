@@ -78,9 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Extract iPXE source
 	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.gz
 	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
-	cd $(DIR_APP) && make $(MAKETUNING) bin/ipxe.lkrn
+	cd $(DIR_APP) && make $(MAKETUNING) bin/ipxe.lkrn CC="gcc -std=gnu99"
 ifeq "$(BUILD_ARCH)" "x86_64"
-	cd $(DIR_APP) && make $(MAKETUNING) bin-x86_64-efi/ipxe.efi
+	cd $(DIR_APP) && make $(MAKETUNING) bin-x86_64-efi/ipxe.efi CC="gcc -std=gnu99"
 endif
 
 	# Installation

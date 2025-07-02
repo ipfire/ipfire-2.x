@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 668
+VER        = 678
 
 THISAPP    = less-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0f6a85a1c66577dd2a28682a6f8399e42fdbe9fc1498b2e89c6bb7c47109e8d3ab934abe5dd998b2c8dfacfb174ad9daeb79b3d4c13df22fa035ea792b2eaf5e
+$(DL_FILE)_BLAKE2 = 5e6644a8c66f35f1b3ab72a0727c76922b7d3cf299d5d1cf1c94882e8b0d3ec0461cd351e6b2db554b331d993760db8eb17209f41f271f5704fee0caf8d6540e
 
 install : $(TARGET)
 
@@ -73,7 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure \
 				--prefix=/usr \
 				--sysconfdir=/etc
-
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

@@ -1,0 +1,31 @@
+X-Git-Url: http://git.ipfire.org/?p=location%2Flibloc.git;a=blobdiff_plain;f=src%2Fdatabase.c;h=c251061cc8a254879491ebe133b1b4f3b58ddf30;hp=0c8608542aaad6e82c4d8602bbeb388ab43225bb;hb=95d271bb90b4cebe81c288a95a2336aa63bac4d7;hpb=d1120513a30de43308d9ed848f7ef3c6ede6d767
+
+diff --git a/src/database.c b/src/database.c
+index 0c86085..c251061 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -907,13 +907,7 @@ static int __loc_database_lookup(struct loc_database* db, const struct in6_addr*
+ 
+ 		// Move on to the next node
+ 		r = __loc_database_lookup(db, address, network, network_address, node_index, level + 1);
+-
+-		// End here if a result was found
+-		if (r == 0)
+-			return r;
+-
+-		// Raise any errors
+-		else if (r < 0)
++		if (r < 0)
+ 			return r;
+ 
+ 		DEBUG(db->ctx, "No match found below level %u\n", level);
+@@ -922,7 +916,7 @@ static int __loc_database_lookup(struct loc_database* db, const struct in6_addr*
+ 	}
+ 
+ 	// If this node has a leaf, we will check if it matches
+-	if (__loc_database_node_is_leaf(node_v1)) {
++	if (!*network && __loc_database_node_is_leaf(node_v1)) {
+ 		r = __loc_database_lookup_handle_leaf(db, address, network, network_address, level, node_v1);
+ 		if (r < 0)
+ 			return r;
+

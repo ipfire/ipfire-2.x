@@ -32,6 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -74,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Compile fix
 	cd $(DIR_APP) && sed -i "s/union wait/int/" syslogd.c
 
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make $(MAKETUNING) RPM_OPT_FLAGS="$(CFLAGS)"
 	cd $(DIR_APP) && make install
 	touch /var/log/{dhcpcd.log,messages}
 	chmod 664 /var/log/{dhcpcd.log,messages}

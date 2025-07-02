@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20250311
+VER        = 20250505
 #		https://github.com/Mic92/iana-etc
 
 THISAPP    = iana-etc-$(VER)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c49fe6730a4cadf932c8522bbe60c853f99ada19cc1e63d5127d09cbb347059dff4577e346a7899fc53a75b324f0738a3764a10794baf60da83b403c9dd51656
+$(DL_FILE)_BLAKE2 = e210ce0eb0eb656623482bb02b70c7f2041c4f66ebe2c10f828d7c1654200c03974af609218a7c2d2b164f0178a76bddbfc813fa9f849d7d27705ff9b62edf08
 
 install : $(TARGET)
 

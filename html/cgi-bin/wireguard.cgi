@@ -94,7 +94,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehash("/var/ipfire/wireguard/settings", \%Wireguard::settings);
 
 	# Start if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	} else {
 		&General::system("/usr/local/bin/wireguardctrl", "stop");
@@ -117,7 +117,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -230,7 +230,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -349,7 +349,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -534,7 +534,7 @@ END
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -649,7 +649,7 @@ END
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 
@@ -765,7 +765,7 @@ END
 	&General::writehasharray("/var/ipfire/wireguard/peers", \%Wireguard::peers);
 
 	# Reload if enabled
-	if ($Wireguard::settings{'ENABLED'} eq "on") {
+	if (&Wireguard::is_enabled()) {
 		&General::system("/usr/local/bin/wireguardctrl", "start");
 	}
 }
@@ -785,7 +785,7 @@ MAIN:
 	&Header::openbox('100%', '', $Lang::tr{'global settings'});
 
 	my %checked = (
-		"ENABLED" => ($Wireguard::settings{'ENABLED'} eq "on") ? "checked" : "",
+		"ENABLED" => (&Wireguard::is_enabled()) ? "checked" : "",
 	);
 
 	my %readonly = (

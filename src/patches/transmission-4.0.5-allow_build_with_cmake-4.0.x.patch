@@ -1,0 +1,117 @@
+diff -Naur transmission-4.0.5.orig/third-party/dht/CMakeLists.txt transmission-4.0.5/third-party/dht/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/dht/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/dht/CMakeLists.txt	2025-05-08 21:06:46.228619936 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.10)
+ project(dht C)
+ 
+ add_library(${PROJECT_NAME} STATIC
+diff -Naur transmission-4.0.5.orig/third-party/fast_float/CMakeLists.txt transmission-4.0.5/third-party/fast_float/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/fast_float/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/fast_float/CMakeLists.txt	2025-05-08 21:07:00.907066965 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.9)
++cmake_minimum_required(VERSION 3.10)
+ 
+ project(fast_float VERSION 3.4.0 LANGUAGES CXX)
+ option(FASTFLOAT_TEST "Enable tests" OFF)
+diff -Naur transmission-4.0.5.orig/third-party/fmt/CMakeLists.txt transmission-4.0.5/third-party/fmt/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/fmt/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/fmt/CMakeLists.txt	2025-05-08 21:07:41.135292083 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1...3.18)
++cmake_minimum_required(VERSION 3.10...3.18)
+ 
+ # Fallback for using newer policies on CMake <3.12.
+ if(${CMAKE_VERSION} VERSION_LESS 3.12)
+diff -Naur transmission-4.0.5.orig/third-party/googletest/CMakeLists.txt transmission-4.0.5/third-party/googletest/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/googletest/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/googletest/CMakeLists.txt	2025-05-08 21:08:06.835074741 +0200
+@@ -1,7 +1,7 @@
+ # Note: CMake support is community-based. The maintainers do not use CMake
+ # internally.
+ 
+-cmake_minimum_required(VERSION 3.5)
++cmake_minimum_required(VERSION 3.10)
+ 
+ if (POLICY CMP0048)
+   cmake_policy(SET CMP0048 NEW)
+diff -Naur transmission-4.0.5.orig/third-party/libb64/CMakeLists.txt transmission-4.0.5/third-party/libb64/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/libb64/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/libb64/CMakeLists.txt	2025-05-08 21:08:40.035085810 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+ project(libb64 VERSION 2.0.0 LANGUAGES C)
+ 
+ set(LIBB64_STANDALONE_BUILD OFF)
+diff -Naur transmission-4.0.5.orig/third-party/libdeflate/CMakeLists.txt transmission-4.0.5/third-party/libdeflate/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/libdeflate/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/libdeflate/CMakeLists.txt	2025-05-08 21:08:58.870659428 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.7)
++cmake_minimum_required(VERSION 3.10)
+ 
+ # Default to a release build.
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+diff -Naur transmission-4.0.5.orig/third-party/libevent/CMakeLists.txt transmission-4.0.5/third-party/libevent/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/libevent/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/libevent/CMakeLists.txt	2025-05-08 21:09:27.056517789 +0200
+@@ -19,7 +19,7 @@
+ #       start libevent.sln
+ #
+ 
+-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+ 
+ if (POLICY CMP0054)
+     cmake_policy(SET CMP0054 NEW)
+diff -Naur transmission-4.0.5.orig/third-party/libnatpmp/CMakeLists.txt transmission-4.0.5/third-party/libnatpmp/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/libnatpmp/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/libnatpmp/CMakeLists.txt	2025-05-08 21:09:46.043096005 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.10)
+ project(natpmp C)
+ 
+ add_definitions(-DNATPMP_STATICLIB -DENABLE_STRNATPMPERR)
+diff -Naur transmission-4.0.5.orig/third-party/libpsl/CMakeLists.txt transmission-4.0.5/third-party/libpsl/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/libpsl/CMakeLists.txt	2023-12-07 00:14:35.000000000 +0100
++++ transmission-4.0.5/third-party/libpsl/CMakeLists.txt	2025-05-08 21:09:59.844516650 +0200
+@@ -2,7 +2,7 @@
+ # This is just the minimum subset needed for building an embedded
+ # static library into Transmission.
+ 
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.10)
+ 
+ project(psl
+   VERSION 0.21.1.0 # when changing this, must set LIBPSL_VERSION_NUMBER too
+diff -Naur transmission-4.0.5.orig/third-party/libutp/CMakeLists.txt transmission-4.0.5/third-party/libutp/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/libutp/CMakeLists.txt	2023-12-07 00:14:36.000000000 +0100
++++ transmission-4.0.5/third-party/libutp/CMakeLists.txt	2025-05-08 21:10:25.155290353 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+ project(libutp VERSION 3.4 LANGUAGES C CXX)
+ 
+ set(LIBUTP_STANDALONE_BUILD OFF)
+diff -Naur transmission-4.0.5.orig/third-party/miniupnpc/CMakeLists.txt transmission-4.0.5/third-party/miniupnpc/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/miniupnpc/CMakeLists.txt	2023-12-07 00:14:36.000000000 +0100
++++ transmission-4.0.5/third-party/miniupnpc/CMakeLists.txt	2025-05-08 21:10:44.852892384 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required (VERSION 2.6)
++cmake_minimum_required (VERSION 3.10)
+ 
+ project (miniupnpc C)
+ set (MINIUPNPC_VERSION 2.0)
+diff -Naur transmission-4.0.5.orig/third-party/utfcpp/CMakeLists.txt transmission-4.0.5/third-party/utfcpp/CMakeLists.txt
+--- transmission-4.0.5.orig/third-party/utfcpp/CMakeLists.txt	2023-12-07 00:14:36.000000000 +0100
++++ transmission-4.0.5/third-party/utfcpp/CMakeLists.txt	2025-05-08 21:10:59.986354870 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required (VERSION 3.0.2)
++cmake_minimum_required (VERSION 3.10)
+ project (utf8cpp VERSION 3.2 LANGUAGES CXX)
+ 
+ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)

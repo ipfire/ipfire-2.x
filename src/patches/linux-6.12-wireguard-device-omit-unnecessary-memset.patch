@@ -1,0 +1,34 @@
+From 2c862914fbcf85609147401ea8674ae9a9e3b8cc Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Sun, 17 Nov 2024 22:20:27 +0100
+Subject: [PATCH] wireguard: device: omit unnecessary memset of netdev private
+ data
+
+The memory for netdev_priv is allocated using kvzalloc in
+alloc_netdev_mqs before rtnl_link_ops->setup is called so there is no
+need to zero it again in wg_setup.
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Link: https://patch.msgid.link/20241117212030.629159-2-Jason@zx2c4.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ drivers/net/wireguard/device.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/wireguard/device.c b/drivers/net/wireguard/device.c
+index 45e9b908dbfb0..a2ba71fbbed46 100644
+--- a/drivers/net/wireguard/device.c
++++ b/drivers/net/wireguard/device.c
+@@ -302,7 +302,6 @@ static void wg_setup(struct net_device *dev)
+ 	/* We need to keep the dst around in case of icmp replies. */
+ 	netif_keep_dst(dev);
+ 
+-	memset(wg, 0, sizeof(*wg));
+ 	wg->dev = dev;
+ }
+ 
+-- 
+2.39.5
+

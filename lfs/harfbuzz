@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 11.2.0
+VER        = 11.2.1
 
 THISAPP    = harfbuzz-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 112693a42120407c25b8bf84ed14f7a481810f34557132e5902e5eeaa967071d0aa785961541b7779b7d36f353c54b6f3167c3ab6bdb81238a69d385dab3ebfe
+$(DL_FILE)_BLAKE2 = 1c2553a02b4254c06f41a429c498439796e3c307ea2b1325b3ee99a4a87dc817bcc0ceb4ec23f0b1c708e3488249ce5f05913f4ab50fc2a66605b3e238f39d5d
 
 install : $(TARGET)
 
@@ -72,9 +72,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && meson setup \
-                     --prefix=/usr \
-			-Dcpp_args=-fno-exceptions \
-			builddir/
+                     	--prefix=/usr \
+				-Dcpp_args=-fno-exceptions \
+				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
 	@rm -rf $(DIR_APP)

@@ -26,7 +26,7 @@ include Config
 
 SUMMARY	   = Server side daemon and supporting files for libvirt
 
-VER        = 10.10.0
+VER        = 11.4.0
 
 THISAPP    = libvirt-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 aarch64
 PROG       = libvirt
-PAK_VER    = 39
+PAK_VER    = 40
 
 DEPS       = ebtables libpciaccess ovmf qemu
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8042ce1493c3ffd6e6deeb7d94d0744da18850fe416480487a57ffd33bf3390f587849f308aad12fd38c887628f90137ba717ea11ef7e0f73a97b157fa985a6e
+$(DL_FILE)_BLAKE2 = 54d2b9cb35394184d2ce22670623849ecfb54abd1c8e48135ec735ed6b30fa9fa22261cf847a66269a0f3918f164954fcc0a5d7eec1e0d759831925f3ac6b546
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))

@@ -45,7 +45,7 @@ usr/bin/apr-1-config
 #usr/lib/libapr-1.la
 #usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.7.5
+usr/lib/libapr-1.so.0.7.6
 #usr/lib/pkgconfig/apr-1.pc
 #usr/share/apr-1
 #usr/share/apr-1/build

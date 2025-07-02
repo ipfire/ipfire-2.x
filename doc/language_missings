@@ -83,9 +83,6 @@
 < oops something went wrong
 < optional
 < ovpn roadwarrior server
-< pakfire dependencies found
-< pakfire no dependencies found
-< pakfire resolvedeps wait
 < quick control
 < random number generator daemon
 < regenerate host certificate
@@ -130,6 +127,7 @@
 ############################################################################
 < dns servers
 < ids provider eol
+< online
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -168,6 +166,7 @@
 < malformed preshared key
 < malformed private key
 < malformed public key
+< online
 < oops something went wrong
 < ovpn roadwarrior server
 < password has quotation mark
@@ -612,6 +611,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -1245,6 +1245,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -2183,6 +2184,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -3273,6 +3275,7 @@
 < one month
 < one week
 < one year
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon
@@ -3884,6 +3887,7 @@
 < not affected
 < not validating
 < okay
+< online
 < oops something went wrong
 < open connections
 < openvpn cert expires soon

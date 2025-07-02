@@ -204,6 +204,7 @@ usr/sbin/watchfrr
 usr/sbin/watchfrr.sh
 usr/sbin/zebra
 #usr/share/yang/frr-affinity-map.yang
+#usr/share/yang/frr-backend.yang
 #usr/share/yang/frr-bgp-bmp.yang
 #usr/share/yang/frr-bgp-common-multiprotocol.yang
 #usr/share/yang/frr-bgp-common-structure.yang

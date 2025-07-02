@@ -1,0 +1,26 @@
+diff -Naur fireperf-0.2.0.orig/autogen.sh fireperf-0.2.0/autogen.sh
+--- fireperf-0.2.0.orig/autogen.sh	2021-02-23 16:06:33.000000000 +0100
++++ fireperf-0.2.0/autogen.sh	2025-05-14 10:03:40.623918720 +0200
+@@ -8,8 +8,9 @@
+         echo "Activated pre-commit hook."
+ fi
+ 
++autopoint
+ intltoolize --force --automake
+-autoreconf --install --symlink
++autoreconf --install --symlink --force
+ 
+ libdir() {
+         echo $(cd $1/$(gcc -print-multi-os-directory); pwd)
+diff -Naur fireperf-0.2.0.orig/configure.ac fireperf-0.2.0/configure.ac
+--- fireperf-0.2.0.orig/configure.ac	2021-02-23 16:06:33.000000000 +0100
++++ fireperf-0.2.0/configure.ac	2025-05-13 20:47:20.578717837 +0200
+@@ -28,6 +28,8 @@
+ 	pic-only
+ ])
+ AC_PREFIX_DEFAULT([/usr])
++AM_GNU_GETTEXT_VERSION(0.25)
++AM_GNU_GETTEXT([external])
+ 
+ IT_PROG_INTLTOOL([0.40.0])
+ 

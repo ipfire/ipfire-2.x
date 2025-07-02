@@ -40,7 +40,8 @@ DEPS       =
 
 SERVICES   = xinetd
 
-CFLAGS    += -fcommon -I/usr/include/tirpc -Wl,-ltirpc
+# Fix build with GCC 15
+CFLAGS    += -std=gnu17 -fcommon -I/usr/include/tirpc -Wl,-ltirpc
 
 ###############################################################################
 # Top-level Rules

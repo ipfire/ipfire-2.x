@@ -81,7 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# https://lists.ipfire.org/pipermail/development/2022-November/014763.html
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.18-Revert-Install-Perl-files-to-Perl-vendor-directory.patch
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.18_gettext-0.25_fix.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.18_Fix_backtracking_after_no_match_was_found_at_the_end_of_the_tree.patch
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \

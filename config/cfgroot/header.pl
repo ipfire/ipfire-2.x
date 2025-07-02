@@ -457,7 +457,7 @@ sub genmenu {
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
     if (! blue_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'60.wireless'}{'enabled'} = 0;
+	$menu->{'05.firewall'}{'subMenu'}->{'70.wireless'}{'enabled'} = 0;
     }
     if ( $Network::ethernet{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $Network::ethernet{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;

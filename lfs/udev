@@ -76,6 +76,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/systemd-254-linux-6.12-fs.patch
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.xz
 
+	# Don't fail if the linker shows a warning
+	cd $(DIR_APP) && sed -e "/fatal-warnings/d" -i meson.build
+
 	# Remove two unneeded groups (render and sgx) from the default udev rules
 	cd $(DIR_APP) && sed -i -e 's/GROUP="render"/GROUP="video"/' \
 		-e 's/GROUP="sgx", //' rules.d/50-udev-default.rules.in

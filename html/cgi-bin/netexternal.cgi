@@ -55,11 +55,11 @@ if ($netsettings{'RED_TYPE'} ne 'PPPOE'){
 	push (@graphs, "ppp0");
 }
 
-if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd"){
+if (-e "/var/log/rrd/collectd/localhost/interface-ipsec0/if_octets.rrd"){
 	push (@graphs, ("ipsec0"));
 }
 
-if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-tun0.rrd"){
+if (-e "/var/log/rrd/collectd/localhost/interface-tun0/if_octets.rrd"){
 	push (@graphs, ("tun0"));
 }
 

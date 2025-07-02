@@ -18,7 +18,6 @@ WARNING: translation string unused: Subclass
 WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Utilization on
 WARNING: translation string unused: Verbose
-WARNING: translation string unused: abort
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
 WARNING: translation string unused: accounting
@@ -100,7 +99,6 @@ WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: artist
 WARNING: translation string unused: attemps
-WARNING: translation string unused: available updates
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
@@ -535,14 +533,6 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
-WARNING: translation string unused: pakfire accept all
-WARNING: translation string unused: pakfire core update auto
-WARNING: translation string unused: pakfire dependencies found
-WARNING: translation string unused: pakfire health check
-WARNING: translation string unused: pakfire no dependencies found
-WARNING: translation string unused: pakfire register
-WARNING: translation string unused: pakfire resolvedeps wait
-WARNING: translation string unused: pakfire update daily
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
@@ -590,7 +580,6 @@ WARNING: translation string unused: removable device advice
 WARNING: translation string unused: repeat
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: reportlevel
-WARNING: translation string unused: request
 WARNING: translation string unused: requested data
 WARNING: translation string unused: reserved dst port
 WARNING: translation string unused: reserved src port
@@ -735,7 +724,6 @@ WARNING: translation string unused: tripwirewarningpolicy
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
-WARNING: translation string unused: uninstall
 WARNING: translation string unused: unix charset
 WARNING: translation string unused: unix group
 WARNING: translation string unused: unix password sync
@@ -751,7 +739,6 @@ WARNING: translation string unused: updxlrtr invalid num of children
 WARNING: translation string unused: updxlrtr unknown
 WARNING: translation string unused: updxlrtr update information
 WARNING: translation string unused: updxlrtr update notification
-WARNING: translation string unused: upgrade
 WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload new ruleset
@@ -1444,6 +1431,7 @@ WARNING: untranslated string: one hour = One Hour
 WARNING: untranslated string: one month = One Month
 WARNING: untranslated string: one week = One Week
 WARNING: untranslated string: one year = One Year
+WARNING: untranslated string: online = Online
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: open connections = Open Connections
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon

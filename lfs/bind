@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 9.20.8
+VER        = 9.20.10
 
 THISAPP    = bind-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cc8f9de7cff23af113c48d365d41774f5141f937091b2f97e682104be03e64c86eb6f00a5f2e43ac4a3472c24b2909ca0d4cb82194cf4e8e510d5dded40ddd5a
+$(DL_FILE)_BLAKE2 = e5a7824ff5b901be447a2f4f067aa8b3345eb8187ed86f3bf6bc623e2b6c812722667eefd1f915026dab078846011e222336a30c4da640c4e54aa828398b180d
 
 install : $(TARGET)
 

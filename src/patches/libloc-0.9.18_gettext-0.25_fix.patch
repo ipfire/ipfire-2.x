@@ -1,0 +1,29 @@
+diff -Naur libloc-0.9.18.orig/autogen.sh libloc-0.9.18/autogen.sh
+--- libloc-0.9.18.orig/autogen.sh	2025-03-10 12:07:35.000000000 +0100
++++ libloc-0.9.18/autogen.sh	2025-05-14 11:24:52.602116647 +0200
+@@ -8,8 +8,9 @@
+         echo "Activated pre-commit hook."
+ fi
+ 
++autopoint
+ intltoolize --force --automake
+-autoreconf --install --symlink
++autoreconf --force --install --symlink
+ 
+ libdir() {
+         echo $(cd $1/$(gcc -print-multi-os-directory); pwd)
+diff -Naur libloc-0.9.18.orig/configure.ac libloc-0.9.18/configure.ac
+--- libloc-0.9.18.orig/configure.ac	2025-03-10 12:07:35.000000000 +0100
++++ libloc-0.9.18/configure.ac	2025-05-14 11:25:45.712783931 +0200
+@@ -30,7 +30,10 @@
+ AC_PREFIX_DEFAULT([/usr])
+ gl_LD_VERSION_SCRIPT
+ 
+-IT_PROG_INTLTOOL([0.40.0])
+++AM_GNU_GETTEXT_VERSION(0.25)
+++AM_GNU_GETTEXT([external])
++
++IT_PROG_INTLTOOL([0.51.0])
+ 
+ # Interpret embedded Python in HTML files
+ XGETTEXT="${XGETTEXT} -L Python --keyword=_:1,2 --keyword=N_:1,2 --no-location"

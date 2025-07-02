@@ -41,7 +41,8 @@ DEPS       =
 
 SERVICES   = openvmtools
 
-CFLAGS    += -Wno-error=array-bounds
+# Fix build with GCC 15
+CFLAGS    += -std=gnu17 -Wno-error=array-bounds
 
 ###############################################################################
 # Top-level Rules

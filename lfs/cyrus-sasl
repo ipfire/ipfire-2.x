@@ -35,6 +35,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = cyrus-sasl
 PAK_VER    = 2
 
+# Fix build with GCC 15
+CFLAGS += -std=gnu17
+
 ifeq "$(PASS)" ""
 	TARGET     = $(DIR_INFO)/$(THISAPP)
 else

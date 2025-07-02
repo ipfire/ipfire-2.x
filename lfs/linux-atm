@@ -32,7 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-CFLAGS    += -fcommon
+# Fix build with GCC 15
+CFLAGS    += -std=gnu99 -fcommon
 
 ###############################################################################
 # Top-level Rules

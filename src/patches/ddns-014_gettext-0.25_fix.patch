@@ -1,0 +1,24 @@
+diff -Naur ddns-014.orig/autogen.sh ddns-014/autogen.sh
+--- ddns-014.orig/autogen.sh	2021-07-12 17:29:29.000000000 +0200
++++ ddns-014/autogen.sh	2025-05-14 10:51:56.418304212 +0200
+@@ -1,4 +1,5 @@
+ #!/bin/sh
+ 
++autopoint
+ intltoolize --force --automake
+ autoreconf --force --install --symlink
+diff -Naur ddns-014.orig/configure.ac ddns-014/configure.ac
+--- ddns-014.orig/configure.ac	2021-07-12 17:29:29.000000000 +0200
++++ ddns-014/configure.ac	2025-05-14 10:50:38.840855781 +0200
+@@ -42,7 +42,10 @@
+ ])
+ AM_SILENT_RULES([yes])
+ 
+-IT_PROG_INTLTOOL([0.40.0])
++AM_GNU_GETTEXT_VERSION(0.25)
++AM_GNU_GETTEXT([external])
++
++IT_PROG_INTLTOOL([0.51.0])
+ 
+ GETTEXT_PACKAGE=ddns
+ AC_SUBST(GETTEXT_PACKAGE)
