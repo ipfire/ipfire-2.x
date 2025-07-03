@@ -1500,6 +1500,7 @@
 'incoming overhead in bytes per second' => 'Incoming Overhead',
 'incoming traffic in bytes per second' => 'Incoming Traffic',
 'incorrect password' => 'Incorrect password',
+'indirect target selection' => 'Indirect target selection',
 'info' => 'Info',
 'init string' => 'Init:',
 'inodes' => 'Index-Nodes',

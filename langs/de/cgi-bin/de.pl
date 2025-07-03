@@ -1444,6 +1444,7 @@
 'incoming overhead in bytes per second' => 'Eingehender Overhead',
 'incoming traffic in bytes per second' => 'Eingehender Verkehr',
 'incorrect password' => 'Fehlerhaftes Passwort',
+'indirect target selection' => 'Indirect target selection',
 'info' => 'Info',
 'info messages' => 'Info',
 'init string' => 'Initialisierung:',

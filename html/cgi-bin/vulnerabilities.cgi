@@ -31,6 +31,7 @@ require "${General::swroot}/header.pl";
 
 my %VULNERABILITIES = (
 	"gather_data_sampling" => "$Lang::tr{'downfall gather data sampling'} (CVE-2022-40982)",
+	"indirect_target_selection" => "$Lang::tr{'indirect target selection'} (CVE-2024-28956)",
 	"itlb_multihit" => "$Lang::tr{'itlb multihit'} (CVE-2018-12207)",
 	"l1tf" => "$Lang::tr{'foreshadow'} (CVE-2018-3620)",
 	"mds" => "$Lang::tr{'fallout zombieload ridl'} (CVE-2018-12126, CVE-2018-12130, CVE-2018-12127, CVE-2019-11091)",
