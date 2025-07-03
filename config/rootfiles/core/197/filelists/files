@@ -1,0 +1,2 @@
+var/ipfire/menu.d/20-status.menu
+var/ipfire/menu.d/40-services.menu
