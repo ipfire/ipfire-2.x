@@ -691,7 +691,7 @@
 'core notice 1' => '<strong>注意：</strong>有一个核心更新来自',
 'core notice 2' => '到',
 'core notice 3' => '可用。',
-'core update' => '汉化：<a href="https://pfchina.org/" target="_blank">鐵血男兒</a>，核心版本：',
+'core update' => '核心版本：',
 'could not be opened' => '不能打开。',
 'could not connect to' => '不能连接到',
 'could not connect to www ipcop org' => '无法连接到www.ipfire.org',
