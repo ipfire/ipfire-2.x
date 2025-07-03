@@ -1088,6 +1088,7 @@ WARNING: untranslated string: incoming compression in bytes per second = Incomin
 WARNING: untranslated string: incoming firewall access = Incoming Firewall Access
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
 WARNING: untranslated string: incoming traffic in bytes per second = Incoming Traffic
+WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: init string = Init:
 WARNING: untranslated string: inodes = Index-Nodes

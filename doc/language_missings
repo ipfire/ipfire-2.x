@@ -129,6 +129,7 @@
 ############################################################################
 < dns servers
 < ids provider eol
+< indirect target selection
 < mdstat
 < online
 < quality of service
@@ -157,6 +158,7 @@
 < ids rulesets
 < ids unsupported provider
 < import connection
+< indirect target selection
 < invalid endpoint
 < invalid endpoint address
 < invalid ip address
@@ -514,6 +516,7 @@
 < import connection
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< indirect target selection
 < inodes
 < interface mode
 < intrusion prevention system
@@ -1134,6 +1137,7 @@
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< indirect target selection
 < inodes
 < interface mode
 < intrusion prevention system
@@ -2057,6 +2061,7 @@
 < incoming compression in bytes per second
 < incoming firewall access
 < incoming overhead in bytes per second
+< indirect target selection
 < inodes
 < integrity
 < interface mode
@@ -3149,6 +3154,7 @@
 < incoming firewall access
 < incoming overhead in bytes per second
 < incoming traffic in bytes per second
+< indirect target selection
 < inodes
 < integrity
 < interface mode
@@ -3826,6 +3832,7 @@
 < ids visit provider website
 < ids working
 < import connection
+< indirect target selection
 < inodes
 < interface mode
 < intrusion prevention system
@@ -4092,6 +4099,7 @@
 < Captive wrong type
 < dns servers
 < guaranteed bandwidth
+< indirect target selection
 < max bandwidth
 < online
 < pakfire confirm upgrades
@@ -4114,6 +4122,7 @@
 < Captive wrong type
 < dns servers
 < guaranteed bandwidth
+< indirect target selection
 < max bandwidth
 < online
 < pakfire confirm upgrades

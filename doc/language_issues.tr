@@ -1103,6 +1103,7 @@ WARNING: untranslated string: ids unable to download the ruleset = Unable to dow
 WARNING: untranslated string: ids visit provider website = Visit provider website
 WARNING: untranslated string: ids working = Changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: import connection = Import a Connection
+WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: interface mode = Interface

@@ -1310,6 +1310,7 @@ WARNING: untranslated string: imsi = IMSI
 WARNING: untranslated string: incoming compression in bytes per second = Incoming Compression
 WARNING: untranslated string: incoming firewall access = Incoming Firewall Access
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
+WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: integrity = Integrity:

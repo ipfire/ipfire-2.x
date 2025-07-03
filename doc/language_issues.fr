@@ -1008,6 +1008,7 @@ WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: ids rulesets = Rulesets
 WARNING: untranslated string: import connection = Import a Connection
+WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: invalid endpoint address = Invalid Endpoint Address
 WARNING: untranslated string: invalid ip address = Invalid IP Address
