@@ -19,6 +19,7 @@ etc/fonts/conf.d/60-latin.conf
 etc/fonts/conf.d/65-fonts-persian.conf
 etc/fonts/conf.d/65-nonlatin.conf
 etc/fonts/conf.d/69-unifont.conf
+etc/fonts/conf.d/70-no-bitmaps-except-emoji.conf
 etc/fonts/conf.d/80-delicious.conf
 etc/fonts/conf.d/90-synthetic.conf
 #etc/fonts/conf.d/README
@@ -36,10 +37,9 @@ usr/bin/fc-validate
 #usr/include/fontconfig/fcfreetype.h
 #usr/include/fontconfig/fcprivate.h
 #usr/include/fontconfig/fontconfig.h
-#usr/lib/libfontconfig.a
 #usr/lib/libfontconfig.so
 usr/lib/libfontconfig.so.1
-usr/lib/libfontconfig.so.1.15.0
+usr/lib/libfontconfig.so.1.16.0
 #usr/lib/pkgconfig/fontconfig.pc
 #usr/share/fontconfig
 #usr/share/fontconfig/conf.avail
@@ -70,6 +70,7 @@ usr/lib/libfontconfig.so.1.15.0
 #usr/share/fontconfig/conf.avail/40-nonlatin.conf
 #usr/share/fontconfig/conf.avail/45-generic.conf
 #usr/share/fontconfig/conf.avail/45-latin.conf
+#usr/share/fontconfig/conf.avail/48-guessfamily.conf
 #usr/share/fontconfig/conf.avail/48-spacing.conf
 #usr/share/fontconfig/conf.avail/49-sansserif.conf
 #usr/share/fontconfig/conf.avail/50-user.conf

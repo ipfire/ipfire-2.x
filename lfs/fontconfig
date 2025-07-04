@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.16.2
+VER        = 2.17.1
 SUMMARY    = Library for configuring and customizing font access
 
 THISAPP    = fontconfig-$(VER)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 24fdbfc573d1a97e08fc159b91e24b77ddeb646e59ab62bb154b18f07383103a8b1e00c635299e1209fb5965dc889b8ab8f5d7228083af1a916978fa69c71136
+$(DL_FILE)_BLAKE2 = 6a25826efacd177c89613aa63b0c94312129af500fb0f5a24de3bb16146b68cc42e45d80b020096286f15b730e0cbf0e640d57024f57299caec4a31b6d178ba9
 
 install : $(TARGET)
 
