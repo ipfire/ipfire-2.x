@@ -19,7 +19,7 @@ usr/lib/libjpeg.so.8
 usr/lib/libjpeg.so.8.3.2
 #usr/lib/libturbojpeg.so
 usr/lib/libturbojpeg.so.0
-usr/lib/libturbojpeg.so.0.3.0
+usr/lib/libturbojpeg.so.0.4.0
 #usr/lib/pkgconfig/libjpeg.pc
 #usr/lib/pkgconfig/libturbojpeg.pc
 #usr/share/doc/libjpeg-turbo
@@ -29,7 +29,9 @@ usr/lib/libturbojpeg.so.0.3.0
 #usr/share/doc/libjpeg-turbo/example.c
 #usr/share/doc/libjpeg-turbo/libjpeg.txt
 #usr/share/doc/libjpeg-turbo/structure.txt
-#usr/share/doc/libjpeg-turbo/tjexample.c
+#usr/share/doc/libjpeg-turbo/tjcomp.c
+#usr/share/doc/libjpeg-turbo/tjdecomp.c
+#usr/share/doc/libjpeg-turbo/tjtran.c
 #usr/share/doc/libjpeg-turbo/usage.txt
 #usr/share/doc/libjpeg-turbo/wizard.txt
 #usr/share/man/man1/cjpeg.1
