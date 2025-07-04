@@ -71,6 +71,9 @@ usr/bin/taglib-config
 #usr/include/taglib/rifffile.h
 #usr/include/taglib/s3mfile.h
 #usr/include/taglib/s3mproperties.h
+#usr/include/taglib/shortenfile.h
+#usr/include/taglib/shortenproperties.h
+#usr/include/taglib/shortentag.h
 #usr/include/taglib/speexfile.h
 #usr/include/taglib/speexproperties.h
 #usr/include/taglib/synchronizedlyricsframe.h
@@ -78,6 +81,7 @@ usr/bin/taglib-config
 #usr/include/taglib/tag.h
 #usr/include/taglib/tag_c.h
 #usr/include/taglib/taglib.h
+#usr/include/taglib/taglib_config.h
 #usr/include/taglib/taglib_export.h
 #usr/include/taglib/tbytevector.h
 #usr/include/taglib/tbytevectorlist.h
@@ -120,9 +124,9 @@ usr/bin/taglib-config
 #usr/lib/cmake/taglib/taglib-targets.cmake
 #usr/lib/libtag.so
 usr/lib/libtag.so.2
-usr/lib/libtag.so.2.0.2
+usr/lib/libtag.so.2.1.1
 #usr/lib/libtag_c.so
 usr/lib/libtag_c.so.2
-usr/lib/libtag_c.so.2.0.2
+usr/lib/libtag_c.so.2.1.1
 #usr/lib/pkgconfig/taglib.pc
 #usr/lib/pkgconfig/taglib_c.pc
