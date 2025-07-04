@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 2.41
+VER        = 2.41.1
+#          https://www.kernel.org/pub/linux/utils/util-linux/
 
 THISAPP    = util-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b0f6d63c1365d3b065584d4d79a1716e1f036474984fc08dd6b298d7f50e66736af046404d3c9d8051fd0c9c455bcd623257ea1b967b755bee063415d91c5c21
+$(DL_FILE)_BLAKE2 = 0734e461837d825a8c0f770061cc005cef9238beea15dd900283481bcec66a971492a898cd44581e889fd1af25cf631e16a687d3f0df0a86a8caa15e7f45c935
 
 install : $(TARGET)
 
@@ -74,24 +75,24 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
-		--docdir=/usr/share/doc/util-linux \
-		--disable-chfn-chsh \
-		--disable-static \
-		--disable-nls \
-		--disable-static \
-		--disable-login \
-		--disable-nologin \
-		--disable-su \
-		--disable-setpriv \
-		--disable-runuser \
-		--disable-pylibmount \
-		--disable-liblastlog2 \
-		--enable-pg \
-		--enable-hardlink \
-		--without-python \
-		--without-systemd \
-		--without-systemdsystemunitdir \
-		runstatdir=/run
+				--docdir=/usr/share/doc/util-linux \
+				--disable-chfn-chsh \
+				--disable-static \
+				--disable-nls \
+				--disable-static \
+				--disable-login \
+				--disable-nologin \
+				--disable-su \
+				--disable-setpriv \
+				--disable-runuser \
+				--disable-pylibmount \
+				--disable-liblastlog2 \
+				--enable-pg \
+				--enable-hardlink \
+				--without-python \
+				--without-systemd \
+				--without-systemdsystemunitdir \
+				runstatdir=/run
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
