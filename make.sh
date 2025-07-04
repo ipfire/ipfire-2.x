@@ -1536,6 +1536,7 @@ build_system() {
 	lfsmake2 aprutil
 	lfsmake2 unbound
 	lfsmake2 libtasn1
+	lfsmake2 libunistring
 	lfsmake2 gnutls
 	lfsmake2 libuv
 	lfsmake2 liburcu
