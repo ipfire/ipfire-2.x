@@ -45,7 +45,7 @@ case "${1}" in
 			-p "${DPROTOCOL}" --dport "${DDEST_PORT}" -j ACCEPT
 
 		boot_mesg "Starting OpenVPN Roadwarrior Server..."
-		loadproc /usr/sbin/openvpn \
+		loadproc -f /usr/sbin/openvpn \
 			--config /var/ipfire/ovpn/server.conf
 
 		boot_mesg "Starting OpenVPN Authenticator..."

@@ -257,7 +257,7 @@ start() {
 	boot_mesg "Starting OpenVPN N2N connection '${name}'..."
 
 	PIDFILE="/var/run/${name}n2n.pid" \
-		loadproc /usr/sbin/openvpn --config "${config}"
+		loadproc -f /usr/sbin/openvpn --config "${config}"
 }
 
 stop() {
