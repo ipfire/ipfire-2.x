@@ -2033,6 +2033,7 @@ build_system() {
 	lfsmake2 frr
 	lfsmake2 dmidecode
 	lfsmake2 mcelog
+	lfsmake2 libtpms
 	lfsmake2 libpciaccess
 	lfsmake2 ovmf
 	lfsmake2 libvirt
