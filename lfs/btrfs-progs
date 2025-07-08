@@ -83,5 +83,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--disable-python
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# This package has an odd way to install its libraries. Instead of
+	# just having libbtrfs.so.0 which links to libbtrfs.so.0.1.4, there
+	# is an extra file called libbtrfs.so.0.1 and likewise for libbtrfsutil.
+	# This confuses our filesystem-cleanup script and is unnecessary.
+	# Therefore we remove the superfluous symlinks.
+	rm -vf \
+		/usr/lib/libbtrfs.so.0.? \
+		/usr/lib/libbtrfsutil.so.1.?
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -34,6 +34,9 @@ done
 # Stop services
 
 # Remove files
+rm -vf \
+	/usr/lib/libbtrfs.so.0.? \
+	/usr/lib/libbtrfsutil.so.1.?
 
 # Extract files
 extract_files
