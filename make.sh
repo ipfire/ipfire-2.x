@@ -2033,7 +2033,9 @@ build_system() {
 	lfsmake2 frr
 	lfsmake2 dmidecode
 	lfsmake2 mcelog
+	lfsmake2 socat
 	lfsmake2 libtpms
+	lfsmake2 swtpm
 	lfsmake2 libpciaccess
 	lfsmake2 ovmf
 	lfsmake2 libvirt
@@ -2065,7 +2067,6 @@ build_system() {
 	lfsmake2 libloc
 	lfsmake2 ncdu
 	lfsmake2 lshw
-	lfsmake2 socat
 	lfsmake2 libcdada
 	lfsmake2 pmacct
 	lfsmake2 squid-asnbl
