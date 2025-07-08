@@ -1465,7 +1465,6 @@ WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Acces
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn connection name = Connection Name
-WARNING: untranslated string: ovpn crypt options = unknown string
 WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
 WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
 WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet

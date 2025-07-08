@@ -133,6 +133,7 @@ WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: artist
 WARNING: translation string unused: attemps
+WARNING: translation string unused: attention
 WARNING: translation string unused: available updates
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
@@ -180,7 +181,9 @@ WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
 WARNING: translation string unused: ccd err name
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd hint
 WARNING: translation string unused: ccd iroutehint
+WARNING: translation string unused: ccd noaddnet
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
@@ -251,6 +254,7 @@ WARNING: translation string unused: dhcp fixed lease help1
 WARNING: translation string unused: dhcp mode
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dhcp-options
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
@@ -262,6 +266,7 @@ WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
+WARNING: translation string unused: dl client arch insecure
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
@@ -389,6 +394,7 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
+WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network
@@ -467,6 +473,9 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for keepalive 1
+WARNING: translation string unused: invalid input for keepalive 1:2
+WARNING: translation string unused: invalid input for keepalive 2
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
 WARNING: translation string unused: invalid port list
@@ -503,6 +512,7 @@ WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: local master
+WARNING: translation string unused: local vpn hostname/ip
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: locationblock country code
@@ -513,6 +523,7 @@ WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log view
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: log-options
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
@@ -549,6 +560,7 @@ WARNING: translation string unused: meaning
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
+WARNING: translation string unused: misc-options
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modem on com1
@@ -634,10 +646,14 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
+WARNING: translation string unused: ovpn add conf
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn crypt options
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn errmsg green already pushed
+WARNING: translation string unused: ovpn errmsg invalid ip or mask
 WARNING: translation string unused: ovpn error md5
 WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn log
@@ -652,6 +668,8 @@ WARNING: translation string unused: ovpn on blue
 WARNING: translation string unused: ovpn on orange
 WARNING: translation string unused: ovpn on red
 WARNING: translation string unused: ovpn reneg sec
+WARNING: translation string unused: ovpn routes push options
+WARNING: translation string unused: ovpn server status
 WARNING: translation string unused: ovpn warning rfc3280
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_mssfix
@@ -758,6 +776,7 @@ WARNING: translation string unused: selecttraffic
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
 WARNING: translation string unused: server reserved
+WARNING: translation string unused: server restart
 WARNING: translation string unused: server string
 WARNING: translation string unused: service added
 WARNING: translation string unused: service removed
@@ -810,6 +829,8 @@ WARNING: translation string unused: ssport forwarding
 WARNING: translation string unused: ssproxy graphs
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
+WARNING: translation string unused: start ovpn server
+WARNING: translation string unused: stop ovpn server
 WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
@@ -1049,10 +1070,20 @@ WARNING: untranslated string: max bandwidth = Maximum bandwidth
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: online = Online
 WARNING: untranslated string: ovpn ciphers = Ciphers
+WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
+WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
+WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
+WARNING: untranslated string: ovpn errmsg invalid route = Invalid route
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
+WARNING: untranslated string: ovpn fqdn = FQDN
+WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
+WARNING: untranslated string: ovpn protocol settings = Protocol Settings
+WARNING: untranslated string: ovpn push default route = Push Default Route
 WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
+WARNING: untranslated string: ovpn routing settings = Routing Settings
+WARNING: untranslated string: ovpn transport protocol = Transport Protocol
 WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pakfire confirm upgrades = Do you want to install all upgrades?
 WARNING: untranslated string: pakfire deps = Package dependencies:

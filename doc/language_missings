@@ -4285,10 +4285,20 @@
 < max bandwidth
 < online
 < ovpn ciphers
+< ovpn crypto settings
+< ovpn dhcp settings
+< ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior settings
+< ovpn routing settings
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < pakfire confirm upgrades
 < pakfire deps
@@ -4321,10 +4331,20 @@
 < max bandwidth
 < online
 < ovpn ciphers
+< ovpn crypto settings
+< ovpn dhcp settings
+< ovpn dynamic client subnet
+< ovpn errmsg invalid route
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn fqdn
+< ovpn misc settings
 < ovpn no cipher selected
+< ovpn protocol settings
+< ovpn push default route
 < ovpn roadwarrior settings
+< ovpn routing settings
+< ovpn transport protocol
 < ovpn unsupported cipher selected
 < pakfire confirm upgrades
 < pakfire deps

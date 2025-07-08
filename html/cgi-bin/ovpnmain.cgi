@@ -4636,7 +4636,7 @@ END
 
 <tr><td colspan=4><hr /></td></tr><tr>
 	<tr>
-		<td class='base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+		<td class='base'><b>$Lang::tr{'ovpn crypto settings'}:</b></td>
 	</tr>
 
 	<tr><td class='boldbase'>$Lang::tr{'cipher'}</td>
