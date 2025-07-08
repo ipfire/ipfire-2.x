@@ -4050,7 +4050,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	}
 
-	if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
+	if ($cgiparams{'ENABLED'} !~ /^(on|off|)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto VPNCONF_ERROR;
 	}
