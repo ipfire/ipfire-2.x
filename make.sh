@@ -1514,7 +1514,6 @@ build_system() {
 	lfsmake2 libarchive
 	lfsmake2 cmake
 	lfsmake2 json-c
-	lfsmake2 json-glib
 	lfsmake2 tcl
 	lfsmake2 python3-MarkupSafe
 	lfsmake2 python3-Jinja2
@@ -1526,6 +1525,7 @@ build_system() {
 	lfsmake2 lvm2
 	lfsmake2 multipath-tools
 	lfsmake2 glib
+	lfsmake2 json-glib
 	lfsmake2 libgudev
 	lfsmake2 libgpg-error
 	lfsmake2 libgcrypt
