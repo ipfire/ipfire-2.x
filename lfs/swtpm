@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = swtpm
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = libtpms
 
@@ -57,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 b2 : $(subst %,%_BLAKE2,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, b2sum
