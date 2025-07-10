@@ -50,10 +50,11 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
-# Increment ipsec serial file if x509 certificates present and no content in index.txt
-
 # Apply SSH configuration
 /usr/local/bin/sshctrl
+
+# Reload Apache2
+/etc/init.d/apache reload
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
