@@ -32,9 +32,13 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 # Remove files
 rm -vf \
+	/etc/rc.d/init.d/networking/red.down/10-ovpn \
+	/etc/rc.d/init.d/networking/red.up/50-ovpn \
 	/usr/lib/libbtrfs.so.0.? \
 	/usr/lib/libbtrfsutil.so.1.?
 
@@ -52,6 +56,10 @@ ldconfig
 
 # Apply SSH configuration
 /usr/local/bin/sshctrl
+
+# Start services
+/etc/init.d/openvpn-n2n start
+/etc/init.d/openvpn-rw start
 
 # Reload Apache2
 /etc/init.d/apache reload
