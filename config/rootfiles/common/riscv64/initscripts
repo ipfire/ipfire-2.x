@@ -18,6 +18,7 @@ etc/rc.d/init.d/collectd
 etc/rc.d/init.d/connectd
 etc/rc.d/init.d/conntrackd
 etc/rc.d/init.d/console
+etc/rc.d/init.d/cpupower
 etc/rc.d/init.d/dhcp
 etc/rc.d/init.d/dhcrelay
 etc/rc.d/init.d/fcron
@@ -182,6 +183,7 @@ etc/rc.d/rcsysinit.d/S42fsresize
 etc/rc.d/rcsysinit.d/S43mounttmpfs
 etc/rc.d/rcsysinit.d/S44smt
 etc/rc.d/rcsysinit.d/S45udev_retry
+etc/rc.d/rcsysinit.d/S46cpupower
 etc/rc.d/rcsysinit.d/S50cleanfs
 etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S70console
