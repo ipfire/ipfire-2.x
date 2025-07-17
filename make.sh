@@ -1903,7 +1903,6 @@ build_system() {
 	lfsmake2 hostapd
 	lfsmake2 syslinux
 	lfsmake2 tftpd
-	lfsmake2 cpufrequtils
 	lfsmake2 apcupsd
 	lfsmake2 fireperf
 	lfsmake2 iperf
