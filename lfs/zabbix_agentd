@@ -116,6 +116,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_gateway.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_wireguard.conf \
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_wireguard.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_locationdb.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_locationdb.conf
 
 	# Install IPFire-specific Zabbix Agent scripts
 	-mkdir -pv /var/ipfire/zabbix_agentd/scripts
