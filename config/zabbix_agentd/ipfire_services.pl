@@ -100,7 +100,7 @@ my %services = (
         # OpenVPN Roadwarrior
         'OpenVPN Roadwarrior Server' => {
                 "process" => "openvpn",
-                "pidfile" => "/var/run/openvpn.pid",
+                "pidfile" => "/var/run/openvpn-rw.pid",
         }
 );
 
