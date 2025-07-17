@@ -9,6 +9,6 @@
 #
 Defaults:zabbix !requiretty
 zabbix ALL=(ALL) NOPASSWD: /opt/pakfire/pakfire status, /usr/sbin/fping, /usr/sbin/arping, /usr/local/bin/getipstat
-zabbix ALL=(ALL) NOPASSWD: /bin/cat /var/run/ovpnserver.log, /usr/local/bin/wireguardctrl dump
+zabbix ALL=(ALL) NOPASSWD: /usr/local/bin/openvpnctrl rw log, /usr/local/bin/wireguardctrl dump
 zabbix ALL=(ALL) NOPASSWD: /var/ipfire/zabbix_agentd/scripts/ipfire_certificate_detail.sh
 zabbix ALL=(ALL) NOPASSWD: /var/ipfire/zabbix_agentd/scripts/ipfire_services.pl
