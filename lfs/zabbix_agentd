@@ -112,6 +112,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_ovpn.conf \
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_ovpn.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_gateway.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_gateway.conf
 
 	# Install IPFire-specific Zabbix Agent scripts
 	-mkdir -pv /var/ipfire/zabbix_agentd/scripts
