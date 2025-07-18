@@ -54,6 +54,33 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Update the OpenVPN configuration
+sed -r \
+	-e "s/^writepid .*/writepid \/var\/run\/openvpn-rw.pid/" \
+	-e "/ncp-disable/d" \
+	-e "s/^cipher (.*)/data-ciphers-fallback \1/" \
+	-i /var/ipfire/ovpn/server.conf
+
+# Change to the subnet topology
+if ! grep -q "topology subnet" /var/ipfire/ovpn/server.conf; then
+	echo "topology subnet" >> /var/ipfire/ovpn/server.conf
+fi
+
+# Migrate away from compression
+if ! grep -q "compress migrate" /var/ipfire/ovpn/server.conf; then
+	echo "compress migrate" >> /var/ipfire/ovpn/server.conf
+fi
+
+# Enable the legacy provider (just in case)
+if ! grep -q "providers legacy default" /var/ipfire/ovpn/server.conf; then
+	echo "providers legacy default" >> /var/ipfire/ovpn/server.conf
+fi
+
+# Enable explicit exit notification
+if ! grep -q "explicit-exit-notify" /var/ipfire/ovpn/server.conf; then
+	echo "explicit-exit-notify" >> /var/ipfire/ovpn/server.conf
+fi
+
 # Apply SSH configuration
 /usr/local/bin/sshctrl
 
