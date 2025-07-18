@@ -488,6 +488,9 @@ sub parse_configuration($$) {
 		# Remove line breaks
 		chomp;
 
+		# Remove any carriage returns
+		$_ =~ s/\r$//;
+
 		# Search for section headers
 		if ($_ =~ m/^\[(\w+)\]$/) {
 			$section = $1;
