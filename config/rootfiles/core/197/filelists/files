@@ -24,4 +24,5 @@ var/ipfire/menu.d/20-status.menu
 var/ipfire/menu.d/40-services.menu
 var/ipfire/main/manualpages
 var/ipfire/ovpn/collectd.vpn
+var/ipfire/suricata/ruleset-sources
 var/ipfire/wireguard-functions.pl
