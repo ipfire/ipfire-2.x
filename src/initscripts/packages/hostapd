@@ -163,26 +163,26 @@ write_config() {
 		wpa2+3)
 			echo "wpa=2"
 			echo "wpa_passphrase=${PWD}"
-			echo "wpa_key_mgmt=WPA-PSK SAE"
+			echo "wpa_key_mgmt=WPA-PSK WPA-PSK-SHA256 SAE"
 			echo "rsn_pairwise=CCMP"
 			;;
 		wpa2)
 			echo "wpa=2"
 			echo "wpa_passphrase=${PWD}"
-			echo "wpa_key_mgmt=WPA-PSK"
+			echo "wpa_key_mgmt=WPA-PSK WPA-PSK-SHA256"
 			echo "rsn_pairwise=CCMP"
 			;;
 		wpa1+2)
 			echo "wpa=3"
 			echo "wpa_passphrase=${PWD}"
-			echo "wpa_key_mgmt=WPA-PSK"
+			echo "wpa_key_mgmt=WPA-PSK WPA-PSK-SHA256"
 			echo "wpa_pairwise=TKIP"
 			echo "rsn_pairwise=CCMP"
 			;;
 		wpa1)
 			echo "wpa=1"
 			echo "wpa_passphrase=${PWD}"
-			echo "wpa_key_mgmt=WPA-PSK"
+			echo "wpa_key_mgmt=WPA-PSK WPA-PSK-SHA256"
 			echo "wpa_pairwise=TKIP"
 			;;
 	esac
