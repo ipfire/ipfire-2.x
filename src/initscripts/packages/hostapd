@@ -130,9 +130,22 @@ write_config() {
 	case "${IEEE80211W}" in
 		on)
 			echo "ieee80211w=2"
+
+			# Enable beacon protection
+			echo "beacon_prot=1"
+
+			# Enable Operating Channel Validation
+			echo "ocv=1"
 			;;
+
 		optional)
 			echo "ieee80211w=1"
+
+			# Enable beacon protection
+			echo "beacon_prot=1"
+
+			# Enable OCV in compatibility mode for broken stations
+			echo "ocv=2"
 			;;
 		*)
 			echo "ieee80211w=0"
@@ -173,6 +186,36 @@ write_config() {
 			echo "wpa_pairwise=TKIP"
 			;;
 	esac
+
+	# Multi-Band Operation - prefer WiFi over mobile networks
+	# This feature requires Management Frame Protection
+	case "${IEEE80211W}" in
+		on|optional)
+			echo "mbo=1"
+			echo "mbo_cell_data_conn_pref=1"
+			;;
+	esac
+
+	# Always enable SSID protection
+	echo "ssid_protection=1"
+
+	# Extended Key ID support for Individually Addressed frames
+	echo "extended_key_id=1"
+
+	# Fully enable Optimized Connectivity Experience
+	echo "oce=7"
+
+	# Enable 802.11u Interworking Support
+	echo "interworking=1"
+
+	# 802.11u: We are a private network
+	echo "access_network_type=0"
+
+	# 802.11u: We have internet access
+	echo "internet=1"
+
+	# 802.11v: Advertise the time
+	echo "time_advertisement=2"
 
 	return 0
 }
