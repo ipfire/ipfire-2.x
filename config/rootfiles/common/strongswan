@@ -62,6 +62,7 @@ etc/strongswan.d/charon/xauth-eap.conf
 etc/strongswan.d/charon/xauth-generic.conf
 etc/strongswan.d/charon/xauth-noauth.conf
 etc/strongswan.d/charon/xcbc.conf
+etc/strongswan.d/iptfs.conf
 etc/strongswan.d/pki.conf
 etc/strongswan.d/starter.conf
 etc/strongswan.d/swanctl.conf
@@ -241,6 +242,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/strongswan.d
 #usr/share/strongswan/templates/config/strongswan.d/charon-logging.conf
 #usr/share/strongswan/templates/config/strongswan.d/charon.conf
+#usr/share/strongswan/templates/config/strongswan.d/iptfs.conf
 #usr/share/strongswan/templates/config/strongswan.d/pki.conf
 #usr/share/strongswan/templates/config/strongswan.d/starter.conf
 #usr/share/strongswan/templates/config/strongswan.d/swanctl.conf
