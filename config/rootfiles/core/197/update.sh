@@ -42,6 +42,19 @@ rm -vf \
 	/usr/lib/libbtrfs.so.0.? \
 	/usr/lib/libbtrfsutil.so.1.?
 
+# Remove dropped packages
+for package in cpufrequtils; do
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+                stop_service "${package}"
+                for i in $(</opt/pakfire/db/rootfiles/${package}); do
+                        rm -rfv "/${i}"
+                done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # Extract files
 extract_files
 
