@@ -101,6 +101,7 @@ fi
 /etc/init.d/unbound restart
 /etc/init.d/openvpn-n2n start
 /etc/init.d/openvpn-rw start
+/etc/init.d/collectd restart
 
 # Reload Apache2
 /etc/init.d/apache reload
