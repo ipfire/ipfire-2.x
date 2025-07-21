@@ -1,4 +1,5 @@
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
+etc/rc.d/init.d/cpupower
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/functions
 etc/rc.d/init.d/openvpn-n2n
@@ -9,6 +10,7 @@ etc/rc.d/rc3.d/S50openvpn-rw
 etc/rc.d/rc3.d/S51openvpn-n2n
 etc/rc.d/rc6.d/K10openvpn-rw
 etc/rc.d/rc6.d/K11openvpn-n2n
+etc/rc.d/rcsysinit.d/S46cpupower
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
