@@ -46,6 +46,7 @@ done
 # Stop services
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
+/etc/init.d/ipsec stop
 
 KVER="xxxKVERxxx"
 
@@ -152,6 +153,9 @@ fi
 
 # Restart services
 /etc/init.d/unbound restart
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 /etc/init.d/openvpn-n2n start
 /etc/init.d/openvpn-rw start
 /etc/init.d/collectd restart
