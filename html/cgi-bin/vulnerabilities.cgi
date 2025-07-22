@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -44,6 +44,7 @@ my %VULNERABILITIES = (
 	"spectre_v1" => "$Lang::tr{'spectre variant 1'} (CVE-2017-5753)",
 	"spectre_v2" => "$Lang::tr{'spectre variant 2'} (CVE-2017-5715)",
 	"srbds" => "$Lang::tr{'srbds'} (CVE-2020-0543)",
+	"tsa" => "$Lang::tr{'transient sheduler attacks'} (CVE-2024-36350,36357,36348,36349)",
 	"tsx_async_abort" => "$Lang::tr{'taa zombieload2'} (CVE-2019-11135)",
 );
 

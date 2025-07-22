@@ -2649,6 +2649,7 @@
 'trafficto' => 'To',
 'transfer limits' => 'Transfer limits',
 'transfers' => 'Transfers',
+'transient sheduler attacks' => 'Transient sheduler attacks',
 'transparent on' => 'Transparent on',
 'transport mode does not support vti' => 'VTI is not support in transport mode',
 'tripwire' => 'Tripwire',
