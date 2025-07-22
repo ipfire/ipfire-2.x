@@ -22,6 +22,69 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+declare -A HT_CAPS=(
+	# LDPC Coding Capability
+	[0x0001]="[LDPC]"
+	# 40 MHz Channel Width
+	[0x0002]="[HT40+][HT40-]"
+	# SM Power Save
+	# [0x0004] - not supported by hostapd
+	# Greenfield
+	[0x0008]="[GF]"
+	# Short Guard Interval (SGI) for 20 MHz
+	[0x0010]="[SHORT-GI-20]"
+	# Short Guard Interval (SGI) for 40 MHz
+	[0x0020]="[SHORT-GI-40]"
+	# TX STBC support
+	[0x0040]="[TX-STBC]"
+	# RX STBC support (1 stream)
+	[0x0080]="[RX-STBC1]"
+	# HT-delayed Block Ack
+	[0x0100]="[DELAYED-BA]"
+	# Max A-MSDU length (7935 vs. 3839 bytes)
+	[0x0200]="[MAX-AMSDU-7935]"
+	# DSSS/CCK Mode in 40 MHz
+	[0x0400]="[DSSS_CCK-40]"
+	# PSMP support
+	# [0x0800] - not supported by hostapd
+	# 40 MHz Intolerant
+	[0x1000]="[40-INTOLERANT]"
+	# L-SIG TXOP protection support
+	[0x2000]="[LSIG-TXOP-PROT]"
+)
+
+declare -A HT_CAPS_DRIVER_FILTERS=(
+	# ath10k does not support Greenfield or Delayed Block Ack
+	[ath10k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
+)
+
+declare -A VHT_CAPS=(
+	# RX LDPC
+	[0x00000008]="[RXLDPC]"
+	# Short GI for 80 MHz
+	[0x00000010]="[SHORT-GI-80]"
+	# Short GI for 160/80+80 MHz
+	[0x00000020]="[SHORT-GI-160]"
+	# TX STBC
+	[0x00000040]="[TX-STBC-2BY1]"
+	# SU Beamformer capable
+	[0x00000800]="[SU-BEAMFORMER]"
+	# SU Beamformee capable
+	[0x00001000]="[SU-BEAMFORMEE]"
+	# MU Beamformer capable
+	[0x00080000]="[MU-BEAMFORMER]"
+	# MU Beamformee capable
+	[0x00100000]="[MU-BEAMFORMEE]"
+	# VHT TXOP Power Save
+	[0x00200000]="[VHT-TXOP-PS]"
+	# +HTC-VHT
+	[0x00400000]="[HTC-VHT]"
+	# RX antenna pattern consistency
+	[0x10000000]="[RX-ANTENNA-PATTERN]"
+	# TX antenna pattern consistency
+	[0x20000000]="[TX-ANTENNA-PATTERN]"
+)
+
 find_interface() {
 	local address="${1}"
 
@@ -37,6 +100,139 @@ find_interface() {
 }
 
 write_config() {
+	local interface="${1}"
+
+	# Fetch the PHY
+	local phy="$(</sys/class/net/${interface}/phy80211/name)"
+
+	# Fetch the driver
+	local driver="$(readlink /sys/class/net/${interface}/device/driver)"
+	driver="${driver##*/}"
+
+	local flag
+	local ht_flags=0
+	local vht_flags=0
+
+	local ht_caps=()
+	local vht_caps=()
+
+	# Fetch PHY information
+	local line
+	while read -r line; do
+		case "${line}" in
+			"VHT Capabilities"*)
+				vht_flags="${line:18:10}"
+				;;
+
+			"Capabilities: "*)
+				ht_flags="${line:14}"
+				;;
+		esac
+	done <<<"$(iw phy "${phy}" info)"
+
+	# Fix the HT caps because some drivers don't support everything
+	# that the actual hardware supports (or have it turned off because of bugs).
+	if [ -n "${HT_CAPS_DRIVER_FILTERS[${driver}]}" ]; then
+		ht_flags="$(( ${ht_flags} & ${HT_CAPS_DRIVER_FILTERS[${driver}]} ))"
+	fi
+
+	# HT Capabilities
+	for flag in ${!HT_CAPS[@]}; do
+		if (( ${ht_flags} & ${flag} )); then
+			ht_caps+=( "${HT_CAPS[${flag}]}" )
+		fi
+	done
+
+	# VHT Capabilities
+	for flag in ${!VHT_CAPS[@]}; do
+		if (( ${vht_flags} & ${flag} )); then
+			vht_caps+=( "${VHT_CAPS[${flag}]}" )
+		fi
+	done
+
+	# Supported channel width
+	case "$(( (${vht_flags} >> 2) & 0x03 ))" in
+		0)
+			# Neither 160, nor 80+80 MHz
+			;;
+		1)
+			vht_caps+=( "[VHT160]" )
+			;;
+		2)
+			vht_caps+=( "[VHT160-80PLUS80]" )
+			;;
+	esac
+
+	# VHT Max MPDU Length
+	case "$(( ${vht_flags} & 0x03 ))" in
+		0)
+			# Default, 3895
+			;;
+		1)
+			vht_caps+=( "[MAX-MPDU-7991]" )
+			;;
+		2)
+			vht_caps+=( "[MAX-MPDU-11454]" )
+			;;
+	esac
+
+	# RX Spacial Streams
+	case "$(( (${vht_flags} >> 8) & 0x03 ))" in
+		1)
+			vht_caps+=( "[RX-STBC-1]" )
+			;;
+		2)
+			vht_caps+=( "[RX-STBC-12]" )
+			;;
+		3)
+			vht_caps+=( "[RX-STBC-123]" )
+			;;
+		4)
+			vht_caps+=( "[RX-STBC-1234]" )
+			;;
+	esac
+
+	# Compressed Steering
+	case "$(( ${vht_flags} >> 13) & 0x03 ))" in
+		2)
+			vht_caps+=( "[BF-ANTENNA-2]" )
+			;;
+		3)
+			vht_caps+=( "[BF-ANTENNA-3]" )
+			;;
+		4)
+			vht_caps+=( "[BF-ANTENNA-4]" )
+			;;
+	esac
+
+	# Sounding Dimension
+	case "$(( (${vht_flags} >> 16) & 0x03 ))" in
+		2)
+			vht_caps+=( "[SOUNDING-DIMENSION-2]" )
+			;;
+		3)
+			vht_caps+=( "[SOUNDING-DIMENSION-3]" )
+			;;
+		4)
+			vht_caps+=( "[SOUNDING-DIMENSION-4]" )
+			;;
+	esac
+
+	local exponent="$(( (${vht_flags} >> 23) & 0x03 ))"
+	if [ "${exponent} -ge 0 ] && [ "${exponent} -le 7 ]; then
+		vht_caps+=( "[MAX-A-MPDU-LEN-EXP${exponent}]" )
+	fi
+
+	# VHT Link Adaptation
+	case "$(( (${vht_flags} >> 26) & 0x03 ))" in
+		2)
+			vht_caps+=( "[VHT-LINK-ADAPT2]" )
+			;;
+		3)
+			vht_caps+=( "[VHT-LINK-ADAPT3]" )
+			;;
+	esac
+
 	# Header
 	echo "# Automatically generated configuration"
 	echo "# DO NOT EDIT"
@@ -86,13 +282,13 @@ write_config() {
 	esac
 
 	# Set HT capabilities
-	if [ -n "${HTCAPS}" ]; then
-		echo "ht_capab=${HTCAPS}"
+	if [ ${#ht_caps[@]} -gt 0 ]; then
+		echo "ht_capab=${ht_caps[@]}"
 	fi
 
 	# Set VHT capabilities
-	if [ -n "${VHTCAPS}" ]; then
-		echo "vht_capab=${VHTCAPS}"
+	if [ ${#vht_caps[@]} -gt 0 ]; then
+		echo "vht_capab=${vht_caps[@]}"
 	fi
 
 	# Enable authentication
@@ -232,7 +428,7 @@ case "${1}" in
 		fi
 
 		# Write the configuration
-		if ! write_config > /etc/hostapd.conf; then
+		if ! write_config "${interface}" > /etc/hostapd.conf; then
 			boot_mesg "Failed to generate configuration"
 			echo_failure
 			exit 1
@@ -259,7 +455,14 @@ case "${1}" in
 		;;
 
 	show-config)
-		write_config
+		interface="$(find_interface "${INTERFACE}")"
+		if [ -z "${interface}" ]; then
+			boot_mesg "Could not find interface with address ${INTERFACE} for wireless access point"
+			echo_failure
+			exit 1
+		fi
+
+		write_config "${interface}"
 		;;
 
 	*)
