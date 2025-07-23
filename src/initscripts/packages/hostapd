@@ -227,7 +227,7 @@ write_config() {
 	esac
 
 	# Compressed Steering
-	case "$(( ${vht_flags} >> 13) & 0x03 ))" in
+	case "$(( (${vht_flags} >> 13) & 0x03 ))" in
 		2)
 			vht_caps+=( "[BF-ANTENNA-2]" )
 			;;
