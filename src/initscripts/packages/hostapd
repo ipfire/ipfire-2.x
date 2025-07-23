@@ -275,6 +275,15 @@ write_config() {
 
 	# Set mode
 	case "${HW_MODE}" in
+		ax)
+			echo "hw_mode=a"
+			echo "ieee80211ax=1"
+			echo "ieee80211ac=1"
+			echo "ieee80211n=1"
+			echo "wmm_enabled=1"
+			#echo "vht_oper_chwidth=1"
+			#echo "he_oper_chwidth=1"
+			;;
 		ac)
 			echo "hw_mode=a"
 			echo "ieee80211ac=1"
