@@ -54,8 +54,9 @@ declare -A HT_CAPS=(
 )
 
 declare -A HT_CAPS_DRIVER_FILTERS=(
-	# ath1[02]k does not support Greenfield or Delayed Block Ack
+	# ath1[012]k does not support Greenfield or Delayed Block Ack
 	[ath10k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
+	[ath11k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
 	[ath12k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
 )
 
