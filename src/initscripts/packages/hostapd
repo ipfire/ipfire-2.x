@@ -358,6 +358,9 @@ write_config() {
 	echo "local_pwr_constraint=3"
 	echo "spectrum_mgmt_required=1"
 
+	# Try to perform radar detetection in the background (if supported by the driver)
+	echo "enable_background_radar=1"
+
 	# Always enable WMM
 	echo "wmm_enabled=1"
 
