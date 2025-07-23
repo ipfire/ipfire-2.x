@@ -35,7 +35,7 @@ case "${1}" in
 		fi
 
 		# Load the tun module
-		modprobe tun
+		modprobe tun &>/dev/null
 
 		# Flush all firewall rules
 		iptables -F OVPNINPUTRW

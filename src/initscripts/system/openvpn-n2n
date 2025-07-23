@@ -252,7 +252,7 @@ start() {
 	fi
 
 	# Load the tun module
-	modprobe tun
+	modprobe tun &>/dev/null
 
 	boot_mesg "Starting OpenVPN N2N connection '${name}'..."
 
