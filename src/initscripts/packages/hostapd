@@ -221,7 +221,7 @@ write_config() {
 	esac
 
 	local exponent="$(( (${vht_flags} >> 23) & 0x03 ))"
-	if [ "${exponent} -ge 0 ] && [ "${exponent} -le 7 ]; then
+	if [ "${exponent}" -ge 0 ] && [ "${exponent}" -le 7 ]; then
 		vht_caps+=( "[MAX-A-MPDU-LEN-EXP${exponent}]" )
 	fi
 
