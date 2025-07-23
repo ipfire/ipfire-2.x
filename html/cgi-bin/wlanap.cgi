@@ -48,8 +48,6 @@ my %wlanapsettings=();
 	"COUNTRY" => "00",
 	"HW_MODE" => "g",
 	"PWD" => "",
-	"HTCAPS" => "",
-	"VHTCAPS" => "",
 	"NOSCAN" => "on",
 	"CLIENTISOLATION" => "off",
 	"IEEE80211W" => "off",
@@ -95,8 +93,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	$wlanapsettings{'ENC'} = $cgiparams{'ENC'};
 	$wlanapsettings{'PWD'} = $cgiparams{'PWD'};
 	$wlanapsettings{'IEEE80211W'} = ($cgiparams{'IEEE80211W'} eq 'on') ? 'on' : 'off';
-	$wlanapsettings{'HTCAPS'} = $cgiparams{'HTCAPS'};
-	$wlanapsettings{'VHTCAPS'} = $cgiparams{'VHTCAPS'};
 	$wlanapsettings{'TX_POWER'} = $cgiparams{'TX_POWER'};
 
 	if ($errormessage eq '') {
@@ -338,20 +334,6 @@ print <<END;
 							$Lang::tr{'wlanap 802.11w enforced'}
 						</option>
 					</select>
-				</td>
-			</tr>
-
-			<tr>
-				<td>HT Caps</td>
-				<td>
-					<input type='text' name='HTCAPS' value='$wlanapsettings{'HTCAPS'}' />
-				</td>
-			</tr>
-
-			<tr>
-				<td>VHT Caps</td>
-				<td>
-					<input type='text' name='VHTCAPS' value='$wlanapsettings{'VHTCAPS'}' />
 				</td>
 			</tr>
 
