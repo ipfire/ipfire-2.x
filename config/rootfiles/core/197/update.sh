@@ -125,7 +125,7 @@ sed -r \
 	-e "s/^writepid .*/writepid \/var\/run\/openvpn-rw.pid/" \
 	-e "/ncp-disable/d" \
 	-e "s/^cipher (.*)/data-ciphers-fallback \1/" \
-	-e "s/^status .*/status /var/run/openvpn-rw.log/" \
+	-e "s/^status .*/status \/var\/run\/openvpn-rw.log/" \
 	-i /var/ipfire/ovpn/server.conf
 
 # Change to the subnet topology
