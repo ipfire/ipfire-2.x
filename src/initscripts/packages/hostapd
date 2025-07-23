@@ -516,6 +516,17 @@ write_config() {
 		echo "ht_capab=${ht_caps[@]}"
 	fi
 
+	# Configure antennas
+	if [ -z "${RX_ANTENNAS}" ]; then
+		RX_ANTENNAS="0xffffffff"
+	fi
+	if [ -z "${TX_ANTENNAS}" ]; then
+		TX_ANTENNAS="0xffffffff"
+	fi
+
+	# Set the antennas to use
+	iw phy "${phy}" set antenna "${TX_ANTENNAS}" "${RX_ANTENNAS}" &>/dev/null
+
 	# Enable authentication
 	echo "auth_algs=1"
 
