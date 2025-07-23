@@ -683,8 +683,10 @@ case "${1}" in
 		)
 
 		# Enable debugging?
-		if [ -n "${DEBUG}" ]; then
-			args+=( "-ddd" )
+		if [ -n "${DEBUG}" ] && [[ "${DEBUG}" =~ ^[0-9]+$ ]]; then
+			for (( i = 0; i < DEBUG; i++ )); do
+				args+=( "-d" )
+			done
 		fi
 
 		boot_mesg "Starting hostapd... "
