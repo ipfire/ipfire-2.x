@@ -91,6 +91,19 @@ declare -A VHT_CAPS_DRIVER_FILTERS=(
 	[ath12k_pci]="$(( 0xffffffff & ~0x00000020 ))"
 )
 
+declare -A HE_MAC_CAPS=(
+	# Nothing, yet
+)
+
+declare -A HE_PHY_CAPS=(
+	# SU Beamformer
+	[0x08000000000]="he_su_beamformer=1"
+	# SU Beamformee
+	[0x10000000000]="he_su_beamformee=1"
+	# MU Beamformer
+	[0x20000000000]="he_mu_beamformer=1"
+)
+
 find_interface() {
 	local address="${1}"
 
@@ -118,14 +131,23 @@ write_config() {
 	local flag
 	local ht_flags=0
 	local vht_flags=0
+	local he_mac_flags=0
+	local he_phy_flags=0
 
 	local ht_caps=()
 	local vht_caps=()
+	local he_caps=()
 
 	# Fetch PHY information
 	local line
 	while read -r line; do
 		case "${line}" in
+			"HE MAC Capabilities"*)
+				he_mac_flags="${line:21:14}"
+				;;
+			"HE PHY Capabilities"*)
+				he_phy_flags="${line:22:24}"
+				;;
 			"VHT Capabilities"*)
 				vht_flags="${line:18:10}"
 				;;
@@ -245,6 +267,13 @@ write_config() {
 			;;
 	esac
 
+	# HE PHY Capabilities
+	for flag in ${!HE_PHY_CAPS[@]}; do
+		if (( ${he_phy_flags} & ${flag} )); then
+			he_caps+=( "${HE_PHY_CAPS[${flag}]}" )
+		fi
+	done
+
 	# Header
 	echo "# Automatically generated configuration"
 	echo "# DO NOT EDIT"
@@ -310,6 +339,11 @@ write_config() {
 	# Set VHT capabilities
 	if [ ${#vht_caps[@]} -gt 0 ]; then
 		echo "vht_capab=${vht_caps[@]}"
+	fi
+
+	# Set HE capabilities
+	if [ ${#he_caps[@]} -gt 0 ]; then
+		printf "%s\n" "${he_caps[@]}"
 	fi
 
 	# Enable authentication
