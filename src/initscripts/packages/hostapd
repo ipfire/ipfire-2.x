@@ -104,6 +104,17 @@ declare -A HE_PHY_CAPS=(
 	[0x20000000000]="he_mu_beamformer=1"
 )
 
+declare -A EHT_MAC_CAPS=(
+	# Nothing, yet
+)
+
+declare -A EHT_PHY_CAPS=(
+	# SU Beamformer
+	[0x0000000000000010]="eht_su_beamformer=1"
+	# SU Beamformee
+	[0x0000000000000020]="eht_su_beamformee=1"
+)
+
 find_interface() {
 	local address="${1}"
 
@@ -133,15 +144,24 @@ write_config() {
 	local vht_flags=0
 	local he_mac_flags=0
 	local he_phy_flags=0
+	local eht_mac_flags=0
+	local eht_phy_flags=0
 
 	local ht_caps=()
 	local vht_caps=()
 	local he_caps=()
+	local eht_caps=()
 
 	# Fetch PHY information
 	local line
 	while read -r line; do
 		case "${line}" in
+			"EHT MAC Capabilities"*)
+				eht_mac_flags="${line:22:6}"
+				;;
+			"EHT PHY Capabilities"*)
+				eht_phy_flags="${line:23:18}"
+				;;
 			"HE MAC Capabilities"*)
 				he_mac_flags="${line:21:14}"
 				;;
@@ -151,7 +171,6 @@ write_config() {
 			"VHT Capabilities"*)
 				vht_flags="${line:18:10}"
 				;;
-
 			"Capabilities: "*)
 				ht_flags="${line:14}"
 				;;
@@ -274,6 +293,13 @@ write_config() {
 		fi
 	done
 
+	# EHT PHY Capabilities
+	for flag in ${!EHT_PHY_CAPS[@]}; do
+		if (( ${eht_phy_flags} & ${flag} )); then
+			eht_caps+=( "${EHT_PHY_CAPS[${flag}]}" )
+		fi
+	done
+
 	# Set the channel to zero if not set
 	if [ -z "${CHANNEL}" ]; then
 		CHANNEL=0
@@ -341,12 +367,12 @@ write_config() {
 	local vht_oper_centr_freq_seg0_idx=""
 
 	case "${MODE}" in
-		VHT20|HE20)
+		VHT20|HE20|EHT20)
 			enable_ac=1
 			;;
 
 		# 40 MHz Channel Width
-		VHT40|HE40)
+		VHT40|HE40|EHT40)
 			enable_ac=1
 
 			# Compute the channel segment index
@@ -363,7 +389,7 @@ write_config() {
 			;;
 
 		# 80 MHz Channel Width
-		VHT80|HE80)
+		VHT80|HE80|EHT80)
 			enable_ac=1
 			vht_oper_chwidth=1
 
@@ -386,8 +412,8 @@ write_config() {
 			fi
 			;;
 
-		# 160 MHz Channel Width
-		VHT160|HE160)
+		# 160/320 MHz Channel Width
+		VHT160|HE160|EHT160|EHT320)
 			enable_ac=1
 			vht_oper_chwidth=2
 
@@ -413,9 +439,20 @@ write_config() {
 	local he_oper_chwidth="${vht_oper_chwidth}"
 	local he_oper_centr_freq_seg0_idx="${vht_oper_centr_freq_seg0_idx}"
 
-	case "${MODE}}" in
-		HE*)
+	case "${MODE}" in
+		HE*|EHT*)
 			enable_ax=1
+			;;
+	esac
+
+	# 802.11be
+	local enable_be=0
+	local eht_oper_chwidth="${he_oper_chwidth}"
+	local eht_oper_centr_freq_seg0_idx="${he_oper_centr_freq_seg0_idx}"
+
+	case "${MODE}" in
+		EHT*)
+			enable_be=1
 			;;
 	esac
 
@@ -428,6 +465,20 @@ write_config() {
 			echo "hw_mode=g"
 			;;
 	esac
+
+	# Enable 802.11be?
+	if [ "${enable_be}" -eq 1 ]; then
+		echo "ieee80211be=1"
+
+		# Configure wider channels
+		echo "eht_oper_chwidth=${eht_oper_chwidth}"
+		echo "eht_oper_centr_freq_seg0_idx=${eht_oper_centr_freq_seg0_idx}"
+
+		# Set EHT capabilities
+		if [ ${#eht_caps[@]} -gt 0 ]; then
+			printf "%s\n" "${eht_caps[@]}"
+		fi
+	fi
 
 	# Enable 802.11ax?
 	if [ "${enable_ax}" -eq 1 ]; then
