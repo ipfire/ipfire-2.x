@@ -35,6 +35,7 @@
 #usr/include/bash/include/ocache.h
 #usr/include/bash/include/posixdir.h
 #usr/include/bash/include/posixjmp.h
+#usr/include/bash/include/posixselect.h
 #usr/include/bash/include/posixstat.h
 #usr/include/bash/include/posixtime.h
 #usr/include/bash/include/posixwait.h
@@ -44,8 +45,10 @@
 #usr/include/bash/include/stat-time.h
 #usr/include/bash/include/stdc.h
 #usr/include/bash/include/systimes.h
+#usr/include/bash/include/timer.h
 #usr/include/bash/include/typemax.h
 #usr/include/bash/include/unionwait.h
+#usr/include/bash/include/unlocked-io.h
 #usr/include/bash/jobs.h
 #usr/include/bash/make_cmd.h
 #usr/include/bash/pathnames.h
@@ -66,15 +69,18 @@ usr/lib/bash/Makefile.inc
 usr/lib/bash/Makefile.sample
 usr/lib/bash/accept
 usr/lib/bash/basename
+usr/lib/bash/chmod
 usr/lib/bash/csv
 usr/lib/bash/cut
 usr/lib/bash/dirname
 usr/lib/bash/dsv
 usr/lib/bash/fdflags
 usr/lib/bash/finfo
+usr/lib/bash/fltexpr
 usr/lib/bash/getconf
 usr/lib/bash/head
 usr/lib/bash/id
+usr/lib/bash/kv
 usr/lib/bash/ln
 usr/lib/bash/loadables.h
 usr/lib/bash/logname
@@ -94,6 +100,7 @@ usr/lib/bash/setpgid
 usr/lib/bash/sleep
 usr/lib/bash/stat
 usr/lib/bash/strftime
+usr/lib/bash/strptime
 usr/lib/bash/sync
 usr/lib/bash/tee
 usr/lib/bash/truefalse
@@ -135,6 +142,7 @@ usr/lib/bash/whoami
 #usr/share/locale/id/LC_MESSAGES/bash.mo
 #usr/share/locale/it/LC_MESSAGES/bash.mo
 #usr/share/locale/ja/LC_MESSAGES/bash.mo
+#usr/share/locale/ka/LC_MESSAGES/bash.mo
 #usr/share/locale/ko/LC_MESSAGES/bash.mo
 #usr/share/locale/lt/LC_MESSAGES/bash.mo
 #usr/share/locale/nb/LC_MESSAGES/bash.mo
@@ -146,6 +154,7 @@ usr/lib/bash/whoami
 #usr/share/locale/ru/LC_MESSAGES/bash.mo
 #usr/share/locale/sk/LC_MESSAGES/bash.mo
 #usr/share/locale/sl/LC_MESSAGES/bash.mo
+#usr/share/locale/sq/LC_MESSAGES/bash.mo
 #usr/share/locale/sr/LC_MESSAGES/bash.mo
 #usr/share/locale/sv/LC_MESSAGES/bash.mo
 #usr/share/locale/tr/LC_MESSAGES/bash.mo
