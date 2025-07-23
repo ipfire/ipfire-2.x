@@ -86,6 +86,11 @@ declare -A VHT_CAPS=(
 	[0x20000000]="[TX-ANTENNA-PATTERN]"
 )
 
+declare -A VHT_CAPS_DRIVER_FILTERS=(
+	# ath12k does not support Short GI for 160 MHz
+	[ath12k_pci]="$(( 0xffffffff & ~0x00000020 ))"
+)
+
 find_interface() {
 	local address="${1}"
 
@@ -135,6 +140,12 @@ write_config() {
 	# that the actual hardware supports (or have it turned off because of bugs).
 	if [ -n "${HT_CAPS_DRIVER_FILTERS[${driver}]}" ]; then
 		ht_flags="$(( ${ht_flags} & ${HT_CAPS_DRIVER_FILTERS[${driver}]} ))"
+	fi
+
+	# Fix the VHT caps because some drivers don't support everything
+	# that the actual hardware supports (or have it turned off because of bugs).
+	if [ -n "${VHT_CAPS_DRIVER_FILTERS[${driver}]}" ]; then
+		vht_flags="$(( ${vht_flags} & ${VHT_CAPS_DRIVER_FILTERS[${driver}]} ))"
 	fi
 
 	# HT Capabilities
