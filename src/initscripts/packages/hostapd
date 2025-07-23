@@ -274,6 +274,36 @@ write_config() {
 		fi
 	done
 
+	# Set the channel to zero if not set
+	if [ -z "${CHANNEL}" ]; then
+		CHANNEL=0
+	fi
+
+	# Translate the old HW_MODE to the newer MODE setting
+	if [ -z "${MODE}" ]; then
+		case "${HW_MODE}" in
+			ac)
+				MODE="VHT20"
+				;;
+			an|gn)
+				MODE="HT20";
+				;;
+		esac
+	fi
+
+	# Set some default BAND if none is set
+	if [ -z "${BAND}" ]; then
+		# Use 2.4 GHz for 802.11g/n and assume 5 GHz for anything else
+		case "${MODE}" in
+			gn)
+				BAND="2g"
+				;;
+			*)
+				BAND="5g"
+				;;
+		esac
+	fi
+
 	# Header
 	echo "# Automatically generated configuration"
 	echo "# DO NOT EDIT"
@@ -302,48 +332,137 @@ write_config() {
 	echo "local_pwr_constraint=3"
 	echo "spectrum_mgmt_required=1"
 
-	# Set mode
-	case "${HW_MODE}" in
-		ax)
-			echo "hw_mode=a"
-			echo "ieee80211ax=1"
-			echo "ieee80211ac=1"
-			echo "ieee80211n=1"
-			echo "wmm_enabled=1"
-			#echo "vht_oper_chwidth=1"
-			#echo "he_oper_chwidth=1"
+	# Always enable WMM
+	echo "wmm_enabled=1"
+
+	# 802.11ac
+	local enable_ac=0
+	local vht_oper_chwidth=0
+	local vht_oper_centr_freq_seg0_idx=""
+
+	case "${MODE}" in
+		VHT20|HE20)
+			enable_ac=1
 			;;
-		ac)
-			echo "hw_mode=a"
-			echo "ieee80211ac=1"
-			echo "ieee80211n=1"
-			echo "wmm_enabled=1"
-			echo "vht_oper_chwidth=1"
+
+		# 40 MHz Channel Width
+		VHT40|HE40)
+			enable_ac=1
+
+			# Compute the channel segment index
+			if [ "${CHANNEL}" -gt 0 ]; then
+				case "$(( (${CHANNEL} / 4) % 2 ))" in
+					0)
+						vht_oper_centr_freq_seg0_idx="$(( ${CHANNEL} - 2 ))"
+						;;
+					1)
+						vht_oper_centr_freq_seg0_idx="$(( ${CHANNEL} + 2 ))"
+						;;
+				esac
+			fi
 			;;
-		an|gn)
-			echo "hw_mode=${HW_MODE:0:1}"
-			echo "ieee80211n=1"
-			echo "wmm_enabled=1"
+
+		# 80 MHz Channel Width
+		VHT80|HE80)
+			enable_ac=1
+			vht_oper_chwidth=1
+
+			# Compute the channel segment index
+			if [ "${CHANNEL}" -gt 0 ]; then
+				case "$(( (${CHANNEL} / 4) % 4 ))" in
+					0)
+						vht_oper_centr_freq_seg0_idx="$(( ${CHANNEL} - 6 ))"
+						;;
+					1)
+						vht_oper_centr_freq_seg0_idx="$(( ${CHANNEL} + 6 ))"
+						;;
+					2)
+						vht_oper_centr_freq_seg0_idx="$(( ${CHANNEL} + 2 ))"
+						;;
+					3)
+						vht_oper_centr_freq_seg0_idx="$(( ${CHANNEL} - 2 ))"
+						;;
+				esac
+			fi
 			;;
-		*)
-			echo "Unsupported mode '${HW_MODE}'" >&2
-			return 1
+
+		# 160 MHz Channel Width
+		VHT160|HE160)
+			enable_ac=1
+			vht_oper_chwidth=2
+
+			# Compute the channel segment index
+			if [ "${CHANNEL}" -gt 0 ]; then
+				case "${CHANNEL}" in
+					36|40|44|48|52|56|60|64)
+						vht_oper_centr_freq_seg0_idx=50
+						;;
+					100|104|108|112|116|120|124|128)
+						vht_oper_centr_freq_seg0_idx=114
+						;;
+					149|153|157|161|165|169|173|177)
+						vht_oper_centr_freq_seg0_idx=163
+						;;
+				esac
+			fi
 			;;
 	esac
+
+	# 802.11ax
+	local enable_ax=0
+	local he_oper_chwidth="${vht_oper_chwidth}"
+	local he_oper_centr_freq_seg0_idx="${vht_oper_centr_freq_seg0_idx}"
+
+	case "${MODE}}" in
+		HE*)
+			enable_ax=1
+			;;
+	esac
+
+	# Set hardware mode
+	case "${BAND}" in
+		5g)
+			echo "hw_mode=a"
+			;;
+		2g)
+			echo "hw_mode=g"
+			;;
+	esac
+
+	# Enable 802.11ax?
+	if [ "${enable_ax}" -eq 1 ]; then
+		echo "ieee80211ax=1"
+
+		# Configure wider channels
+		echo "he_oper_chwidth=${he_oper_chwidth}"
+		echo "he_oper_centr_freq_seg0_idx=${he_oper_centr_freq_seg0_idx}"
+
+		# Set HE capabilities
+		if [ ${#he_caps[@]} -gt 0 ]; then
+			printf "%s\n" "${he_caps[@]}"
+		fi
+	fi
+
+	# Enable 802.11ac?
+	if [ "${enable_ac}" -eq 1 ]; then
+		echo "ieee80211ac=1"
+
+		# Configure wider channels
+		echo "vht_oper_chwidth=${vht_oper_chwidth}"
+		echo "vht_oper_centr_freq_seg0_idx=${vht_oper_centr_freq_seg0_idx}"
+
+		# Set VHT capabilities
+		if [ ${#vht_caps[@]} -gt 0 ]; then
+			echo "vht_capab=${vht_caps[@]}"
+		fi
+	fi
+
+	# Always enable 802.11n
+	echo "ieee80211n=1"
 
 	# Set HT capabilities
 	if [ ${#ht_caps[@]} -gt 0 ]; then
 		echo "ht_capab=${ht_caps[@]}"
-	fi
-
-	# Set VHT capabilities
-	if [ ${#vht_caps[@]} -gt 0 ]; then
-		echo "vht_capab=${vht_caps[@]}"
-	fi
-
-	# Set HE capabilities
-	if [ ${#he_caps[@]} -gt 0 ]; then
-		printf "%s\n" "${he_caps[@]}"
 	fi
 
 	# Enable authentication
