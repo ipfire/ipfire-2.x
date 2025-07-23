@@ -446,8 +446,22 @@ case "${1}" in
 			exit 1
 		fi
 
+		# Compose the command line
+		args=(
+			/usr/bin/hostapd
+			-s
+			-B
+			/etc/hostapd.conf
+			-i "${interface}"
+		)
+
+		# Enable debugging?
+		if [ -n "${DEBUG}" ]; then
+			args+=( "-ddd" )
+		fi
+
 		boot_mesg "Starting hostapd... "
-		loadproc /usr/bin/hostapd -s -B /etc/hostapd.conf -i "${interface}"
+		loadproc "${args[@]}"
 		;;
 
 	stop)
