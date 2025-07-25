@@ -47,6 +47,7 @@ done
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
 /etc/init.d/ipsec stop
+/etc/init.d/apache stop
 
 KVER="xxxKVERxxx"
 
@@ -152,6 +153,7 @@ fi
 /usr/local/bin/sshctrl
 
 # Restart services
+/etc/init.d/apache start
 /etc/init.d/firewall restart
 /etc/init.d/unbound restart
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
@@ -160,9 +162,6 @@ fi
 /etc/init.d/openvpn-n2n start
 /etc/init.d/openvpn-rw start
 /etc/init.d/collectd restart
-
-# Reload Apache2
-/etc/init.d/apache reload
 
 # Build initial ramdisks
 dracut --regenerate-all --force
