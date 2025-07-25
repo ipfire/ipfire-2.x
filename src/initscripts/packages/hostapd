@@ -247,7 +247,7 @@ write_config() {
 	esac
 
 	# Compressed Steering
-	case "$(( (${vht_flags} >> 13) & 0x03 ))" in
+	case "$(( ((${vht_flags} >> 13) & 0x03) + 1 ))" in
 		2)
 			vht_caps+=( "[BF-ANTENNA-2]" )
 			;;
@@ -260,7 +260,7 @@ write_config() {
 	esac
 
 	# Sounding Dimension
-	case "$(( (${vht_flags} >> 16) & 0x03 ))" in
+	case "$(( ((${vht_flags} >> 16) & 0x03) + 1 ))" in
 		2)
 			vht_caps+=( "[SOUNDING-DIMENSION-2]" )
 			;;
