@@ -13,6 +13,7 @@ etc/rc.d/rc6.d/K11openvpn-n2n
 etc/rc.d/rcsysinit.d/S46cpupower
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/local/bin/openvpnctrl
