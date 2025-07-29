@@ -232,6 +232,9 @@ endif
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
 
+	# Do not automatically create bond0 when bonding is being loaded
+	echo "options bonding max_bonds=0" > /etc/modprobe.d/bonding.conf
+
 	# build cpupower utility
 	cd $(DIR_APP)/tools/power/cpupower && make $(MAKETUNING)
 	cd $(DIR_APP)/tools/power/cpupower && make install

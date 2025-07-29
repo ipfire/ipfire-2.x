@@ -13,6 +13,7 @@ boot/dtb-KVER
 #boot/dtb-KVER/starfive/jh7110-starfive-visionfive-2-v1.3b.dtb
 boot/vmlinuz-KVER
 #etc/cpufreq-bench.conf
+etc/modprobe.d/bonding.conf
 etc/modprobe.d/ipv6.conf
 #lib/modules
 #lib/modules/KVER
