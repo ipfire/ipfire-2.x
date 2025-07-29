@@ -71,57 +71,86 @@ ZONE=$(detect_zone)
 
 # Cannot proceed if we could not find a zone
 if [ -z "${ZONE}" ]; then
-	logger "Could not find a bridged zone for ${INTERFACE}"
+	logger "Could not find a master zone for ${INTERFACE}"
 	exit 0
 fi
 
 # Determine the mode of this zone
 MODE="$(get_value "${ZONE}_MODE")"
 
-# The name of the virtual bridge
-BRIDGE="$(get_value "${ZONE}_DEV")"
+# Exit if there is no MODE
+if [ -z "${MODE}" ]; then
+       exit 0
+fi
+
+# The name of the virtual master interface
+MASTER="$(get_value "${ZONE}_DEV")"
+
+# Fetch the MTU
 MTU="$(get_value "${ZONE}_MTU")"
-STP="$(get_value "${ZONE}_STP")"
-STP_PRIORITY="$(get_value "${ZONE}_STP_PRIORITY")"
+
+# Set default MTU if nothing is set
+if [ -z "${MTU}" ]; then
+	MTU=1500
+fi
+
+# Fetch the MAC address of the master interface
+ADDRESS="$(get_value "${ZONE}_MACADDR")"
+
+# If no address has been configured, generate a random one
+if [ -z "${ADDRESS}" ]; then
+	ADDRESS="$(random_mac_address)"
+fi
 
 case "${MODE}" in
-	bridge)
-		# Set default MTU if nothing is set
-		if [ -z "${MTU}" ]; then
-			MTU=1500
+	# Bond
+	bond)
+		BOND_MODE="$(get_value "${ZONE}_BOND_MODE")"
+		if [ -z "${BOND_MODE}" ]; then
+			BOND_MODE="802.3ad"
 		fi
+
+		# Check for some valid BOND_MODE
+		case "${BOND_MODE}" in
+			balance-rr|active-backup|balance-xor|broadcast|802.3ad|balance-tlb|balance-alb)
+				;;
+			*)
+				logger "Invalid bond mode ${BOND_MODE} for ${MASTER}. Falling back to 802.3ad"
+				BOND_MODE="802.3ad"
+				;;
+		esac
+
+		# Create the master interface if it does not exist
+		if [ ! -d "/sys/class/net/${MASTER}" ]; then
+			if ! ip link add "${MASTER}" address "${ADDRESS}" mtu "${MTU}" \
+					type bond mode "${BOND_MODE}"; then
+				logger "Failed to create bonding interface ${MASTER}"
+				exit 1
+			fi
+		fi
+		;;
+
+	# Bridge
+	bridge)
+		# Fetch spanning tree settings
+		STP="$(get_value "${ZONE}_STP")"
+		STP_PRIORITY="$(get_value "${ZONE}_STP_PRIORITY")"
 
 		# We need to check if $STP_PRIORITY has a valid value if not set it
 		if [ -z "${STP_PRIORITY}" ]; then
 			STP_PRIORITY=16384
 		fi
 
-		ADDRESS="$(get_value "${ZONE}_MACADDR")"
-		[ -n "${ADDRESS}" ] || ADDRESS="$(random_mac_address)"
-
 		# We need to create the bridge if it doesn't exist, yet
-		if [ ! -d "/sys/class/net/${BRIDGE}" ]; then
-			ip link add "${BRIDGE}" address "${ADDRESS}" mtu "${MTU}" type bridge \
+		if [ ! -d "/sys/class/net/${MASTER}" ]; then
+			ip link add "${MASTER}" address "${ADDRESS}" mtu "${MTU}" type bridge \
 				$([ "${STP}" = "on" ] && echo "stp_state 1  priority ${STP_PRIORITY}" )
-			#ip link set "${BRIDGE}" up
 		fi
 
 		# Try setting wireless interfaces into master mode
 		if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
 			iw dev "${INTERFACE}" set type __ap
 		fi
-
-		# Attempt to set the MTU
-		ip link set dev "${INTERFACE}" mtu "${MTU}"
-
-		# Attach the physical device
-		logger "Attach ${INTERFACE} to ${BRIDGE}"
-		ip link set dev "${INTERFACE}" master "${BRIDGE}"
-		ip link set dev "${INTERFACE}" up
-		;;
-
-	"")
-		exit 0
 		;;
 
 	*)
@@ -129,3 +158,17 @@ case "${MODE}" in
 		exit 1
 		;;
 esac
+
+# Attempt to set the MTU
+ip link set dev "${INTERFACE}" mtu "${MTU}"
+
+# Ensure the physical interface is down
+ip link set dev "${INTERFACE}" down
+
+# Attach the physical device
+logger "Attach ${INTERFACE} to ${MASTER}"
+ip link set dev "${INTERFACE}" master "${MASTER}"
+ip link set dev "${INTERFACE}" up
+
+# Done!
+exit 0

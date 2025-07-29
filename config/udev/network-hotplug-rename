@@ -78,7 +78,7 @@ for zone in ${ZONES}; do
 	# If a matching interface has been found we will
 	# print the name to which udev will rename it.
 	case "${!mode}" in
-		bridge)
+		bond|bridge)
 			counter=0
 			for slave in ${!slaves}; do
 				if [ "${slave,,}" = "${ADDRESS,,}" ]; then
