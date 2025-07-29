@@ -86,6 +86,12 @@ fi
 # The name of the virtual master interface
 MASTER="$(get_value "${ZONE}_DEV")"
 
+# Fail if no master device has been configured
+if [ -z "${MASTER}" ]; then
+	logger "No ${ZONE}_DEV configured"
+	exit 1
+fi
+
 # Fetch the MTU
 MTU="$(get_value "${ZONE}_MTU")"
 
