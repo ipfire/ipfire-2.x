@@ -93,6 +93,7 @@ rm -rvf \
 rm -vf \
 	/etc/rc.d/init.d/networking/red.down/10-ovpn \
 	/etc/rc.d/init.d/networking/red.up/50-ovpn \
+	/lib/udev/network-hotplug-bridge \
 	/usr/lib/libbtrfs.so.0.? \
 	/usr/lib/libbtrfsutil.so.1.?
 
