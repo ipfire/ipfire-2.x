@@ -25,6 +25,12 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
+# Only run this script once at a time
+if [ -z "${LOCKED}" ]; then
+	export LOCKED=1
+	exec flock "${0}" "${0}" "$@"
+fi
+
 detect_zone() {
 	local intf="${INTERFACE%?}"
 	intf="${intf%phys}"
