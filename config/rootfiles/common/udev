@@ -49,7 +49,7 @@ lib/udev/hwdb.d
 lib/udev/iocost
 lib/udev/mtd_probe
 lib/udev/network-aqm
-lib/udev/network-hotplug-bridges
+lib/udev/network-hotplug-master
 lib/udev/network-hotplug-rename
 lib/udev/network-hotplug-vlan
 lib/udev/network-offloading

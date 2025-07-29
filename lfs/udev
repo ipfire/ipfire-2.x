@@ -148,8 +148,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/lib/udev/network-hotplug-rename
 	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-vlan \
 		/lib/udev/network-hotplug-vlan
-	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-bridges \
-		/lib/udev/network-hotplug-bridges
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-master \
+		/lib/udev/network-hotplug-master
 	install -v -m 644 $(DIR_SRC)/config/udev/60-net.rules \
 		/lib/udev/rules.d
 
