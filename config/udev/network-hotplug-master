@@ -31,7 +31,7 @@ detect_zone() {
 	intf="${intf^^}"
 
 	local zone
-	for zone in GREEN BLUE ORANGE RED; do
+	for zone in GREEN BLUE ORANGE RED INTF0 INTF1 INTF2 INTF3; do
 		# Try to find if INTERFACE is the *phys version of a zone
 		if [ "${intf}" = "${zone}" ]; then
 			echo "${zone}"
