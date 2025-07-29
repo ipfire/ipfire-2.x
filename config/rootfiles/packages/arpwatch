@@ -1,0 +1,5 @@
+etc/rc.d/init.d/arpwatch
+usr/sbin/arpsnmp
+usr/sbin/arpwatch
+#var/lib/arpwatch
+var/lib/arpwatch/ethercodes.dat

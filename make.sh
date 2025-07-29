@@ -2089,6 +2089,7 @@ build_system() {
 	lfsmake2 inotify-tools
 	lfsmake2 grub-btrfs
 	lfsmake2 fort-validator
+	lfsmake2 arpwatch
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au
