@@ -620,7 +620,11 @@ killproc()
 	done
 
 	if [ -z "${killsig}" ];	then
-		pidofproc -s "${1}"
+		if [ -z "${pidfile}" ];	then
+			pidofproc -s "${1}"
+		else
+			pidofproc -s -p "${pidfile}" "${1}"
+		fi
 
 		# Program was terminated
 		if [ "$?" != "0" ]; then
