@@ -434,7 +434,7 @@ iptables_init() {
 
 	# If a Tor relay is enabled apply firewall rules
 	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_PORT}" ]; then
-		/usr/local/bin/torctrl restart 1> /dev/null
+		/usr/local/bin/torctrl restart &>/dev/null
 	fi
 
 	# POLICY CHAIN
