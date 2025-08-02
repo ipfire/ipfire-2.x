@@ -9545,6 +9545,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/OF_RESERVED_MEM
 #lib/modules/KVER/build/include/config/OID_REGISTRY
 #lib/modules/KVER/build/include/config/OPEN_ALLIANCE_HELPERS
+#lib/modules/KVER/build/include/config/OVERLAY_FS
+#lib/modules/KVER/build/include/config/OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW
 #lib/modules/KVER/build/include/config/P54_COMMON
 #lib/modules/KVER/build/include/config/P54_LEDS
 #lib/modules/KVER/build/include/config/P54_PCI
@@ -18537,6 +18539,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/gdb/linux/interrupts.py
 #lib/modules/KVER/build/scripts/gdb/linux/kasan.py
 #lib/modules/KVER/build/scripts/gdb/linux/lists.py
+#lib/modules/KVER/build/scripts/gdb/linux/mapletree.py
 #lib/modules/KVER/build/scripts/gdb/linux/mm.py
 #lib/modules/KVER/build/scripts/gdb/linux/modules.py
 #lib/modules/KVER/build/scripts/gdb/linux/page_owner.py
@@ -18552,6 +18555,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/gdb/linux/utils.py
 #lib/modules/KVER/build/scripts/gdb/linux/vfs.py
 #lib/modules/KVER/build/scripts/gdb/linux/vmalloc.py
+#lib/modules/KVER/build/scripts/gdb/linux/xarray.py
 #lib/modules/KVER/build/scripts/gdb/vmlinux-gdb.py
 #lib/modules/KVER/build/scripts/gen-randstruct-seed.sh
 #lib/modules/KVER/build/scripts/generate_builtin_ranges.awk
