@@ -45,8 +45,8 @@ class Reporter(object):
 		# Fetch the current event loop
 		self.loop = asyncio.get_running_loop()
 
-		# Are we running?
-		self.is_running = multiprocessing.Event()
+		# Have we terminated?
+		self.is_terminated = asyncio.Event()
 
 		# Create an events queue
 		self.queue = multiprocessing.Queue(1024)
@@ -91,19 +91,12 @@ class Reporter(object):
 		"""
 		log.debug("Starting reporter...")
 
-		# We are now running
-		self.is_running.set()
-
 		# Start all workers
 		for worker in self.workers:
 			worker.start()
 
-		# Sleep for forever
-		while self.is_running.is_set():
-			await asyncio.sleep(1)
-
-			# Write some data into the queue
-			self.queue.put("ABC", block=False)
+		# Wait until we have terminated
+		await self.is_terminated.wait()
 
 		log.debug("Reporter has exited")
 
@@ -114,7 +107,7 @@ class Reporter(object):
 		log.debug("Terminating...")
 
 		# We are no longer running
-		self.is_running.clear()
+		self.is_terminated.set()
 
 		# Remove the socket so we won't receive any more data
 		try:
