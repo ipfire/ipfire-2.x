@@ -52,6 +52,7 @@ usr/share/suricata
 #usr/share/suricata/rules/websocket-events.rules
 #usr/share/suricata/threshold.config
 var/cache/suricata
+var/cache/suricata/sgh
 var/lib/suricata
 #var/lib/suricata/cache
 #var/lib/suricata/cache/sgh

@@ -123,6 +123,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Set correct ownership for the cache directory.
 	chown nobody:nobody /var/cache/suricata
 
+	# Create the Hyperscan cache directory
+	-mkdir -pv /var/cache/suricata/sgh
+	chown suricata:suricata /var/cache/suricata/sgh
+
 	# Create logging directory.
 	-mkdir -p /var/log/suricata
 
