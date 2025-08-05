@@ -122,6 +122,9 @@ class Reporter(object):
 		except OSError as e:
 			log.error("Failed to remove %s: %s" % (SOCKET_PATH, e))
 
+		# Close the queue
+		self.queue.close()
+
 		# Terminate all workers
 		for worker in self.workers:
 			worker.terminate()
@@ -166,8 +169,13 @@ class Worker(multiprocessing.Process):
 			signal.signal(signo, signal.SIG_DFL)
 
 		# Loop for forever
-		while self.reporter.is_running.is_set():
-			event = self.reporter.queue.get(block=True)
+		while True:
+			try:
+				event = self.reporter.queue.get(block=True)
+
+			# If the queue has been closed, we immediately exit
+			except ValueError:
+				break
 
 			# Log the event
 			log.debug("Received event in worker %s: %s" % (self.pid, event))
