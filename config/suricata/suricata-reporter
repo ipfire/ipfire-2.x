@@ -1,0 +1,100 @@
+#!/usr/bin/python3
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2025  Michael Tremer                                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+import argparse
+import asyncio
+import logging
+import logging.handlers
+import signal
+import sys
+
+log = logging.getLogger("suricata-reporter")
+log.setLevel(logging.DEBUG)
+
+class Reporter(object):
+	"""
+		This is the main class that handles all the things...
+	"""
+	def __init__(self):
+		pass
+
+	async def run(self):
+		"""
+			The main loop of the application.
+		"""
+		log.debug("Starting reporter...")
+
+		# Sleep for forever
+		while True:
+			await asyncio.sleep(1)
+
+		log.debug("Reporter has exited")
+
+
+def setup_logging(loglevel=logging.INFO):
+	log.setLevel(loglevel)
+
+	# Log to syslog by default
+	handler = logging.handlers.SysLogHandler(address="/dev/log", facility="daemon")
+	log.addHandler(handler)
+
+	# Format everything
+	formatter = logging.Formatter("%(name)s[%(process)d]: %(message)s")
+	handler.setFormatter(formatter)
+
+	handler.setLevel(loglevel)
+
+	# Write everything to the console, too
+	handler = logging.StreamHandler()
+	log.addHandler(handler)
+
+	handler.setLevel(loglevel)
+
+	return log
+
+async def main():
+	parser = argparse.ArgumentParser(description="Reporter Service for Suricata")
+
+	# Command Line Arguments
+	parser.add_argument("--verbose", "-v", action="count", help="Be more verbose")
+
+	# Parse command line arguments
+	args = parser.parse_args()
+
+	# Setup logging
+	loglevel = logging.WARN
+
+	if args.verbose:
+		if args.verbose == 1:
+			loglevel = logging.INFO
+		elif args.verbose >= 2:
+			loglevel = logging.DEBUG
+
+	setup_logging(loglevel=loglevel)
+
+	# Create the repoert
+	reporter = Reporter()
+
+	# Run!
+	await reporter.run()
+
+if __name__ == "__main__":
+	asyncio.run(main())
