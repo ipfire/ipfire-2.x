@@ -1144,7 +1144,7 @@ unix-command:
   #filename: custom.socket
 
 # Magic file. The extension .mgc is added to the value here.
-magic-file: /usr/share/misc/magic
+magic-file: /usr/share/misc/magic.mgc
 
 # GeoIP2 database file. Specify path and filename of GeoIP2 database
 # if using rules with "geoip" rule option.
