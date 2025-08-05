@@ -1889,6 +1889,7 @@
 'o-yes' => 'Aktiv',
 'october' => 'Oktober',
 'off' => 'aus',
+'offloaded' => 'Ausgelagert',
 'ok' => 'OK',
 'older' => 'Älter',
 'on' => 'ein',

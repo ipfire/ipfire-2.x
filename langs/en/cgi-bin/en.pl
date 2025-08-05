@@ -1956,6 +1956,7 @@
 'o-yes' => 'Activ',
 'october' => 'October',
 'off' => 'off',
+'offloaded' => 'Offloaded',
 'ok' => 'OK',
 'okay' => 'Okay',
 'older' => 'Older',

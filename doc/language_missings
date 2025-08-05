@@ -159,6 +159,7 @@
 < ids provider eol
 < indirect target selection
 < mdstat
+< offloaded
 < online
 < ovpn ciphers
 < ovpn crypto settings
@@ -225,6 +226,7 @@
 < malformed private key
 < malformed public key
 < mdstat
+< offloaded
 < online
 < oops something went wrong
 < ovpn ciphers
@@ -691,6 +693,7 @@
 < not affected
 < not validating
 < Number of Countries for the pie chart
+< offloaded
 < okay
 < one hour
 < one month
@@ -1352,6 +1355,7 @@
 < not affected
 < not validating
 < Number of Countries for the pie chart
+< offloaded
 < okay
 < one hour
 < one month
@@ -2316,6 +2320,7 @@
 < notice
 < not validating
 < Number of Countries for the pie chart
+< offloaded
 < okay
 < one hour
 < one month
@@ -3431,6 +3436,7 @@
 < notice
 < not validating
 < Number of Countries for the pie chart
+< offloaded
 < okay
 < one hour
 < one month
@@ -4073,6 +4079,7 @@
 < no entries
 < not affected
 < not validating
+< offloaded
 < okay
 < online
 < oops something went wrong
@@ -4290,6 +4297,7 @@
 < guaranteed bandwidth
 < indirect target selection
 < max bandwidth
+< offloaded
 < online
 < ovpn ciphers
 < ovpn crypto settings
@@ -4337,6 +4345,7 @@
 < guaranteed bandwidth
 < indirect target selection
 < max bandwidth
+< offloaded
 < online
 < ovpn ciphers
 < ovpn crypto settings

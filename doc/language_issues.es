@@ -168,6 +168,7 @@ WARNING: translation string unused: bitrate
 WARNING: translation string unused: bleeding rules
 WARNING: translation string unused: blue access use hint
 WARNING: translation string unused: blue interface
+WARNING: translation string unused: bypassed
 WARNING: translation string unused: ca name must only contain characters or spaces
 WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
@@ -1060,6 +1061,7 @@ WARNING: untranslated string: indirect target selection = Indirect target select
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: offloaded = Offloaded
 WARNING: untranslated string: online = Online
 WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
