@@ -23,8 +23,10 @@ import argparse
 import asyncio
 import logging
 import logging.handlers
+import multiprocessing
 import signal
 import sys
+import time
 
 log = logging.getLogger("suricata-reporter")
 log.setLevel(logging.DEBUG)
@@ -34,7 +36,13 @@ class Reporter(object):
 		This is the main class that handles all the things...
 	"""
 	def __init__(self):
-		pass
+		# Fetch CPU count
+		cpu_count = multiprocessing.cpu_count()
+
+		# Create as many workers as we have processors
+		self.workers = [
+			Worker(reporter=self) for _ in range(cpu_count)
+		]
 
 	async def run(self):
 		"""
@@ -42,11 +50,43 @@ class Reporter(object):
 		"""
 		log.debug("Starting reporter...")
 
+		# Start all workers
+		for worker in self.workers:
+			worker.start()
+
 		# Sleep for forever
 		while True:
 			await asyncio.sleep(1)
 
+		# Terminate all workers
+		for worker in self.workers:
+			worker.terminate()
+
+		# Wait until all workers have terminated
+		for worker in self.workers:
+			worker.join()
+
 		log.debug("Reporter has exited")
+
+
+class Worker(multiprocessing.Process):
+	def __init__(self, reporter):
+		super().__init__()
+
+		# Store the reporter
+		self.reporter = reporter
+
+	def run(self):
+		"""
+			This is the main entry point for workers...
+		"""
+		log.debug("Worker %s launched" % self.pid)
+
+		# Sleep for forever
+		while True:
+			time.sleep(1)
+
+		log.debug("Worker %s terminated" % self.pid)
 
 
 def setup_logging(loglevel=logging.INFO):
