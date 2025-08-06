@@ -287,7 +287,12 @@ class Worker(multiprocessing.Process):
 			#log.debug("Received event in worker %s: %s" % (self.pid, event))
 
 			# Process the event
-			self.process(event)
+			try:
+				self.process(event)
+
+			# Log any exceptions, but keep going
+			except Exception as e:
+				log.error("Failed to process: %s" % e)
 
 		# Optimize the database before exiting
 		log.debug("Optimizing the database")
