@@ -138,6 +138,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install the reporter
 	install -v -m 755 $(DIR_SRC)/config/suricata/suricata-reporter /usr/bin/suricata-reporter
+	install -v -m 644 $(DIR_SRC)/config/suricata/reporter.conf \
+		/var/ipfire/suricata/reporter.conf
+	chown -v nobody:nobody /var/ipfire/suricata/reporter.conf
 
 	# Install the watcher
 	install -v -m 755 $(DIR_SRC)/config/suricata/suricata-watcher /usr/bin/suricata-watcher

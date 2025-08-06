@@ -54,6 +54,7 @@ usr/share/suricata
 #usr/share/suricata/threshold.config
 var/cache/suricata
 var/cache/suricata/sgh
+var/ipfire/suricata/reporter.conf
 var/lib/suricata
 #var/lib/suricata/cache
 #var/lib/suricata/cache/sgh

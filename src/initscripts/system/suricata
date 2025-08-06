@@ -189,7 +189,8 @@ case "$1" in
 		if [ "$ENABLE_IDS" == "on" ]; then
 			# Start the reporter
 			boot_mesg "Starting Intrusion Prevention Reporter..."
-			loadproc -f -p /var/run/suricata/reporter.pid -b /usr/bin/suricata-reporter
+			loadproc -f -p /var/run/suricata/reporter.pid -b /usr/bin/suricata-reporter \
+				--config="/var/ipfire/suricata/reporter.conf"
 
 			# Start suricata
 			boot_mesg "Starting Intrusion Prevention System..."
