@@ -40,8 +40,7 @@ import sys
 HOSTNAME = socket.gethostname()
 
 # Email Settings
-EMAIL_FROM = "michael.tremer@ipfire.org"
-EMAIL_TO = "ms@ipfire.org"
+EMAIL_FROM = "IPFire Intrusion Prevention System <%s>"
 
 SOCKET_PATH = "/var/run/suricata/reporter.socket"
 
@@ -164,6 +163,10 @@ class Reporter(object):
 		except queue.Full as e:
 			log.warning("Failed to push event into the queue. The queue seems to be full.")
 
+		# Ignore if the queue has been closed
+		except ValueError:
+			pass
+
 
 class Worker(multiprocessing.Process):
 	def __init__(self, reporter):
@@ -171,6 +174,13 @@ class Worker(multiprocessing.Process):
 
 		# Store the reporter
 		self.reporter = reporter
+
+	@property
+	def config(self):
+		"""
+			Proxy to access the configuration file
+		"""
+		return self.reporter.config
 
 	def run(self):
 		"""
@@ -227,7 +237,8 @@ class Worker(multiprocessing.Process):
 		log.debug("Received alert: %s" % event)
 
 		# Send an email
-		self.send_alert_email(event)
+		if self.config.getboolean("email", "enabled", fallback=False):
+			self.send_alert_email(event)
 
 	def send_alert_email(self, event):
 		"""
@@ -236,8 +247,29 @@ class Worker(multiprocessing.Process):
 		# Create a new message
 		msg = email.message.EmailMessage()
 
-		msg.add_header("From", "IPFire Intrusion Prevention System <%s>" % EMAIL_FROM)
-		msg.add_header("To", EMAIL_TO)
+		# Fetch the sender
+		email_from = self.config.get("email", "sender", fallback=None)
+		if email_from is None:
+			email_from = "no-reply@%s" % HOSTNAME
+
+		# Set the sender
+		msg.add_header("From", EMAIL_FROM % email_from)
+
+		# Fetch the recipients
+		email_recipients = self.config.get("email", "recipients", fallback=None)
+		if email_recipients is None:
+			log.error("Cannot send alert emails because no recipients have been configured.")
+			return
+
+		# Split the recipients
+		email_recipients = email.utils.getaddresses([email_recipients])
+
+		# Add them to the email
+		msg.add_header("To", ", ".join(
+			email.utils.formataddr(recipient) for recipient in email_recipients)
+		)
+
+		# Set the Subject
 		msg.add_header("Subject", "[ALERT][%s] %s %s - %s" % (HOSTNAME,
 			"*" * event.alert_severity, event.alert_signature, event.alert_category))
 
@@ -277,7 +309,7 @@ class Worker(multiprocessing.Process):
 
 		# Send the email
 		p = subprocess.Popen(
-			["/usr/sbin/sendmail", "-t", "-oi", "-f", EMAIL_FROM],
+			["/usr/sbin/sendmail", "-t", "-oi", "-f", email_from],
 			text=True,
 			stdin=subprocess.PIPE,
 			stdout=subprocess.PIPE,
@@ -292,6 +324,8 @@ class Worker(multiprocessing.Process):
 			if stdout:
 				log.error(stdout)
 
+		log.debug("Successfully send email to %s" % \
+			", ".join(address for name, address in email_recipients))
 
 class Event(object):
 	def __init__(self, event):
