@@ -236,9 +236,19 @@ class Worker(multiprocessing.Process):
 		# Log the event
 		log.debug("Received alert: %s" % event)
 
+		# Send to syslog
+		if self.config.getboolean("syslog", "enabled", fallback=False):
+			self.send_to_syslog(event)
+
 		# Send an email
 		if self.config.getboolean("email", "enabled", fallback=False):
 			self.send_alert_email(event)
+
+	def send_to_syslog(self, event):
+		"""
+			Sends the event to the local syslog server in fast.log format
+		"""
+		log.warning(event.fast_log)
 
 	def send_alert_email(self, event):
 		"""
@@ -327,6 +337,7 @@ class Worker(multiprocessing.Process):
 		log.debug("Successfully send email to %s" % \
 			", ".join(address for name, address in email_recipients))
 
+
 class Event(object):
 	def __init__(self, event):
 		# Parse the event
@@ -356,12 +367,28 @@ class Event(object):
 		return self.data.get("src_ip")
 
 	@property
+	def source_port(self):
+		return self.data.get("src_port", None)
+
+	@property
 	def destination_address(self):
 		return self.data.get("dest_ip")
 
 	@property
+	def destination_port(self):
+		return self.data.get("dest_port", None)
+
+	@property
 	def protocol(self):
 		return self.data.get("proto")
+
+	@property
+	def icmp_code(self):
+		return self.data.get("icmp_code", None)
+
+	@property
+	def icmp_type(self):
+		return self.data.get("icmp_type", None)
 
 	# Alert Stuff
 
@@ -378,6 +405,10 @@ class Event(object):
 		return self.alert.get("signature")
 
 	@property
+	def alert_signature_id(self):
+		return self.alert.get("signature_id")
+
+	@property
 	def alert_severity(self):
 		return self.alert.get("severity", 0)
 
@@ -385,13 +416,61 @@ class Event(object):
 	def alert_action(self):
 		return self.alert.get("action")
 
+	@property
+	def alert_gid(self):
+		return self.alert.get("gid")
 
+	@property
+	def alert_rev(self):
+		return self.alert.get("rev")
+
+	@property
+	def fast_log(self):
+		"""
+			Returns the event in a human-readable way (like fast.log)
+		"""
+		s = []
+
+		# Show if we dropped the packet
+		if self.alert_action == "blocked":
+			s.append("[Drop]")
+
+		# Add some stars to make it pretty
+		s.append("[**]")
+
+		# Show which signature created the alert
+		s.append("%s:%s:%s" % (self.alert_gid, self.alert_signature_id, self.alert_rev))
+
+		# Show the signature
+		s.append("%s" % self.alert_signature)
+
+		# More stars
+		s.append("[**]")
+
+		# Classification
+		s.append("[Classification: %s]" % self.alert_category)
+
+		# Priority
+		s.append("[Priority: %s]" % self.alert_severity)
+
+		# Protocol
+		s.append("{%s}" % self.protocol)
+
+		# Source and Destination Addresses
+		s.append("%s:%s -> %s:%s" % (
+			self.source_address,
+			self.source_port or self.icmp_code,
+			self.destination_address,
+			self.destination_port or self.icmp_type,
+		))
+
+		return " ".join(s)
 
 def setup_logging(loglevel=logging.INFO):
 	log.setLevel(loglevel)
 
 	# Log to syslog by default
-	handler = logging.handlers.SysLogHandler(address="/dev/log", facility="daemon")
+	handler = logging.handlers.SysLogHandler(address="/dev/log", facility="local5")
 	log.addHandler(handler)
 
 	# Format everything
