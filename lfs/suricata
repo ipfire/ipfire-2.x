@@ -136,6 +136,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install converter script needed for Core Update 167
 	install -m 0755 $(DIR_SRC)/config/suricata/convert-ids-backend-files /usr/sbin/convert-ids-backend-files
 
+	# Install the reporter
+	install -v -m 755 $(DIR_SRC)/config/suricata/suricata-reporter /usr/bin/suricata-reporter
+
 	# Install the watcher
 	install -v -m 755 $(DIR_SRC)/config/suricata/suricata-watcher /usr/bin/suricata-watcher
 

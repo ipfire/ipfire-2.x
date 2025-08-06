@@ -1,6 +1,7 @@
 etc/suricata
 etc/suricata/suricata.yaml
 usr/bin/suricata
+usr/bin/suricata-reporter
 usr/bin/suricata-watcher
 #usr/bin/suricatactl
 #usr/bin/suricatasc
