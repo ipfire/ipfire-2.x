@@ -42,8 +42,6 @@ HOSTNAME = socket.gethostname()
 # Email Settings
 EMAIL_FROM = "IPFire Intrusion Prevention System <%s>"
 
-SOCKET_PATH = "/var/run/suricata/reporter.socket"
-
 log = logging.getLogger("suricata-reporter")
 log.setLevel(logging.DEBUG)
 
@@ -89,6 +87,11 @@ class Reporter(object):
 		# Create the socket
 		self.sock = self._create_socket()
 
+	@property
+	def socket_path(self):
+		return self.config.get("DEFAULT", "socket",
+			fallback="/var/run/suricata/reporter.socket")
+
 	def _create_socket(self):
 		"""
 			Creates a new socket to receive messages on
@@ -98,7 +101,7 @@ class Reporter(object):
 
 		# Bind to the some path
 		try:
-			sock.bind(SOCKET_PATH)
+			sock.bind(self.socket_path)
 		except OSError as e:
 			log.error("Failed to bind to socket: %s" % e)
 
@@ -137,9 +140,9 @@ class Reporter(object):
 
 		# Remove the socket so we won't receive any more data
 		try:
-			os.unlink(SOCKET_PATH)
+			os.unlink(self.socket_path)
 		except OSError as e:
-			log.error("Failed to remove %s: %s" % (SOCKET_PATH, e))
+			log.error("Failed to remove %s: %s" % (self.socket_path, e))
 
 		# Close the queue
 		self.queue.close()
