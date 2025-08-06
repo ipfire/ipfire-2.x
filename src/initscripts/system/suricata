@@ -174,7 +174,7 @@ generate_fw_rules() {
 }
 
 case "$1" in
-        start)
+	start)
 		# Get amount of CPU cores
 		cpu_count="$(getconf _NPROCESSORS_ONLN)"
 
@@ -201,9 +201,9 @@ case "$1" in
 			# Generate firewall rules
 			generate_fw_rules
 		fi
-	;;
+		;;
 
-        stop)
+	stop)
 		boot_mesg "Stopping Intrusion Detection System..."
 		killproc -p /var/run/suricata.pid /usr/bin/suricata
 
@@ -215,17 +215,17 @@ case "$1" in
 
 		# Don't report returncode of rm if suricata was not started
 		exit 0
-        ;;
+		;;
 
-        status)
+	status)
 		PIDFILE="/var/run/suricata.pid" statusproc /usr/bin/suricata
 		PIDFILE="/var/run/suricata/reporter.pid" statusproc /usr/bin/suricata-reporter
-                ;;
+		;;
 
-        restart)
-                $0 stop
-                $0 start
-                ;;
+	restart)
+		$0 stop
+		$0 start
+		;;
 
 	reload)
 		# Send SIGUSR2 to the suricata process to perform a reload
@@ -239,8 +239,8 @@ case "$1" in
 		generate_fw_rules
 		;;
 
-        *)
-                echo "Usage: $0 {start|stop|restart|reload|status}"
-                exit 1
-                ;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload|status}"
+		exit 1
+		;;
 esac
