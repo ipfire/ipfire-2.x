@@ -29,7 +29,7 @@ import signal
 import socket
 import sys
 
-SOCKET_PATH = "/var/run/suricata-reporter.socket"
+SOCKET_PATH = "/var/run/suricata/reporter.socket"
 
 log = logging.getLogger("suricata-reporter")
 log.setLevel(logging.DEBUG)
