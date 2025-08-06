@@ -60,7 +60,13 @@ class Reporter(object):
 		self.config.read(config)
 
 		# Fetch CPU count
-		cpu_count = multiprocessing.cpu_count()
+		workers = self.config.getint("DEFAULT", "workers",
+			fallback=multiprocessing.cpu_count())
+
+		# Check if workers are a positive number
+		if workers < 1:
+			log.error("Invalid number of workers: %s" % workers)
+			raise SystemExit(1)
 
 		# Fetch the current event loop
 		self.loop = asyncio.get_running_loop()
@@ -73,7 +79,7 @@ class Reporter(object):
 
 		# Create as many workers as we have processors
 		self.workers = [
-			Worker(reporter=self) for _ in range(cpu_count)
+			Worker(reporter=self) for _ in range(workers)
 		]
 
 		# Register any signals
