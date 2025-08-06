@@ -185,14 +185,14 @@ case "$1" in
 			NFQUEUES+=":$(($cpu_count-1))"
 		fi
 
-		# Check if the IDS should be started.
+		# Check if suricata should be started
 		if [ "$ENABLE_IDS" == "on" ]; then
 			# Start the reporter
 			boot_mesg "Starting Intrusion Prevention Reporter..."
 			loadproc -f -p /var/run/suricata/reporter.pid -b /usr/bin/suricata-reporter
 
-			# Start the IDS.
-			boot_mesg "Starting Intrusion Detection System..."
+			# Start suricata
+			boot_mesg "Starting Intrusion Prevention System..."
 			loadproc -b /usr/bin/suricata-watcher -c /etc/suricata/suricata.yaml $NFQUEUES
 
 			# Flush the firewall chain
@@ -204,7 +204,7 @@ case "$1" in
 		;;
 
 	stop)
-		boot_mesg "Stopping Intrusion Detection System..."
+		boot_mesg "Stopping Intrusion Prevention System..."
 		killproc -p /var/run/suricata.pid /usr/bin/suricata
 
 		boot_mesg "Stopping Intrusion Prevention Reporter..."
