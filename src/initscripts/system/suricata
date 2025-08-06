@@ -187,6 +187,10 @@ case "$1" in
 
 		# Check if the IDS should be started.
 		if [ "$ENABLE_IDS" == "on" ]; then
+			# Start the reporter
+			boot_mesg "Starting Intrusion Prevention Reporter..."
+			loadproc -f -p /var/run/suricata/reporter.pid -b /usr/bin/suricata-reporter
+
 			# Start the IDS.
 			boot_mesg "Starting Intrusion Detection System..."
 			loadproc -b /usr/bin/suricata-watcher -c /etc/suricata/suricata.yaml $NFQUEUES
@@ -203,6 +207,9 @@ case "$1" in
 		boot_mesg "Stopping Intrusion Detection System..."
 		killproc -p /var/run/suricata.pid /usr/bin/suricata
 
+		boot_mesg "Stopping Intrusion Prevention Reporter..."
+		killproc -p /var/run/suricata/reporter.pid /usr/bin/suricata-reporter
+
 		# Flush firewall chain.
 		flush_fw_chain
 
@@ -211,7 +218,8 @@ case "$1" in
         ;;
 
         status)
-                PIDFILE="/var/run/suricata.pid" statusproc /usr/bin/suricata
+		PIDFILE="/var/run/suricata.pid" statusproc /usr/bin/suricata
+		PIDFILE="/var/run/suricata/reporter.pid" statusproc /usr/bin/suricata-reporter
                 ;;
 
         restart)
