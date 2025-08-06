@@ -21,18 +21,34 @@
 
 import argparse
 import asyncio
+import datetime
+import email.message
+import email.utils
+import json
 import logging
 import logging.handlers
 import multiprocessing
 import os
+import queue
 import signal
 import socket
+import subprocess
 import sys
+
+# Fetch the hostname
+HOSTNAME = socket.gethostname()
+
+# Email Settings
+EMAIL_FROM = "michael.tremer@ipfire.org"
+EMAIL_TO = "ms@ipfire.org"
 
 SOCKET_PATH = "/var/run/suricata/reporter.socket"
 
 log = logging.getLogger("suricata-reporter")
 log.setLevel(logging.DEBUG)
+
+# i18n
+_ = lambda x: x
 
 class Reporter(object):
 	"""
@@ -170,10 +186,166 @@ class Worker(multiprocessing.Process):
 			except ValueError:
 				break
 
+			# Parse the event
+			try:
+				event = Event(event)
+
+			# Skip any events we could not decode
+			except ValueError as e:
+				log.warning("Failed to decode event: %s" % e)
+				continue
+
 			# Log the event
-			log.debug("Received event in worker %s: %s" % (self.pid, event))
+			#log.debug("Received event in worker %s: %s" % (self.pid, event))
+
+			# Process the event
+			self.process(event)
 
 		log.debug("Worker %s terminated" % self.pid)
+
+	def process(self, event):
+		"""
+			Called whenever we have received an event
+		"""
+		# Process by type
+		if event.type == "alert":
+			return self.process_alert(event)
+
+		# We don't care about anything else for now
+		return
+
+	def process_alert(self, event):
+		"""
+			Called to process alerts
+		"""
+		# Log the event
+		log.debug("Received alert: %s" % event)
+
+		# Send an email
+		self.send_alert_email(event)
+
+	def send_alert_email(self, event):
+		"""
+			Generates a new email with the alert
+		"""
+		# Create a new message
+		msg = email.message.EmailMessage()
+
+		msg.add_header("From", "IPFire Intrusion Prevention System <%s>" % EMAIL_FROM)
+		msg.add_header("To", EMAIL_TO)
+		msg.add_header("Subject", "[ALERT][%s] %s %s - %s" % (HOSTNAME,
+			"*" * event.alert_severity, event.alert_signature, event.alert_category))
+
+		# Add the timestamp as Date: header
+		msg.add_header("Date", email.utils.format_datetime(event.timestamp))
+
+		# Generate a Message ID
+		msg.add_header("Message-ID", email.utils.make_msgid())
+
+		# Compose the content
+		content = [
+			_("To whom it may concern,"),
+			"",
+			_("The IPFire Intrusion Preventsion System has raised the following alert:"),
+			"",
+			"	%-20s : %s" % (_("Signature"), event.alert_signature),
+			"	%-20s : %s" % (_("Category"), event.alert_category),
+			"	%-20s : %s" % (_("Severity"), event.alert_severity),
+			"	%-20s : %s" % (_("Timestamp"), event.timestamp.strftime("%A, %d %B %Y at %H:%M:%S %Z")),
+			"	%-20s : %s" % (_("Source"), event.source_address),
+			"	%-20s : %s" % (_("Destination"), event.destination_address),
+			"	%-20s : %s" % (_("Protocol"), event.protocol),
+			"",
+		]
+
+		# Show if something was blocked
+		if event.alert_action == "blocked":
+			content += (
+				_("The threat was blocked."), "",
+			)
+
+		# Add the content to the email
+		msg.set_content("\n".join(content))
+
+		# Log the generated email
+		log.debug(msg.as_string())
+
+		# Send the email
+		p = subprocess.Popen(
+			["/usr/sbin/sendmail", "-t", "-oi", "-f", EMAIL_FROM],
+			text=True,
+			stdin=subprocess.PIPE,
+			stdout=subprocess.PIPE,
+			stderr=subprocess.STDOUT,
+		)
+
+		# Pipe the email into sendmail
+		stdout, stderr = p.communicate(msg.as_string())
+
+		if not p.returncode == 0:
+			log.error("Failed to send email. sendmail returned %s:" % p.returncode)
+			if stdout:
+				log.error(stdout)
+
+
+class Event(object):
+	def __init__(self, event):
+		# Parse the event
+		try:
+			self.data = json.loads(event)
+
+		# Raise some ValueError if we could not decode the input
+		except json.JSONDecodeError as e:
+			raise ValueError("%s" % e) from e
+
+	def __str__(self):
+		return "%s" % self.data
+
+	@property
+	def type(self):
+		return self.data.get("event_type")
+
+	@property
+	def timestamp(self):
+		t = self.data.get("timestamp")
+
+		# Parse the timestamp
+		return datetime.datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f%z")
+
+	@property
+	def source_address(self):
+		return self.data.get("src_ip")
+
+	@property
+	def destination_address(self):
+		return self.data.get("dest_ip")
+
+	@property
+	def protocol(self):
+		return self.data.get("proto")
+
+	# Alert Stuff
+
+	@property
+	def alert(self):
+		return self.data.get("alert")
+
+	@property
+	def alert_category(self):
+		return self.alert.get("category")
+
+	@property
+	def alert_signature(self):
+		return self.alert.get("signature")
+
+	@property
+	def alert_severity(self):
+		return self.alert.get("severity", 0)
+
+	@property
+	def alert_action(self):
+		return self.alert.get("action")
+
 
 
 def setup_logging(loglevel=logging.INFO):
