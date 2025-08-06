@@ -25,11 +25,13 @@ import configparser
 import datetime
 import email.message
 import email.utils
+import grp
 import json
 import logging
 import logging.handlers
 import multiprocessing
 import os
+import pwd
 import queue
 import signal
 import socket
@@ -92,6 +94,25 @@ class Reporter(object):
 		return self.config.get("DEFAULT", "socket",
 			fallback="/var/run/suricata/reporter.socket")
 
+	def get_socket_owner(self):
+		# Fetch the user/group from the configuration
+		uname = self.config.get("DEFAULT", "user", fallback="suricata")
+		gname = self.config.get("DEFAULT", "group", fallback="suricata")
+
+		# Fetch the user and group
+		try:
+			user = pwd.getpwnam(uname)
+		except KeyError:
+			user = None
+
+		try:
+			group = grp.getgrnam(gname)
+		except KeyError:
+			group = None
+
+		# Return a tuple with the desired user/group IDs
+		return (user.pw_uid if user else -1, group.gr_gid if group else -1)
+
 	def _create_socket(self):
 		"""
 			Creates a new socket to receive messages on
@@ -107,6 +128,12 @@ class Reporter(object):
 
 			# Terminate immediately
 			raise SystemExit(1)
+
+		# Fetch the socket owner
+		uid, gid = self.get_socket_owner()
+
+		# Adjust the ownership
+		os.chown(self.socket_path, uid, gid)
 
 		# Call something whenever we receive data on the socket
 		self.loop.add_reader(sock.fileno(), self._receive_message, sock)
