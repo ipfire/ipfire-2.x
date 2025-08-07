@@ -1486,6 +1486,7 @@ build_system() {
 	lfsmake2 python3
 	lfsmake2 python3-wheel
 	lfsmake2 python3-packaging
+	lfsmake2 python3-more_itertools
 	lfsmake2 python3-setuptools
 	lfsmake2 ninja
 	lfsmake2 meson
