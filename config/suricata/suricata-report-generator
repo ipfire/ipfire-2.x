@@ -1,0 +1,89 @@
+#!/usr/bin/python3
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2025  Michael Tremer                                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+import argparse
+import logging
+import sqlite3
+
+log = logging.getLogger("suricata-report-generator")
+log.setLevel(logging.DEBUG)
+
+# i18n
+_ = lambda x: x
+
+class ReportGenerator(object):
+	"""
+		This is the main class that handles all the things...
+	"""
+	def __init__(self, path):
+		self.path = path
+
+		# Open the database
+		self.db = sqlite3.connect(path)
+
+	def run(self, output):
+		log.debug("Generating report %s..." % output)
+
+		pass # TODO
+
+
+def setup_logging(loglevel=logging.INFO):
+	log.setLevel(loglevel)
+
+	# Write everything to the console
+	handler = logging.StreamHandler()
+	log.addHandler(handler)
+
+	handler.setLevel(loglevel)
+
+	return log
+
+def main():
+	parser = argparse.ArgumentParser(description="Reporter Generator for Suricata")
+
+	# Command Line Arguments
+	parser.add_argument("--verbose", "-v", action="count", help="Be more verbose")
+	parser.add_argument("--database", help="Database",
+		default="/var/log/suricata/reporter.db")
+	parser.add_argument("--output", "-o", required=True, help=_("Output Path"))
+
+	# Parse command line arguments
+	args = parser.parse_args()
+
+	# Setup logging
+	loglevel = logging.WARN
+
+	if args.verbose:
+		if args.verbose == 1:
+			loglevel = logging.INFO
+		elif args.verbose >= 2:
+			loglevel = logging.DEBUG
+
+	setup_logging(loglevel=loglevel)
+
+	# Create the repoert
+	generator = ReportGenerator(args.database)
+
+	# Run!
+	generator.run(args.output)
+
+if __name__ == "__main__":
+	main()
