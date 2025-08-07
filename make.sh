@@ -1484,6 +1484,7 @@ build_system() {
 	lfsmake2 gdbm
 	lfsmake2 sqlite
 	lfsmake2 python3
+	lfsmake2 python3-wheel
 	lfsmake2 python3-setuptools
 	lfsmake2 ninja
 	lfsmake2 meson
