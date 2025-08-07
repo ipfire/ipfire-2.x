@@ -21,6 +21,7 @@
 
 import argparse
 import calendar
+import collections
 import datetime
 import logging
 import reportlab
@@ -29,13 +30,23 @@ import reportlab.platypus
 import socket
 import sqlite3
 
-from reportlab.lib.units import cm
+from reportlab.lib.units import cm, mm
 
 log = logging.getLogger("suricata-report-generator")
 log.setLevel(logging.DEBUG)
 
 # i18n
 _ = lambda x: x
+
+def row_factory(cursor, row):
+	"""
+		This is a custom row factory that makes all fields accessible as attributes.
+	"""
+	# Create a new class with all fields
+	cls = collections.namedtuple("Row", [column for column, *args in cursor.description])
+
+	# Parse the row data
+	return cls._make(row)
 
 class ReportGenerator(object):
 	"""
@@ -46,6 +57,7 @@ class ReportGenerator(object):
 
 		# Open the database
 		self.db = sqlite3.connect(path)
+		self.db.row_factory = row_factory
 
 		# Load a default stylesheet for our document
 		self.styles = reportlab.lib.styles.getSampleStyleSheet()
@@ -110,6 +122,9 @@ class ReportGenerator(object):
 		# Create a new PDF document
 		doc = reportlab.platypus.SimpleDocTemplate(
 			output, pagesize=reportlab.lib.pagesizes.A4,
+
+			# Decrease the margins
+			leftMargin=5 * mm, rightMargin=5 * mm, topMargin=10 * mm, bottomMargin=15 * mm,
 		)
 
 		# Collect everything that should go on the document
@@ -118,8 +133,21 @@ class ReportGenerator(object):
 		# Create the title page
 		self._make_titlepage(elements, date_start, date_end)
 
+		# Add detailed alerts
+		self._make_alerts(elements, date_start, date_end, width=doc.width)
+
 		# Render the document
-		doc.build(elements)
+		doc.build(elements, onLaterPages=self._make_page_number)
+
+	def _make_page_number(self, canvas, doc):
+		# Fetch the current page number
+		number = canvas.getPageNumber()
+
+		# Set the font
+		canvas.setFont(self.styles["Normal"].fontName, 9)
+
+		# Write the page number to the right hand bottom
+		canvas.drawRightString(200 * mm, 10 * mm, _("Page %s") % number)
 
 	def _make_titlepage(self, elements, date_start, date_end):
 		"""
@@ -172,6 +200,141 @@ class ReportGenerator(object):
 				self.styles["Centered"],
 			),
 		)
+
+		# End the page
+		elements.append(
+			reportlab.platypus.PageBreak(),
+		)
+
+	def _make_alerts(self, elements, date_start, date_end, **kwargs):
+		"""
+			Called to add all alerts in the date range with all their detail.
+		"""
+		date = date_start
+
+		while date <= date_end:
+			self._make_alerts_by_date(elements, date, **kwargs)
+
+			# Move on to the next day
+			date += datetime.timedelta(days=1)
+
+	def _make_alerts_by_date(self, elements, date, *, width):
+		log.debug("Rendering alerts for %s..." % date)
+
+		# Fetch the alerts
+		c = self.db.execute("""
+			SELECT
+				id,
+				datetime(timestamp, 'unixepoch', 'localtime') AS timestamp,
+
+				-- Basic Stuff
+				(event ->> '$.src_ip') AS source_address,
+				(event ->> '$.src_port') AS source_port,
+				(event ->> '$.dest_ip') AS destination_address,
+				(event ->> '$.dest_port') AS destination_port,
+				(event ->> '$.proto') AS protocol,
+				(event ->> '$.icmp_code') AS icmp_code,
+				(event ->> '$.icmp_type') AS icmp_type,
+
+				-- Alert Stuff
+				(event ->> '$.alert.category') AS alert_category,
+				(event ->> '$.alert.signature') AS alert_signature,
+				(event ->> '$.alert.signature_id') AS alert_signature_id,
+				(event ->> '$.alert.severity') AS alert_severity,
+				(event ->> '$.alert.action') AS alert_action,
+				(event ->> '$.alert.gid') AS alert_gid,
+				(event ->> '$.alert.rev') AS alert_rev
+			FROM
+				alerts
+			WHERE
+				date(timestamp, 'unixepoch', 'localtime') = ?
+			ORDER BY
+				timestamp ASC,
+				id ASC
+		""", (date.isoformat(),))
+
+		# Start the table with the header
+		rows = [
+			(_("Time"), _("Signature"), _("Protocol"), _("Source / Destination"))
+		]
+
+		while True:
+			row = c.fetchone()
+			if row is None:
+				break
+
+			print(row)
+
+			# Parse the timestamp
+			t = datetime.datetime.strptime(row.timestamp, "%Y-%m-%d %H:%M:%S")
+
+			# Append the row
+			rows.append((
+				t.strftime("%H:%M:%S"),
+				"%s %s\n[%s:%s:%s] - %s" % (
+					"*" * row.alert_severity,
+					row.alert_signature,
+					row.alert_gid,
+					row.alert_signature_id,
+					row.alert_rev,
+					row.alert_category,
+				),
+				row.protocol,
+				"%s:%s\n%s:%s" % (
+					row.source_address, (row.source_port or row.icmp_code),
+					row.destination_address, (row.destination_port or row.icmp_type),
+				),
+			))
+
+		# Skip if we have found no data
+		if len(rows) == 1:
+			log.debug("Skipping %s, because we don't have any data" % date)
+			return
+
+		# Add a headline
+		elements.append(
+			reportlab.platypus.Paragraph(
+				_("Alerts from %s") % date.strftime("%A, %d %B %Y"),
+				self.styles["Heading2"],
+			)
+		)
+
+		# Create the table
+		table = reportlab.platypus.Table(rows,
+			# Set the widths of the rows
+			colWidths=(
+				width * 0.1, width * 0.6, width * 0.1, width * 0.2,
+			),
+
+			# Repeat the header after a page break
+			repeatRows=1,
+		)
+
+		# Style the table
+		table.setStyle(
+			reportlab.platypus.TableStyle((
+				# Make the grid slightly grey
+				("GRID", (0, 0), (-1, -1), 0.25, reportlab.lib.colors.grey),
+
+				# Align all content to the top left corners of the cells
+				("ALIGN", (0, 0), (-1, -1), "LEFT"),
+				("ALIGN", (0, 0), (0, -1), "CENTER"),
+				("ALIGN", (2, 0), (2, -1), "CENTER"),
+				("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+				# Chose a much smaller font size
+				("FONTSIZE", (0, 0), (-1, -1), 8),
+
+				# Alternate the background colours of the rows
+				("ROWBACKGROUNDS", (0, 1), (-1, -1), [
+					reportlab.lib.colors.white,
+					reportlab.lib.colors.lightgrey,
+				]),
+			)),
+		)
+
+		# Append the table to the output
+		elements.append(table)
 
 		# End the page
 		elements.append(
