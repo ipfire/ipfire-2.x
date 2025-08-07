@@ -20,6 +20,8 @@
 ###############################################################################
 
 import argparse
+import calendar
+import datetime
 import logging
 import sqlite3
 
@@ -39,10 +41,54 @@ class ReportGenerator(object):
 		# Open the database
 		self.db = sqlite3.connect(path)
 
-	def run(self, output):
+	def generate(self, output, year, month, week, day):
+		"""
+			Generates a PDF report.
+		"""
 		log.debug("Generating report %s..." % output)
 
-		pass # TODO
+		today = datetime.date.today()
+
+		# Daily reports
+		if year and month and day:
+			try:
+				date = datetime.date(year, month, day)
+			except ValueError as e:
+				log.error("Invalid date: %s-%s-%s" % (year, month, day))
+				raise SystemExit(2)
+
+			# Start and end date are the same day
+			date_start = date_end = date
+
+		# Monthly reports
+		elif year and month:
+			date_start = datetime.date(year, month, 1)
+
+			# Determine the last day
+			first_weekday, last_day = calendar.monthrange(year, month)
+			date_end = datetime.date(year, month, last_day)
+
+			# Cap to today
+			date_end = min(date_end, today)
+
+		# Weekly reports
+		elif year and week:
+			date_start = datetime.date.fromisocalendar(year, week, 1)
+			date_end   = datetime.date.fromisocalendar(year, week, 7)
+
+			# Cap to today
+			date_end = min(date_end, today)
+
+		# Yearly reports
+		elif year:
+			date_start = datetime.date(year, 1, 1)
+			date_end   = datetime.date(year, 12, 31)
+
+			# Cap to today
+			date_end = min(date_end, today)
+
+		# Log the dates
+		log.debug("  Dates: %s - %s" % (date_start, date_end))
 
 
 def setup_logging(loglevel=logging.INFO):
@@ -65,6 +111,19 @@ def main():
 		default="/var/log/suricata/reporter.db")
 	parser.add_argument("--output", "-o", required=True, help=_("Output Path"))
 
+	# Select the time
+	parser.add_argument("--year", type=int, required=True,
+		help=_("Year of the report (e.g. 2025)"))
+	parser.add_argument("--month", type=int, choices=range(1, 13),
+		help=_("Month of the report (1-12)"))
+
+	# We can only use --week or --day, but never both
+	group = parser.add_mutually_exclusive_group()
+	group.add_argument("--day", type=int, choices=range(1, 32),
+		help=_("Day of the month (1-31)"))
+	group.add_argument("--week", type=int, choices=range(1, 54),
+		help=_("ISO calendar week number (1-53)"))
+
 	# Parse command line arguments
 	args = parser.parse_args()
 
@@ -79,11 +138,17 @@ def main():
 
 	setup_logging(loglevel=loglevel)
 
-	# Create the repoert
+	# Create the report
 	generator = ReportGenerator(args.database)
 
-	# Run!
-	generator.run(args.output)
+	# Generate!
+	generator.generate(
+		output = args.output,
+		year   = args.year,
+		month  = args.month,
+		week   = args.week,
+		day    = args.day,
+	)
 
 if __name__ == "__main__":
 	main()
