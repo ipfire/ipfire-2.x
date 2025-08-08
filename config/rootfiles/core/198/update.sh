@@ -51,6 +51,7 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/init.d/suricata restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
