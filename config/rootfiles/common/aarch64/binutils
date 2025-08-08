@@ -426,7 +426,7 @@ usr/lib/bfd-plugins/libdep.so
 #usr/lib/ldscripts/armelfb_linux_eabi.xwe
 #usr/lib/ldscripts/armelfb_linux_eabi.xwer
 #usr/lib/ldscripts/stamp
-usr/lib/libbfd-2.44.so
+usr/lib/libbfd-2.45.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -445,15 +445,15 @@ usr/lib/libctf.so.0.0.0
 #usr/lib/libgprofng.so
 usr/lib/libgprofng.so.0
 usr/lib/libgprofng.so.0.0.0
-usr/lib/libopcodes-2.44.so
+usr/lib/libopcodes-2.45.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
 #usr/lib/libsframe.a
 #usr/lib/libsframe.la
 #usr/lib/libsframe.so
-usr/lib/libsframe.so.1
-usr/lib/libsframe.so.1.0.0
+usr/lib/libsframe.so.2
+usr/lib/libsframe.so.2.0.0
 #usr/share/doc/gprofng
 #usr/share/doc/gprofng/examples.tar.gz
 #usr/share/info/as.info
@@ -501,6 +501,9 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/locale/ga/LC_MESSAGES/gprof.mo
 #usr/share/locale/ga/LC_MESSAGES/ld.mo
 #usr/share/locale/ga/LC_MESSAGES/opcodes.mo
+#usr/share/locale/gas.es
+#usr/share/locale/gas.es/LC_MESSAGES
+#usr/share/locale/gas.es/LC_MESSAGES/gas.mo
 #usr/share/locale/hr/LC_MESSAGES/bfd.mo
 #usr/share/locale/hr/LC_MESSAGES/binutils.mo
 #usr/share/locale/hu/LC_MESSAGES/gprof.mo
