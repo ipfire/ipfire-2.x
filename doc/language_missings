@@ -179,6 +179,7 @@
 < quality of service
 < rss
 < rss long
+< transient sheduler attacks
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -258,6 +259,7 @@
 < system time
 < timeformat
 < total
+< transient sheduler attacks
 < upload fcdsl.o
 < warning
 < wg
@@ -814,6 +816,7 @@
 < traffic stat out
 < traffic stat title
 < transfers
+< transient sheduler attacks
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -1475,6 +1478,7 @@
 < tor use guard nodes
 < total
 < transfers
+< transient sheduler attacks
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -2540,6 +2544,7 @@
 < traffic stat out
 < traffic stat title
 < transfers
+< transient sheduler attacks
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -3652,6 +3657,7 @@
 < traffic stat out
 < traffic stat title
 < transfers
+< transient sheduler attacks
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -4174,6 +4180,7 @@
 < traffic stat out
 < traffic stat title
 < transfers
+< transient sheduler attacks
 < transport mode does not support vti
 < update ruleset
 < updxlrtr passive mode
@@ -4314,6 +4321,7 @@
 < password has quotation mark
 < rss
 < rss long
+< transient sheduler attacks
 ############################################################################
 # Checking cgi-bin translations for language: zh                           #
 ############################################################################
@@ -4360,3 +4368,4 @@
 < password has quotation mark
 < rss
 < rss long
+< transient sheduler attacks

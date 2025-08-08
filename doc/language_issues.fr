@@ -1100,6 +1100,7 @@ WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
 WARNING: untranslated string: total = Total
+WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
 WARNING: untranslated string: warning = Warning
 WARNING: untranslated string: wg client pool = Client Pool
 WARNING: untranslated string: wg create host-to-net peer = Create A New Host-To-Net Peer

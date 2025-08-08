@@ -1425,6 +1425,7 @@ WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
 WARNING: untranslated string: total = Total
 WARNING: untranslated string: transfers = Transfers
+WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
