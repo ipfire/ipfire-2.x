@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Zabbix Agent
 
-VER        = 7.0.11
+VER        = 7.0.16
 
 THISAPP    = zabbix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       = fping
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0c6544c64febc51e6fc153863b46e333d9d5564c83f40b71362a15c0533d48e50e5c340b35b2ca0dd1d776d0452f4aae42dc44d4e0e4b2c5949df02efbc7fc06
+$(DL_FILE)_BLAKE2 = 5b5ae98fd9ff819b0a202ad566fc4e9523991f67a13a0967986299cafe962e54c7769dffe821b59c55bd2b6e437ea913a6f7074bf9275cdb1bf433eeeb193117
 
 install : $(TARGET)
 
@@ -112,6 +112,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_ovpn.conf \
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_ovpn.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_gateway.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_gateway.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_wireguard.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_wireguard.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_locationdb.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_locationdb.conf
 
 	# Install IPFire-specific Zabbix Agent scripts
 	-mkdir -pv /var/ipfire/zabbix_agentd/scripts

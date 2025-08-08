@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.5.50
+VER        = 0.5.51
 
 THISAPP    = libhtp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e26aa03d06aa370ab22e1fb462087ac67427d63490802ac369378f90cbb6ed8ed9f95c20acc3fbfdb92cabddb2e1a45bb7c45454b5d17e898f9b0cf8aa804536
+$(DL_FILE)_BLAKE2 = 0800b917a57745012308bb10d4ce8456d47233ae3420b1d64cb42e88a7156cd1ffcbcdab5df28c54fe3ab70a7f37ba41bd5ebcefe24915abf47b753a0bb05716
 
 install : $(TARGET)
 
@@ -72,8 +72,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--disable-static
+				--prefix=/usr \
+				--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

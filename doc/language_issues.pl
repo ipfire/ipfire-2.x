@@ -6,6 +6,7 @@ WARNING: translation string unused: Existing Files
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: OVPN
 WARNING: translation string unused: Pages
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
@@ -204,6 +205,7 @@ WARNING: translation string unused: dhcp fixed lease help1
 WARNING: translation string unused: dhcp mode
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dhcp-options
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
@@ -285,7 +287,6 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
-WARNING: translation string unused: extrahd
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall hits per
@@ -365,6 +366,9 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for keepalive 1
+WARNING: translation string unused: invalid input for keepalive 1:2
+WARNING: translation string unused: invalid input for keepalive 2
 WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
@@ -376,6 +380,7 @@ WARNING: translation string unused: invalid users
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
@@ -392,6 +397,7 @@ WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: local master
+WARNING: translation string unused: local vpn hostname/ip
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
@@ -399,6 +405,7 @@ WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log view
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: log-options
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
@@ -433,6 +440,7 @@ WARNING: translation string unused: meaning
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
+WARNING: translation string unused: misc-options
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modem on com1
@@ -516,6 +524,10 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn on blue
+WARNING: translation string unused: ovpn on orange
+WARNING: translation string unused: ovpn on red
+WARNING: translation string unused: ovpn server status
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -587,6 +599,7 @@ WARNING: translation string unused: reset shares
 WARNING: translation string unused: resetglobals
 WARNING: translation string unused: resetpolicy
 WARNING: translation string unused: resetshares
+WARNING: translation string unused: restart ovpn server
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: restore settings
 WARNING: translation string unused: root
@@ -662,6 +675,8 @@ WARNING: translation string unused: ssport forwarding
 WARNING: translation string unused: ssproxy graphs
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
+WARNING: translation string unused: start ovpn server
+WARNING: translation string unused: stop ovpn server
 WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
@@ -806,6 +821,11 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours = 24 Hours
+WARNING: untranslated string: AES-128-CBC = AES - CBC Mode - 128 Bit
+WARNING: untranslated string: AES-128-GCM = AES - GCM Mode - 128 Bit
+WARNING: untranslated string: AES-256-CBC = AES - CBC Mode - 256 Bit
+WARNING: untranslated string: AES-256-GCM = AES - GCM Mode - 256 Bit
+WARNING: untranslated string: CHACHA20-POLY1305 = ChaCha20-Poly1305
 WARNING: untranslated string: Captive = Captive Portal
 WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive GAIN ACCESS = GAIN ACCESS
@@ -844,6 +864,7 @@ WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot
 WARNING: untranslated string: ConnSched shutdown = Shutdown
+WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:
@@ -883,7 +904,6 @@ WARNING: untranslated string: aliases default interface = - Default Interface -
 WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
-WARNING: untranslated string: attention = ATTENTION
 WARNING: untranslated string: autonomous system = Autonomous System
 WARNING: untranslated string: available = available
 WARNING: untranslated string: bit = bit
@@ -924,22 +944,18 @@ WARNING: untranslated string: ccd err isipsecrw = The given subnet address is al
 WARNING: untranslated string: ccd err isovpnn2n = The subnet address is already in use for an OpenVPN net-to-net connection.
 WARNING: untranslated string: ccd err isovpnnet = The subnet address is already in use for the OpenVPN server.
 WARNING: untranslated string: ccd err issubnet = Subnet address already in use.
-WARNING: untranslated string: ccd err name = Please choose a name.
 WARNING: untranslated string: ccd err nameexist = Name already exists.
 WARNING: untranslated string: ccd err netadrexist = Network already exists.
 WARNING: untranslated string: ccd err orange = This is the ORANGE subnet.
 WARNING: untranslated string: ccd err red = This is the RED subnet.
 WARNING: untranslated string: ccd err routeovpn = Already used by OpenVPN server.
 WARNING: untranslated string: ccd err routeovpn2 = Already pushed from OpenVPN server.
-WARNING: untranslated string: ccd hint = On this page you are able to define static networks from which the roadwarrior clients can get fixed IP address assignments.
 WARNING: untranslated string: ccd invalid = Invalid.
 WARNING: untranslated string: ccd iroute = IPFire has access to these networks on the client's site
 WARNING: untranslated string: ccd iroute2 = Client has access to these networks on IPFire's site
-WARNING: untranslated string: ccd iroutehint = Attention! If you change these settings, you have to restart the OpenVPN server that the changes take effect!
 WARNING: untranslated string: ccd modify = Change network
 WARNING: untranslated string: ccd name = Name
 WARNING: untranslated string: ccd net = Static IP address pools
-WARNING: untranslated string: ccd noaddnet = You can only add new static networks when OpenVPN server is stopped.
 WARNING: untranslated string: ccd none = None
 WARNING: untranslated string: ccd routes = Routing:
 WARNING: untranslated string: ccd subnet = Subnet
@@ -952,8 +968,6 @@ WARNING: untranslated string: countries = Countries
 WARNING: untranslated string: country codes and flags = Country Codes and Flags:
 WARNING: untranslated string: countrycode = Code
 WARNING: untranslated string: cpu frequency = CPU frequency
-WARNING: untranslated string: crypto error = Cryptographic error
-WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
@@ -961,7 +975,6 @@ WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: details = Details
-WARNING: untranslated string: dh = Diffie-Hellman-Parameter
 WARNING: untranslated string: dhcp deny known clients: = Deny known clients:
 WARNING: untranslated string: dhcp dns enable update = Enable DNS Update (RFC2136):
 WARNING: untranslated string: dhcp dns key name = Key Name
@@ -973,7 +986,6 @@ WARNING: untranslated string: dhcp make fixed lease = Add to fix leases
 WARNING: untranslated string: dhcp valid range required when deny known clients checked = Valid range required when "Deny known clients:" is checked
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
-WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dnat address = Firewall Interface
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
@@ -1161,7 +1173,6 @@ WARNING: untranslated string: fwdfw wd_sun = Sun
 WARNING: untranslated string: fwdfw wd_thu = Thu
 WARNING: untranslated string: fwdfw wd_tue = Tue
 WARNING: untranslated string: fwdfw wd_wed = Wed
-WARNING: untranslated string: fwhost OpenVPN N-2-N = OpenVPN Net-to-Net
 WARNING: untranslated string: fwhost addgrp = Add new network/host group
 WARNING: untranslated string: fwhost addgrpname = Group name:
 WARNING: untranslated string: fwhost addhost = Add new host
@@ -1311,6 +1322,7 @@ WARNING: untranslated string: imsi = IMSI
 WARNING: untranslated string: incoming compression in bytes per second = Incoming Compression
 WARNING: untranslated string: incoming firewall access = Incoming Firewall Access
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
+WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: integrity = Integrity:
@@ -1396,6 +1408,7 @@ WARNING: untranslated string: masquerading = Masquerading
 WARNING: untranslated string: masquerading disabled = Masquerading disabled
 WARNING: untranslated string: masquerading enabled = Masquerading enabled
 WARNING: untranslated string: maximum = Maximum
+WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: minimum = Minimum
@@ -1450,22 +1463,31 @@ WARNING: untranslated string: otp qrcode = OTP QRCode
 WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
 WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Access
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
-WARNING: untranslated string: ovpn add conf = Additional configuration
+WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn connection name = Connection Name
-WARNING: untranslated string: ovpn crypt options = Cryptographic options
-WARNING: untranslated string: ovpn errmsg green already pushed = Route for green network is always set
-WARNING: untranslated string: ovpn errmsg invalid ip or mask = Invalid network-address or subnetmask
-WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
+WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
+WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
+WARNING: untranslated string: ovpn errmsg invalid route = Invalid route
+WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
+WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
+WARNING: untranslated string: ovpn fqdn = FQDN
 WARNING: untranslated string: ovpn ha = Hash algorithm
 WARNING: untranslated string: ovpn mgmt in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
+WARNING: untranslated string: ovpn no cipher selected = No cipher selected
 WARNING: untranslated string: ovpn no connections = No active OpenVPN connections
 WARNING: untranslated string: ovpn port in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn protocol settings = Protocol Settings
+WARNING: untranslated string: ovpn push default route = Push Default Route
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
-WARNING: untranslated string: ovpn routes push = Routes (one per line) e.g. 192.168.10.0/255.255.255.0 192.168.20.0/24
-WARNING: untranslated string: ovpn routes push options = Route push options
+WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
+WARNING: untranslated string: ovpn routes push = Custom Routes
+WARNING: untranslated string: ovpn routing settings = Routing Settings
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
-WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn transport protocol = Transport Protocol
+WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pak update = Update
 WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
@@ -1492,6 +1514,7 @@ WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: public key = Public Key
 WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!
 WARNING: untranslated string: qr code = QR Code
+WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: reboot fsck = Reboot & run &lsquo;fsck&rsquo;
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
@@ -1512,6 +1535,8 @@ WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: rss = RSS
+WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
 WARNING: untranslated string: samba server role member = Domain Member
@@ -1520,9 +1545,7 @@ WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: search = Search
 WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
-WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
 WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
-WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
@@ -1577,7 +1600,6 @@ WARNING: untranslated string: tor common settings = Common Settings
 WARNING: untranslated string: tor configuration = Tor Configuration
 WARNING: untranslated string: tor connected relays = Connected relays
 WARNING: untranslated string: tor contact info = Contact Info
-WARNING: untranslated string: tor daemon = Daemon
 WARNING: untranslated string: tor directory port = Directory port
 WARNING: untranslated string: tor enabled = Enable Tor
 WARNING: untranslated string: tor errmsg invalid accounting limit = Invalid accounting limit
@@ -1616,6 +1638,7 @@ WARNING: untranslated string: traffic stat in = In
 WARNING: untranslated string: traffic stat out = Out
 WARNING: untranslated string: traffic stat title = RED Traffic
 WARNING: untranslated string: transfers = Transfers
+WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks

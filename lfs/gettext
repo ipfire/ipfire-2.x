@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.25
+VER        = 0.26
 
 THISAPP    = gettext-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -56,7 +56,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cec5dd43f64ea676b112d53374452852ad25b2d31833a805bb2f92cd0b172536b47f916ad630fd4acd11208d408ff302eac2a5cd6a78ec653b7d5a3b447f5584
+$(DL_FILE)_BLAKE2 = b182e5fdb9fc46868dc39b512ef300c54c8e77a766f2d2de69289f84966d4205f494b3ecedfb30c6df581947172411ae7eb4ccc0bb1f180b67dd8a83803832a8
 
 install : $(TARGET)
 

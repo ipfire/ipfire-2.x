@@ -65,6 +65,7 @@ etc/raddb
 #etc/raddb/mods-available/passwd
 #etc/raddb/mods-available/perl
 #etc/raddb/mods-available/preprocess
+#etc/raddb/mods-available/proxy_rate_limit
 #etc/raddb/mods-available/python
 #etc/raddb/mods-available/python3
 #etc/raddb/mods-available/radutmp
@@ -259,6 +260,7 @@ etc/raddb
 #etc/raddb/mods-enabled/pap
 #etc/raddb/mods-enabled/passwd
 #etc/raddb/mods-enabled/preprocess
+#etc/raddb/mods-enabled/proxy_rate_limit
 #etc/raddb/mods-enabled/radutmp
 #etc/raddb/mods-enabled/realm
 #etc/raddb/mods-enabled/replicate
@@ -544,6 +546,9 @@ usr/lib/freeradius/rlm_perl.so
 #usr/lib/freeradius/rlm_preprocess.a
 #usr/lib/freeradius/rlm_preprocess.la
 usr/lib/freeradius/rlm_preprocess.so
+#usr/lib/freeradius/rlm_proxy_rate_limit.a
+#usr/lib/freeradius/rlm_proxy_rate_limit.la
+usr/lib/freeradius/rlm_proxy_rate_limit.so
 #usr/lib/freeradius/rlm_python3.a
 #usr/lib/freeradius/rlm_python3.la
 usr/lib/freeradius/rlm_python3.so
@@ -993,6 +998,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.hillstone
 #usr/share/freeradius/dictionary.hp
 #usr/share/freeradius/dictionary.huawei
+#usr/share/freeradius/dictionary.huawei.v2
 #usr/share/freeradius/dictionary.iana
 #usr/share/freeradius/dictionary.iea
 #usr/share/freeradius/dictionary.infinera

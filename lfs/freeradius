@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = RADIUS Server
 
-VER        = 3.2.6
+VER        = 3.2.7
 
 THISAPP    = freeradius-server-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = freeradius
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       = libtalloc samba
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0af7cdf7fb784f2d5019f3bcb06d1d44dca046c9a4513d780ab032367001b6a67e9ea17a3a5b4609b9d7b936647e60c96e35188ba9644c4360071ac8d021bd58
+$(DL_FILE)_BLAKE2 = cd523fbc01e82d87f0944926612223ee2acafc008f0f50447c35263b5dcdd36c8f00c54dde1102a3987b45a7e67426c99a7aee692cf59983c80ead111a2188dd
 
 install : $(TARGET)
 

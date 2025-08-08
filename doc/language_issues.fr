@@ -27,11 +27,11 @@ WARNING: translation string unused: Captive vout
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: Daily
-WARNING: translation string unused: Disabled
 WARNING: translation string unused: Existing Files
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: OVPN
 WARNING: translation string unused: Pages
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
@@ -134,6 +134,7 @@ WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: artist
 WARNING: translation string unused: attemps
+WARNING: translation string unused: attention
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
@@ -176,8 +177,12 @@ WARNING: translation string unused: cannot enable both nat traversal and compres
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
+WARNING: translation string unused: ccd err name
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd hint
+WARNING: translation string unused: ccd iroutehint
 WARNING: translation string unused: ccd maxclients
+WARNING: translation string unused: ccd noaddnet
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
@@ -205,6 +210,8 @@ WARNING: translation string unused: cpu frequency per
 WARNING: translation string unused: cpu usage per
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
+WARNING: translation string unused: crypto error
+WARNING: translation string unused: crypto warning
 WARNING: translation string unused: cryptographic settings
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
@@ -238,6 +245,7 @@ WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
 WARNING: translation string unused: destination port overlaps
+WARNING: translation string unused: dh
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -245,6 +253,7 @@ WARNING: translation string unused: dhcp fixed lease help1
 WARNING: translation string unused: dhcp mode
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dhcp-options
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
@@ -256,6 +265,7 @@ WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
+WARNING: translation string unused: dl client arch insecure
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
@@ -337,7 +347,6 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
-WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
@@ -382,6 +391,7 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
+WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network
@@ -458,6 +468,9 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for keepalive 1
+WARNING: translation string unused: invalid input for keepalive 1:2
+WARNING: translation string unused: invalid input for keepalive 2
 WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
@@ -476,6 +489,7 @@ WARNING: translation string unused: ipblocklist category invalid
 WARNING: translation string unused: ipblocklist category reputation
 WARNING: translation string unused: ipblocklist category scanner
 WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: ipsec no connections
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
@@ -494,6 +508,7 @@ WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: local master
+WARNING: translation string unused: local vpn hostname/ip
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: locationblock country code
@@ -504,6 +519,7 @@ WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log view
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: log-options
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
@@ -539,6 +555,7 @@ WARNING: translation string unused: meaning
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
+WARNING: translation string unused: misc-options
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modem on com1
@@ -624,10 +641,15 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
+WARNING: translation string unused: ovpn add conf
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn crypt options
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn errmsg green already pushed
+WARNING: translation string unused: ovpn errmsg invalid ip or mask
+WARNING: translation string unused: ovpn error md5
 WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
@@ -637,7 +659,13 @@ WARNING: translation string unused: ovpn mtu-disc no
 WARNING: translation string unused: ovpn mtu-disc off
 WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
+WARNING: translation string unused: ovpn on blue
+WARNING: translation string unused: ovpn on orange
+WARNING: translation string unused: ovpn on red
 WARNING: translation string unused: ovpn reneg sec
+WARNING: translation string unused: ovpn routes push options
+WARNING: translation string unused: ovpn server status
+WARNING: translation string unused: ovpn warning rfc3280
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -710,6 +738,7 @@ WARNING: translation string unused: reset shares
 WARNING: translation string unused: resetglobals
 WARNING: translation string unused: resetpolicy
 WARNING: translation string unused: resetshares
+WARNING: translation string unused: restart ovpn server
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: restore settings
 WARNING: translation string unused: root
@@ -733,6 +762,7 @@ WARNING: translation string unused: selecttraffic
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
 WARNING: translation string unused: server reserved
+WARNING: translation string unused: server restart
 WARNING: translation string unused: server string
 WARNING: translation string unused: service added
 WARNING: translation string unused: service removed
@@ -743,6 +773,7 @@ WARNING: translation string unused: set
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
 WARNING: translation string unused: show areas
+WARNING: translation string unused: show dh
 WARNING: translation string unused: show last x lines
 WARNING: translation string unused: show lines
 WARNING: translation string unused: show share options
@@ -784,6 +815,8 @@ WARNING: translation string unused: ssport forwarding
 WARNING: translation string unused: ssproxy graphs
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
+WARNING: translation string unused: start ovpn server
+WARNING: translation string unused: stop ovpn server
 WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
@@ -820,6 +853,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
+WARNING: translation string unused: tor daemon
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
 WARNING: translation string unused: tor guard country
@@ -959,6 +993,11 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: AES-128-CBC = AES - CBC Mode - 128 Bit
+WARNING: untranslated string: AES-128-GCM = AES - GCM Mode - 128 Bit
+WARNING: untranslated string: AES-256-CBC = AES - CBC Mode - 256 Bit
+WARNING: untranslated string: AES-256-GCM = AES - GCM Mode - 256 Bit
+WARNING: untranslated string: CHACHA20-POLY1305 = ChaCha20-Poly1305
 WARNING: untranslated string: allowed subnets = Allowed Subnets
 WARNING: untranslated string: bypassed = Bypassed
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
@@ -1009,6 +1048,7 @@ WARNING: untranslated string: hostile networks total = Total Hostile Networks
 WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: ids rulesets = Rulesets
 WARNING: untranslated string: import connection = Import a Connection
+WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: invalid endpoint = Invalid Endpoint
 WARNING: untranslated string: invalid endpoint address = Invalid Endpoint Address
 WARNING: untranslated string: invalid ip address = Invalid IP Address
@@ -1022,24 +1062,45 @@ WARNING: untranslated string: local subnets = Local Subnets
 WARNING: untranslated string: malformed preshared key = Malformed Pre-Shared Key
 WARNING: untranslated string: malformed private key = Malformed Private Key
 WARNING: untranslated string: malformed public key = Malformed Public Key
+WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: online = Online
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
+WARNING: untranslated string: ovpn ciphers = Ciphers
+WARNING: untranslated string: ovpn crypto settings = Cryptographic Settings
+WARNING: untranslated string: ovpn dhcp settings = DHCP Settings
+WARNING: untranslated string: ovpn dynamic client subnet = Dynamic Client Subnet
+WARNING: untranslated string: ovpn errmsg invalid route = Invalid route
+WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
+WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
+WARNING: untranslated string: ovpn fqdn = FQDN
+WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
+WARNING: untranslated string: ovpn no cipher selected = No cipher selected
+WARNING: untranslated string: ovpn protocol settings = Protocol Settings
+WARNING: untranslated string: ovpn push default route = Push Default Route
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
+WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
+WARNING: untranslated string: ovpn routing settings = Routing Settings
+WARNING: untranslated string: ovpn transport protocol = Transport Protocol
+WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: password has quotation mark = Password contains an illegal double quotation mark.
 WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: public key = Public Key
 WARNING: untranslated string: qr code = QR Code
+WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)
 WARNING: untranslated string: remarks = Remarks
 WARNING: untranslated string: remote subnets = Remote Subnets
 WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: rss = RSS
+WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
 WARNING: untranslated string: total = Total
+WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
 WARNING: untranslated string: warning = Warning
 WARNING: untranslated string: wg client pool = Client Pool
 WARNING: untranslated string: wg create host-to-net peer = Create A New Host-To-Net Peer

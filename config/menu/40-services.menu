@@ -26,13 +26,13 @@
 				'title' => "$Lang::tr{'time server'}",
 				'enabled' => 1,
 				};
-    $subservices->{'50.qos'} = {'caption' => 'Quality of Service',
+    $subservices->{'50.qos'} = {'caption' => $Lang::tr{'quality of service'},
 				'uri' => '/cgi-bin/qos.cgi',
-				'title' => "Quality of Service",
+				'title' => "$Lang::tr{'quality of service'}",
 				'enabled' => 1,
 				};
-    $subservices->{'70.extrahd'} = {'caption' => "ExtraHD",
-				'enabled' => 1,
+    $subservices->{'70.extrahd'} = {'caption' => $Lang::tr{'extrahd'},
 				'uri' => '/cgi-bin/extrahd.cgi',
-				'title' => "ExtraHD",
+				'title' => "$Lang::tr{'extrahd'}",
+				'enabled' => 1,
 				};

@@ -369,7 +369,7 @@ pidofproc()
 		for pid in ${lpids}
 		do
 			if [ "${pid}" -ne "$$" -a "${pid}" -ne "${PPID}" ]; then
-				kill -0 "${pid}" > /dev/null &&
+				kill -0 "${pid}" 2> /dev/null &&
 				pidlist="${pidlist} ${pid}"
 			fi
 			
@@ -620,7 +620,11 @@ killproc()
 	done
 
 	if [ -z "${killsig}" ];	then
-		pidofproc -s "${1}"
+		if [ -z "${pidfile}" ];	then
+			pidofproc -s "${1}"
+		else
+			pidofproc -s -p "${pidfile}" "${1}"
+		fi
 
 		# Program was terminated
 		if [ "$?" != "0" ]; then

@@ -57,7 +57,7 @@ fi
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 # Standard zones
-ZONES="RED GREEN ORANGE BLUE"
+ZONES="RED GREEN ORANGE BLUE INTF0 INTF1 INTF2 INTF3"
 
 # Determine the address of INTERFACE
 ADDRESS="$(</sys/class/net/${INTERFACE}/address)"
@@ -78,7 +78,7 @@ for zone in ${ZONES}; do
 	# If a matching interface has been found we will
 	# print the name to which udev will rename it.
 	case "${!mode}" in
-		bridge)
+		bond|bridge)
 			counter=0
 			for slave in ${!slaves}; do
 				if [ "${slave,,}" = "${ADDRESS,,}" ]; then

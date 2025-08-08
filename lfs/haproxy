@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The Reliable, High Performance TCP/HTTP Load Balancer
 
-VER        = 3.1.2
+VER        = 3.2.2
 
 # From: https://www.haproxy.org/download/
 
@@ -36,7 +36,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
-PAK_VER    = 31
+PAK_VER    = 32
 
 DEPS       =
 
@@ -54,7 +54,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 234a365251f226dcd1892fe89ec0dc11f505a85e08b12be1dba61dfd03808cb4cd8ad0f0548b2250379ade124314a5b5577b634bb401798666bae41fe1cc1388
+$(DL_FILE)_BLAKE2 = 8dc203c6ff0d366cba482c55bb8fc03d0b8ed7f6fee96a311efebc8a00abb5f50f087fa4b1045322ee831f3f7da0bee6eea67200083b0af5d40e8dd3f252644c
 
 install : $(TARGET)
 

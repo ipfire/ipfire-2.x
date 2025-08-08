@@ -1,0 +1,117 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+SUMMARY    = Monitoring tool for ARP traffic on a network
+
+VER        = 3.8
+ETHERCODES_DATE = 20200628
+
+# From: https://ee.lbl.gov/downloads/arpwatch/
+
+THISAPP    = arpwatch-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = arpwatch
+PAK_VER    = 1
+
+DEPS       =
+
+SERVICES   = arpwatch
+
+# Enable debugging code
+CFLAGS += -DDEBUG=1
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) ethercodes.dat-$(ETHERCODES_DATE).xz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+ethercodes.dat-$(ETHERCODES_DATE).xz = $(DL_FROM)/ethercodes.dat-$(ETHERCODES_DATE).xz
+
+$(DL_FILE)_BLAKE2 = 2ec0360ed12722e09cfccd06a1ab48ed77ea017d9ebf182cf2792dac53b61b1f0d6b5895fe30ec4d6b9e05d78aa75762775e548573f7bd5b2918ce8ca775eed3
+ethercodes.dat-$(ETHERCODES_DATE).xz_BLAKE2 = e702b9109ef3ccce73e2637f96126bf19e7dfa533774c0bd623042b3609f147981263b84397ec155a65ae12fa57247c32644e1e7e57c2c749ef768156d853027
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+b2 : $(subst %,%_BLAKE2,$(objects))
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, b2sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	# Fix compilation issues
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/arpwatch/53_stop-using-_getshort.patch
+	cd $(DIR_APP) && sed -i '1i#include <time.h>' report.c
+
+	# Don't install the initscript
+	cd $(DIR_APP) && sed -i '/@HAVE_FREEBSD_TRUE@/d' Makefile.in
+
+	# Build!
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+
+	# Install initscripts
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
+
+	# Install the data directory
+	-mkdir -pv /var/lib/arpwatch
+
+	# Install ethercodes.dat
+	xz -dvv \
+		< $(DIR_DL)/ethercodes.dat-$(ETHERCODES_DATE).xz \
+		> /var/lib/arpwatch/ethercodes.dat
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

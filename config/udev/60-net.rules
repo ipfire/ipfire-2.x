@@ -6,5 +6,5 @@ ACTION=="add", SUBSYSTEM=="net", PROGRAM="/lib/udev/network-hotplug-rename", RES
 # that has just come up.
 ACTION=="add", SUBSYSTEM=="net", RUN+="/lib/udev/network-hotplug-vlan"
 
-# Call a script that will set up zones as bridges
-ACTION=="add", SUBSYSTEM=="net", RUN+="/lib/udev/network-hotplug-bridges"
+# Call a script that will set up interfaces that have a master interface (bridges, bonding, ..)
+ACTION=="add", SUBSYSTEM=="net", RUN+="/lib/udev/network-hotplug-master"

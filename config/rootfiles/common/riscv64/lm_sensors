@@ -14,11 +14,11 @@ usr/lib/libsensors.so.5.0.0
 #usr/man/man5/sensors.conf.5
 #usr/man/man5/sensors3.conf.5
 #usr/man/man8/fancontrol.8
-#usr/man/man8/isadump.8
-#usr/man/man8/isaset.8
 #usr/man/man8/pwmconfig.8
 #usr/man/man8/sensors-conf-convert.8
 #usr/man/man8/sensors-detect.8
 usr/sbin/fancontrol
 usr/sbin/pwmconfig
 usr/sbin/sensors-detect
+#usr/share/zsh/site-functions/_sensors
+#usr/share/zsh/site-functions/_sensors-detect

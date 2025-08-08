@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.11.1
+VER        = 0.11.2
 
 THISAPP    = libssh-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 87079b4eaf66ceb77803b3d854f847b3f3fb6a67ac3bfa756ebcf8f06bf2b313e976044e0a1d81227fb5278fb04bc56f1a82877d14a6ee76bec0c690b14f38a7
+$(DL_FILE)_BLAKE2 = 7f4a97b2027e386f5bfd308b1aac1938484722d4d1bb55ce0fa2de8358bedea47955df1cb4e68679033d1a5538058422770872f2f6513a82199ff506eccfad0e
 
 install : $(TARGET)
 
@@ -72,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	-mkdir -pv $(DIR_APP)/build
 	cd $(DIR_APP)/build && cmake .. \
-		-DCMAKE_INSTALL_PREFIX=/usr
+				-DCMAKE_INSTALL_PREFIX=/usr
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	@rm -rf $(DIR_APP)

@@ -1,0 +1,89 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2025 IPFire Team  <info@ipfire.org>                           #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Load the configuration if it exists
+if [ -r "/etc/sysconfig/cpupower" ]; then
+	. /etc/sysconfig/cpupower
+fi
+
+# This function returns which governor to use
+find_governor() {
+	local driver
+
+	# If a governor has been configured, we just use that one
+	if [ -n "${GOVERNOR}" ]; then
+		echo "${GOVERNOR}"
+		return 0
+	fi
+
+	# Determine the driver
+	if [ -r "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver" ]; then
+		driver="$(</sys/devices/system/cpu/cpu0/cpufreq/scaling_driver)"
+	fi
+
+	# Decide which governor to use based on the driver
+	case "${driver}" in
+		# If the driver could not be detected, we won't use anything
+		"")
+			;;
+
+		# Intel P-State only supports performace and powersave. The latter
+		# is rather implemented like ondemand in other cases.
+		intel_pstate)
+			echo "powersave"
+			;;
+
+		# For everything else use schedutil
+		*)
+			echo "schedutil"
+			;;
+	esac
+
+	return 0
+}
+
+set_governor() {
+	# Find the governor to use
+	local governor="$(find_governor)"
+
+	# If we could not detect a governor we don't have anything to do
+	if [ -z "${governor}" ]; then
+		return 0
+	fi
+
+	# Set the governor
+	cpupower frequency-set --governor "${governor}" >/dev/null
+}
+
+case "${1}" in
+	start)
+		boot_mesg "Enabling CPU Power Saving Features..."
+		set_governor
+		evaluate_retval
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac

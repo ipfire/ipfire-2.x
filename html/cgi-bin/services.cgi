@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2021  IPFire Team                                        #
+# Copyright (C) 2005-2025  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -114,7 +114,7 @@ $querry[1] = 'hour' unless defined $querry[1];
 		# OpenVPN Roadwarrior
 		$Lang::tr{'ovpn roadwarrior server'} => {
 			"process" => "openvpn",
-			"pidfile" => "/var/run/openvpn.pid",
+			"pidfile" => "/var/run/openvpn-rw.pid",
 		}
 	});
 

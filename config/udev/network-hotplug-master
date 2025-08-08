@@ -1,0 +1,186 @@
+#!/bin/bash
+############################################################################
+#                                                                          #
+# This file is part of the IPFire Firewall.                                #
+#                                                                          #
+# IPFire is free software; you can redistribute it and/or modify           #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 2 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPFire is distributed in the hope that it will be useful,                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPFire; if not, write to the Free Software                    #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2016 IPFire Team <info@ipfire.org>                         #
+#                                                                          #
+############################################################################
+
+[ -n "${INTERFACE}" ] || exit 2
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+# Only run this script once at a time
+if [ -z "${LOCKED}" ]; then
+	export LOCKED=1
+	exec flock "${0}" "${0}" "$@"
+fi
+
+detect_zone() {
+	local intf="${INTERFACE%?}"
+	intf="${intf%phys}"
+	intf="${intf^^}"
+
+	local zone
+	for zone in GREEN BLUE ORANGE RED INTF0 INTF1 INTF2 INTF3; do
+		# Try to find if INTERFACE is the *phys version of a zone
+		if [ "${intf}" = "${zone}" ]; then
+			echo "${zone}"
+			return 0
+		fi
+
+		# Try to find out if this INTERFACE is a slave of a zone
+		local slave
+		for slave in $(get_value "${zone}_SLAVES"); do
+			# Compare if the mac address matches or if the name matches
+			if [ "$(cat /sys/class/net/${INTERFACE}/address 2>/dev/null)" = "${slave}" ] || [ "${INTERFACE}" = "${slave}" ]; then
+				echo "${zone}"
+				return 0
+			fi
+		done
+	done
+
+	return 1
+}
+
+get_value() {
+	echo "${!1}"
+}
+
+random_mac_address() {
+	local address="02"
+
+	for i in $(seq 5); do
+		printf -v address "${address}:%02x" "$(( RANDOM % 256 ))"
+	done
+
+	echo "${address}"
+}
+
+# Try to detect which zone we are operating on
+ZONE=$(detect_zone)
+
+# Cannot proceed if we could not find a zone
+if [ -z "${ZONE}" ]; then
+	logger "Could not find a master zone for ${INTERFACE}"
+	exit 0
+fi
+
+# Determine the mode of this zone
+MODE="$(get_value "${ZONE}_MODE")"
+
+# Exit if there is no MODE
+if [ -z "${MODE}" ]; then
+       exit 0
+fi
+
+# The name of the virtual master interface
+MASTER="$(get_value "${ZONE}_DEV")"
+
+# Fail if no master device has been configured
+if [ -z "${MASTER}" ]; then
+	logger "No ${ZONE}_DEV configured"
+	exit 1
+fi
+
+# Fetch the MTU
+MTU="$(get_value "${ZONE}_MTU")"
+
+# Set default MTU if nothing is set
+if [ -z "${MTU}" ]; then
+	MTU=1500
+fi
+
+# Fetch the MAC address of the master interface
+ADDRESS="$(get_value "${ZONE}_MACADDR")"
+
+# If no address has been configured, generate a random one
+if [ -z "${ADDRESS}" ]; then
+	ADDRESS="$(random_mac_address)"
+fi
+
+case "${MODE}" in
+	# Bond
+	bond)
+		BOND_MODE="$(get_value "${ZONE}_BOND_MODE")"
+		if [ -z "${BOND_MODE}" ]; then
+			BOND_MODE="802.3ad"
+		fi
+
+		# Check for some valid BOND_MODE
+		case "${BOND_MODE}" in
+			balance-rr|active-backup|balance-xor|broadcast|802.3ad|balance-tlb|balance-alb)
+				;;
+			*)
+				logger "Invalid bond mode ${BOND_MODE} for ${MASTER}. Falling back to 802.3ad"
+				BOND_MODE="802.3ad"
+				;;
+		esac
+
+		# Create the master interface if it does not exist
+		if [ ! -d "/sys/class/net/${MASTER}" ]; then
+			if ! ip link add "${MASTER}" address "${ADDRESS}" mtu "${MTU}" \
+					type bond mode "${BOND_MODE}"; then
+				logger "Failed to create bonding interface ${MASTER}"
+				exit 1
+			fi
+		fi
+		;;
+
+	# Bridge
+	bridge)
+		# Fetch spanning tree settings
+		STP="$(get_value "${ZONE}_STP")"
+		STP_PRIORITY="$(get_value "${ZONE}_STP_PRIORITY")"
+
+		# We need to check if $STP_PRIORITY has a valid value if not set it
+		if [ -z "${STP_PRIORITY}" ]; then
+			STP_PRIORITY=16384
+		fi
+
+		# We need to create the bridge if it doesn't exist, yet
+		if [ ! -d "/sys/class/net/${MASTER}" ]; then
+			ip link add "${MASTER}" address "${ADDRESS}" mtu "${MTU}" type bridge \
+				$([ "${STP}" = "on" ] && echo "stp_state 1  priority ${STP_PRIORITY}" )
+		fi
+
+		# Try setting wireless interfaces into master mode
+		if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
+			iw dev "${INTERFACE}" set type __ap
+		fi
+		;;
+
+	*)
+		logger -t "network" "Unhandled mode '${MODE}' for '${ZONE}' (${INTERFACE})"
+		exit 1
+		;;
+esac
+
+# Attempt to set the MTU
+ip link set dev "${INTERFACE}" mtu "${MTU}"
+
+# Ensure the physical interface is down
+ip link set dev "${INTERFACE}" down
+
+# Attach the physical device
+logger "Attach ${INTERFACE} to ${MASTER}"
+ip link set dev "${INTERFACE}" master "${MASTER}"
+ip link set dev "${INTERFACE}" up
+
+# Done!
+exit 0

@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="196"							# Core Level (Filename)
+CORE="197"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -1525,6 +1525,7 @@ build_system() {
 	lfsmake2 lvm2
 	lfsmake2 multipath-tools
 	lfsmake2 glib
+	lfsmake2 json-glib
 	lfsmake2 libgudev
 	lfsmake2 libgpg-error
 	lfsmake2 libgcrypt
@@ -1535,6 +1536,8 @@ build_system() {
 	lfsmake2 apr
 	lfsmake2 aprutil
 	lfsmake2 unbound
+	lfsmake2 libtasn1
+	lfsmake2 libunistring
 	lfsmake2 gnutls
 	lfsmake2 libuv
 	lfsmake2 liburcu
@@ -1665,7 +1668,6 @@ build_system() {
 	lfsmake2 mandoc
 	lfsmake2 efivar
 	lfsmake2 efibootmgr
-	lfsmake2 libtasn1
 	lfsmake2 p11-kit
 	lfsmake2 ca-certificates
 	lfsmake2 fireinfo
@@ -1901,7 +1903,6 @@ build_system() {
 	lfsmake2 hostapd
 	lfsmake2 syslinux
 	lfsmake2 tftpd
-	lfsmake2 cpufrequtils
 	lfsmake2 apcupsd
 	lfsmake2 fireperf
 	lfsmake2 iperf
@@ -2031,6 +2032,9 @@ build_system() {
 	lfsmake2 frr
 	lfsmake2 dmidecode
 	lfsmake2 mcelog
+	lfsmake2 socat
+	lfsmake2 libtpms
+	lfsmake2 swtpm
 	lfsmake2 libpciaccess
 	lfsmake2 ovmf
 	lfsmake2 libvirt
@@ -2062,7 +2066,6 @@ build_system() {
 	lfsmake2 libloc
 	lfsmake2 ncdu
 	lfsmake2 lshw
-	lfsmake2 socat
 	lfsmake2 libcdada
 	lfsmake2 pmacct
 	lfsmake2 squid-asnbl
@@ -2086,6 +2089,7 @@ build_system() {
 	lfsmake2 inotify-tools
 	lfsmake2 grub-btrfs
 	lfsmake2 fort-validator
+	lfsmake2 arpwatch
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au
@@ -2612,6 +2616,8 @@ lang)
 	$BASEDIR/tools/sort_strings.pl nl
 	$BASEDIR/tools/sort_strings.pl tr
 	$BASEDIR/tools/sort_strings.pl it
+	$BASEDIR/tools/sort_strings.pl tw
+	$BASEDIR/tools/sort_strings.pl zh
 	$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
 	$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 	$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
@@ -2621,6 +2627,8 @@ lang)
 	$BASEDIR/tools/check_strings.pl nl > $BASEDIR/doc/language_issues.nl
 	$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr
 	$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
+	$BASEDIR/tools/check_strings.pl tw > $BASEDIR/doc/language_issues.tw
+	$BASEDIR/tools/check_strings.pl zh > $BASEDIR/doc/language_issues.zh
 	$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 	print_status DONE
 

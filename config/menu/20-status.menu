@@ -86,8 +86,8 @@
 				  'title' => 'Atm-status',
 				  'enabled' => (`find /sys/class/atm/*/device 2>/dev/null` ? 1 : 0),
 				  };
-    $substatus->{'76.mdstat'} = {'caption' => 'Mdstat',
+    $substatus->{'76.mdstat'} = {'caption' => $Lang::tr{'mdstat'},
 				  'uri' => '/cgi-bin/mdstat.cgi',
-				  'title' => 'Mdstat',
+				  'title' => $Lang::tr{'mdstat'},
 				  'enabled' => 1,
 				  };

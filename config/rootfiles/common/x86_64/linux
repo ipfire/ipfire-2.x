@@ -2,6 +2,7 @@ boot/System.map-KVER
 boot/config-KVER
 boot/vmlinuz-KVER
 #etc/cpufreq-bench.conf
+etc/modprobe.d/bonding.conf
 etc/modprobe.d/ipv6.conf
 #lib/modules
 #lib/modules/KVER
@@ -8710,7 +8711,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/HID_TIVO
 #lib/modules/KVER/build/include/config/HID_TOPSEED
 #lib/modules/KVER/build/include/config/HID_TWINHAN
-#lib/modules/KVER/build/include/config/HID_UNIVERSAL_PIDFF
 #lib/modules/KVER/build/include/config/HID_ZYDACRON
 #lib/modules/KVER/build/include/config/HIGH_RES_TIMERS
 #lib/modules/KVER/build/include/config/HINIC
@@ -9491,6 +9491,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/MITIGATION_SRSO
 #lib/modules/KVER/build/include/config/MITIGATION_SSB
 #lib/modules/KVER/build/include/config/MITIGATION_TAA
+#lib/modules/KVER/build/include/config/MITIGATION_TSA
 #lib/modules/KVER/build/include/config/MITIGATION_UNRET_ENTRY
 #lib/modules/KVER/build/include/config/MLX4_CORE
 #lib/modules/KVER/build/include/config/MLX4_CORE_GEN2
@@ -10203,6 +10204,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/OID_REGISTRY
 #lib/modules/KVER/build/include/config/OPEN_ALLIANCE_HELPERS
 #lib/modules/KVER/build/include/config/OUTPUT_FORMAT
+#lib/modules/KVER/build/include/config/OVERLAY_FS
+#lib/modules/KVER/build/include/config/OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW
 #lib/modules/KVER/build/include/config/P2SB
 #lib/modules/KVER/build/include/config/P54_COMMON
 #lib/modules/KVER/build/include/config/P54_LEDS
@@ -19365,6 +19368,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/gdb/linux/interrupts.py
 #lib/modules/KVER/build/scripts/gdb/linux/kasan.py
 #lib/modules/KVER/build/scripts/gdb/linux/lists.py
+#lib/modules/KVER/build/scripts/gdb/linux/mapletree.py
 #lib/modules/KVER/build/scripts/gdb/linux/mm.py
 #lib/modules/KVER/build/scripts/gdb/linux/modules.py
 #lib/modules/KVER/build/scripts/gdb/linux/page_owner.py
@@ -19380,6 +19384,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/scripts/gdb/linux/utils.py
 #lib/modules/KVER/build/scripts/gdb/linux/vfs.py
 #lib/modules/KVER/build/scripts/gdb/linux/vmalloc.py
+#lib/modules/KVER/build/scripts/gdb/linux/xarray.py
 #lib/modules/KVER/build/scripts/gdb/vmlinux-gdb.py
 #lib/modules/KVER/build/scripts/gen-randstruct-seed.sh
 #lib/modules/KVER/build/scripts/generate_builtin_ranges.awk
@@ -21245,7 +21250,6 @@ lib/modules/KVER/kernel
 #lib/modules/KVER/kernel/drivers/hid/hid-tivo.ko.xz
 #lib/modules/KVER/kernel/drivers/hid/hid-topseed.ko.xz
 #lib/modules/KVER/kernel/drivers/hid/hid-twinhan.ko.xz
-#lib/modules/KVER/kernel/drivers/hid/hid-universal-pidff.ko.xz
 #lib/modules/KVER/kernel/drivers/hid/hid-zydacron.ko.xz
 #lib/modules/KVER/kernel/drivers/hid/i2c-hid
 #lib/modules/KVER/kernel/drivers/hid/i2c-hid/i2c-hid-acpi.ko.xz

@@ -24,7 +24,7 @@
 
 include Config
 
-VER      = 1.47.2
+VER      = 1.47.3
 
 THISAPP    = e2fsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 20f93b53c18396dbbf8a9564fd80181e391120554bd63a76c90c88d32616596fb7cf8e1252417b835ef3918ecf3211aebdd7a75daebee11bcb6e7b0f9bd88053
+$(DL_FILE)_BLAKE2 = 5d83a47d24f28fb4e0a6e8a145b146e6ff0de4463a16720790041f6fe750e595d749e730016bc3a9255c9ed3172b15e37f0fa8af4e8463f724f6bd221a9fa161
 
 install : $(TARGET)
 
@@ -73,13 +73,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv $(DIR_APP)/build
 	cd $(DIR_APP)/build && \
 		$(DIR_APP)/configure \
-			--prefix=/usr \
-			--with-root-prefix="" \
-			--enable-elf-shlibs \
-			--disable-libblkid \
-			--disable-libuuid \
-			--disable-nls
-
+				--prefix=/usr \
+				--with-root-prefix="" \
+				--enable-elf-shlibs \
+				--disable-libblkid \
+				--disable-libuuid \
+				--disable-nls
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	cd $(DIR_APP)/build && make install-libs

@@ -27,7 +27,7 @@ our %Providers = (
 		dl_type => "archive",
 	},
 
-	# Ruleset for registered sourcefire users with a valid subsription.
+	# Ruleset for registered sourcefire users with a valid subscription.
 	subscripted => {
 		summary => "Talos VRT rules with subscription",
 		website => "https://www.snort.org",
@@ -47,7 +47,7 @@ our %Providers = (
 		dl_type => "archive",
 	},
 
-	# Emerging threads community rules.
+	# Emerging threats community rules.
 	emerging => {
 		summary => "Emergingthreats.net Community Rules",
 		website => "https://emergingthreats.net/",
@@ -57,7 +57,7 @@ our %Providers = (
 		dl_type => "archive",
 	},
 
-	# Emerging threads Pro rules.
+	# Emerging threats Pro rules.
 	emerging_pro => {
 		summary => "Emergingthreats.net Pro Rules",
 		website => "https://emergingthreats.net/",
@@ -72,9 +72,6 @@ our %Providers = (
 		summary => "Abuse.ch SSLBL Blacklist Rules",
 		website => "https://sslbl.abuse.ch/",
 		tr_string => "sslbl blacklist rules",
-		requires_subscription => "False",
-		dl_url => "https://sslbl.abuse.ch/blacklist/sslblacklist.rules",
-		dl_type => "plain",
 	},
 
 	# Etnetera Aggressive Blacklist.

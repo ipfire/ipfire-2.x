@@ -985,6 +985,10 @@ EOF
 
 					<td class="text-right">
 						${mem}
+
+						<span title="$Lang::tr{'rss long'}">
+							$Lang::tr{'rss'}
+						</span>
 					</td>
 EOF
 
