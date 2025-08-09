@@ -233,6 +233,10 @@ case "$1" in
 		# of the ruleset.
 		kill -USR2 $(pidof suricata)
 
+		# Reload the reporter
+		PIDFILE="/var/run/suricata/reporter.pid" \
+			reloadproc /usr/bin/suricata-reporter
+
 		# Flush the firewall chain.
 		flush_fw_chain
 
