@@ -160,6 +160,9 @@
 < ids email recipients
 < ids email sender
 < ids enable email alerts
+< ids invalid mail address
+< ids no email recipients
+< ids no email sender
 < ids provider eol
 < indirect target selection
 < mdstat
@@ -215,6 +218,9 @@
 < ids email recipients
 < ids email sender
 < ids enable email alerts
+< ids invalid mail address
+< ids no email recipients
+< ids no email sender
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
@@ -579,11 +585,14 @@
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
+< ids invalid mail address
 < ids log hits
 < ids merge classifications
 < ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no email recipients
+< ids no email sender
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
@@ -1227,11 +1236,14 @@
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
+< ids invalid mail address
 < ids log hits
 < ids merge classifications
 < ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no email recipients
+< ids no email sender
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
@@ -2177,11 +2189,14 @@
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
+< ids invalid mail address
 < ids log hits
 < ids merge classifications
 < ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no email recipients
+< ids no email sender
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
@@ -3295,11 +3310,14 @@
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
+< ids invalid mail address
 < ids log hits
 < ids merge classifications
 < ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no email recipients
+< ids no email sender
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
@@ -4007,11 +4025,14 @@
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
+< ids invalid mail address
 < ids log hits
 < ids merge classifications
 < ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no email recipients
+< ids no email sender
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
@@ -4327,6 +4348,9 @@
 < ids email recipients
 < ids email sender
 < ids enable email alerts
+< ids invalid mail address
+< ids no email recipients
+< ids no email sender
 < indirect target selection
 < max bandwidth
 < offloaded
@@ -4379,6 +4403,9 @@
 < ids email recipients
 < ids email sender
 < ids enable email alerts
+< ids invalid mail address
+< ids no email recipients
+< ids no email sender
 < indirect target selection
 < max bandwidth
 < offloaded

@@ -574,6 +574,29 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		}
 	}
 
+	# Check if the e-mail feature should be used.
+	if ($cgiparams{'ENABLE_EMAIL'} eq "on") {
+		# Check if a sender mail address has been provided.
+		unless($cgiparams{'EMAIL_SENDER'}) {
+			$errormessage = $Lang::tr{'ids no email sender'};
+		}
+
+		# Check if the given sender mail address is valid.
+		if (&_validate_mail_address($cgiparams{'EMAIL_SENDER'})) {
+			$errormessage = "$cgiparams{'EMAIL_SENDER'} - $Lang::tr{'ids invalid mail address'}";
+		}
+
+		# Check if at least one mail recipient has been given.
+		unless($cgiparams{'EMAIL_RECIPIENTS'}) {
+			$errormessage = $Lang::tr{'ids no email recipients'};
+		}
+
+		# Check if the given recipient mail address or addresses are valid.
+		if (&_validate_mail_address($cgiparams{'EMAIL_RECIPIENTS'})) {
+			$errormessage = "$cgiparams{'EMAIL_RECIPIENTS'} - $Lang::tr{'ids invalid mail address'}";
+		}
+	}
+
 	# Go on if there are no error messages.
 	if (!$errormessage) {
 		# Store settings into settings file.
@@ -588,6 +611,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 	# Generate file to store the HTTP ports.
 	&IDS::generate_http_ports_file();
+
+	# Generate report generator config file.
+	&IDS::generate_report_generator_config();
 
 	# Check if the IDS currently is running.
 	if(&IDS::ids_is_running()) {
@@ -1027,7 +1053,7 @@ print <<END
 		<br>
 
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<table width='100%' border='0'>
+			<table class='form' width='100%' border='0'>
 				<tr>
 					<td colspan='$num_zones'>
 						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
@@ -2090,4 +2116,28 @@ sub _rulefile_to_category($) {
 
 	# Return the converted filename.
         return $category;
+}
+
+#
+## Private function to validate if a given string contains one or
+## more valid mail addresses.
+#
+sub _validate_mail_address($) {
+	my ($address) = @_;
+
+	# Temporary array, which holds the single mail addresses.
+	my @temp;
+
+	# Split the string of mail addresses into single pieces and
+	# store them into the temporary array.
+	@temp = split(/\,/, $address);
+
+	# Loop through the array of mail addresses.
+	foreach my $addr (@temp) {
+		# Return 1 if the processed mail address is invalid.
+		return 1 unless($addr =~ '^([a-zA-Z][\w\_\.]{6,15})\@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$');
+	}
+
+	# Return nothing if the address is valid.
+	return;
 }
