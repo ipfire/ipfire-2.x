@@ -1006,6 +1006,9 @@ sub show_mainpage() {
 	$checked{'ENABLE_IDS'}{'off'} = '';
 	$checked{'ENABLE_IDS'}{'on'} = '';
 	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
+	$checked{'ENABLE_EMAIL'}{'off'} = '';
+	$checked{'ENABLE_EMAIL'}{'on'} = '';
+	$checked{'ENABLE_EMAIL'}{$idssettings{'ENABLE_EMAIL'}} = "checked='checked'";
 
 	# Draw current state of the IDS
 	&Header::opensection();
@@ -1082,6 +1085,44 @@ print <<END
 				</tr>
 
 				<tr> <!-- empty row for spacing -->
+					<td colspan='$num_zones'>
+						&nbsp;
+					</td>
+				</tr>
+
+				<tr>
+					<td colspan='$num_zones'>
+						<b>$Lang::tr{'ids email alerts'}</b>
+					<td>
+				</tr>
+
+				<tr>
+					<td colspan='$num_zones'>
+						<input type='checkbox' name='ENABLE_EMAIL' $checked{'ENABLE_EMAIL'}{'on'}>&nbsp;$Lang::tr{'ids enable email alerts'}
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for='EMAIL_SENDER'>$Lang::tr{'ids email sender'}</label>
+					</td>
+
+					<td colspan='$num_zones -1'>
+						<input type="text" name="EMAIL_SENDER" value="$idssettings{'EMAIL_SENDER'}" placeholder="alert\@example.com" size="64">
+					<td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for='EMAIL_RECIPIENTS'>$Lang::tr{'ids email recipients'}</label>
+					</td>
+
+					<td colspan='$num_zones -1'>
+						<input type="text" name="EMAIL_RECIPIENTS" value="$idssettings{'EMAIL_RECIPIENTS'}" placeholder="one\@example.com, multiple\@example.com" size="64">
+					</td>
+				</tr>
+
+				<tr><!-- empty row for spacing -->
 					<td colspan='$num_zones'>
 						&nbsp;
 					</td>

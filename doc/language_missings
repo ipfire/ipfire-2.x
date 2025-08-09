@@ -156,6 +156,10 @@
 < AES-256-GCM
 < CHACHA20-POLY1305
 < dns servers
+< ids email alerts
+< ids email recipients
+< ids email sender
+< ids enable email alerts
 < ids provider eol
 < indirect target selection
 < mdstat
@@ -207,6 +211,10 @@
 < g.dtm
 < g.lite
 < hostile networks total
+< ids email alerts
+< ids email recipients
+< ids email sender
+< ids enable email alerts
 < ids provider eol
 < ids rulesets
 < ids unsupported provider
@@ -560,8 +568,12 @@
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
+< ids email alerts
+< ids email recipients
+< ids email sender
 < ids enable
 < ids enable automatic updates
+< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -1204,8 +1216,12 @@
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
+< ids email alerts
+< ids email recipients
+< ids email sender
 < ids enable
 < ids enable automatic updates
+< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -2150,8 +2166,12 @@
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
+< ids email alerts
+< ids email recipients
+< ids email sender
 < ids enable
 < ids enable automatic updates
+< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -3264,8 +3284,12 @@
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
+< ids email alerts
+< ids email recipients
+< ids email sender
 < ids enable
 < ids enable automatic updates
+< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -3972,8 +3996,12 @@
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
+< ids email alerts
+< ids email recipients
+< ids email sender
 < ids enable
 < ids enable automatic updates
+< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -4295,6 +4323,10 @@
 < CHACHA20-POLY1305
 < dns servers
 < guaranteed bandwidth
+< ids email alerts
+< ids email recipients
+< ids email sender
+< ids enable email alerts
 < indirect target selection
 < max bandwidth
 < offloaded
@@ -4343,6 +4375,10 @@
 < CHACHA20-POLY1305
 < dns servers
 < guaranteed bandwidth
+< ids email alerts
+< ids email recipients
+< ids email sender
+< ids enable email alerts
 < indirect target selection
 < max bandwidth
 < offloaded
