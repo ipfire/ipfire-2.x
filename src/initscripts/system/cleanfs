@@ -107,6 +107,10 @@ case "${1}" in
 		if [ ! -e /var/run/saslauthd ]; then
 			mkdir -p /var/run/saslauthd
 		fi
+		if ! [ -d "/var/run/suricata" ]; then
+			mkdir -p /var/run/suricata
+			chown suricata:suricata /var/run/suricata
+		fi
 		if [ ! -e /var/log/vnstat ]; then
 			mkdir -p /var/log/vnstat
 		fi
