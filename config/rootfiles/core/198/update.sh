@@ -38,6 +38,12 @@ done
 # Extract files
 extract_files
 
+# Create /var/run/suricata
+if ! [ -d "/var/run/suricata" ]; then
+	mkdir -p /var/run/suricata
+	chown suricata:suricata /var/run/suricata
+fi
+
 # update linker config
 ldconfig
 
