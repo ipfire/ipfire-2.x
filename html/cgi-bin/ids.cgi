@@ -2127,8 +2127,9 @@ sub _validate_mail_address($) {
 
 	# Loop through the array of mail addresses.
 	foreach my $addr (@temp) {
-		# Return 1 if the processed mail address is invalid.
-		return 1 unless($addr =~ '^([a-zA-Z][\w\_\.]{6,15})\@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$');
+		# If the address contains a '@' with at least one character before and after,
+		# we consider it valid.
+		return 1 unless ($address =~ m/.@./);
 	}
 
 	# Return nothing if the address is valid.
