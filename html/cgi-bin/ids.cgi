@@ -1053,26 +1053,23 @@ print <<END
 		<br>
 
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<table class='form' width='100%' border='0'>
+			<table class='form'>
 				<tr>
-					<td colspan='$num_zones'>
-						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
+					<td>
+						$Lang::tr{'ids enable'}
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>
 					</td>
 				</tr>
+			</table>
 
-				<tr> <!-- empty row for spacing -->
-					<td colspan='$num_zones'>
-						&nbsp;
-					</td>
-				</tr>
+			<h6>
+				$Lang::tr{'ids monitored interfaces'}
+			</h6>
 
-				<tr>
-					<td colspan='$num_zones'>
-						<b>$Lang::tr{'ids monitored interfaces'}</b>
-					</td>
-				</tr>
-
-				<tr>
+			<table class="form">
 END
 ;
 
@@ -1098,33 +1095,35 @@ END
 			}
 
 			print <<END;
-				<td>
-					<label>
+				<tr>
+					<td>
+						&nbsp; &nbsp; <font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>
+					</td>
+
+					<td>
 						<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>
-						&nbsp; $Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>
-					</label>
-				</td>
+					</td>
+				</tr>
 END
 		}
 
 print <<END
-				</tr>
+			</table>
 
-				<tr> <!-- empty row for spacing -->
-					<td colspan='$num_zones'>
-						&nbsp;
-					</td>
-				</tr>
+			<h6>
+				$Lang::tr{'ids email alerts'}
+			</h6>
 
+			<table class="form">
 				<tr>
-					<td colspan='$num_zones'>
-						<b>$Lang::tr{'ids email alerts'}</b>
 					<td>
-				</tr>
+						<label for="ENABLE_EMAIL">
+							$Lang::tr{'ids enable email alerts'}
+						</label>
+					</td>
 
-				<tr>
-					<td colspan='$num_zones'>
-						<input type='checkbox' name='ENABLE_EMAIL' $checked{'ENABLE_EMAIL'}{'on'}>&nbsp;$Lang::tr{'ids enable email alerts'}
+					<td>
+						<input type='checkbox' name='ENABLE_EMAIL' id="ENABLED_EMAIL" $checked{'ENABLE_EMAIL'}{'on'}>
 					</td>
 				</tr>
 
@@ -1133,7 +1132,7 @@ print <<END
 						<label for='EMAIL_SENDER'>$Lang::tr{'ids email sender'}</label>
 					</td>
 
-					<td colspan='$num_zones -1'>
+					<td>
 						<input type="text" name="EMAIL_SENDER" value="$idssettings{'EMAIL_SENDER'}" placeholder="alert\@example.com" size="64">
 					<td>
 				</tr>
@@ -1143,19 +1142,13 @@ print <<END
 						<label for='EMAIL_RECIPIENTS'>$Lang::tr{'ids email recipients'}</label>
 					</td>
 
-					<td colspan='$num_zones -1'>
+					<td>
 						<input type="text" name="EMAIL_RECIPIENTS" value="$idssettings{'EMAIL_RECIPIENTS'}" placeholder="one\@example.com, multiple\@example.com" size="64">
 					</td>
 				</tr>
 
-				<tr><!-- empty row for spacing -->
-					<td colspan='$num_zones'>
-						&nbsp;
-					</td>
-				</tr>
-
-				<tr>
-					<td colspan='$num_zones' align='right'>
+				<tr class="action">
+					<td colspan="2">
 						<input type='submit' name='IDS' value='$Lang::tr{'save'}' />
 					</td>
 				</tr>
