@@ -1,0 +1,144 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2025  Michael Tremer                                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. "${rc_functions}"
+
+# Read the IPS settings
+readhash CONFIG "/var/ipfire/suricata/settings"
+
+send_report() {
+	local args=( "$@" )
+	local address
+
+	# Add the email sender
+	if [ -n "${CONFIG[EMAIL_SENDER]}" ]; then
+		args+=( "--email-sender=${CONFIG[EMAIL_SENDER]}" )
+
+	# Fail if we don't have a sender
+	else
+		echo "${0}: Cannot send reports with EMAIL_SENDER being set" >&2
+		return 2
+	fi
+
+	local IFS=','
+
+	# Append the email recipients
+	for address in ${CONFIG[EMAIL_RECIPIENTS]}; do
+		args+=( "--email-recipient=${address}" )
+	done
+
+	# Generate the report
+	if ! suricata-report-generator "${args[@]}"; then
+		return 1
+	fi
+
+	return 0
+}
+
+send_monthly_report() {
+	# Check if we are supposed to send monthly reports
+	case "${CONFIG[ENABLE_REPORT_MONTHLY]}" in
+		on)
+			;;
+		*)
+			return 0
+			;;
+	esac
+
+	# Determine the last month
+	local y="$(date --date="last month" +"%Y")"
+	local m="$(date --date="last month" +"%m")"
+
+	# Send the report
+	send_report --year="${y}" --month="${m}"
+}
+
+send_weekly_report() {
+	# Check if we are supposed to send weekly reports
+	case "${CONFIG[ENABLE_REPORT_WEEKLY]}" in
+		on)
+			;;
+		*)
+			return 0
+			;;
+	esac
+
+	# Determine last week
+	local y="$(date --date="last week" +"%Y")"
+	local w="$(date --date="last week" +"%V")"
+
+	# Send the report
+	send_report --year="${y}" --week="${w}"
+}
+
+# Sends a daily report for "yesterday"
+send_daily_report() {
+	# Check if we are supposed to send daily reports
+	case "${CONFIG[ENABLE_REPORT_DAILY]}" in
+		on)
+			;;
+		*)
+			return 0
+			;;
+	esac
+
+	# Determine yesterday's date
+	local y="$(date --date="yesterday" +"%Y")"
+	local m="$(date --date="yesterday" +"%m")"
+	local d="$(date --date="yesterday" +"%d")"
+
+	# Send the report
+	send_report --year="${y}" --month="${m}" --day="${d}"
+}
+
+main() {
+	local interval="${1}"
+	shift
+
+	case "${interval}" in
+		monthly)
+			if ! send_monthly_report "$@"; then
+				return $?
+			fi
+			;;
+
+		weekly)
+			if ! send_weekly_report "$@"; then
+				return $?
+			fi
+			;;
+
+		daily)
+			if ! send_daily_report "$@"; then
+				return $?
+			fi
+			;;
+		*)
+			echo "${0}: Unknown interval '${interval}'" >&2
+			return 2
+			;;
+	esac
+
+	return 0
+}
+
+main "$@" || exit 1
