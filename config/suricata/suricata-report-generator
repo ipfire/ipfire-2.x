@@ -23,12 +23,16 @@ import argparse
 import calendar
 import collections
 import datetime
+import email.message
+import email.utils
 import logging
 import reportlab
 import reportlab.lib.styles
 import reportlab.platypus
 import socket
 import sqlite3
+import subprocess
+import tempfile
 
 from reportlab.lib.units import cm, mm
 
@@ -339,6 +343,71 @@ class ReportGenerator(object):
 			reportlab.platypus.PageBreak(),
 		)
 
+	def email(self, recipients, sender, **kwargs):
+		"""
+			Generates an email with the report
+		"""
+		log.debug("Sending an email from %s to %s" % (sender, recipients))
+
+		# Fetch the hostname
+		hostname = socket.gethostname()
+
+		# Create a new message
+		msg = email.message.EmailMessage()
+
+		# Set the sender
+		msg.add_header("From", sender)
+
+		# Add them to the email
+		msg.add_header("To", ", ".join(recipients))
+
+		# Set the Subject
+		msg.add_header(
+			"Subject", "[REPORT] Intrusion Prevention System Alerts from %s" % hostname,
+		),
+
+		# Compose the content
+		content = [
+			_("To whom it may concern,"),
+			"",
+			_("The IPFire Intrusion Preventsion System is sending you the attached report."),
+		]
+
+		# Add the content to the email
+		msg.set_content("\n".join(content))
+
+		# Generate the report & attach it to the email
+		with tempfile.NamedTemporaryFile() as f:
+			# Generate
+			self.generate(output=f.name, **kwargs)
+
+			# Attach
+			msg.add_attachment(
+				f.read(), maintype="application", subtype="pdf", filename="report.pdf",
+			)
+
+		# Show the email
+		log.debug(msg.as_string())
+
+		# Send the email
+		p = subprocess.Popen(
+			["/usr/sbin/sendmail", "-t", "-oi", "-f", sender],
+			text=True,
+			stdin=subprocess.PIPE,
+			stdout=subprocess.PIPE,
+			stderr=subprocess.STDOUT,
+		)
+
+		# Pipe the email into sendmail
+		stdout, stderr = p.communicate(msg.as_string())
+
+		if not p.returncode == 0:
+			log.error("Failed to send email. sendmail returned %s:" % p.returncode)
+			if stdout:
+				log.error(stdout)
+
+		log.debug("Successfully send email to %s" % ", ".join(recipients))
+
 
 def setup_logging(loglevel=logging.INFO):
 	log.setLevel(loglevel)
@@ -358,7 +427,15 @@ def main():
 	parser.add_argument("--verbose", "-v", action="count", help="Be more verbose")
 	parser.add_argument("--database", help="Database",
 		default="/var/log/suricata/reporter.db")
-	parser.add_argument("--output", "-o", required=True, help=_("Output Path"))
+
+	# Require some output parameters
+	group = parser.add_mutually_exclusive_group(required=True)
+	group.add_argument("--output", "-o", help=_("Output Path"))
+	group.add_argument("--email-recipient", nargs="*", dest="recipients",
+		help=_("Send the report to these recipients (multiple possible)")
+	)
+
+	parser.add_argument("--email-sender", dest="sender", help=_("Email Sender"))
 
 	# Select the time
 	parser.add_argument("--year", type=int, required=True,
@@ -376,6 +453,10 @@ def main():
 	# Parse command line arguments
 	args = parser.parse_args()
 
+	# Check if we have an email sender
+	if args.recipients and not args.sender:
+		parser.error("--email-sender= is required if recipients have been passed")
+
 	# Setup logging
 	loglevel = logging.WARN
 
@@ -391,13 +472,25 @@ def main():
 	generator = ReportGenerator(args.database)
 
 	# Generate!
-	generator.generate(
-		output = args.output,
-		year   = args.year,
-		month  = args.month,
-		week   = args.week,
-		day    = args.day,
-	)
+	if args.output:
+		generator.generate(
+			output = args.output,
+			year   = args.year,
+			month  = args.month,
+			week   = args.week,
+			day    = args.day,
+		)
+
+	# Email!
+	elif args.recipients:
+		generator.email(
+			recipients = args.recipients,
+			sender     = args.sender,
+			year       = args.year,
+			month      = args.month,
+			week       = args.week,
+			day        = args.day,
+		)
 
 if __name__ == "__main__":
 	main()
