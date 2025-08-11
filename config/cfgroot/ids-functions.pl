@@ -1757,9 +1757,6 @@ sub generate_report_generator_config() {
 
 	# Read-in IDS settings.
 	&General::readhash("$ids_settings_file", \%idssettings);
-	
-	# Get amount of available CPU cores.
-	my $cpu_count = &General::number_cpu_cores();
 
 	# Open config file for writing.
 	open(FILE, ">", "$report_generator_config_file") or die "Could not write to $report_generator_config_file. $!\n";
