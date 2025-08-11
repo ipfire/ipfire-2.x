@@ -163,6 +163,10 @@
 < ids no email recipients
 < ids no email sender
 < ids provider eol
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
+< ids summary reports
 < indirect target selection
 < mdstat
 < offloaded
@@ -220,7 +224,11 @@
 < ids no email recipients
 < ids no email sender
 < ids provider eol
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
 < ids rulesets
+< ids summary reports
 < ids unsupported provider
 < import connection
 < indirect target selection
@@ -596,6 +604,9 @@
 < ids provider eol
 < ids provider settings
 < ids remove rule structures
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
@@ -603,6 +614,7 @@
 < ids ruleset settings
 < ids show
 < ids subscription code required
+< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -1246,6 +1258,9 @@
 < ids provider eol
 < ids provider settings
 < ids remove rule structures
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
@@ -1253,6 +1268,7 @@
 < ids ruleset settings
 < ids show
 < ids subscription code required
+< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -2198,6 +2214,9 @@
 < ids provider eol
 < ids provider settings
 < ids remove rule structures
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
@@ -2205,6 +2224,7 @@
 < ids ruleset settings
 < ids show
 < ids subscription code required
+< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -3318,6 +3338,9 @@
 < ids provider eol
 < ids provider settings
 < ids remove rule structures
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
@@ -3325,6 +3348,7 @@
 < ids ruleset settings
 < ids show
 < ids subscription code required
+< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -4032,6 +4056,9 @@
 < ids provider eol
 < ids provider settings
 < ids remove rule structures
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
 < ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset is up to date
@@ -4039,6 +4066,7 @@
 < ids ruleset settings
 < ids show
 < ids subscription code required
+< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -4343,6 +4371,10 @@
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
+< ids summary reports
 < indirect target selection
 < max bandwidth
 < offloaded
@@ -4397,6 +4429,10 @@
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
+< ids reports daily
+< ids reports monthly
+< ids reports weekly
+< ids summary reports
 < indirect target selection
 < max bandwidth
 < offloaded

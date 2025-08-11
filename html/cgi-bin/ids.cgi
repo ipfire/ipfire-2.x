@@ -575,7 +575,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	}
 
 	# Check if the e-mail feature should be used.
-	if ($cgiparams{'ENABLE_EMAIL'} eq "on") {
+	if (($cgiparams{'ENABLE_EMAIL'} eq "on") || ($cgiparams{'ENABLE_REPORT_DAILY'} eq "on") ||
+	    ($cgiparams{'ENABLE_REPORT_WEEKLY'} eq "on") || ($cgiparams{'ENABLE_REPORT_MONTLY'} eq "on")) {
 		# Check if a sender mail address has been provided.
 		unless($cgiparams{'EMAIL_SENDER'}) {
 			$errormessage = $Lang::tr{'ids no email sender'};
@@ -1036,6 +1037,16 @@ sub show_mainpage() {
 	$checked{'ENABLE_EMAIL'}{'on'} = '';
 	$checked{'ENABLE_EMAIL'}{$idssettings{'ENABLE_EMAIL'}} = "checked='checked'";
 
+	$checked{'ENABLE_REPORT_DAILY'}{'off'} = '';
+	$checked{'ENABLE_REPORT_DAILY'}{'on'} = '';
+	$checked{'ENABLE_REPORT_DAILY'}{$idssettings{'ENABLE_REPORT_DAILY'}} = "checked='checked'";
+	$checked{'ENABLE_REPORT_WEEKLY'}{'off'} = '';
+	$checked{'ENABLE_REPORT_WEEKLY'}{'on'} = '';
+	$checked{'ENABLE_REPORT_WEEKLY'}{$idssettings{'ENABLE_REPORT_WEEKLY'}} = "checked='checked'";
+	$checked{'ENABLE_REPORT_MONTHLY'}{'off'} = '';
+	$checked{'ENABLE_REPORT_MONTHLY'}{'on'} = '';
+	$checked{'ENABLE_REPORT_MONTHLY'}{$idssettings{'ENABLE_REPORT_MONTHLY'}} = "checked='checked'";
+
 	# Draw current state of the IDS
 	&Header::opensection();
 
@@ -1133,7 +1144,7 @@ print <<END
 					</td>
 
 					<td>
-						<input type="text" name="EMAIL_SENDER" value="$idssettings{'EMAIL_SENDER'}">
+						<input type="text" name="EMAIL_SENDER" value="$email_sender">
 					<td>
 				</tr>
 
@@ -1143,7 +1154,50 @@ print <<END
 					</td>
 
 					<td>
-						<input type="text" name="EMAIL_RECIPIENTS" value="$idssettings{'EMAIL_RECIPIENTS'}">
+						<input type="text" name="EMAIL_RECIPIENTS" value="$email_recipients">
+					</td>
+				</tr>
+
+			</table>
+
+			<h6>
+				$Lang::tr{'ids summary reports'}
+			</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						<label for="ENABLE_REPORT_DAILY">
+							$Lang::tr{'ids reports daily'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_REPORT_DAILY' id="ENABLE_REPORT_DAILY" $checked{'ENABLE_REPORT_DAILY'}{'on'}>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="ENABLE_REPORT_WEEKLY">
+							$Lang::tr{'ids reports weekly'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_REPORT_WEEKLY' id="ENABLE_REPORT_WEEKLY" $checked{'ENABLE_REPORT_WEEKLY'}{'on'}>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="ENABLE_REPORT_MONTHLY">
+							$Lang::tr{'ids reports monthly'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_REPORT_MONTHLY' id="ENABLE_REPORT_MONTHLY" $checked{'ENABLE_REPORT_MONTHLY'}{'on'}>
 					</td>
 				</tr>
 
