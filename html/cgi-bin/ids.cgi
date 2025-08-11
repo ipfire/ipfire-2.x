@@ -1047,6 +1047,22 @@ sub show_mainpage() {
 	$checked{'ENABLE_REPORT_MONTHLY'}{'on'} = '';
 	$checked{'ENABLE_REPORT_MONTHLY'}{$idssettings{'ENABLE_REPORT_MONTHLY'}} = "checked='checked'";
 
+	# Set E-Mail settings from settings hash.
+	my $email_sender = $idssettings{'EMAIL_SENDER'};
+	my $email_recipients = $idssettings{'EMAIL_RECIPIENTS'};
+
+	# Set form values to cgiparams state in error case.
+	if ($errormessage) {
+		$checked{'ENABLE_IDS'}{$cgiparams{'ENABLE_IDS'}} = "checked='checked'";
+		$checked{'ENABLE_EMAIL'}{$cgiparams{'ENABLE_EMAIL'}} = "checked='checked'";
+		$checked{'ENABLE_REPORT_DAILY'}{$cgiparams{'ENABLE_REPORT_DAILY'}} = "checked='checked'";
+		$checked{'ENABLE_REPORT_WEEKLY'}{$cgiparams{'ENABLE_REPORT_WEEKLY'}} = "checked='checked'";
+		$checked{'ENABLE_REPORT_MONTHLY'}{$cgiparams{'ENABLE_REPORT_MONTHLY'}} = "checked='checked'";
+
+		$email_sender = $cgiparams{'EMAIL_SENDER'};
+		$email_recipients = $cgiparams{'EMAIL_RECIPIENTS'};
+	}
+
 	# Draw current state of the IDS
 	&Header::opensection();
 
@@ -1103,6 +1119,11 @@ END
 			# Grab checkbox status from settings hash.
 			if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
 				$checked_input = "checked = 'checked'";
+			}
+
+			# Set the checkbox status to the cgiparams state in error case.
+			if ($errormessage) {
+				$checked_input = "checked = 'checked'" if ($cgiparams{"ENABLE_IDS_$zone_upper"} eq "on");
 			}
 
 			print <<END;
