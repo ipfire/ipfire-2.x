@@ -751,7 +751,6 @@
 'enable javascript' => 'Włącz javascript',
 'enable wildcards' => 'Enable wildcards:',
 'enabled' => 'Włączony:',
-'enabled on' => 'Włączony na',
 'enabledtitle' => 'Włączony',
 'encapsulation' => 'Encapsulacja',
 'encrypted' => 'Encrypted',

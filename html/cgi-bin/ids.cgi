@@ -1118,7 +1118,7 @@ print <<END
 				<tr>
 					<td>
 						<label for="ENABLE_EMAIL">
-							$Lang::tr{'ids enable email alerts'}
+							$Lang::tr{'enable'}
 						</label>
 					</td>
 

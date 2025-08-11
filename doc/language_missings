@@ -159,7 +159,6 @@
 < ids email alerts
 < ids email recipients
 < ids email sender
-< ids enable email alerts
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
@@ -217,7 +216,6 @@
 < ids email alerts
 < ids email recipients
 < ids email sender
-< ids enable email alerts
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
@@ -579,7 +577,6 @@
 < ids email sender
 < ids enable
 < ids enable automatic updates
-< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -1230,7 +1227,6 @@
 < ids email sender
 < ids enable
 < ids enable automatic updates
-< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -2183,7 +2179,6 @@
 < ids email sender
 < ids enable
 < ids enable automatic updates
-< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -3304,7 +3299,6 @@
 < ids email sender
 < ids enable
 < ids enable automatic updates
-< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -4019,7 +4013,6 @@
 < ids email sender
 < ids enable
 < ids enable automatic updates
-< ids enable email alerts
 < ids extract ruleset
 < ids finished
 < ids force ruleset update
@@ -4347,7 +4340,6 @@
 < ids email alerts
 < ids email recipients
 < ids email sender
-< ids enable email alerts
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
@@ -4402,7 +4394,6 @@
 < ids email alerts
 < ids email recipients
 < ids email sender
-< ids enable email alerts
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
