@@ -1133,7 +1133,7 @@ print <<END
 					</td>
 
 					<td>
-						<input type="text" name="EMAIL_SENDER" value="$idssettings{'EMAIL_SENDER'}" placeholder="alert\@example.com" size="64">
+						<input type="text" name="EMAIL_SENDER" value="$idssettings{'EMAIL_SENDER'}">
 					<td>
 				</tr>
 
@@ -1143,7 +1143,7 @@ print <<END
 					</td>
 
 					<td>
-						<input type="text" name="EMAIL_RECIPIENTS" value="$idssettings{'EMAIL_RECIPIENTS'}" placeholder="one\@example.com, multiple\@example.com" size="64">
+						<input type="text" name="EMAIL_RECIPIENTS" value="$idssettings{'EMAIL_RECIPIENTS'}">
 					</td>
 				</tr>
 
