@@ -1450,7 +1450,7 @@
 'ids download new ruleset' => 'Downloading and unpacking new ruleset. Please wait until all operations have completed successfully...',
 'ids email alerts' => 'Email Alerts',
 'ids email recipients' => 'Recipients',
-'ids email sender' => 'Sender address',
+'ids email sender' => 'Sender Address',
 'ids enable' => 'Enable Intrusion Prevention System',
 'ids enable automatic updates' => 'Enable automatic updates',
 'ids extract ruleset' => 'Extracting ruleset for provider:',
