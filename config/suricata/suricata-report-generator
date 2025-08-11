@@ -263,8 +263,6 @@ class ReportGenerator(object):
 			if row is None:
 				break
 
-			print(row)
-
 			# Parse the timestamp
 			t = datetime.datetime.strptime(row.timestamp, "%Y-%m-%d %H:%M:%S")
 
