@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3500200
+VER        = 3500400
 
 THISAPP    = sqlite-autoconf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0e4f2da8d11173f32625bbfa9fa07c3dcccc5343c410c9c10da47c9df7eeecaf33726d8e5fddf2ef78ce51a1adf0fe605a81278e2fc0d6044264ecf40f05bdfa
+$(DL_FILE)_BLAKE2 = cb7b3509079a6b57dd7a0443e249b8fe6d1ff43b1bb318d07a1403a754ddbfa5d25f191405c062a5cdb872315aac78daa1e95d6687aab37e18889e21bc6d8c71
 
 install : $(TARGET)
 
