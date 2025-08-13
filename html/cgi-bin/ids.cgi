@@ -1149,18 +1149,6 @@ print <<END
 			<table class="form">
 				<tr>
 					<td>
-						<label for="ENABLE_EMAIL">
-							$Lang::tr{'enable'}
-						</label>
-					</td>
-
-					<td>
-						<input type='checkbox' name='ENABLE_EMAIL' id="ENABLED_EMAIL" $checked{'ENABLE_EMAIL'}{'on'}>
-					</td>
-				</tr>
-
-				<tr>
-					<td>
 						<label for='EMAIL_SENDER'>$Lang::tr{'ids email sender'}</label>
 					</td>
 
@@ -1179,13 +1167,18 @@ print <<END
 					</td>
 				</tr>
 
-			</table>
+				<tr>
+					<td>
+						<label for="ENABLE_EMAIL">
+							$Lang::tr{'ids send email on alert'}
+						</label>
+					</td>
 
-			<h6>
-				$Lang::tr{'ids summary reports'}
-			</h6>
+					<td>
+						<input type='checkbox' name='ENABLE_EMAIL' id="ENABLED_EMAIL" $checked{'ENABLE_EMAIL'}{'on'}>
+					</td>
+				</tr>
 
-			<table class="form">
 				<tr>
 					<td>
 						<label for="ENABLE_REPORT_DAILY">

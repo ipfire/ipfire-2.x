@@ -166,7 +166,7 @@
 < ids reports daily
 < ids reports monthly
 < ids reports weekly
-< ids summary reports
+< ids send email on alert
 < indirect target selection
 < mdstat
 < offloaded
@@ -228,7 +228,7 @@
 < ids reports monthly
 < ids reports weekly
 < ids rulesets
-< ids summary reports
+< ids send email on alert
 < ids unsupported provider
 < import connection
 < indirect target selection
@@ -612,9 +612,9 @@
 < ids ruleset is up to date
 < ids rulesets
 < ids ruleset settings
+< ids send email on alert
 < ids show
 < ids subscription code required
-< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -1266,9 +1266,9 @@
 < ids ruleset is up to date
 < ids rulesets
 < ids ruleset settings
+< ids send email on alert
 < ids show
 < ids subscription code required
-< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -2222,9 +2222,9 @@
 < ids ruleset is up to date
 < ids rulesets
 < ids ruleset settings
+< ids send email on alert
 < ids show
 < ids subscription code required
-< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -3346,9 +3346,9 @@
 < ids ruleset is up to date
 < ids rulesets
 < ids ruleset settings
+< ids send email on alert
 < ids show
 < ids subscription code required
-< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -4064,9 +4064,9 @@
 < ids ruleset is up to date
 < ids rulesets
 < ids ruleset settings
+< ids send email on alert
 < ids show
 < ids subscription code required
-< ids summary reports
 < ids the choosen provider is already in use
 < ids unable to download the ruleset
 < ids unsupported provider
@@ -4374,7 +4374,7 @@
 < ids reports daily
 < ids reports monthly
 < ids reports weekly
-< ids summary reports
+< ids send email on alert
 < indirect target selection
 < max bandwidth
 < offloaded
@@ -4432,7 +4432,7 @@
 < ids reports daily
 < ids reports monthly
 < ids reports weekly
-< ids summary reports
+< ids send email on alert
 < indirect target selection
 < max bandwidth
 < offloaded
