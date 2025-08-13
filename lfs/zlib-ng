@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.2.4
+VER        = 2.2.5
 
 THISAPP    = zlib-ng-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = eb118c4b1d6de1b6cb5e3e1fcc8cc36ccf794321fab49f6070868515b179845495bf8833222107cc874397a3c2043a39c28d0f5d5a2bd450afaba606747a07cd
+$(DL_FILE)_BLAKE2 = 7d2907595b6e57f2739f4acea11cb317a35c4f63208d3f44b65cca0ea1ffbef89311bc839327e037b3aea78de1407d3ff025567f6768013277d0fd61e0a40210
 
 install : $(TARGET)
 
