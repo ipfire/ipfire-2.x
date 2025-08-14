@@ -92,6 +92,8 @@ usr/bin/locale
 #usr/include/bits/hwcap.h
 #usr/include/bits/in.h
 #usr/include/bits/indirect-return.h
+#usr/include/bits/inet-fortified-decl.h
+#usr/include/bits/inet-fortified.h
 #usr/include/bits/initspin.h
 #usr/include/bits/inotify.h
 #usr/include/bits/ioctl-types.h
@@ -207,6 +209,7 @@ usr/bin/locale
 #usr/include/bits/termios-c_iflag.h
 #usr/include/bits/termios-c_lflag.h
 #usr/include/bits/termios-c_oflag.h
+#usr/include/bits/termios-cbaud.h
 #usr/include/bits/termios-misc.h
 #usr/include/bits/termios-struct.h
 #usr/include/bits/termios-tcflow.h
@@ -512,7 +515,6 @@ usr/bin/locale
 #usr/include/sysexits.h
 #usr/include/syslog.h
 #usr/include/tar.h
-#usr/include/termio.h
 #usr/include/termios.h
 #usr/include/tgmath.h
 #usr/include/thread_db.h
@@ -812,7 +814,7 @@ usr/lib/gconv
 #usr/lib/libc_nonshared.a
 #usr/lib/libdl.a
 #usr/lib/libg.a
-#usr/lib/libm-2.41.a
+#usr/lib/libm-2.42.a
 #usr/lib/libm.a
 #usr/lib/libm.so
 #usr/lib/libmcheck.a

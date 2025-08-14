@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.41
+VER        = 2.42
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -62,16 +62,21 @@ EXTRA_CONFIG += \
 	--enable-experimental-malloc \
 	--enable-bind-now \
 	--enable-fortify-source \
+	--enable-stack-protector=strong \
 	--disable-crypt \
 	--disable-build-nscd \
 	--disable-nscd
 
 ifeq "$(BUILD_ARCH)" "x86_64"
-	EXTRA_CONFIG += --enable-cet
+	EXTRA_CONFIG += \
+		--enable-cet \
+		--enable-sframe
 endif
 
 ifeq "$(BUILD_ARCH)" "aarch64"
-	EXTRA_CONFIG += --enable-memory-tagging
+	EXTRA_CONFIG += \
+		--enable-memory-tagging \
+		--enable-sframe
 endif
 
 ###############################################################################
@@ -82,7 +87,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4da62f489ba7a95bb069c2cfea8cf78e4d37e3a5f7e1736239670ba1dca12b69aa77bd00ced078c27d91b1e622c58cbd70258161a9d18c5b3bcc95863b8d744d
+$(DL_FILE)_BLAKE2 = 6ffabfe7942034a5a4fb5097679cb47bc3431eb2a3864af07cea0cb6aa5db63fbaf6f026b3c9299e00268058a6762eb21e92499f012d552ed87d65c7ffbd0bbe
 
 install : $(TARGET)
 
