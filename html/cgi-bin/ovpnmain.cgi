@@ -41,8 +41,8 @@ require "${General::swroot}/countries.pl";
 require "${General::swroot}/location-functions.pl";
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -999,6 +999,12 @@ sub openvpn_status($) {
 	}
 
 	return $status;
+}
+
+# Hook to regenerate the configuration files
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	&writeserverconf();
+	exit(0);
 }
 
 ###

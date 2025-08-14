@@ -16,4 +16,5 @@ var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/ipblocklist-functions.pl
 var/ipfire/langs/list
+var/ipfire/main/manualpages
 var/ipfire/wireguard-functions.pl
