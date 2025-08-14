@@ -41,8 +41,8 @@ require "${General::swroot}/countries.pl";
 require "${General::swroot}/location-functions.pl";
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
