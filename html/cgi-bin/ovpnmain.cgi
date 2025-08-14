@@ -1001,6 +1001,12 @@ sub openvpn_status($) {
 	return $status;
 }
 
+# Hook to regenerate the configuration files
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	&writeserverconf();
+	exit(0);
+}
+
 ###
 ### Save Advanced options
 ###
