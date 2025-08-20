@@ -2694,18 +2694,18 @@ ADV_ERROR:
     $selected{'DCIPHER'}{'CAST5-CBC'} = '';
     $selected{'DCIPHER'}{'BF-CBC'} = '';
     $selected{'DCIPHER'}{'DES-CBC'} = '';
-    $selected{'DCIPHER'}{$cgiparams{'DCIPHER'}} = 'SELECTED';
+    $selected{'DCIPHER'}{$vpnsettings{'DCIPHER'}} = 'SELECTED';
 
     $selected{'DAUTH'}{'whirlpool'} = '';
     $selected{'DAUTH'}{'SHA512'} = '';
     $selected{'DAUTH'}{'SHA384'} = '';
     $selected{'DAUTH'}{'SHA256'} = '';
     $selected{'DAUTH'}{'SHA1'} = '';
-    $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
+    $selected{'DAUTH'}{$vpnsettings{'DAUTH'}} = 'SELECTED';
 
     $checked{'TLSAUTH'}{'off'} = '';
     $checked{'TLSAUTH'}{'on'} = '';
-    $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
+    $checked{'TLSAUTH'}{$vpnsettings{'TLSAUTH'}} = 'CHECKED';
 
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
