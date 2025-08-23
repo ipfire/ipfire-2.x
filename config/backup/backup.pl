@@ -349,8 +349,10 @@ restore_backup() {
 		rm /var/log/pakfire.log
 	fi
 
-	# Update the OpenVPN configuration
+	# Update the OpenVPN configuration and restart the openvpn daemons
 	sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
+	/etc/init.d/openvpn-n2n restart
+	/etc/init.d/openvpn-rw restart
 
 	return 0
 }
