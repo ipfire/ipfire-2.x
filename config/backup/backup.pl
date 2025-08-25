@@ -350,6 +350,11 @@ restore_backup() {
 	fi
 
 	# Update the OpenVPN configuration and restart the openvpn daemons
+	if grep -q "ncp-disable" /var/ipfire/ovpn/server.conf; then
+		sed -r -e "/ncp-disable/d" -i /var/ipfire/ovpn/server.conf
+		echo "DATACIPHERS=AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305" >> \
+			/var/ipfire/ovpn/settings
+	fi
 	sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 	/etc/init.d/openvpn-n2n restart
 	/etc/init.d/openvpn-rw restart
