@@ -123,6 +123,10 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Update the OpenVPN configuration
+if grep -q "ncp-disable" /var/ipfire/ovpn/server.conf; then
+	sed -r -e "/ncp-disable/d" -i /var/ipfire/ovpn/server.conf
+	echo "DATACIPHERS=AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305" >> /var/ipfire/ovpn/settings
+fi
 sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 
 # Apply SSH configuration
