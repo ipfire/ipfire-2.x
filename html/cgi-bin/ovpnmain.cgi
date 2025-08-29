@@ -211,6 +211,21 @@ sub deletebackupcert
 	}
 }
 
+# Writes the OpenVPN RW server settings and ensures that some values are set
+sub writesettings() {
+	# Initialize TLSAUTH
+	if ($vpnsettings{"TLSAUTH"} eq "") {
+		$vpnsettings{"TLSAUTH"} = "off";
+	}
+
+	# Initialize MSSFIX
+	if ($vpnsettings{"MSSFIX"} eq "") {
+		$vpnsettings{"MSSFIX"} = "off";
+	}
+
+	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+}
+
 sub writeserverconf {
 	# Do we require the OpenSSL Legacy Provider?
 	my $requires_legacy_provider = 0;
@@ -1067,7 +1082,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     }
 
     if ($cgiparams{'MSSFIX'} ne 'on') {
-    	delete $vpnsettings{'MSSFIX'};
+    	$vpnsettings{'MSSFIX'} = "off";
     } else {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
@@ -1124,7 +1139,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     }
 
 	# Store our configuration
-	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&writesettings();
 
 	# Write the server configuration
 	&writeserverconf();
@@ -1419,7 +1434,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
 
 	# Store our configuration
-    &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&writesettings();
 
 	# Write the OpenVPN server configuration
     &writeserverconf();
@@ -1969,7 +1984,7 @@ END
 	$vpnsettings{'ROOTCERT_CITY'}		= $cgiparams{'ROOTCERT_CITY'};
 	$vpnsettings{'ROOTCERT_STATE'}		= $cgiparams{'ROOTCERT_STATE'};
 	$vpnsettings{'ROOTCERT_COUNTRY'}	= $cgiparams{'ROOTCERT_COUNTRY'};
-	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&writesettings();
 
 	# Replace empty strings with a .
 	(my $ou = $cgiparams{'ROOTCERT_OU'}) =~ s/^\s*$/\./;
