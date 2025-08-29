@@ -605,6 +605,7 @@ sub write_ccd_configs() {
 	foreach my $key (keys %conns) {
 		my $name = $conns{$key}[1];
 		my $type = $conns{$key}[3];
+		my $gateway = "";
 
 		# Skip anything that isn't a host connection
 		next unless ($type eq "host");
@@ -631,7 +632,12 @@ sub write_ccd_configs() {
 
 			# Fetch the network of the pool
 			my $network = &get_cdd_network($pool);
+			my $netaddr = &Network::get_netaddress($network);
 			my $netmask = &Network::get_netmask($network);
+
+			# The gateway is always the first address in the network
+			# (this is needed to push any routes below)
+			$gateway = &Network::find_next_ip_address($netaddr, 1);
 
 			if (defined $address && defined $network && defined $netmask) {
 				print CONF "# Allocated IP address from $pool\n";
@@ -708,7 +714,7 @@ sub write_ccd_configs() {
 					next;
 				}
 
-				print CONF "push \"route $netaddress $netmask\"\n";
+				print CONF "push \"route $netaddress $netmask $gateway\"\n";
 			}
 
 			# Newline
