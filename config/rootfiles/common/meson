@@ -1,11 +1,11 @@
 #usr/bin/meson
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info/entry_points.txt
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/meson-1.8.0-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info/entry_points.txt
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/meson-1.9.0-py3.10.egg-info/top_level.txt
 #usr/lib/python3.10/site-packages/mesonbuild
 #usr/lib/python3.10/site-packages/mesonbuild/__init__.py
 #usr/lib/python3.10/site-packages/mesonbuild/_pathlib.py
@@ -38,6 +38,8 @@
 #usr/lib/python3.10/site-packages/mesonbuild/cargo/cfg.py
 #usr/lib/python3.10/site-packages/mesonbuild/cargo/interpreter.py
 #usr/lib/python3.10/site-packages/mesonbuild/cargo/manifest.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/raw.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/toml.py
 #usr/lib/python3.10/site-packages/mesonbuild/cargo/version.py
 #usr/lib/python3.10/site-packages/mesonbuild/cmake
 #usr/lib/python3.10/site-packages/mesonbuild/cmake/__init__.py
