@@ -1596,7 +1596,6 @@ END
     $cahash{$key}[0] = $cgiparams{'CA_NAME'};
     $cahash{$key}[1] = $casubject;
     &General::writehasharray("${General::swroot}/ovpn/caconfig", \%cahash);
-#    system('/usr/local/bin/ipsecctrl', 'R');
 
     UPLOADCA_ERROR:
 
@@ -1652,22 +1651,15 @@ END
 	foreach my $key (keys %confighash) {
 	    my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
 	    if (grep(/: OK/, @test)) {
-		# Delete connection
-#		if ($vpnsettings{'ENABLED'} eq 'on' ||
-#		    $vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#		    system('/usr/local/bin/ipsecctrl', 'D', $key);
-#		}
 		unlink ("${General::swroot}/ovpn//certs/$confighash{$key}[1]cert.pem");
 		unlink ("${General::swroot}/ovpn/certs/$confighash{$key}[1].p12");
 		delete $confighash{$key};
 		&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-#		&writeipsecfiles();
 	    }
 	}
 	unlink ("${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
 	delete $cahash{$cgiparams{'KEY'}};
 	&General::writehasharray("${General::swroot}/ovpn/caconfig", \%cahash);
-#	system('/usr/local/bin/ipsecctrl', 'R');
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
@@ -1710,7 +1702,6 @@ END
 	    unlink ("${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
 	    delete $cahash{$cgiparams{'KEY'}};
 	    &General::writehasharray("${General::swroot}/ovpn/caconfig", \%cahash);
-#	    system('/usr/local/bin/ipsecctrl', 'R');
 	}
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
@@ -2178,10 +2169,6 @@ END
 
     ROOTCERT_SUCCESS:
     &General::system("chmod", "600", "${General::swroot}/ovpn/certs/serverkey.pem");
-#    if ($vpnsettings{'ENABLED'} eq 'on' ||
-#	$vpnsettings{'ENABLE_BLUE'} eq 'on') {
-#	system('/usr/local/bin/ipsecctrl', 'S');
-#    }
 
 ###
 ### Enable/Disable connection
@@ -3238,19 +3225,9 @@ END
 	   if ($confighash{$cgiparams{'KEY'}}[0] eq 'off') {
 	    $confighash{$cgiparams{'KEY'}}[0] = 'on';
 	    &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	    #&writeserverconf();
-#	    if ($vpnsettings{'ENABLED'} eq 'on' ||
-#		$vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#	 	system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
-#	    }
 	} else {
 	    $confighash{$cgiparams{'KEY'}}[0] = 'off';
-#	    if ($vpnsettings{'ENABLED'} eq 'on' ||
-#		$vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#		system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'});
-#	    }
 	    &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	    #&writeserverconf();
 	}
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
