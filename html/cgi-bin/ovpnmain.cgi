@@ -132,7 +132,7 @@ my $col="";
 	"MAX_CLIENTS"  => 100,
 	"MSSFIX"       => "off",
 	"TLSAUTH"      => "on",
-}) unless (%vpnsettings);
+});
 
 # Load CGI parameters
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
