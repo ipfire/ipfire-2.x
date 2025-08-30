@@ -132,7 +132,7 @@ my $col="";
 	"MAX_CLIENTS"  => 100,
 	"MSSFIX"       => "off",
 	"TLSAUTH"      => "on",
-}) unless (%vpnsettings);
+});
 
 # Load CGI parameters
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
@@ -209,6 +209,21 @@ sub deletebackupcert
 		close FILE;
 		unlink ("${General::swroot}/ovpn/certs/$hexvalue.pem");
 	}
+}
+
+# Writes the OpenVPN RW server settings and ensures that some values are set
+sub writesettings() {
+	# Initialize TLSAUTH
+	if ($vpnsettings{"TLSAUTH"} eq "") {
+		$vpnsettings{"TLSAUTH"} = "off";
+	}
+
+	# Initialize MSSFIX
+	if ($vpnsettings{"MSSFIX"} eq "") {
+		$vpnsettings{"MSSFIX"} = "off";
+	}
+
+	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
 }
 
 sub writeserverconf {
@@ -590,6 +605,7 @@ sub write_ccd_configs() {
 	foreach my $key (keys %conns) {
 		my $name = $conns{$key}[1];
 		my $type = $conns{$key}[3];
+		my $gateway = "";
 
 		# Skip anything that isn't a host connection
 		next unless ($type eq "host");
@@ -616,7 +632,12 @@ sub write_ccd_configs() {
 
 			# Fetch the network of the pool
 			my $network = &get_cdd_network($pool);
+			my $netaddr = &Network::get_netaddress($network);
 			my $netmask = &Network::get_netmask($network);
+
+			# The gateway is always the first address in the network
+			# (this is needed to push any routes below)
+			$gateway = &Network::find_next_ip_address($netaddr, 1);
 
 			if (defined $address && defined $network && defined $netmask) {
 				print CONF "# Allocated IP address from $pool\n";
@@ -693,7 +714,7 @@ sub write_ccd_configs() {
 					next;
 				}
 
-				print CONF "push \"route $netaddress $netmask\"\n";
+				print CONF "push \"route $netaddress $netmask $gateway\"\n";
 			}
 
 			# Newline
@@ -1067,7 +1088,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     }
 
     if ($cgiparams{'MSSFIX'} ne 'on') {
-    	delete $vpnsettings{'MSSFIX'};
+    	$vpnsettings{'MSSFIX'} = "off";
     } else {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
@@ -1124,7 +1145,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     }
 
 	# Store our configuration
-	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&writesettings();
 
 	# Write the server configuration
 	&writeserverconf();
@@ -1419,7 +1440,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
 
 	# Store our configuration
-    &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&writesettings();
 
 	# Write the OpenVPN server configuration
     &writeserverconf();
@@ -1596,7 +1617,6 @@ END
     $cahash{$key}[0] = $cgiparams{'CA_NAME'};
     $cahash{$key}[1] = $casubject;
     &General::writehasharray("${General::swroot}/ovpn/caconfig", \%cahash);
-#    system('/usr/local/bin/ipsecctrl', 'R');
 
     UPLOADCA_ERROR:
 
@@ -1652,22 +1672,15 @@ END
 	foreach my $key (keys %confighash) {
 	    my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
 	    if (grep(/: OK/, @test)) {
-		# Delete connection
-#		if ($vpnsettings{'ENABLED'} eq 'on' ||
-#		    $vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#		    system('/usr/local/bin/ipsecctrl', 'D', $key);
-#		}
 		unlink ("${General::swroot}/ovpn//certs/$confighash{$key}[1]cert.pem");
 		unlink ("${General::swroot}/ovpn/certs/$confighash{$key}[1].p12");
 		delete $confighash{$key};
 		&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-#		&writeipsecfiles();
 	    }
 	}
 	unlink ("${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
 	delete $cahash{$cgiparams{'KEY'}};
 	&General::writehasharray("${General::swroot}/ovpn/caconfig", \%cahash);
-#	system('/usr/local/bin/ipsecctrl', 'R');
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
@@ -1710,7 +1723,6 @@ END
 	    unlink ("${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
 	    delete $cahash{$cgiparams{'KEY'}};
 	    &General::writehasharray("${General::swroot}/ovpn/caconfig", \%cahash);
-#	    system('/usr/local/bin/ipsecctrl', 'R');
 	}
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
@@ -1978,7 +1990,7 @@ END
 	$vpnsettings{'ROOTCERT_CITY'}		= $cgiparams{'ROOTCERT_CITY'};
 	$vpnsettings{'ROOTCERT_STATE'}		= $cgiparams{'ROOTCERT_STATE'};
 	$vpnsettings{'ROOTCERT_COUNTRY'}	= $cgiparams{'ROOTCERT_COUNTRY'};
-	&General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&writesettings();
 
 	# Replace empty strings with a .
 	(my $ou = $cgiparams{'ROOTCERT_OU'}) =~ s/^\s*$/\./;
@@ -2178,10 +2190,6 @@ END
 
     ROOTCERT_SUCCESS:
     &General::system("chmod", "600", "${General::swroot}/ovpn/certs/serverkey.pem");
-#    if ($vpnsettings{'ENABLED'} eq 'on' ||
-#	$vpnsettings{'ENABLE_BLUE'} eq 'on') {
-#	system('/usr/local/bin/ipsecctrl', 'S');
-#    }
 
 ###
 ### Enable/Disable connection
@@ -3238,19 +3246,9 @@ END
 	   if ($confighash{$cgiparams{'KEY'}}[0] eq 'off') {
 	    $confighash{$cgiparams{'KEY'}}[0] = 'on';
 	    &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	    #&writeserverconf();
-#	    if ($vpnsettings{'ENABLED'} eq 'on' ||
-#		$vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#	 	system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
-#	    }
 	} else {
 	    $confighash{$cgiparams{'KEY'}}[0] = 'off';
-#	    if ($vpnsettings{'ENABLED'} eq 'on' ||
-#		$vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#		system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'});
-#	    }
 	    &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	    #&writeserverconf();
 	}
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
