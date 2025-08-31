@@ -1783,6 +1783,7 @@ build_system() {
 	lfsmake2 ntp
 	lfsmake2 openssh
 	lfsmake2 fontconfig
+	lfsmake2 prompt
 	lfsmake2 dejavu-fonts-ttf
 	lfsmake2 ubuntu-font-family
 	lfsmake2 freefont
