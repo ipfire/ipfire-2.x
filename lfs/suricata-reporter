@@ -76,5 +76,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Move the configuration file so that it can be edited by the user
+	# and will be included in the backup
+	mv -v /etc/suricata/reporter.conf \
+		/var/ipfire/suricata/reporter.conf
+	ln -svf --relative \
+		/var/ipfire/suricata/reporter.conf \
+		/etc/suricata/reporter.conf
+	chown nobody:nobody /var/ipfire/suricata/reporter.conf
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
