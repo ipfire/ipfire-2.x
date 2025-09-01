@@ -1,4 +1,5 @@
 etc/suricata/reporter.conf
+usr/bin/suricata-reporter
 usr/bin/suricata-report-cron
 usr/bin/suricata-report-generator
 #usr/share/doc/suricata-reporter
