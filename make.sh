@@ -2095,6 +2095,7 @@ build_system() {
 	lfsmake2 grub-btrfs
 	lfsmake2 fort-validator
 	lfsmake2 arpwatch
+	lfsmake2 suricata-reporter
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au
