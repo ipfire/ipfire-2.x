@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	find /srv/web/ipfire/html/{captive,redirect-templates,themes} -type d | xargs chmod -v 755
 
 	# Web UI Font
+	mkdir -pv /srv/web/ipfire/html/themes/ipfire/include/fonts
 	ln -svf --relative /usr/share/fonts/Prompt-Bold.ttf \
 		/srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Bold.ttf
 	ln -svf --relative /usr/share/fonts/Prompt-Medium.ttf \
