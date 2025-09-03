@@ -1,1 +1,3 @@
+etc/rc.d/init.d/suricata
 var/ipfire/graphs.pl
+var/ipfire/ids-functions.pl
