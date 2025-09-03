@@ -1,0 +1,13 @@
+--- pillow-11.3.0/pyproject.toml.bak	2025-08-07 15:56:16.353590772 +0000
++++ pillow-11.3.0/pyproject.toml	2025-08-07 15:56:31.049397673 +0000
+@@ -14,8 +14,8 @@
+ keywords = [
+   "Imaging",
+ ]
+-license = "MIT-CMU"
+-license-files = [ "LICENSE" ]
++#license = "MIT-CMU"
++#license-files = [ "LICENSE" ]
+ authors = [
+   { name = "Jeffrey A. Clark", email = "aclark@aclark.net" },
+ ]

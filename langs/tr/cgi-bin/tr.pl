@@ -936,7 +936,6 @@
 'enable javascript' => 'Javascripti aktifleştir',
 'enable wildcards' => 'Joker karakterleri aktifleştir:',
 'enabled' => 'Aktif:',
-'enabled on' => 'Aktif olacağı yer',
 'enabledtitle' => 'Aktif',
 'encapsulation' => 'Kapsülleme',
 'encrypted' => 'Şifre',

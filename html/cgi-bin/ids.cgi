@@ -574,6 +574,30 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		}
 	}
 
+	# Check if the e-mail feature should be used.
+	if (($cgiparams{'ENABLE_EMAIL'} eq "on") || ($cgiparams{'ENABLE_REPORT_DAILY'} eq "on") ||
+	    ($cgiparams{'ENABLE_REPORT_WEEKLY'} eq "on") || ($cgiparams{'ENABLE_REPORT_MONTLY'} eq "on")) {
+		# Check if a sender mail address has been provided.
+		unless($cgiparams{'EMAIL_SENDER'}) {
+			$errormessage = $Lang::tr{'ids no email sender'};
+		}
+
+		# Check if the given sender mail address is valid.
+		if (&_validate_mail_address($cgiparams{'EMAIL_SENDER'})) {
+			$errormessage = "$cgiparams{'EMAIL_SENDER'} - $Lang::tr{'ids invalid mail address'}";
+		}
+
+		# Check if at least one mail recipient has been given.
+		unless($cgiparams{'EMAIL_RECIPIENTS'}) {
+			$errormessage = $Lang::tr{'ids no email recipients'};
+		}
+
+		# Check if the given recipient mail address or addresses are valid.
+		if (&_validate_mail_address($cgiparams{'EMAIL_RECIPIENTS'})) {
+			$errormessage = "$cgiparams{'EMAIL_RECIPIENTS'} - $Lang::tr{'ids invalid mail address'}";
+		}
+	}
+
 	# Go on if there are no error messages.
 	if (!$errormessage) {
 		# Store settings into settings file.
@@ -588,6 +612,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 	# Generate file to store the HTTP ports.
 	&IDS::generate_http_ports_file();
+
+	# Generate report generator config file.
+	&IDS::generate_report_generator_config();
 
 	# Check if the IDS currently is running.
 	if(&IDS::ids_is_running()) {
@@ -1006,6 +1033,37 @@ sub show_mainpage() {
 	$checked{'ENABLE_IDS'}{'off'} = '';
 	$checked{'ENABLE_IDS'}{'on'} = '';
 	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
+	$checked{'ENABLE_EMAIL'}{'off'} = '';
+	$checked{'ENABLE_EMAIL'}{'on'} = '';
+	$checked{'ENABLE_EMAIL'}{$idssettings{'ENABLE_EMAIL'}} = "checked='checked'";
+
+	$selected{'EMAIL_ALERT_SEVERITY'}{$idssettings{'EMAIL_ALERT_SEVERITY'}} = "selected";
+
+	$checked{'ENABLE_REPORT_DAILY'}{'off'} = '';
+	$checked{'ENABLE_REPORT_DAILY'}{'on'} = '';
+	$checked{'ENABLE_REPORT_DAILY'}{$idssettings{'ENABLE_REPORT_DAILY'}} = "checked='checked'";
+	$checked{'ENABLE_REPORT_WEEKLY'}{'off'} = '';
+	$checked{'ENABLE_REPORT_WEEKLY'}{'on'} = '';
+	$checked{'ENABLE_REPORT_WEEKLY'}{$idssettings{'ENABLE_REPORT_WEEKLY'}} = "checked='checked'";
+	$checked{'ENABLE_REPORT_MONTHLY'}{'off'} = '';
+	$checked{'ENABLE_REPORT_MONTHLY'}{'on'} = '';
+	$checked{'ENABLE_REPORT_MONTHLY'}{$idssettings{'ENABLE_REPORT_MONTHLY'}} = "checked='checked'";
+
+	# Set E-Mail settings from settings hash.
+	my $email_sender = $idssettings{'EMAIL_SENDER'};
+	my $email_recipients = $idssettings{'EMAIL_RECIPIENTS'};
+
+	# Set form values to cgiparams state in error case.
+	if ($errormessage) {
+		$checked{'ENABLE_IDS'}{$cgiparams{'ENABLE_IDS'}} = "checked='checked'";
+		$checked{'ENABLE_EMAIL'}{$cgiparams{'ENABLE_EMAIL'}} = "checked='checked'";
+		$checked{'ENABLE_REPORT_DAILY'}{$cgiparams{'ENABLE_REPORT_DAILY'}} = "checked='checked'";
+		$checked{'ENABLE_REPORT_WEEKLY'}{$cgiparams{'ENABLE_REPORT_WEEKLY'}} = "checked='checked'";
+		$checked{'ENABLE_REPORT_MONTHLY'}{$cgiparams{'ENABLE_REPORT_MONTHLY'}} = "checked='checked'";
+
+		$email_sender = $cgiparams{'EMAIL_SENDER'};
+		$email_recipients = $cgiparams{'EMAIL_RECIPIENTS'};
+	}
 
 	# Draw current state of the IDS
 	&Header::opensection();
@@ -1024,26 +1082,23 @@ print <<END
 		<br>
 
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<table width='100%' border='0'>
+			<table class='form'>
 				<tr>
-					<td colspan='$num_zones'>
-						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
+					<td>
+						$Lang::tr{'ids enable'}
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>
 					</td>
 				</tr>
+			</table>
 
-				<tr> <!-- empty row for spacing -->
-					<td colspan='$num_zones'>
-						&nbsp;
-					</td>
-				</tr>
+			<h6>
+				$Lang::tr{'ids monitored interfaces'}
+			</h6>
 
-				<tr>
-					<td colspan='$num_zones'>
-						<b>$Lang::tr{'ids monitored interfaces'}</b>
-					</td>
-				</tr>
-
-				<tr>
+			<table class="form">
 END
 ;
 
@@ -1068,27 +1123,135 @@ END
 				$checked_input = "checked = 'checked'";
 			}
 
+			# Set the checkbox status to the cgiparams state in error case.
+			if ($errormessage) {
+				$checked_input = "checked = 'checked'" if ($cgiparams{"ENABLE_IDS_$zone_upper"} eq "on");
+			}
+
 			print <<END;
-				<td>
-					<label>
+				<tr>
+					<td>
+						&nbsp; &nbsp; <font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>
+					</td>
+
+					<td>
 						<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>
-						&nbsp; $Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>
-					</label>
-				</td>
+					</td>
+				</tr>
 END
 		}
 
 print <<END
+			</table>
+
+			<h6>
+				$Lang::tr{'ids email alerts'}
+			</h6>
+
+			<table class="form">
+				<tr>
+					<td>
+						<label for='EMAIL_SENDER'>$Lang::tr{'ids email sender'}</label>
+					</td>
+
+					<td>
+						<input type="text" name="EMAIL_SENDER" value="$email_sender">
+					<td>
 				</tr>
 
-				<tr> <!-- empty row for spacing -->
-					<td colspan='$num_zones'>
-						&nbsp;
+				<tr>
+					<td>
+						<label for='EMAIL_RECIPIENTS'>$Lang::tr{'ids email recipients'}</label>
+					</td>
+
+					<td>
+						<input type="text" name="EMAIL_RECIPIENTS" value="$email_recipients">
 					</td>
 				</tr>
 
 				<tr>
-					<td colspan='$num_zones' align='right'>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="ENABLE_EMAIL">
+							$Lang::tr{'ids send email on alert'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_EMAIL' id="ENABLED_EMAIL" $checked{'ENABLE_EMAIL'}{'on'}>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="EMAIL_ALERT_SEVERITY">
+							$Lang::tr{'ids email alert severity'}
+						</label>
+					</td>
+
+					<td>
+						<select name="EMAIL_ALERT_SEVERITY">
+							<option value="4" $selected{'EMAIL_ALERT_SEVERITY'}{'4'}>
+								$Lang::tr{'ids all including informational'}
+							</option>
+							<option value="3" $selected{'EMAIL_ALERT_SEVERITY'}{'3'}>
+								$Lang::tr{'ids high, medium and low severity'}
+							</option>
+							<option value="2" $selected{'EMAIL_ALERT_SEVERITY'}{'2'}>
+								$Lang::tr{'ids high and medium severity'}
+							</option>
+							<option value="1" $selected{'EMAIL_ALERT_SEVERITY'}{'1'}>
+								$Lang::tr{'ids high severity only'}
+							</option>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="ENABLE_REPORT_DAILY">
+							$Lang::tr{'ids reports daily'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_REPORT_DAILY' id="ENABLE_REPORT_DAILY" $checked{'ENABLE_REPORT_DAILY'}{'on'}>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="ENABLE_REPORT_WEEKLY">
+							$Lang::tr{'ids reports weekly'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_REPORT_WEEKLY' id="ENABLE_REPORT_WEEKLY" $checked{'ENABLE_REPORT_WEEKLY'}{'on'}>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="ENABLE_REPORT_MONTHLY">
+							$Lang::tr{'ids reports monthly'}
+						</label>
+					</td>
+
+					<td>
+						<input type='checkbox' name='ENABLE_REPORT_MONTHLY' id="ENABLE_REPORT_MONTHLY" $checked{'ENABLE_REPORT_MONTHLY'}{'on'}>
+					</td>
+				</tr>
+
+				<tr class="action">
+					<td colspan="2">
 						<input type='submit' name='IDS' value='$Lang::tr{'save'}' />
 					</td>
 				</tr>
@@ -2049,4 +2212,29 @@ sub _rulefile_to_category($) {
 
 	# Return the converted filename.
         return $category;
+}
+
+#
+## Private function to validate if a given string contains one or
+## more valid mail addresses.
+#
+sub _validate_mail_address($) {
+	my ($address) = @_;
+
+	# Temporary array, which holds the single mail addresses.
+	my @temp;
+
+	# Split the string of mail addresses into single pieces and
+	# store them into the temporary array.
+	@temp = split(/\,/, $address);
+
+	# Loop through the array of mail addresses.
+	foreach my $addr (@temp) {
+		# If the address contains a '@' with at least one character before and after,
+		# we consider it valid.
+		return 1 unless ($address =~ m/.@./);
+	}
+
+	# Return nothing if the address is valid.
+	return;
 }

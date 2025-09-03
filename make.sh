@@ -1484,6 +1484,21 @@ build_system() {
 	lfsmake2 gdbm
 	lfsmake2 sqlite
 	lfsmake2 python3
+	lfsmake2 python3-wheel
+	lfsmake2 python3-toml
+	lfsmake2 python3-pyproject2setuppy
+	lfsmake2 python3-packaging
+	lfsmake2 python3-pep517
+	lfsmake2 python3-build
+	lfsmake2 python3-install
+	lfsmake2 python3-urllib3
+	lfsmake2 python3-charset-normalizer
+	lfsmake2 python3-idna
+	lfsmake2 python3-certifi
+	lfsmake2 python3-requests
+	lfsmake2 python3-docutils
+	lfsmake2 python3-flit
+	lfsmake2 python3-more_itertools
 	lfsmake2 python3-setuptools
 	lfsmake2 ninja
 	lfsmake2 meson
@@ -1764,7 +1779,6 @@ build_system() {
 	lfsmake2 perl-Object-Tiny
 	lfsmake2 perl-Archive-Peek-Libarchive
 	lfsmake2 python3-inotify
-	lfsmake2 python3-docutils
 	lfsmake2 python3-daemon
 	lfsmake2 ntp
 	lfsmake2 openssh
@@ -1863,8 +1877,6 @@ build_system() {
 	lfsmake2 elinks
 	lfsmake2 igmpproxy
 	lfsmake2 opus
-	lfsmake2 python3-toml
-	lfsmake2 python3-pyproject2setuppy
 	lfsmake2 python3-pyparsing
 	lfsmake2 spice-protocol
 	lfsmake2 spice
@@ -1934,16 +1946,6 @@ build_system() {
 	lfsmake2 wireless-regdb
 	lfsmake2 ddns
 	lfsmake2 python3-pycparser
-	lfsmake2 python3-charset-normalizer
-	lfsmake2 python3-certifi
-	lfsmake2 python3-idna
-	lfsmake2 python3-requests
-	lfsmake2 python3-pep517
-	lfsmake2 python3-build
-	lfsmake2 python3-install
-	lfsmake2 python3-urllib3
-	lfsmake2 python3-flit
-	lfsmake2 python3-packaging
 	lfsmake2 python3-typing-extensions
 	lfsmake2 python3-semantic-version
 	lfsmake2 python3-setuptools-scm
@@ -1983,6 +1985,8 @@ build_system() {
 	lfsmake2 python3-exceptiongroup
 	lfsmake2 python3-trio
 	lfsmake2 python3-pyfuse3
+	lfsmake2 python3-pillow
+	lfsmake2 python3-reportlab
 	lfsmake2 aws-cli
 	lfsmake2 oci-python-sdk
 	lfsmake2 oci-cli

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 80.9.0
+VER        = 0.45.1
 
-THISAPP    = setuptools-$(VER)
+THISAPP    = wheel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ab367912eec92b0d1251916d09c1dd2e311767eec87225beaff870dff923b47ba1732d2f7393b7d9e55d1ff1249c612e4403019e0021048951f9fc3b775c04c9
+$(DL_FILE)_BLAKE2 = 13c8d60a2e39ded3d911c9e03915b01bda201f7e8cd6de456484ce6eeb2a990861a01f26e5d9f2ac4ca0ab2b6d0fea9db437d6f82cb39db9b1059c3c53202ec0
 
 install : $(TARGET)
 
@@ -73,6 +73,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python3 setup.py install
+	cd $(DIR_APP) && python3 setup.py build
+	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

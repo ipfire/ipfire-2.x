@@ -1030,7 +1030,6 @@
 'enable smt' => 'Habilitar subprocesos múltiples simultáneos (SMT)',
 'enable wildcards' => 'Activar comodines',
 'enabled' => 'Activado:',
-'enabled on' => 'Activado en',
 'enabledtitle' => 'Activado',
 'encapsulation' => 'Encapsulamiento',
 'encrypted' => 'Encriptado',

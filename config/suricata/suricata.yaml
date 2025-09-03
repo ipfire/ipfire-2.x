@@ -94,9 +94,9 @@ outputs:
 
   # Extensible Event Format (nicknamed EVE) event log in JSON format
   - eve-log:
-      enabled: no
-      filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
-      filename: eve.json
+      enabled: yes
+      filetype: unix_dgram #regular|syslog|unix_dgram|unix_stream|redis
+      filename: /var/run/suricata/reporter.socket
       # Enable for multi-threaded eve.json output; output files are amended with
       # an identifier, e.g., eve.9.json
       #threaded: false
@@ -1144,7 +1144,7 @@ unix-command:
   #filename: custom.socket
 
 # Magic file. The extension .mgc is added to the value here.
-magic-file: /usr/share/misc/magic
+magic-file: /usr/share/misc/magic.mgc
 
 # GeoIP2 database file. Specify path and filename of GeoIP2 database
 # if using rules with "geoip" rule option.

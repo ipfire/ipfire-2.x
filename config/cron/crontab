@@ -65,6 +65,11 @@ HOME=/
 # Perform a surciata rules update every 12 hours.
 @ 12h [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-ids-ruleset >/dev/null 2>&1
 
+# Send IPS reports
+&nice(5),bootrun	0 9 * * *   /usr/bin/suricata-report-cron daily
+&nice(5),bootrun	0 9 * * MON	/usr/bin/suricata-report-cron weekly
+&nice(5),bootrun	0 9 1 * *   /usr/bin/suricata-report-cron monthly
+
 # Update Lists for IP-based blocking every 15 minutes.
 @ 15 [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-ipblocklists >/dev/null 2>&1
 

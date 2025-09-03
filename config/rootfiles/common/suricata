@@ -1,6 +1,8 @@
 etc/suricata
 etc/suricata/suricata.yaml
 usr/bin/suricata
+usr/bin/suricata-reporter
+usr/bin/suricata-report-cron
 usr/bin/suricata-watcher
 #usr/bin/suricatactl
 #usr/bin/suricatasc
@@ -53,6 +55,7 @@ usr/share/suricata
 #usr/share/suricata/threshold.config
 var/cache/suricata
 var/cache/suricata/sgh
+var/ipfire/suricata/reporter.conf
 var/lib/suricata
 #var/lib/suricata/cache
 #var/lib/suricata/cache/sgh
