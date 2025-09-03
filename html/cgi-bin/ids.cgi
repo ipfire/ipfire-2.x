@@ -1170,6 +1170,10 @@ print <<END
 				</tr>
 
 				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+
+				<tr>
 					<td>
 						<label for="ENABLE_EMAIL">
 							$Lang::tr{'ids send email on alert'}
@@ -1204,6 +1208,10 @@ print <<END
 							</option>
 						</select>
 					</td>
+				</tr>
+
+				<tr>
+					<td colspan="2">&nbsp;</td>
 				</tr>
 
 				<tr>
