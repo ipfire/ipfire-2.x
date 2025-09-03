@@ -1037,6 +1037,8 @@ sub show_mainpage() {
 	$checked{'ENABLE_EMAIL'}{'on'} = '';
 	$checked{'ENABLE_EMAIL'}{$idssettings{'ENABLE_EMAIL'}} = "checked='checked'";
 
+	$selected{'EMAIL_ALERT_SEVERITY'}{$idssettings{'EMAIL_ALERT_SEVERITY'}} = "selected";
+
 	$checked{'ENABLE_REPORT_DAILY'}{'off'} = '';
 	$checked{'ENABLE_REPORT_DAILY'}{'on'} = '';
 	$checked{'ENABLE_REPORT_DAILY'}{$idssettings{'ENABLE_REPORT_DAILY'}} = "checked='checked'";
@@ -1176,6 +1178,31 @@ print <<END
 
 					<td>
 						<input type='checkbox' name='ENABLE_EMAIL' id="ENABLED_EMAIL" $checked{'ENABLE_EMAIL'}{'on'}>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<label for="EMAIL_ALERT_SEVERITY">
+							$Lang::tr{'ids email alert severity'}
+						</label>
+					</td>
+
+					<td>
+						<select name="EMAIL_ALERT_SEVERITY">
+							<option value="4" $selected{'EMAIL_ALERT_SEVERITY'}{'4'}>
+								$Lang::tr{'ids all including informational'}
+							</option>
+							<option value="3" $selected{'EMAIL_ALERT_SEVERITY'}{'3'}>
+								$Lang::tr{'ids high, medium and low severity'}
+							</option>
+							<option value="2" $selected{'EMAIL_ALERT_SEVERITY'}{'2'}>
+								$Lang::tr{'ids high and medium severity'}
+							</option>
+							<option value="1" $selected{'EMAIL_ALERT_SEVERITY'}{'1'}>
+								$Lang::tr{'ids high severity only'}
+							</option>
+						</select>
 					</td>
 				</tr>
 

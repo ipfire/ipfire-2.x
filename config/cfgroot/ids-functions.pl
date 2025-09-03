@@ -1781,6 +1781,11 @@ sub generate_report_generator_config() {
 	print FILE "sender = $idssettings{'EMAIL_SENDER'}\n";
 	print FILE "recipients = $idssettings{'EMAIL_RECIPIENTS'}\n";
 
+	# Optionally add the severity
+	if ($idssettings{'EMAIL_ALERT_SEVERITY'}) {
+		print FILE "severity = $idssettings{'EMAIL_ALERT_SEVERITY'}\n";
+	}
+
 	close(FILE);
 }
 

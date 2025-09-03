@@ -156,9 +156,14 @@
 < AES-256-GCM
 < CHACHA20-POLY1305
 < dns servers
+< ids all including informational
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
@@ -217,9 +222,14 @@
 < g.dtm
 < g.lite
 < hostile networks total
+< ids all including informational
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
@@ -572,6 +582,7 @@
 < hostile networks total
 < ids add provider
 < ids adjust ruleset
+< ids all including informational
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -581,6 +592,7 @@
 < ids customize ruleset
 < ids download new ruleset
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
 < ids enable
@@ -589,6 +601,9 @@
 < ids finished
 < ids force ruleset update
 < ids hide
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids ignored hosts
 < ids invalid mail address
 < ids log hits
@@ -1226,6 +1241,7 @@
 < hostile networks total
 < ids add provider
 < ids adjust ruleset
+< ids all including informational
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1235,6 +1251,7 @@
 < ids customize ruleset
 < ids download new ruleset
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
 < ids enable
@@ -1243,6 +1260,9 @@
 < ids finished
 < ids force ruleset update
 < ids hide
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids ignored hosts
 < ids invalid mail address
 < ids log hits
@@ -2182,6 +2202,7 @@
 < hostile networks total
 < ids add provider
 < ids adjust ruleset
+< ids all including informational
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -2191,6 +2212,7 @@
 < ids customize ruleset
 < ids download new ruleset
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
 < ids enable
@@ -2199,6 +2221,9 @@
 < ids finished
 < ids force ruleset update
 < ids hide
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids ignored hosts
 < ids invalid mail address
 < ids log hits
@@ -3306,6 +3331,7 @@
 < hour-graph
 < ids add provider
 < ids adjust ruleset
+< ids all including informational
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -3315,6 +3341,7 @@
 < ids customize ruleset
 < ids download new ruleset
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
 < ids enable
@@ -3323,6 +3350,9 @@
 < ids finished
 < ids force ruleset update
 < ids hide
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids ignored hosts
 < ids invalid mail address
 < ids log hits
@@ -4024,6 +4054,7 @@
 < hostile networks total
 < ids add provider
 < ids adjust ruleset
+< ids all including informational
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -4033,6 +4064,7 @@
 < ids customize ruleset
 < ids download new ruleset
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
 < ids enable
@@ -4041,6 +4073,9 @@
 < ids finished
 < ids force ruleset update
 < ids hide
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids ignored hosts
 < ids invalid mail address
 < ids log hits
@@ -4365,9 +4400,14 @@
 < CHACHA20-POLY1305
 < dns servers
 < guaranteed bandwidth
+< ids all including informational
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
@@ -4423,9 +4463,14 @@
 < CHACHA20-POLY1305
 < dns servers
 < guaranteed bandwidth
+< ids all including informational
 < ids email alerts
+< ids email alert severity
 < ids email recipients
 < ids email sender
+< ids high and medium severity
+< ids high, medium and low severity
+< ids high severity only
 < ids invalid mail address
 < ids no email recipients
 < ids no email sender
