@@ -12,6 +12,7 @@ etc/rc.d/rc3.d/S51openvpn-n2n
 etc/rc.d/rc6.d/K10openvpn-rw
 etc/rc.d/rc6.d/K11openvpn-n2n
 etc/rc.d/rcsysinit.d/S46cpupower
+etc/sysconfig/createfiles
 lib/udev/network-hotplug-master
 lib/udev/network-hotplug-rename
 lib/udev/rules.d/60-net.rules
