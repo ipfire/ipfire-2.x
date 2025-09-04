@@ -25,7 +25,7 @@
 # 		<major> and <minor> are the major and minor numbers used for the device.
 ########################################################################
 
-/var/run/ovpnserver.log	file	644	nobody	nobody
+/var/run/openvpn-rw.log	file	644	nobody	nobody
 /var/run/openvpn	dir	644	nobody	nobody
 
 # End /etc/sysconfig/createfiles
