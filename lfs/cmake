@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.0.2
+VER        = 4.1.1
 
 THISAPP    = cmake-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3ea56ae2916f60f564a1d630ddff97ccd41ec11753aabde894f9a0369477ae57ed9b9e45f7a6684cca534706554b613bfa95b8105a2a19917d5ca1c76c7ea1c9
+$(DL_FILE)_BLAKE2 = 8e0806d2d2342c646ca3379dd9481dd27705d84d9720dc572beadd9e8eac48dd27398df6bdade34eb5294416aa62bb075eaa622c28679a82bacafc66f1b165c2
 
 install : $(TARGET)
 
