@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 6.14.0
+VER        = 6.16.0
+# https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/
 
 THISAPP    = xfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -46,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5ef446b2055356627cd91ebfe9bb07388f9b5a12fd8c530b83980261b2dc3ddfa47f809114f0f238ef787ed687d324abe82427fdc2b3ecc3171d4d06615dd0c4
+$(DL_FILE)_BLAKE2 = ae4087c887b4c9d2fcc4b5341ca3c7d0333cf2132111179feee4b765ba9a1cc94143723b2bc4bcd8658bd7902871266af69293c77d715de1d0e878dc76b42e8e
 
 install : $(TARGET)
 
@@ -80,8 +81,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && make $(MAKETUNING) DEBUG=-DNDEBUG INSTALL_USER=root INSTALL_GROUP=root \
-		LOCAL_CONFIGURE_OPTIONS="$(CONFIGURE_OPTIONS)"
+	cd $(DIR_APP) && make $(MAKETUNING) \
+					DEBUG=-DNDEBUG \
+					INSTALL_USER=root \
+					INSTALL_GROUP=root \
+					LOCAL_CONFIGURE_OPTIONS="$(CONFIGURE_OPTIONS)"
 	cd $(DIR_APP) && make install install-dev
 	cd $(DIR_APP) && install -v -m755 -D libhandle/libhandle.la /usr/lib/libhandle.la
 	chmod -v 755 /lib/libhandle.so*
