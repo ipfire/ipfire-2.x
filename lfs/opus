@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Opus Audio Codec Library
 
-VER        = 1.5.1
+VER        = 1.5.2
 
 THISAPP    = opus-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = opus
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5ba1d6f28594f366b545507bafb22751e15a0e78e152e7cdef456dccb0bc9fc512faa18c90fb4ea5455a9535de89df987dea8a0fabce9a25c285d0c410d4b482
+$(DL_FILE)_BLAKE2 = 1c54de8171df1da69b64a2eca4ce97a0280cfceafb387f40ef1186add366030a397fabc19b18cf1e50d6dbaccb027697d1e2b3da4fa6ab73d70c2b4e723e87f7
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -80,7 +80,9 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure  --prefix=/usr --libdir=/usr/lib
+	cd $(DIR_APP) && ./configure  \
+				--prefix=/usr \
+				--libdir=/usr/lib
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
