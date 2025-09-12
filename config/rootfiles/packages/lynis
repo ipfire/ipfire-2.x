@@ -120,3 +120,4 @@ var/ipfire/lynis/lynis
 #var/ipfire/lynis/plugins
 #var/ipfire/lynis/plugins/README
 var/ipfire/lynis/plugins/custom_plugin.template
+#var/ipfire/lynis/publiccode.yml
