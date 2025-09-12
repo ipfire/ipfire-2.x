@@ -45,6 +45,7 @@ usr/bin/vtysh
 #usr/include/frr/graph.h
 #usr/include/frr/hash.h
 #usr/include/frr/hook.h
+#usr/include/frr/host_nb.h
 #usr/include/frr/iana_afi.h
 #usr/include/frr/id_alloc.h
 #usr/include/frr/if.h
@@ -68,13 +69,11 @@ usr/bin/vtysh
 #usr/include/frr/log_vty.h
 #usr/include/frr/md5.h
 #usr/include/frr/memory.h
-#usr/include/frr/mgmt.pb-c.h
 #usr/include/frr/mgmt_be_client.h
 #usr/include/frr/mgmt_defines.h
 #usr/include/frr/mgmt_fe_client.h
 #usr/include/frr/mgmt_msg.h
 #usr/include/frr/mgmt_msg_native.h
-#usr/include/frr/mgmt_pb.h
 #usr/include/frr/mlag.h
 #usr/include/frr/module.h
 #usr/include/frr/monotime.h
@@ -183,6 +182,10 @@ usr/lib/libfrrcares.so.0.0.0
 #usr/lib/libmgmt_be_nb.so
 usr/lib/libmgmt_be_nb.so.0
 usr/lib/libmgmt_be_nb.so.0.0.0
+#usr/lib/libmlag_pb.la
+#usr/lib/libmlag_pb.so
+usr/lib/libmlag_pb.so.0
+usr/lib/libmlag_pb.so.0.0.0
 usr/sbin/bgpd
 usr/sbin/fabricd
 usr/sbin/fpm_listener
@@ -219,6 +222,7 @@ usr/sbin/zebra
 #usr/share/yang/frr-deviations-bgp-datacenter.yang
 #usr/share/yang/frr-deviations-ietf-key-chain.yang
 #usr/share/yang/frr-filter.yang
+#usr/share/yang/frr-host.yang
 #usr/share/yang/frr-if-rmap.yang
 #usr/share/yang/frr-interface.yang
 #usr/share/yang/frr-module-translator.yang
@@ -243,4 +247,5 @@ usr/sbin/zebra
 #usr/share/yang/ietf-netconf-with-defaults.yang
 #usr/share/yang/ietf-netconf.yang
 #usr/share/yang/ietf-routing-types.yang
+#usr/share/yang/ietf-srv6-types.yang
 var/ipfire/backup/addons/includes/frr

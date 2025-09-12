@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = FRRouting Routing daemon
 
-VER        = 10.3.1
+VER        = 10.4.1
 
 THISAPP    = frr-frr-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = frr
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = aeeaa15bcd102ec322672106e1fdd98f2d124ac79514be6ee1ac63648a336519a95b1f1dc5fbee348b92796e6e79e2a9f857b959af5838b2c2b4afb2dc68de0a
+$(DL_FILE)_BLAKE2 = 1270fe6bb82e9e0ea718bab72658ad8b82c936f06f2c5e3686a66f3e9baeedf10e181bbf6c9cd05713194518f7bc6ab561b9baeaf609716fe182240e8abccdce
 
 install : $(TARGET)
 
