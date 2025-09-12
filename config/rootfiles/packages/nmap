@@ -581,6 +581,8 @@ usr/share/nmap/scripts/metasploit-info.nse
 usr/share/nmap/scripts/metasploit-msgrpc-brute.nse
 usr/share/nmap/scripts/metasploit-xmlrpc-brute.nse
 usr/share/nmap/scripts/mikrotik-routeros-brute.nse
+usr/share/nmap/scripts/mikrotik-routeros-username-brute.nse
+usr/share/nmap/scripts/mikrotik-routeros-version.nse
 usr/share/nmap/scripts/mmouse-brute.nse
 usr/share/nmap/scripts/mmouse-exec.nse
 usr/share/nmap/scripts/modbus-discover.nse
@@ -791,6 +793,7 @@ usr/share/nmap/scripts/stuxnet-detect.nse
 usr/share/nmap/scripts/supermicro-ipmi-conf.nse
 usr/share/nmap/scripts/svn-brute.nse
 usr/share/nmap/scripts/targets-asn.nse
+usr/share/nmap/scripts/targets-ipv6-eui64.nse
 usr/share/nmap/scripts/targets-ipv6-map4to6.nse
 usr/share/nmap/scripts/targets-ipv6-multicast-echo.nse
 usr/share/nmap/scripts/targets-ipv6-multicast-invalid-dst.nse
