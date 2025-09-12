@@ -20,6 +20,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+srv/web/ipfire/cgi-bin/wio.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/local/bin/openvpnctrl
 var/ipfire/backup/bin/backup.pl
@@ -31,4 +32,5 @@ var/ipfire/menu.d/40-services.menu
 var/ipfire/main/manualpages
 var/ipfire/ovpn/collectd.vpn
 var/ipfire/suricata/ruleset-sources
+var/ipfire/wio/wiovpn.pl
 var/ipfire/wireguard-functions.pl
