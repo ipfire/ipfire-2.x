@@ -12,6 +12,7 @@ etc/rc.d/rc3.d/S51openvpn-n2n
 etc/rc.d/rc6.d/K10openvpn-rw
 etc/rc.d/rc6.d/K11openvpn-n2n
 etc/rc.d/rcsysinit.d/S46cpupower
+etc/sysconfig/createfiles
 lib/udev/network-hotplug-master
 lib/udev/network-hotplug-rename
 lib/udev/rules.d/60-net.rules
@@ -19,6 +20,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+srv/web/ipfire/cgi-bin/wio.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/local/bin/openvpnctrl
 var/ipfire/backup/bin/backup.pl
@@ -30,4 +32,5 @@ var/ipfire/menu.d/40-services.menu
 var/ipfire/main/manualpages
 var/ipfire/ovpn/collectd.vpn
 var/ipfire/suricata/ruleset-sources
+var/ipfire/wio/wiovpn.pl
 var/ipfire/wireguard-functions.pl

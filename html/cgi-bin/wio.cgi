@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2021 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2025 IPFire Team  <info@ipfire.org>                      #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -1291,7 +1291,7 @@ print"</table>";
 
 if ( -e "$ovpnpid" ) {
 
-@ovpnstatus = `cat /var/run/ovpnserver.log`;
+@ovpnstatus = `cat /var/run/openvpn-rw.log`;
 
 print"
 <table border='0' width='100%' bordercolor='$Header::bordercolour' cellspacing='0' cellpadding='0' style='border-collapse: collapse'>

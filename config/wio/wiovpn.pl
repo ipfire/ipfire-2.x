@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2025 IPFire Team  <info@ipfire.org>                      #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2020/05/04 12:02:23
+#
 #
 # This wioovpn.pl is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -75,7 +75,7 @@ if ( ! -e "$ovpnpid" ) {
 }
 else {
 
-@ovpnstatus = `cat /var/run/ovpnserver.log`;
+@ovpnstatus = `cat /var/run/openvpn-rw.log`;
 
 open(FILE, "$ovpnconfig");
 @ovpncfg = <FILE>;
