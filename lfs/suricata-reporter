@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2
+VER        = 0.3
 
 THISAPP    = suricata-reporter-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = af8a881c467898bfad94622d91733f86cfebcca848ac445c6a447e980535d0d6ea4f86be47b7e5db4a6182d0c6d21b2504aa9979aa5a113672597d00d82843e8
+$(DL_FILE)_BLAKE2 = 8e06248fadb582244b32e4bdbf68cd584e4f7048a917f4891d7c92351e5f879c5149e82d8a1c25ca14e33a954d338214b18d95bb7a92fbc87fcf9548e6dd266d
 
 install : $(TARGET)
 
