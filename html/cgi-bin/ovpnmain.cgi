@@ -605,7 +605,6 @@ sub write_ccd_configs() {
 	foreach my $key (keys %conns) {
 		my $name = $conns{$key}[1];
 		my $type = $conns{$key}[3];
-		my $gateway = "";
 
 		# Skip anything that isn't a host connection
 		next unless ($type eq "host");
@@ -637,12 +636,34 @@ sub write_ccd_configs() {
 
 			# The gateway is always the first address in the network
 			# (this is needed to push any routes below)
-			$gateway = &Network::find_next_ip_address($netaddr, 1);
+			my $gateway = &Network::find_next_ip_address($netaddr, 1);
 
 			if (defined $address && defined $network && defined $netmask) {
 				print CONF "# Allocated IP address from $pool\n";
-				print CONF "ifconfig-push ${address} ${netmask}\n\n";
+				print CONF "ifconfig-push ${address} ${netmask}\n";
 			}
+
+			# Push the first address of the static pool as the gateway.
+			# Withtout this pushed, the client will receive the first IP address
+			# of the dynamic pool which will cause problems later on:
+			# Any additional routes won't be able to reach the dynamic gateway
+			# but pushing a host route is not possible, because the OpenVPN client
+			# does not seem to understand how a layer 3 VPN works.
+			if (defined $gateway) {
+				print CONF "push \"route-gateway ${gateway}\"\n";
+			}
+
+			# Add a host route for the dynamic pool gateway so that
+			# the firewall can reach the client without needing to assign
+			# the gateway IP address of the static pool to the tun interface.
+			$netaddr = &Network::get_netaddress($vpnsettings{'DOVPN_SUBNET'});
+			$gateway = &Network::find_next_ip_address($netaddr, 1);
+			if (defined $gateway) {
+				print CONF "push \"route ${gateway} 255.255.255.255\"\n";
+			}
+
+			# End the block
+			print CONF "\n";
 		}
 
 		# Redirect Gateway?
@@ -714,7 +735,7 @@ sub write_ccd_configs() {
 					next;
 				}
 
-				print CONF "push \"route $netaddress $netmask $gateway\"\n";
+				print CONF "push \"route $netaddress $netmask\"\n";
 			}
 
 			# Newline
@@ -924,23 +945,24 @@ sub check_ccdconf
 sub read_routepushfile($) {
 	my $hash = shift;
 
-	# Don't read the legacy file if we already have a value
-	if ($hash->{'ROUTES_PUSH'} ne "") {
-		unlink($routes_push_file);
-
 	# This is some legacy code that reads the routes file if it is still present
-	} elsif (-e "$routes_push_file") {
-		delete $hash->{'ROUTES_PUSH'};
-
+	if (-e "$routes_push_file") {
 		my @routes = ();
 
 		open(FILE,"$routes_push_file");
 		while (<FILE>) {
+			chomp;
 			push(@routes, $_);
 		}
 		close(FILE);
 
 		$hash->{'ROUTES_PUSH'} = join("|", @routes);
+
+		# Write the settings
+		&writesettings();
+
+		# Unlink the legacy file
+		unlink($routes_push_file);
 	}
 }
 
