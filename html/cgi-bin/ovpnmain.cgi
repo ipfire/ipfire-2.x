@@ -945,23 +945,24 @@ sub check_ccdconf
 sub read_routepushfile($) {
 	my $hash = shift;
 
-	# Don't read the legacy file if we already have a value
-	if ($hash->{'ROUTES_PUSH'} ne "") {
-		unlink($routes_push_file);
-
 	# This is some legacy code that reads the routes file if it is still present
-	} elsif (-e "$routes_push_file") {
-		delete $hash->{'ROUTES_PUSH'};
-
+	if (-e "$routes_push_file") {
 		my @routes = ();
 
 		open(FILE,"$routes_push_file");
 		while (<FILE>) {
+			chomp;
 			push(@routes, $_);
 		}
 		close(FILE);
 
 		$hash->{'ROUTES_PUSH'} = join("|", @routes);
+
+		# Write the settings
+		&writesettings();
+
+		# Unlink the legacy file
+		unlink($routes_push_file);
 	}
 }
 
