@@ -349,8 +349,12 @@ restore_backup() {
 		rm /var/log/pakfire.log
 	fi
 
-	# Update the OpenVPN configuration and restart the openvpn daemons
+	# Update the OpenVPN configuration, update the RW log entry in collectd.vpn
+	# if it is the old name and restart the openvpn daemons
 	sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
+	if grep -q "/var/run/ovpnserver.log" /var/ipfire/ovpn/collectd.vpn; then
+		sed -i 's|"/var/run/ovpnserver.log"|"/var/run/openvpn-rw.log"|' /var/ipfire/ovpn/collectd.vpn
+	fi
 	/etc/init.d/openvpn-n2n restart
 	/etc/init.d/openvpn-rw restart
 

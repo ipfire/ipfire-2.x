@@ -125,6 +125,11 @@ ldconfig
 # Update the OpenVPN configuration
 sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 
+# Replace the OpenVPN RW log name in collectd.vpn
+if grep -q "/var/run/ovpnserver.log" /var/ipfire/ovpn/collectd.vpn; then
+	sed -i 's|"/var/run/ovpnserver.log"|"/var/run/openvpn-rw.log"|' /var/ipfire/ovpn/collectd.vpn
+fi
+
 # Apply SSH configuration
 /usr/local/bin/sshctrl
 
