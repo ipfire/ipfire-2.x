@@ -653,6 +653,15 @@ sub write_ccd_configs() {
 				print CONF "push \"route-gateway ${gateway}\"\n";
 			}
 
+			# Add a host route for the dynamic pool gateway so that
+			# the firewall can reach the client without needing to assign
+			# the gateway IP address of the static pool to the tun interface.
+			$netaddr = &Network::get_netaddress($vpnsettings{'DOVPN_SUBNET'});
+			$gateway = &Network::find_next_ip_address($netaddr, 1);
+			if (defined $gateway) {
+				print CONF "push \"route ${gateway} 255.255.255.255\"\n";
+			}
+
 			# End the block
 			print CONF "\n";
 		}
