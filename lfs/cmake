@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i '/"lib64"/s/64//' Modules/GNUInstallDirs.cmake
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cmake-4.1.1_Avoid_using_undocumented_type_for_CURLOPT_PROXYTYPE_values.patch
 	cd $(DIR_APP) && ./bootstrap \
 			--prefix=/usr \
 			--mandir=/share/man \

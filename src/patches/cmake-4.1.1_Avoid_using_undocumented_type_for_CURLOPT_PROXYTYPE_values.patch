@@ -1,0 +1,11 @@
+--- cmake-4.1.1/Source/CTest/cmCTestCurl.h.orig	2025-08-27 18:33:28.000000000 +0200
++++ cmake-4.1.1/Source/CTest/cmCTestCurl.h	2025-09-13 15:07:02.531027863 +0200
+@@ -52,7 +52,7 @@
+   std::vector<std::string> HttpHeaders;
+   std::string HTTPProxyAuth;
+   std::string HTTPProxy;
+-  curl_proxytype HTTPProxyType;
++  long HTTPProxyType;
+   bool UseHttp10 = false;
+   bool Quiet = false;
+   int TimeOutSeconds = 0;
