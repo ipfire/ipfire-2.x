@@ -16,6 +16,7 @@ etc/sysconfig/createfiles
 lib/udev/network-hotplug-master
 lib/udev/network-hotplug-rename
 lib/udev/rules.d/60-net.rules
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
