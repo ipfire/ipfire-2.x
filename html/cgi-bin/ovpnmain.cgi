@@ -306,9 +306,7 @@ sub writeserverconf {
     print CONF "status $RW_STATUS 30\n";
 
 	# Cryptography
-	if ($vpnsettings{'DATACIPHERS'} eq '') {
-		print CONF "ncp-disable\n";
-	} else {
+	if ($vpnsettings{'DATACIPHERS'} ne '') {
 		print CONF "data-ciphers " . $vpnsettings{'DATACIPHERS'} =~ s/\|/:/gr . "\n";
 	}
 
