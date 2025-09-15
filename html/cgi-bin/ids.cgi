@@ -57,7 +57,7 @@ my @network_zones = &Network::get_available_network_zones();
 push(@network_zones, "ipsec", "wg");
 
 # Check if openvpn is started and add it to the array of network zones.
-if ( -e "/var/run/openvpn.pid") {
+if ( -e "/var/run/openvpn-rw.pid") {
 	push(@network_zones, "ovpn");
 }
 
