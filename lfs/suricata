@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.0.0
+VER        = 8.0.1
 
 THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = be76000891acfd6746c05023abb633aff86d90a9a18ecf49758bf05cdc52ed7184f2ac87056dc19489dff0dda81c1139a8a608f682389533ae07a8295fab20c3
+$(DL_FILE)_BLAKE2 = 52b2fb30a4c56a5a0979ac2016b707e089cdc3ecdf85d834cf2a22e92465136fda11b6830a95831c0146f6f3db7b93892649ee15317a9db1825452266611722b
 
 install : $(TARGET)
 
