@@ -34,6 +34,8 @@ done
 # Stop services
 
 # Remove files
+rm -rfv \
+	/usr/lib/libhtp.so.2*
 
 # Extract files
 extract_files

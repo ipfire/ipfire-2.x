@@ -1796,7 +1796,6 @@ build_system() {
 	lfsmake2 setup
 	lfsmake2 jansson
 	lfsmake2 yaml
-	lfsmake2 libhtp
 	lfsmake2 colm
 	lfsmake2 ragel
 	lfsmake2 vectorscan

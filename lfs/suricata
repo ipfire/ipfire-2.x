@@ -77,7 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--localstatedir=/var \
 		--enable-gccprotect \
 		--disable-gccmarch-native \
-		--enable-non-bundled-htp \
 		--enable-nfqueue \
 		--disable-static \
 		--disable-python \
