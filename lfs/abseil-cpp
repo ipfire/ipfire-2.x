@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20250127.0
+VER        = 20250814.0
 
 THISAPP    = abseil-cpp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 70fa05a0db91b9e7ccf9f2828a7bf4b7fe6d7177b5f2d17b2f2f6f2a5e83289674d624fa7983410713a2d62b1025a5b5d957f1ba11e01cb727fc771ce76bc914
+$(DL_FILE)_BLAKE2 = f60f3604215f64f33fad902637360050061ec62cfa6413cafc4cd3794a1898c7ee67f7b6edf78e5cb7c6b0ed86b8d80338ad4abee3f2664e391c2cfae5997220
 
 install : $(TARGET)
 

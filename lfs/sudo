@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.9.17p1
+VER        = 1.9.17p2
 
 THISAPP    = sudo-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 21771348a8de392767c366bb938951327dcc64a4cedee716a802435899e5135c218468271833a9e3ab9d90bda29e36c0870e27dd333d3a5c64fb8e3a5ebbff58
+$(DL_FILE)_BLAKE2 = dd42ff4fd571ba8489cc59d71a09c7e0483d21daf9faf7e697beedc04d9f170b01e60446af179c949a3da115b616fbec07aff8fbf8b7d502161c24d1b35b7a69
 
 install : $(TARGET)
 

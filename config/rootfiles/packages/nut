@@ -27,6 +27,7 @@ usr/bin/clone-outlet
 usr/bin/dummy-ups
 usr/bin/etapro
 usr/bin/everups
+usr/bin/failover
 usr/bin/gamatronic
 usr/bin/genericups
 usr/bin/isbmex
@@ -44,12 +45,15 @@ usr/bin/nhs_ser
 usr/bin/nut-scanner
 usr/bin/nutconf
 usr/bin/nutdrv_atcl_usb
+usr/bin/nutdrv_hashx
 usr/bin/nutdrv_qx
 usr/bin/nutdrv_siemens-sitop
 usr/bin/oneac
 usr/bin/optiups
 usr/bin/powercom
 usr/bin/powerpanel
+usr/bin/powervar_cx_ser
+usr/bin/powervar_cx_usb
 usr/bin/rhino
 usr/bin/richcomm_usb
 usr/bin/riello_ser
@@ -69,6 +73,7 @@ usr/bin/upslog
 usr/bin/upsrw
 usr/bin/upssched-cmd
 usr/bin/usbhid-ups
+usr/bin/ve-direct
 usr/bin/victronups
 #usr/include/nut-scan.h
 #usr/include/nutclient.h
@@ -89,8 +94,8 @@ usr/lib/libnutclientstub.so.1
 usr/lib/libnutclientstub.so.1.0.1
 #usr/lib/libnutscan.la
 #usr/lib/libnutscan.so
-usr/lib/libnutscan.so.3
-usr/lib/libnutscan.so.3.0.0
+usr/lib/libnutscan.so.4
+usr/lib/libnutscan.so.4.0.0
 #usr/lib/libupsclient.la
 #usr/lib/libupsclient.so
 usr/lib/libupsclient.so.7

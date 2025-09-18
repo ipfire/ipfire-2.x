@@ -112,5 +112,10 @@ else
 	cd /usr/lib/python3.10 && find . | grep -E "(/test/)" | xargs rm -rf
 endif
 
+	# Remove the bundled setuptools directories
+ifeq "$(ROOT)" ""
+	rm -rfv /usr/lib/python3.10/site-packages/setuptools*
+endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

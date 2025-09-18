@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Network UPS Tools Core (Uninterruptible Power Supply Monitoring)
 
-VER        = 2.8.3
+VER        = 2.8.4
 
 THISAPP    = nut-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nut
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 515e829286b123610a856003a8838a022ae365b193988477086a683b9da0a99b3b1cf048cecd75c764c8a9a03856e966bd9d82333475670d1df43899d9b8a7bf
+$(DL_FILE)_BLAKE2 = 1a9e86c112055b623811e1747aa420ebb8022189c2e43f38c29cca93171d59b895d1ff5487d8f325c79833c6f6a76bffd849fb179db158bb2a1fbf86952dd797
 
 install : $(TARGET)
 

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.8.0
+VER        = 3.8.1
 
 THISAPP    = libarchive-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 7cdccd6b4cbb180dbd40fba3461fa98b53aaf05c0b4b71776d9bb26d1ed5329b8aff9cb534667334a4069bb6e1e629522b048ce859c408d48ba96cec9c41bddf
+$(DL_FILE)_BLAKE2 = 92ce11758ea050c7f5b3b2440566b71d29d4fe3ee90ee3455117585ef629eb7cfbe6f3c67bfb309c38d02118ef8f71c1c30ffe14466bfef7929c6d6134b11fc8
 
 install : $(TARGET)
 

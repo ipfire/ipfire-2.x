@@ -747,7 +747,6 @@
 'enable javascript' => 'Разрешить javascript',
 'enable wildcards' => 'Разрешить wildcards:',
 'enabled' => 'Включено:',
-'enabled on' => 'Разрешено на',
 'enabledtitle' => 'Включено',
 'encapsulation' => 'Инкапсуляция',
 'encrypted' => 'Зашифровано',

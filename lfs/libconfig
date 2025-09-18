@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8
+VER        = 1.8.1
 
 THISAPP    = libconfig-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3879fa62277332f9df07c3776d11e6ec6c7518fe83c83a6b50b15683a34d9d57f54bb550f911076654b0f62c40fa650167d8a233e01f05be0c5b5dcc9fc8749b
+$(DL_FILE)_BLAKE2 = 96e6da09e8efdd6091edfe58cbc860296e6c484257ea95df95eea3c103fc03a46159136483d35ac4bf25ab6284d8284a1bd988d8499eb057d6226ac4ae7e950a
 
 install : $(TARGET)
 
@@ -75,7 +75,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP) && ./configure \
-				--prefix=/usr
+				--prefix=/usr \
+				--disable-static \
+				--disable-doc \
+				--disable-examples \
+				--disable-tests
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

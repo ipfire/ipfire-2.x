@@ -1,0 +1,11 @@
+--- suricata-8.0.0-beta1/rules/stream-events.rules.orig	2025-04-08 14:50:55.000000000 +0200
++++ suricata-8.0.0-beta1/rules/stream-events.rules	2025-06-03 16:16:56.517635788 +0200
+@@ -97,7 +97,7 @@
+ # rule to alert if a stream has excessive retransmissions
+ alert tcp any any -> any any (msg:"SURICATA STREAM excessive retransmissions"; flowbits:isnotset,tcp.retransmission.alerted; flowint:tcp.retransmission.count,>=,10; flowbits:set,tcp.retransmission.alerted; classtype:protocol-command-decode; sid:2210054; rev:1;)
+ # Packet on wrong thread. Fires at most once per flow.
+-alert tcp any any -> any any (msg:"SURICATA STREAM pkt seen on wrong thread"; stream-event:wrong_thread; threshold:type backoff, track by_flow, count 1, multiplier 10; sid:2210059; rev:2;)
++#alert tcp any any -> any any (msg:"SURICATA STREAM pkt seen on wrong thread"; stream-event:wrong_thread; threshold:type backoff, track by_flow, count 1, multiplier 10; sid:2210059; rev:2;)
+ 
+ # Packet with FIN+SYN set
+ alert tcp any any -> any any (msg:"SURICATA STREAM FIN SYN reuse"; stream-event:fin_syn; threshold:type backoff, track by_flow, count 1, multiplier 2; classtype:protocol-command-decode; sid:2210060; rev:2;)

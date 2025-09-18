@@ -45,11 +45,15 @@ usr/libexec/qemu-bridge-helper
 #usr/share/qemu
 #usr/share/qemu/QEMU,cgthree.bin
 #usr/share/qemu/QEMU,tcx.bin
-#usr/share/qemu/bamboo.dtb
+usr/share/qemu/ast27x0_bootrom.bin
 usr/share/qemu/bios-256k.bin
 usr/share/qemu/bios-microvm.bin
 usr/share/qemu/bios.bin
-#usr/share/qemu/canyonlands.dtb
+#usr/share/qemu/dtb
+usr/share/qemu/dtb/bamboo.dtb
+usr/share/qemu/dtb/canyonlands.dtb
+usr/share/qemu/dtb/petalogix-ml605.dtb
+usr/share/qemu/dtb/petalogix-s3adsp1800.dtb
 usr/share/qemu/edk2-aarch64-code.fd
 usr/share/qemu/edk2-arm-code.fd
 usr/share/qemu/edk2-arm-vars.fd
@@ -130,8 +134,6 @@ usr/share/qemu/npcm8xx_bootrom.bin
 #usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.bin
 usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin
 #usr/share/qemu/palcode-clipper
-#usr/share/qemu/petalogix-ml605.dtb
-#usr/share/qemu/petalogix-s3adsp1800.dtb
 usr/share/qemu/pnv-pnor.bin
 usr/share/qemu/pvh.bin
 usr/share/qemu/pxe-e1000.rom

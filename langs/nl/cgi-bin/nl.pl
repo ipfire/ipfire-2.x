@@ -839,7 +839,6 @@
 'enable javascript' => 'Inschakelen javascript',
 'enable wildcards' => 'Inschakelen wildcards:',
 'enabled' => 'Ingeschakeld:',
-'enabled on' => 'Ingeschakeld op',
 'enabledtitle' => 'Ingeschakeld',
 'encapsulation' => 'Inkapseling',
 'encrypted' => 'Gecodeerd',

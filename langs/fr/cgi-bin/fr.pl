@@ -1028,7 +1028,6 @@
 'enable smt' => 'Activer le partage d\'un cœur de processeur (SMT)',
 'enable wildcards' => 'Activer les cartes d\'invitations :',
 'enabled' => 'Activé :',
-'enabled on' => 'Activé sur',
 'enabledtitle' => 'Activé',
 'encapsulation' => 'Encapsulation',
 'encrypted' => 'Chiffré',

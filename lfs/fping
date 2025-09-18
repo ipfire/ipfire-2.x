@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A program to ping multiple hosts
 
-VER        = 5.3
+VER        = 5.4
 
 THISAPP    = fping-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fping
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cc7b8bd2c8099c8bfb5e14d5b27f45cf1dc1aef24f941f5bf9c7aede95dac9472d2fe4033e8b7ea66fea8d901b99a7c908e7beff5484c0577c3f88517ef1a7ea
+$(DL_FILE)_BLAKE2 = b3c2f3ac8cb2d27593ad7a937c2fb27ab67bef3cd0d912a2a08b52bf9a96b2e5a5637567f0ef1203f86fefc99036a78ee05d69f175bdb1c2d62b6eaf6e474284
 
 install : $(TARGET)
 

@@ -1,0 +1,11 @@
+etc/suricata/reporter.conf
+usr/bin/suricata-reporter
+usr/bin/suricata-report-cron
+usr/bin/suricata-report-generator
+#usr/share/doc/suricata-reporter
+#usr/share/doc/suricata-reporter/COPYING
+#usr/share/doc/suricata-reporter/README.md
+usr/share/locale/de_DE
+usr/share/locale/de_DE/LC_MESSAGES
+usr/share/locale/de_DE/LC_MESSAGES/suricata-reporter.mo
+var/ipfire/suricata/reporter.conf

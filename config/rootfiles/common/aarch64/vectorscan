@@ -6,8 +6,8 @@
 #usr/include/hs/hs_version.h
 #usr/lib/libhs.so
 usr/lib/libhs.so.5
-usr/lib/libhs.so.5.4.11
+usr/lib/libhs.so.5.4.12
 #usr/lib/libhs_runtime.so
 usr/lib/libhs_runtime.so.5
-usr/lib/libhs_runtime.so.5.4.11
+usr/lib/libhs_runtime.so.5.4.12
 #usr/lib/pkgconfig/libhs.pc

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.0.11
+VER        = 8.0.1
 
 THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5bdfc3715bed2faa49cc9096a30fb0f58c81c0ebe6cb82629d5ccddd75cf68af6b3a1e9ae2ed54cbbeea48d40c2e1c3348b52c19856ba9550b6c687653de8b47
+$(DL_FILE)_BLAKE2 = 52b2fb30a4c56a5a0979ac2016b707e089cdc3ecdf85d834cf2a22e92465136fda11b6830a95831c0146f6f3db7b93892649ee15317a9db1825452266611722b
 
 install : $(TARGET)
 
@@ -70,14 +70,13 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-disable-sid-2210059.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-8.0.0-disable-sid-2210059.patch
 	cd $(DIR_APP) && LDFLAGS="$(LDFLAGS)" ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
 		--enable-gccprotect \
 		--disable-gccmarch-native \
-		--enable-non-bundled-htp \
 		--enable-nfqueue \
 		--disable-static \
 		--disable-python \
@@ -122,6 +121,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Set correct ownership for the cache directory.
 	chown nobody:nobody /var/cache/suricata
+
+	# Create the Hyperscan cache directory
+	-mkdir -pv /var/cache/suricata/sgh
+	chown suricata:suricata /var/cache/suricata/sgh
 
 	# Create logging directory.
 	-mkdir -p /var/log/suricata

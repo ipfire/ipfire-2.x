@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.12
+VER        = 0e36779-bootstrapped
 
 THISAPP    = grub-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -61,7 +61,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 unifont-7.0.03.pcf.gz = $(DL_FROM)/unifont-7.0.03.pcf.gz
 
-$(DL_FILE)_BLAKE2 = a678f7fafb945d325c8cf47aa086f48357a8f6335b762f77038c30a3896b3b05491598d9931d5335841d224fffcbe4a9a43ca1479057c1f1ce52b8d2a952c431
+$(DL_FILE)_BLAKE2 = 4e006b3e852403eaed348de188406656a6d8cdff14a1394dd7cf3ada45218e4f4cfd3ee4a4b235633cbee7ea87a49a267c44e48105095ebb13d8192382bd8ce2
 unifont-7.0.03.pcf.gz_BLAKE2 = fb96c1786fcc8c77796c90ce30a2b7d544013bd62cedbf7b027e1894fe75cdbd2044717796cb0e3150db1457fcb58076491d9c0b855621b652fb9a52c0793469
 
 install : $(TARGET)
@@ -96,7 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.02_disable_vga_fallback.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-2.12-Use-medany-instead-of-large-model-for-RISCV.patch
 	cd $(DIR_APP) && [ ! -e grub-core/extra_deps.lst ] && echo 'depends bli part_gpt' > grub-core/extra_deps.lst
-	cd $(DIR_APP) && autoreconf -vfi
+	#cd $(DIR_APP) && autoreconf -vfi
 
 	# Install unifont
 	cp -v $(DIR_DL)/unifont-7.0.03.pcf.gz $(DIR_APP)/unifont.pcf.gz

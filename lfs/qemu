@@ -27,7 +27,7 @@ include Config
 SUMMARY    = Machine emulator and virtualizer
 
 # If you update the version also qemu-ga !!!
-VER        = 10.0.2
+VER        = 10.1.0
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 46
+PAK_VER    = 47
 
 DEPS       = alsa libusbredir spice libseccomp libslirp
 
@@ -57,7 +57,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = be4ddf050d2102cefded5b4967222df749ee8af92c2427c31a9b29b3800fac8bb328daf2c38d11aa307b51eb7d7243f9b064b3bf24d446a001e5520359ee83c3
+$(DL_FILE)_BLAKE2 = 025012e73cdd2468b1b0fdef9b34aae41893780cfcad0d52c05e7f67ff7a9969c8c596f006b8a7e6f1b59e39da8fdec07d6f241911c604502755acd26bb750b6
 
 install : $(TARGET)
 
@@ -91,20 +91,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--sysconfdir=/etc \
-		--localstatedir=/var \
-		--enable-kvm \
-		--disable-attr \
-		--target-list="$(TARGETS)" \
-		--extra-cflags="$(CFLAGS)" \
-		--enable-spice \
-		--enable-usb-redir \
-		--enable-seccomp \
-		--disable-docs \
-		--disable-sdl \
-		--enable-slirp \
-		-Dfdt=system
+				--prefix=/usr \
+				--sysconfdir=/etc \
+				--localstatedir=/var \
+				--enable-kvm \
+				--disable-attr \
+				--target-list="$(TARGETS)" \
+				--extra-cflags="$(CFLAGS)" \
+				--enable-spice \
+				--enable-usb-redir \
+				--enable-seccomp \
+				--disable-docs \
+				--disable-sdl \
+				--enable-slirp \
+				-Dfdt=system
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

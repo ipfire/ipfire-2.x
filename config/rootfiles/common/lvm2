@@ -35,6 +35,7 @@ usr/sbin/lvmconfig
 usr/sbin/lvmdevices
 usr/sbin/lvmdiskscan
 usr/sbin/lvmdump
+usr/sbin/lvmpersist
 usr/sbin/lvmsadc
 usr/sbin/lvmsar
 usr/sbin/lvreduce
@@ -99,6 +100,7 @@ usr/sbin/vgsplit
 #usr/share/man/man8/lvmdevices.8
 #usr/share/man/man8/lvmdiskscan.8
 #usr/share/man/man8/lvmdump.8
+#usr/share/man/man8/lvmpersist.8
 #usr/share/man/man8/lvmsadc.8
 #usr/share/man/man8/lvmsar.8
 #usr/share/man/man8/lvreduce.8

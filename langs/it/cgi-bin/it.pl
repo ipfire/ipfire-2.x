@@ -843,7 +843,6 @@
 'enable javascript' => 'Enable javascript',
 'enable wildcards' => 'Enable wildcards:',
 'enabled' => 'abilitato:',
-'enabled on' => 'abilitato su',
 'enabledtitle' => 'abilitato',
 'encapsulation' => 'Encapsulation',
 'encrypted' => 'Encrypted',

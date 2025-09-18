@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Support Utilities for Kernel nfsd
 
-VER        = 2.8.3
+VER        = 2.8.4
 
 THISAPP    = nfs-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 27
+PAK_VER    = 28
 
 DEPS       = rpcbind
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 70fbba171697e13e0050cb146ff7e30ce53937d37882e4f53be62ee2792e8afee451a74e81d3b739a4d3c76ef444c5602a7a6a2a1e1148829a50f27e5da18533
+$(DL_FILE)_BLAKE2 = 4c4319facaadb4a8cb1319efde1c6a1086dcbecb7c093c6edd64c23ae3ead85e6e6209e69279f47a73ef92410f59278f56f472ae0a28493936e2f2d681b40dea
 
 install : $(TARGET)
 

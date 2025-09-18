@@ -1251,7 +1251,7 @@ sub updateipsthroughputgraph {
 		"GPRINT:whitelisted_bytes_max:%9.2lf %sbps\\j",
 
 		# Bypassed Packets
-		"STACK:bypassed_bytes$color{'color11'}A0:" . sprintf("%-30s", $Lang::tr{'bypassed'}),
+		"STACK:bypassed_bytes$color{'color11'}A0:" . sprintf("%-30s", $Lang::tr{'offloaded'}),
 		"GPRINT:bypassed_bytes_avg:%9.2lf %sbps",
 		"GPRINT:bypassed_bytes_min:%9.2lf %sbps",
 		"GPRINT:bypassed_bytes_max:%9.2lf %sbps\\j",

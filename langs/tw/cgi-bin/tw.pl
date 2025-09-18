@@ -1030,7 +1030,6 @@
 'enable smt' => '啟用同時多線程(SMT)',
 'enable wildcards' => '啟用通配符:',
 'enabled' => '啟用:',
-'enabled on' => '啟用接口',
 'enabledtitle' => '啟用',
 'encapsulation' => '封裝形式',
 'encrypted' => '加密',

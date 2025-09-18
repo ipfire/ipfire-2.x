@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="197"							# Core Level (Filename)
+CORE="198"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -32,7 +32,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER="20250430"
+TOOLCHAINVER="20250814"
 
 KVER_SUFFIX="-${SNAME}"
 
@@ -1484,7 +1484,22 @@ build_system() {
 	lfsmake2 gdbm
 	lfsmake2 sqlite
 	lfsmake2 python3
+	lfsmake2 python3-wheel
+	lfsmake2 python3-toml
 	lfsmake2 python3-setuptools
+	lfsmake2 python3-pyproject2setuppy
+	lfsmake2 python3-packaging
+	lfsmake2 python3-pep517
+	lfsmake2 python3-build
+	lfsmake2 python3-install
+	lfsmake2 python3-urllib3
+	lfsmake2 python3-charset-normalizer
+	lfsmake2 python3-idna
+	lfsmake2 python3-certifi
+	lfsmake2 python3-requests
+	lfsmake2 python3-docutils
+	lfsmake2 python3-flit
+	lfsmake2 python3-more_itertools
 	lfsmake2 ninja
 	lfsmake2 meson
 	lfsmake2 pam
@@ -1764,11 +1779,11 @@ build_system() {
 	lfsmake2 perl-Object-Tiny
 	lfsmake2 perl-Archive-Peek-Libarchive
 	lfsmake2 python3-inotify
-	lfsmake2 python3-docutils
 	lfsmake2 python3-daemon
 	lfsmake2 ntp
 	lfsmake2 openssh
 	lfsmake2 fontconfig
+	lfsmake2 prompt
 	lfsmake2 dejavu-fonts-ttf
 	lfsmake2 ubuntu-font-family
 	lfsmake2 freefont
@@ -1781,7 +1796,6 @@ build_system() {
 	lfsmake2 setup
 	lfsmake2 jansson
 	lfsmake2 yaml
-	lfsmake2 libhtp
 	lfsmake2 colm
 	lfsmake2 ragel
 	lfsmake2 vectorscan
@@ -1863,8 +1877,6 @@ build_system() {
 	lfsmake2 elinks
 	lfsmake2 igmpproxy
 	lfsmake2 opus
-	lfsmake2 python3-toml
-	lfsmake2 python3-pyproject2setuppy
 	lfsmake2 python3-pyparsing
 	lfsmake2 spice-protocol
 	lfsmake2 spice
@@ -1934,16 +1946,6 @@ build_system() {
 	lfsmake2 wireless-regdb
 	lfsmake2 ddns
 	lfsmake2 python3-pycparser
-	lfsmake2 python3-charset-normalizer
-	lfsmake2 python3-certifi
-	lfsmake2 python3-idna
-	lfsmake2 python3-requests
-	lfsmake2 python3-pep517
-	lfsmake2 python3-build
-	lfsmake2 python3-install
-	lfsmake2 python3-urllib3
-	lfsmake2 python3-flit
-	lfsmake2 python3-packaging
 	lfsmake2 python3-typing-extensions
 	lfsmake2 python3-semantic-version
 	lfsmake2 python3-setuptools-scm
@@ -1983,6 +1985,8 @@ build_system() {
 	lfsmake2 python3-exceptiongroup
 	lfsmake2 python3-trio
 	lfsmake2 python3-pyfuse3
+	lfsmake2 python3-pillow
+	lfsmake2 python3-reportlab
 	lfsmake2 aws-cli
 	lfsmake2 oci-python-sdk
 	lfsmake2 oci-cli
@@ -2090,6 +2094,7 @@ build_system() {
 	lfsmake2 grub-btrfs
 	lfsmake2 fort-validator
 	lfsmake2 arpwatch
+	lfsmake2 suricata-reporter
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au

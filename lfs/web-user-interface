@@ -74,6 +74,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Reset permissions of redirect templates and theme directories
 	find /srv/web/ipfire/html/{captive,redirect-templates,themes} -type d | xargs chmod -v 755
 
+	# Web UI Font
+	mkdir -pv /srv/web/ipfire/html/themes/ipfire/include/fonts
+	ln -svf --relative /usr/share/fonts/Prompt-Bold.ttf \
+		/srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Bold.ttf
+	ln -svf --relative /usr/share/fonts/Prompt-Medium.ttf \
+		/srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Medium.ttf
+	ln -svf --relative /usr/share/fonts/Prompt-Regular.ttf \
+		/srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Regular.ttf
+
 	# Captive Portal CSS
 	ln -svf --relative /usr/share/bootstrap/css/bootstrap-grid.min.css \
 		/srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css

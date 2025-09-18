@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.5.1
+VER        = 3.5.2
 
 THISAPP    = libffi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = eaeb04beeb4ab6e0ef5652175d5c9d29a18b6f1edbf05db819a3a6ac9c8ed47de32c54fca4c3a9a476283c0771650d5a577e7868f16c671ee46e25db27369066
+$(DL_FILE)_BLAKE2 = 35ce590926bcdd2556c30c94bb0fef3f0cfe8f32e809ffad00eb0bc7a8ba1ba40da844b108069c87e86bff278221cc42dc7c7aacd02a7b7bc408ea054085398c
 
 install : $(TARGET)
 
@@ -74,7 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

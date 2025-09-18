@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = Nagios Remote Plug-In Executor
 
-VER        = 4.1.0
+VER        = 4.1.3
 
 THISAPP    = nrpe-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/nrpe-$(THISAPP)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios_nrpe
-PAK_VER    = 13
+PAK_VER    = 14
 
 DEPS       = nagios-plugins
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = abce679c9387c5c4624349eb66465910aaff49074e6b60c6b515ef803d9d79b2603db8629b35ce5da61c02734ba4d48b49600f17bdf93482bd53013e3d121429
+$(DL_FILE)_BLAKE2 = 9337bfd0226ddb72cbc94aca7e30a94a1b325874d5bf631ff84786f65214628d90d6adec0de13d425b71a14b5ac36bf75c3561ef17b27773c8cb88ef2316be66
 
 install : $(TARGET)
 
@@ -83,16 +83,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--libexecdir=/usr/lib/nagios \
-		--sysconfdir=/etc/nagios \
-		--with-piddir=/var/run \
-		--with-init-type=sysv \
-		--with-nrpe-user=nobody \
-		--with-nrpe-group=nobody \
-		--with-nagios-user=nobody \
-		--with-nagios-group=nobody
-
+				--prefix=/usr \
+				--libexecdir=/usr/lib/nagios \
+				--sysconfdir=/etc/nagios \
+				--with-piddir=/var/run \
+				--with-init-type=sysv \
+				--with-nrpe-user=nobody \
+				--with-nrpe-group=nobody \
+				--with-nagios-user=nobody \
+				--with-nagios-group=nobody
 	cd $(DIR_APP) && make all $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-config

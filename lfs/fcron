@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.1
+VER        = 3.4.0
 
 THISAPP    = fcron-$(VER)
 DL_FILE    = $(THISAPP).src.tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 184b74f9d64186b7d3aae87d48ed0107525fd0c73bb8db86408bd246592ff4fbcbc04f8ca0064868a8555d7c6be2f183172d62daeed75275cd836517da504d0f
+$(DL_FILE)_BLAKE2 = 6af224b5c41005f15970be553d9d80e2de809f35d79bcfb35e33ae3a9e9d6f81d058d3e2a52c0c5b960fff7e9f444f8e95f60ccce5392a6031f35a114ea87dbc
 
 install : $(TARGET)
 
@@ -74,21 +74,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--without-sendmail \
-		--with-spooldir=/var/spool/cron \
-		--with-fifodir=/var/run \
-		--with-piddir=/var/run \
-		--sysconfdir=/etc \
-		--with-username=cron \
-		--with-groupname=cron \
-		--with-run-non-privileged=no \
-		--with-fcrondyn=no \
-		--with-sysfcrontab=no \
-		--with-boot-install=no \
-		--with-pam=no \
-		--with-selinux=no
-
+				--prefix=/usr \
+				--without-sendmail \
+				--with-spooldir=/var/spool/cron \
+				--with-fifodir=/var/run \
+				--with-piddir=/var/run \
+				--sysconfdir=/etc \
+				--with-username=cron \
+				--with-groupname=cron \
+				--with-run-non-privileged=no \
+				--with-fcrondyn=no \
+				--with-sysfcrontab=no \
+				--with-boot-install=no \
+				--with-pam=no \
+				--with-selinux=no
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	echo "root" > /etc/fcron.allow

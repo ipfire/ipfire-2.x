@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Transport independent RPC portmapper
 
-VER        = 1.2.7
+VER        = 1.2.8
 
 THISAPP    = rpcbind-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rpcbind
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f1e79b304ce5fe06c1c256d3512d999daffca782d956440f612b8a957ad7ddb35356b47aa4f4105d5b24d820daab32ec3a0f4a3b8ac76bb7adf5c3ed22d2ef01
+$(DL_FILE)_BLAKE2 = 70bef658aafc4b1b626a7e9ff312b34748e0142a0a93d058c28d6599545281464f27a5546abe287f0dd369e5264cb38940f85e5e6c128cb0e0f7aaa4b841ab77
 
 install : $(TARGET)
 
@@ -83,11 +83,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i "/servname/s:rpcbind:sunrpc:" src/rpcbind.c
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--bindir=/sbin \
-		--with-rpcuser=root \
-		--without-systemdsystemunitdir
-
+				--prefix=/usr \
+				--bindir=/sbin \
+				--with-rpcuser=root \
+				--without-systemdsystemunitdir
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	#install initscripts
