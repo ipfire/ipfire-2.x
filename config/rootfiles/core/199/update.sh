@@ -51,6 +51,7 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/init.d/unbound restart
 
 # Build initial ramdisks (for dracut-ng update)
 dracut --regenerate-all --force
