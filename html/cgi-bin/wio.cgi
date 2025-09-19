@@ -84,7 +84,7 @@ my $rrddir       = "/var/log/rrd/wio";
 my $refreshbox   = '<meta http-equiv="refresh" content="0;url=/cgi-bin/wio.cgi">';
 my $sortstring   = '^IPADR|^HOST';
 my $ovpnaddon    = "/var/ipfire/ovpn";
-my $ovpnpid      = "/var/run/openvpn.pid";
+my $ovpnpid      = "/var/run/openvpn-rw.pid";
 my $vpnpid       = "/var/run/charon.pid";
 my $redactive    = "/var/ipfire/red/active";
 my $redip        = '-';

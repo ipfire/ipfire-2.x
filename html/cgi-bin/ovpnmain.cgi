@@ -128,7 +128,7 @@ my $col="";
 	# Advanced Settings
 	"DPROTOCOL"    => "udp",
 	"DDEST_PORT"   => 1194,
-	"DMTU"         => 1500,
+	"DMTU"         => 1420,
 	"MAX_CLIENTS"  => 100,
 	"MSSFIX"       => "off",
 	"TLSAUTH"      => "on",

@@ -82,7 +82,7 @@ if ( -e $rediface ) {
 
 my $redip      = $hostname;
 my $vpnpid     = ( -e "/var/run/charon.pid" ? `awk '{print $1}' /var/run/charon.pid`: '');
-my $ovpnpid    = ( -e  "/var/run/openvpn.pid" ? `awk '{print $1}' /var/run/openvpn.pid`: '');
+my $ovpnpid    = ( -e  "/var/run/openvpn-rw.pid" ? `awk '{print $1}' /var/run/openvpn-rw.pid`: '');
 
 my $steptime   = $wiosettings{'CRON'} *= 60;
 my $i_ping     = 'icmp';

@@ -51,7 +51,7 @@ my $logging    = $wiosettings{'LOGGING'};
 my ( @ovpnstatus, @ovpncfg, @ovpncache, @ovpnarray, @ovpnmatch, @ovpnwrite );
 
 my $now         = strftime "%a, %d.%m.%Y %H:%M:%S", localtime;
-my $ovpnpid     = "/var/run/openvpn.pid";
+my $ovpnpid     = "/var/run/openvpn-rw.pid";
 my $ovpnmailmsg = '';
 my $ovpncache   = "/var/log/wio/.ovpncache";
 my $ovpnconfig  = "/var/ipfire/ovpn/ovpnconfig";
