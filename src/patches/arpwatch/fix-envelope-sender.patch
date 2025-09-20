@@ -1,0 +1,11 @@
+--- arpwatch-3.8/report.c~	2025-09-20 13:57:16.351246657 +0000
++++ arpwatch-3.8/report.c	2025-09-20 13:43:47.777995101 +0000
+@@ -390,7 +390,7 @@
+ 	close(fd);
+ 
+ 	/* Always Deliver interactively (pause when child depth gets large) */
+-	execl(sendmail, "sendmail", "-odi", watcher, NULL);
++	execl(sendmail, "sendmail", "-odi", watcher, "-f", watchee, NULL);
+ 	lg(LOG_ERR, "execl: %s: %s", sendmail, strerror(errno));
+ 	exit(1);
+ }
