@@ -321,7 +321,7 @@ write_config() {
 	# Set some default BAND if none is set
 	if [ -z "${BAND}" ]; then
 		# Use 2.4 GHz for 802.11g/n and assume 5 GHz for anything else
-		case "${MODE}" in
+		case "${HW_MODE}" in
 			gn)
 				BAND="2g"
 				;;
