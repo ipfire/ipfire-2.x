@@ -74,6 +74,17 @@ case "${1}" in
 		${0} start
 		;;
 
+	status)
+		failed=0
+
+		for intf in ${INTERFACES}; do
+			PIDFILE="/var/run/arpwatch-${intf}.pid" \
+				statusproc /usr/sbin/arpwatch || failed=$?
+		done
+
+		exit ${failed}
+		;;
+
 	*)
 		echo "Usage: ${0} {start|stop|restart}"
 		exit 1
