@@ -653,6 +653,9 @@ write_config() {
 	# 802.11v: Advertise the time
 	echo "time_advertisement=2"
 
+	# Convert multicast to unicast packets
+	echo "multicast_to_unicast=1"
+
 	return 0
 }
 
