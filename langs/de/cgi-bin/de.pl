@@ -3078,6 +3078,8 @@
 'wlanap hide ssid' => 'SSID verbergen',
 'wlanap informations' => 'Informationen',
 'wlanap interface' => 'Interface übernehmen',
+'wlanap invalid band' => 'Ungültiges Band',
+'wlanap invalid mode' => 'Ungültiger Modus',
 'wlanap invalid wpa' => 'Ungültige Länge in WPA-Passphrase. Muss zwischen 8 und 63 Zeichen lang sein.',
 'wlanap link dhcp' => 'Wireless Lan DHCP-Einstellungen',
 'wlanap link wireless' => 'Wireless Lan Clients freischalten',

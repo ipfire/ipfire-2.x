@@ -1235,3 +1235,5 @@ WARNING: untranslated string: wio_wanname = unknown string
 WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
 WARNING: untranslated string: wlanap clients = unknown string
+WARNING: untranslated string: wlanap invalid band = Invalid band
+WARNING: untranslated string: wlanap invalid mode = Invalid mode

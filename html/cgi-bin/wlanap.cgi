@@ -96,13 +96,24 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 		}
 	}
 
+	# Validate BAND
+	unless ($cgiparams{'BAND'} =~ m/^[25]g$/) {
+		$errormessage .= "$Lang::tr{'wlanap invalid band'}<br />";
+	}
+
+	# Validate MODE
+	unless ($cgiparams{'MODE'} =~ m/^(HT|HE|VHT|EHT)(20|40|80|160|320)$/) {
+		$errormessage .= "$Lang::tr{'wlanap invalid mode'}<br />";
+	}
+
 	# XXX This needs validation
 	$wlanapsettings{'INTERFACE'} = $cgiparams{'INTERFACE'};
 	$wlanapsettings{'SSID'} = $cgiparams{'SSID'};
 	$wlanapsettings{'HIDESSID'} = ($cgiparams{'HIDESSID'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'CLIENTISOLATION'} = ($cgiparams{'CLIENTISOLATION'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'COUNTRY'} = $cgiparams{'COUNTRY'};
-	$wlanapsettings{'HW_MODE'} = $cgiparams{'HW_MODE'};
+	$wlanapsettings{'MODE'} = $cgiparams{'MODE'};
+	$wlanapsettings{'BAND'} = $cgiparams{'BAND'};
 	$wlanapsettings{'CHANNEL'} = $cgiparams{'CHANNEL'};
 	$wlanapsettings{'NOSCAN'} = ($cgiparams{'NOSCAN'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'ENC'} = $cgiparams{'ENC'};

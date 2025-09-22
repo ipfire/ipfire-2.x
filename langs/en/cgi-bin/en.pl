@@ -3199,6 +3199,8 @@
 'wlanap hide ssid' => 'Hide SSID',
 'wlanap informations' => 'Information',
 'wlanap interface' => 'Select Interface',
+'wlanap invalid band' => 'Invalid band',
+'wlanap invalid mode' => 'Invalid mode',
 'wlanap invalid wpa' => 'Invalid length in WPA passphrase. Must be between 8 and 63 characters.',
 'wlanap link dhcp' => 'Wireless LAN DHCP configuration',
 'wlanap link wireless' => 'Activate wireless lan clients',

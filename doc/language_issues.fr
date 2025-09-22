@@ -1287,5 +1287,7 @@ WARNING: untranslated string: wio_webinterface_link = unknown string
 WARNING: untranslated string: wireguard = WireGuard
 WARNING: untranslated string: wlanap clients = unknown string
 WARNING: untranslated string: wlanap hide ssid = Hide SSID
+WARNING: untranslated string: wlanap invalid band = Invalid band
+WARNING: untranslated string: wlanap invalid mode = Invalid mode
 WARNING: untranslated string: wlanap psk = Pre-Shared Key
 WARNING: untranslated string: wlanap wireless mode = Wireless Mode

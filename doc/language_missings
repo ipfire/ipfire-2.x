@@ -196,6 +196,8 @@
 < rss
 < rss long
 < transient sheduler attacks
+< wlanap invalid band
+< wlanap invalid mode
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -340,6 +342,8 @@
 < whitelisted
 < wireguard
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap psk
 < wlanap wireless mode
 < wlanap wlan clients
@@ -952,6 +956,8 @@
 < wlanap client isolation
 < wlanap configuration
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -1630,6 +1636,8 @@
 < wlanap client isolation
 < wlanap configuration
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -2723,6 +2731,8 @@
 < wlanap configuration
 < wlanap country
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -3853,6 +3863,8 @@
 < wlanap configuration
 < wlanap country
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -4358,6 +4370,8 @@
 < wlanap auto
 < wlanap client isolation
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -4450,6 +4464,8 @@
 < rss
 < rss long
 < transient sheduler attacks
+< wlanap invalid band
+< wlanap invalid mode
 ############################################################################
 # Checking cgi-bin translations for language: zh                           #
 ############################################################################
@@ -4513,3 +4529,5 @@
 < rss
 < rss long
 < transient sheduler attacks
+< wlanap invalid band
+< wlanap invalid mode
