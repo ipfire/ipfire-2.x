@@ -37,6 +37,18 @@ my %wlanapsettings=();
 # Read the configuration file
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 
+# Set MODE from HW_MODE
+unless (defined $wlanapsettings{'MODE'}) {
+	if ($wlanapsettings{'HW_MODE'} eq "ac") {
+		$wlanapsettings{'MODE'} = "VHT20";
+	} elsif ($wlanapsettings{'HW_MODE'} eq "an" || $wlanapsettings{'HW_MODE'} eq "gn") {
+		$wlanapsettings{'MODE'} = "HT20";
+	}
+
+	# Remove the old value
+	undef $wlanapsettings{'HW_MODE'};
+}
+
 # Set defaults
 &General::set_defaults(\%wlanapsettings, {
 	"APMODE" => "on",
@@ -46,7 +58,7 @@ my %wlanapsettings=();
 	"TXPOWER" => "auto",
 	"CHANNEL" => "0",
 	"COUNTRY" => "00",
-	"HW_MODE" => "g",
+	"MODE" => "HT20",
 	"PWD" => "",
 	"NOSCAN" => "on",
 	"CLIENTISOLATION" => "off",
