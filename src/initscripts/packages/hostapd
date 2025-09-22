@@ -62,13 +62,13 @@ declare -A HT_CAPS_DRIVER_FILTERS=(
 
 declare -A VHT_CAPS=(
 	# RX LDPC
-	[0x00000008]="[RXLDPC]"
+	[0x00000010]="[RXLDPC]"
 	# Short GI for 80 MHz
-	[0x00000010]="[SHORT-GI-80]"
+	[0x00000020]="[SHORT-GI-80]"
 	# Short GI for 160/80+80 MHz
-	[0x00000020]="[SHORT-GI-160]"
+	[0x00000040]="[SHORT-GI-160]"
 	# TX STBC
-	[0x00000040]="[TX-STBC-2BY1]"
+	[0x00000080]="[TX-STBC-2BY1]"
 	# SU Beamformer capable
 	[0x00000800]="[SU-BEAMFORMER]"
 	# SU Beamformee capable
