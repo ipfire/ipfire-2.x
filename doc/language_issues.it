@@ -1386,6 +1386,7 @@ WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
+WARNING: untranslated string: smt not implemented = Not Implemented
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
 WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
 WARNING: untranslated string: spectre variant 1 = Spectre Variant 1

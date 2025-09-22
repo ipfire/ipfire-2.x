@@ -2328,6 +2328,7 @@
 'smbstop' => 'Samba Dienste beenden',
 'smt disabled' => 'Simultanes Multi-Threading ausgeschaltet',
 'smt enabled' => 'Simultanes Multi-Threading eingeschaltet',
+'smt not implemented' => 'Nicht implementiert',
 'smt not supported' => 'Simultanes Multi-Threading nicht unterstützt',
 'smtphost' => 'Smtp Host',
 'smtpport' => 'Smtp Port',

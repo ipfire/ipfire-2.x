@@ -195,6 +195,7 @@
 < quality of service
 < rss
 < rss long
+< smt not implemented
 < transient sheduler attacks
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
@@ -312,6 +313,7 @@
 < rss
 < rss long
 < scanned
+< smt not implemented
 < system time
 < timeformat
 < total
@@ -878,6 +880,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < spec rstack overflow
 < spectre variant 1
@@ -1579,6 +1582,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < software version
 < source ip country
@@ -2623,6 +2627,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < snat new source ip address
 < software version
@@ -3776,6 +3781,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < snat new source ip address
 < software version
@@ -4405,6 +4411,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < spec rstack overflow
 < spectre variant 1
@@ -4617,6 +4624,7 @@
 < password has quotation mark
 < rss
 < rss long
+< smt not implemented
 < transient sheduler attacks
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
@@ -4704,6 +4712,7 @@
 < password has quotation mark
 < rss
 < rss long
+< smt not implemented
 < transient sheduler attacks
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz

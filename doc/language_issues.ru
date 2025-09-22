@@ -1565,6 +1565,7 @@ WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
+WARNING: untranslated string: smt not implemented = Not Implemented
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
 WARNING: untranslated string: snat new source ip address = New source IP address
 WARNING: untranslated string: software version = Software Version

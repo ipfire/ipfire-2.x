@@ -1112,6 +1112,7 @@ WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: rss = RSS
 WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: scanned = Scanned
+WARNING: untranslated string: smt not implemented = Not Implemented
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
 WARNING: untranslated string: total = Total

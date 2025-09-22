@@ -2429,6 +2429,7 @@
 'smbstop' => 'Stop samba',
 'smt disabled' => 'Simultaneous Multi-Threading (SMT) is disabled',
 'smt enabled' => 'Simultaneous Multi-Threading (SMT) is enabled',
+'smt not implemented' => 'Not Implemented',
 'smt not supported' => 'Simultaneous Multi-Threading (SMT) is not supported',
 'smtphost' => 'SMTP host',
 'smtpport' => 'SMTP port',
