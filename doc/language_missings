@@ -196,6 +196,28 @@
 < rss
 < rss long
 < transient sheduler attacks
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap invalid band
 < wlanap invalid mode
 ############################################################################
@@ -341,6 +363,28 @@
 < wg warning configuration only shown once
 < whitelisted
 < wireguard
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap hide ssid
 < wlanap invalid band
 < wlanap invalid mode
@@ -949,10 +993,32 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap hide ssid
@@ -1629,10 +1695,32 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap hide ssid
@@ -2723,10 +2811,32 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
@@ -3855,10 +3965,32 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
@@ -4364,10 +4496,32 @@
 < whois results from
 < winbind daemon
 < wireguard
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap hide ssid
 < wlanap invalid band
@@ -4464,6 +4618,28 @@
 < rss
 < rss long
 < transient sheduler attacks
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap invalid band
 < wlanap invalid mode
 ############################################################################
@@ -4529,5 +4705,27 @@
 < rss
 < rss long
 < transient sheduler attacks
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap invalid band
 < wlanap invalid mode

@@ -180,7 +180,9 @@ $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'COUNTRY'}{$wlanapsettings{'COUNTRY'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
-$selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
+
+$selected{'MODE'}{$wlanapsettings{'MODE'}} = "selected";
+$selected{'BAND'}{$wlanapsettings{'BAND'}} = "selected";
 
 # Fetch all available channels
 my @channellist = &get_channellist($INTF);
@@ -284,13 +286,77 @@ print <<END;
 			<tr>
 				<td>$Lang::tr{'wlanap wireless mode'}</td>
 				<td>
-					<select name='HW_MODE'>
-						<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
-						<option value='b' $selected{'HW_MODE'}{'b'}>802.11b</option>
-						<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
-						<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
-						<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
-						<option value='ac' $selected{'HW_MODE'}{'ac'}>802.11ac</option>
+					<select name='MODE'>
+						<optgroup label="$Lang::tr{'wlanap 802.11be'}">
+							<option value="EHT320" $selected{'MODE'}{'EHT320'}>
+								$Lang::tr{'wlanap 802.11be 320mhz'}
+							</option>
+							<option value="EHT160" $selected{'MODE'}{'EHT160'}>
+								$Lang::tr{'wlanap 802.11be 160mhz'}
+							</option>
+							<option value="EHT80" $selected{'MODE'}{'EHT80'}>
+								$Lang::tr{'wlanap 802.11be 80mhz'}
+							</option>
+							<option value="EHT40" $selected{'MODE'}{'EHT40'}>
+								$Lang::tr{'wlanap 802.11be 40mhz'}
+							</option>
+							<option value="EHT20" $selected{'MODE'}{'EHT20'}>
+								$Lang::tr{'wlanap 802.11be 20mhz'}
+							</option>
+						</optgroup>
+
+						<optgroup label="$Lang::tr{'wlanap 802.11ax'}">
+							<option value="HE160" $selected{'MODE'}{'HE160'}>
+								$Lang::tr{'wlanap 802.11ax 160mhz'}
+							</option>
+							<option value="HE80" $selected{'MODE'}{'HE80'}>
+								$Lang::tr{'wlanap 802.11ax 80mhz'}
+							</option>
+							<option value="HE40" $selected{'MODE'}{'HE40'}>
+								$Lang::tr{'wlanap 802.11ax 40mhz'}
+							</option>
+							<option value="HE20" $selected{'MODE'}{'HE20'}>
+								$Lang::tr{'wlanap 802.11ax 20mhz'}
+							</option>
+						</optgroup>
+
+						<optgroup label="$Lang::tr{'wlanap 802.11ac'}">
+							<option value="VHT160" $selected{'MODE'}{'VHT160'}>
+								$Lang::tr{'wlanap 802.11ac 160mhz'}
+							</option>
+							<option value="VHT80" $selected{'MODE'}{'VHT80'}>
+								$Lang::tr{'wlanap 802.11ac 80mhz'}
+							</option>
+							<option value="VHT40" $selected{'MODE'}{'VHT40'}>
+								$Lang::tr{'wlanap 802.11ac 40mhz'}
+							</option>
+							<option value="VHT20" $selected{'MODE'}{'VHT20'}>
+								$Lang::tr{'wlanap 802.11ac 20mhz'}
+							</option>
+						</optgroup>
+
+						<optgroup label="$Lang::tr{'wlanap 802.11agn'}">
+							<option value="HT40" $selected{'MODE'}{'HT40'}>
+								$Lang::tr{'wlanap 802.11agn 40mhz'}
+							</option>
+							<option value="HT20" $selected{'MODE'}{'HT20'}>
+								$Lang::tr{'wlanap 802.11agn 20mhz'}
+							</option>
+						</optgroup>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap band'}</td>
+				<td>
+					<select name='BAND'>
+						<option value="5g" $selected{'BAND'}{'5g'}>
+							$Lang::tr{'wlanap band 5ghz'}
+						</option>
+						<option value="2g" $selected{'BAND'}{'2g'}>
+							$Lang::tr{'wlanap band 2.4ghz'}
+						</option>
 					</select>
 				</td>
 			</tr>
