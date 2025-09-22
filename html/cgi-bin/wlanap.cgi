@@ -40,8 +40,10 @@ my %wlanapsettings=();
 # Set MODE from HW_MODE
 unless (defined $wlanapsettings{'MODE'}) {
 	if ($wlanapsettings{'HW_MODE'} eq "ac") {
+		$wlanapsettings{'BAND'} = '5g';
 		$wlanapsettings{'MODE'} = "VHT20";
 	} elsif ($wlanapsettings{'HW_MODE'} eq "an" || $wlanapsettings{'HW_MODE'} eq "gn") {
+		$wlanapsettings{'BAND'} = '2g';
 		$wlanapsettings{'MODE'} = "HT20";
 	}
 
@@ -58,6 +60,7 @@ unless (defined $wlanapsettings{'MODE'}) {
 	"TXPOWER" => "auto",
 	"CHANNEL" => "0",
 	"COUNTRY" => "00",
+	"BAND" => "5g",
 	"MODE" => "HT20",
 	"PWD" => "",
 	"NOSCAN" => "on",
