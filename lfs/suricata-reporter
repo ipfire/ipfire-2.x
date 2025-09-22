@@ -73,7 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
-			--sysconfdir=/etc
+			--sysconfdir=/etc \
+			--localstatedir=/var
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
