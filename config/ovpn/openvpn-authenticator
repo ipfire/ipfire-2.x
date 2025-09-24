@@ -218,9 +218,9 @@ class OpenVPNAuthenticator(object):
 				if self._check_totp_token(token, conn.get("totp_secret")):
 					return self._client_auth_successful(cid, kid)
 
-			# Restart authentication
-			self._client_auth_challenge(cid, kid,
-				username=common_name, password="TOTP")
+		# Restart authentication
+		self._client_auth_challenge(cid, kid,
+			username=common_name, password="TOTP")
 
 	def _client_disconnect(self, cid, environ={}):
 		"""
