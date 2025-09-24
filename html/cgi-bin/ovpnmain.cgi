@@ -2443,6 +2443,7 @@ END
 		print "auth-nocache\n";
 
 		# Set a fake user name for authentication
+		print "auth-user-pass\n";
 		print "auth-token-user USER\n";
 		print "auth-token TOTP\n";
 
