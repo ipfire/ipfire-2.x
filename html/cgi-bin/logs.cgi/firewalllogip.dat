@@ -1,14 +1,23 @@
 #!/usr/bin/perl
-#
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# JC HERITIER
-# page inspired from the initial firewalllog.dat
-#
-# Modified for IPFire by Christian Schmidt
-#	                    and Michael Tremer (www.ipfire.org)
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 use strict;
 use Getopt::Std;
@@ -61,7 +70,7 @@ if ($settings{'showpie'} != 0) { $cgiparams{'showpie'} = $settings{'showpie'} };
 if ($settings{'sortcolumn'} != 0) { $cgiparams{'sortcolumn'} = $settings{'sortcolumn'} };
 
 &Header::getcgihash(\%cgiparams);
-if ($cgiparams{'pienumber'} != 0) { $settings{'pienumber'} = $cgiparams{'pienumber'} };
+if ($cgiparams{'pienumber'} != 0) { $settings{'pienumber'} = &Header::escape($cgiparams{'pienumber'}) };
 if ($cgiparams{'otherspie'} != 0) { $settings{'otherspie'} = $cgiparams{'otherspie'} };
 if ($cgiparams{'showpie'} != 0) { $settings{'showpie'} = $cgiparams{'showpie'} };
 if ($cgiparams{'sortcolumn'} != 0) { $settings{'sortcolumn'} = $cgiparams{'sortcolumn'} };
