@@ -864,6 +864,14 @@ sub validportrange # used to check a port range
 	}
 }
 
+# Checks for a valid country code
+sub validcc($) {
+	my $cc = shift;
+
+	# Must contain of exactly two uppercase characters, or must be A1, A2, or A3
+	return ($cc =~ m/^([A-Z]{2}|A[123])$/);
+}
+
 sub IpInSubnet {
 	my $addr = shift;
 	my $network = shift;

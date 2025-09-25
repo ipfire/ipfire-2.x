@@ -156,6 +156,7 @@
 < AES-256-GCM
 < CHACHA20-POLY1305
 < dns servers
+< fwhost invalid country code
 < ids all including informational
 < ids email alerts
 < ids email alert severity
@@ -243,6 +244,7 @@
 < endpoint port
 < extrahd because it it outside the allowed mount path
 < fwdfw syn flood protection
+< fwhost invalid country code
 < fwhost wg peers
 < g.dtm
 < g.lite
@@ -620,6 +622,7 @@
 < fwhost cust location
 < fwhost cust locationgroup
 < fwhost cust locationlocation
+< fwhost invalid country code
 < fwhost newlocationgrp
 < fwhost wg peers
 < fw red
@@ -1305,6 +1308,7 @@
 < fwhost cust location
 < fwhost cust locationgroup
 < fwhost cust locationlocation
+< fwhost invalid country code
 < fwhost newlocationgrp
 < fwhost wg peers
 < fw red
@@ -2254,6 +2258,7 @@
 < fwhost hint
 < fwhost hosts
 < fwhost icmptype
+< fwhost invalid country code
 < fwhost ipadr
 < fwhost ip_mac
 < fwhost ipsec host
@@ -3407,6 +3412,7 @@
 < fwhost hint
 < fwhost hosts
 < fwhost icmptype
+< fwhost invalid country code
 < fwhost ipadr
 < fwhost ip_mac
 < fwhost ipsec host
@@ -4195,6 +4201,7 @@
 < foreshadow
 < fwdfw all subnets
 < fwdfw syn flood protection
+< fwhost invalid country code
 < fwhost wg peers
 < fw red
 < generate ptr
@@ -4574,6 +4581,7 @@
 < Captive wrong type
 < CHACHA20-POLY1305
 < dns servers
+< fwhost invalid country code
 < guaranteed bandwidth
 < ids all including informational
 < ids email alerts
@@ -4662,6 +4670,7 @@
 < Captive wrong type
 < CHACHA20-POLY1305
 < dns servers
+< fwhost invalid country code
 < guaranteed bandwidth
 < ids all including informational
 < ids email alerts
