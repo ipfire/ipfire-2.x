@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2025  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -576,7 +576,7 @@ if (($uqsettings{'MODE'} eq 'USERQUOTA') && ($uqsettings{'ACTION'} eq $Lang::tr{
 
 	$_  = $uqsettings{'QUOTA_USERS'};
 	chomp; s/\n/|/g;
-	my $quota_users = $_;
+	my $quota_users = &Header::escape($_);
 
 	if ($uqsettings{'QUOTA_USERS'} =~ /\\/)
 	{
@@ -936,6 +936,11 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter install blacklist'}) && ($bes
 		close FILE;
 
 		# XXX uses globbing
+		if(!($besettings{'BE_NAME'} =~ /^[a-zA-Z0-9-_]+$/))
+		{
+			$errormessage = 'Invalid blacklist name (use only alphanumeric characters plus hyphens or underscores)';
+			goto ERROR;
+		}
 		system("rm -f $dbdir/$besettings{'BE_NAME'}/*.db");
 		&General::system("/usr/bin/squidGuard", "-c", "$editdir/install.conf", "-C", "all");
 		# XXX uses globbing
@@ -2046,6 +2051,10 @@ foreach $line (@tclist)
 	if ($temp[6] eq 'on') { $time.=$Lang::tr{'urlfilter sat'}; } else { $time.='='; }
 	if ($temp[7] eq 'on') { $time.=$Lang::tr{'urlfilter sun'}; } else { $time.='='; }
 	$time=$time.' &nbsp; '.$temp[8].':'.$temp[9].' to '.$temp[10].':'.$temp[11];
+
+	$temp[12] = &Header::escape($temp[12]);
+	$temp[13] = &Header::escape($temp[13]);
+	$temp[16] = &Header::escape($temp[16]);
 
 print <<END
 		<td align='center'>$temp[0]</td>
