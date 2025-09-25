@@ -1289,6 +1289,7 @@
 'fwhost hint' => 'Hinweis',
 'fwhost hosts' => 'Firewall-Hosts',
 'fwhost icmptype' => 'ICMP-Typ:',
+'fwhost invalid country code' => 'Ungültiger Ländercode',
 'fwhost ip_mac' => 'IP/MAC-Adresse',
 'fwhost ipadr' => 'IP-Adresse:',
 'fwhost ipsec host' => 'IPsec-Clients:',

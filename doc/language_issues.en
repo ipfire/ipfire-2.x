@@ -942,6 +942,7 @@ WARNING: untranslated string: fwhost err srvexist = This service already exists 
 WARNING: untranslated string: fwhost err sub32 = Please add a network, not a single host
 WARNING: untranslated string: fwhost hint = Note
 WARNING: untranslated string: fwhost icmptype = ICMP type:
+WARNING: untranslated string: fwhost invalid country code = Invalid Country Code
 WARNING: untranslated string: fwhost ip_mac = IP/MAC address
 WARNING: untranslated string: fwhost ipsec net = IPsec networks:
 WARNING: untranslated string: fwhost menu = Firewall Groups

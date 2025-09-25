@@ -703,6 +703,10 @@ if ($fwhostsettings{'ACTION'} eq 'savelocationgrp')
 	# Check name
 	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
 
+	unless (&General::validcc($fwhostsettings{'COUNTRY_CODE'})) {
+		$errormessage = $Lang::tr{'fwhost invalid country code'};
+	}
+
 	# Check for existing group name.
 	if (!&checkgroup($grp) && $fwhostsettings{'update'} ne 'on'){
 		$errormessage = $Lang::tr{'fwhost err grpexist'};
@@ -714,7 +718,7 @@ if ($fwhostsettings{'ACTION'} eq 'savelocationgrp')
 	}
 
 	if ($fwhostsettings{'update'} eq 'on'){
-		@target=&Header::escape($fwhostsettings{'COUNTRY_CODE'});
+		@target = $fwhostsettings{'COUNTRY_CODE'};
 		$type='Location Group';
 
 		#check if host/net exists in grp
