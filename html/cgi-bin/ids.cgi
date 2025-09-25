@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -105,7 +105,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 
 		# Assign hash values.
 		my $new_entry_address = $cgiparams{'IGNORE_ENTRY_ADDRESS'};
-		my $new_entry_remark = $cgiparams{'IGNORE_ENTRY_REMARK'};
+		my $new_entry_remark = &Header::escape($cgiparams{'IGNORE_ENTRY_REMARK'});
 
 		# Read-in ignoredfile.
 		&General::readhasharray($IDS::ignored_file, \%ignored) if (-e $IDS::ignored_file);
