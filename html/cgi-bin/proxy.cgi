@@ -3977,8 +3977,16 @@ END
 		print FILE " $proxysettings{'VISIBLE_HOSTNAME'}\n\n";
 	}
 
-	if (!($proxysettings{'ADMIN_MAIL_ADDRESS'} eq '')) { print FILE "cache_mgr $proxysettings{'ADMIN_MAIL_ADDRESS'}\n"; }
-	if (!($proxysettings{'ADMIN_PASSWORD'} eq '')) { print FILE "cachemgr_passwd $proxysettings{'ADMIN_PASSWORD'} all\n"; }
+	if (!($proxysettings{'ADMIN_MAIL_ADDRESS'} eq ''))
+		{
+			$proxysettings{'ADMIN_MAIL_ADDRESS'} = &Header::escape($proxysettings{'ADMIN_MAIL_ADDRESS'});
+			print FILE "cache_mgr $proxysettings{'ADMIN_MAIL_ADDRESS'}\n";
+		}
+	if (!($proxysettings{'ADMIN_PASSWORD'} eq ''))
+		{
+			$proxysettings{'ADMIN_PASSWORD'} = &Header::escape($proxysettings{'ADMIN_PASSWORD'});
+			print FILE "cachemgr_passwd $proxysettings{'ADMIN_PASSWORD'} all\n";
+		}
 	print FILE "\n";
 
 	print FILE "max_filedescriptors $proxysettings{'FILEDESCRIPTORS'}\n\n";
@@ -3994,8 +4002,13 @@ END
 		# login=*:password      ($proxysettings{'FORWARD_USERNAME'} eq 'on')
 		if (($proxy1 eq 'YES') || ($proxy1 eq 'PASS'))
 		{
+			$proxysettings{'UPSTREAM_USER'} = &Header::escape($proxysettings{'UPSTREAM_USER'});
 			print FILE " login=$proxysettings{'UPSTREAM_USER'}";
-			if ($proxy1 eq 'YES') { print FILE ":$proxysettings{'UPSTREAM_PASSWORD'}"; }
+			if ($proxy1 eq 'YES')
+			{
+				$proxysettings{'UPSTREAM_PASSWORD'} = &Header::escape($proxysettings{'UPSTREAM_PASSWORD'});
+				print FILE ":$proxysettings{'UPSTREAM_PASSWORD'}";
+			}
 		}
 		elsif ($proxysettings{'FORWARD_USERNAME'} eq 'on') { print FILE " login=*:password"; }
 
