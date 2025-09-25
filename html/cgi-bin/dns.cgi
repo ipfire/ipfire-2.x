@@ -127,15 +127,17 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 		$errormessage = "$Lang::tr{'invalid ip'}: $cgiparams{'NAMESERVER'}";
 	}
 
+	# Check if the provided hostname is valid
+	if ($cgiparams{'TLS_HOSTNAME'} ne "") {
+		unless (&General::validfqdn($cgiparams{"TLS_HOSTNAME"})) {
+			$errormessage = "$Lang::tr{'invalid ip or hostname'}: " . &Header::escape($cgiparams{'TLS_HOSTNAME'});
+		}
+	}
+
 	# Check if a TLS is enabled and no TLS_HOSTNAME has benn specified.
-	elsif($settings{'PROTO'} eq "TLS") {
-		unless($cgiparams{"TLS_HOSTNAME"}) {
+	if ($settings{'PROTO'} eq "TLS") {
+		unless ($cgiparams{"TLS_HOSTNAME"}) {
 			$errormessage = "$Lang::tr{'dns no tls hostname given'}";
-		} else {
-			# Check if the provided domain is valid.
-			unless(&General::validfqdn($cgiparams{"TLS_HOSTNAME"})) {
-				$errormessage = "$Lang::tr{'invalid ip or hostname'}: $cgiparams{'TLS_HOSTNAME'}";
-			}
 		}
 	}
 
@@ -187,7 +189,6 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 		}
 
 		# Add/Modify the entry to/in the dns_servers hash.
-		$cgiparams{'TLS_HOSTNAME'} = &Header::escape($cgiparams{'TLS_HOSTNAME'});
 		$dns_servers{$id} = ["$cgiparams{'NAMESERVER'}", "$cgiparams{'TLS_HOSTNAME'}", "$status", "$cgiparams{'REMARK'}"];
 
 		# Write the changed hash to the config file.
