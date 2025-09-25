@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2020 IPFire Team  <info@ipfire.org>                           #
+# Copyright (C) 2020 - 2025 IPFire Team  <info@ipfire.org>                    #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -141,7 +141,7 @@ my $database_query = qq(
         ORDER BY common_name, duration DESC;
 );
 
-if ($cgiparams{'CONNECTION_NAME'}) {
+if (($cgiparams{'CONNECTION_NAME'}) && ($cgiparams{'CONNECTION_NAME'} =~ /^[a-zA-Z0-9]+$/)) {
 	$database_query = qq(
 		SELECT common_name, DATETIME(connected_at, 'localtime'), DATETIME(disconnected_at, 'localtime'), bytes_received, bytes_sent,
 			STRFTIME('%s', DATETIME(disconnected_at)) - STRFTIME('%s', DATETIME(connected_at)) AS duration FROM sessions
