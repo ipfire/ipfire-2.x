@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2005-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -187,6 +187,7 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 		}
 
 		# Add/Modify the entry to/in the dns_servers hash.
+		$cgiparams{'TLS_HOSTNAME'} = &Header::escape($cgiparams{'TLS_HOSTNAME'});
 		$dns_servers{$id} = ["$cgiparams{'NAMESERVER'}", "$cgiparams{'TLS_HOSTNAME'}", "$status", "$cgiparams{'REMARK'}"];
 
 		# Write the changed hash to the config file.
