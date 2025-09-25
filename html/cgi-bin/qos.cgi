@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -671,6 +671,8 @@ END
 END
 ;
 	if (($qossettings{'OUT_SPD'} ne '') && ($qossettings{'INC_SPD'} ne '')) {
+		$qossettings{'OUT_SPD'} = &Header::escape($qossettings{'OUT_SPD'});
+		$qossettings{'INC_SPD'} = &Header::escape($qossettings{'INC_SPD'});
 		print <<END
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	  <table width='100%'>
@@ -683,6 +685,8 @@ END
 ;
 	}
 	if (($qossettings{'DEFCLASS_OUT'} ne '') && ($qossettings{'DEFCLASS_INC'} ne '')) {
+		$qossettings{'DEFCLASS_OUT'} = &Header::escape($qossettings{'DEFCLASS_OUT'});
+		$qossettings{'DEFCLASS_INC'} = &Header::escape($qossettings{'DEFCLASS_INC'});
 		print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='100%'>
