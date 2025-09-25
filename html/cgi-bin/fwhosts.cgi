@@ -800,7 +800,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 		foreach my $i (0 .. 4) { $customservice{$key}[$i] = "";}
 		$customservice{$key}[0] = $fwhostsettings{'SRV_NAME'};
 		$customservice{$key}[1] = $fwhostsettings{'SRV_PORT'};
-		$customservice{$key}[2] = &Header::escape($fwhostsettings{'PROT'});
+		$customservice{$key}[2] = $fwhostsettings{'PROT'};
 		$customservice{$key}[3] = $ICMP;
 		&General::writehasharray("$configsrv", \%customservice );
 		#reset fields
@@ -1783,7 +1783,7 @@ sub addservice
 	{
 		$fwhostsettings{'oldsrvname'} = $fwhostsettings{'SRV_NAME'};
 		$fwhostsettings{'oldsrvport'} = $fwhostsettings{'SRV_PORT'};
-		$fwhostsettings{'oldsrvprot'} = $fwhostsettings{'PROT'};
+		$fwhostsettings{'oldsrvprot'} = &Header::escape($fwhostsettings{'PROT'});
 		$fwhostsettings{'oldsrvicmp'} = $fwhostsettings{'ICMP'};
 	}
 	print<<END;
