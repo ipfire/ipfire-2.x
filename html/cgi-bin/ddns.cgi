@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -226,9 +226,6 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 			flock FILE, 2;
 
 			# Add account data to the file.
-			$settings{'SERVICE'} = &Header::escape(($settings{'SERVICE'});
-			$settings{'LOGIN'} = &Header::escape(($settings{'LOGIN'});
-			$settings{'PASSWORD'} = &Header::escape(($settings{'PASSWORD'});
 			print FILE "$settings{'SERVICE'},$hostname,$domain,$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n";
 
 			# Close file after writing.
@@ -527,17 +524,19 @@ print <<END
 		<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 
 		<td class='username'>$Lang::tr{'username'}</td>
-		<td class='username'><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
+		<td class='username'><input type='text' name='LOGIN'
+			value='@{[ &Header::escape($settings{'LOGIN'}) ]}' /></td>
 
 		<td class='token' style='display:none'>$Lang::tr{'token'}</td>
-		<td class='token' style='display:none'><input type='text' name='TOKEN' value='$settings{'TOKEN'}' /></td>
+		<td class='token' style='display:none'><input type='text' name='TOKEN'
+			value='@{[ &Header::escape($settings{'TOKEN'}) ]}' /></td>
 	</tr>
 
 	<tr class='password'>
 		<td class='base'></td>
 		<td></td>
 		<td class='base'>$Lang::tr{'password'}</td>
-		<td><input type='password' name='PASSWORD' value='$settings{'PASSWORD'}' /></td>
+		<td><input type='password' name='PASSWORD' value='@{[ &Header::escape($settings{'PASSWORD'}) ]}' /></td>
 	</tr>
 </table>
 <br>
