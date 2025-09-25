@@ -955,7 +955,8 @@ if ($netsettings{'BLUE_DEV'}) {
 }
 print <<END
 	<td class='base'>$Lang::tr{'advproxy visible hostname'}:</td>
-	<td><input type='text' name='VISIBLE_HOSTNAME' value='$proxysettings{'VISIBLE_HOSTNAME'}' /></td>
+	<td><input type='text' name='VISIBLE_HOSTNAME'
+		value='@{[ &Header::escape($proxysettings{'VISIBLE_HOSTNAME'}) ]}' /></td>
 </tr>
 <tr>
 END
@@ -1074,13 +1075,15 @@ print <<END
 	<td class='base'><a href='/cgi-bin/cachemgr.cgi' target='_blank'>$Lang::tr{'proxy cachemgr'}:</td>
 	<td><input type='checkbox' name='CACHEMGR' $checked{'CACHEMGR'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'advproxy admin mail'}:</td>
-	<td><input type='text' name='ADMIN_MAIL_ADDRESS' value='$proxysettings{'ADMIN_MAIL_ADDRESS'}' /></td>
+	<td><input type='text' name='ADMIN_MAIL_ADDRESS'
+		value='@{[ &Header::escape($proxysettings{'ADMIN_MAIL_ADDRESS'}) ]}' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'proxy filedescriptors'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='FILEDESCRIPTORS' value='$proxysettings{'FILEDESCRIPTORS'}' size='5' /></td>
 	<td class='base'>$Lang::tr{'proxy admin password'}:</td>
-	<td><input type='text' name='ADMIN_PASSWORD' value='$proxysettings{'ADMIN_PASSWORD'}' /></td>
+	<td><input type='text' name='ADMIN_PASSWORD'
+		value='@{[ &Header::escape($proxysettings{'ADMIN_PASSWORD'}) ]}' /></td>
 </tr>
 <tr>
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
@@ -3973,18 +3976,15 @@ END
 	{
 		print FILE " $mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}\n\n";
 	} else {
-		$proxysettings{'VISIBLE_HOSTNAME'} = &Header::escape($proxysettings{'VISIBLE_HOSTNAME'});
 		print FILE " $proxysettings{'VISIBLE_HOSTNAME'}\n\n";
 	}
 
 	if (!($proxysettings{'ADMIN_MAIL_ADDRESS'} eq ''))
 		{
-			$proxysettings{'ADMIN_MAIL_ADDRESS'} = &Header::escape($proxysettings{'ADMIN_MAIL_ADDRESS'});
 			print FILE "cache_mgr $proxysettings{'ADMIN_MAIL_ADDRESS'}\n";
 		}
 	if (!($proxysettings{'ADMIN_PASSWORD'} eq ''))
 		{
-			$proxysettings{'ADMIN_PASSWORD'} = &Header::escape($proxysettings{'ADMIN_PASSWORD'});
 			print FILE "cachemgr_passwd $proxysettings{'ADMIN_PASSWORD'} all\n";
 		}
 	print FILE "\n";
