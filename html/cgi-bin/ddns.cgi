@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -226,6 +226,9 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 			flock FILE, 2;
 
 			# Add account data to the file.
+			$settings{'SERVICE'} = &Header::escape(($settings{'SERVICE'});
+			$settings{'LOGIN'} = &Header::escape(($settings{'LOGIN'});
+			$settings{'PASSWORD'} = &Header::escape(($settings{'PASSWORD'});
 			print FILE "$settings{'SERVICE'},$hostname,$domain,$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n";
 
 			# Close file after writing.
