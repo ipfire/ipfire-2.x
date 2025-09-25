@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -102,8 +102,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 		$mail{'RECIPIENT'}		= $cgiparams{'txt_recipient'};
 
 		if ($cgiparams{'txt_mailuser'} && $cgiparams{'txt_mailpass'}) {
-			$auth{'AUTHNAME'}		= $cgiparams{'txt_mailuser'};
-			$auth{'AUTHPASS'}		= $cgiparams{'txt_mailpass'};
+			$auth{'AUTHNAME'}		= &Header::escape($cgiparams{'txt_mailuser'});
+			$auth{'AUTHPASS'}		= &Header::escape($cgiparams{'txt_mailpass'});
 			$auth{'AUTHHOST'}		= $cgiparams{'txt_mailserver'};
 			print TXT1 "$auth{'AUTHNAME'}|$auth{'AUTHHOST'}:$auth{'AUTHPASS'}\n";
 		}
