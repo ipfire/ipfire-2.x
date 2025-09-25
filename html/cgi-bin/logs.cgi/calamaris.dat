@@ -170,6 +170,10 @@ if ($reportsettings{'ACTION'} eq $Lang::tr{'calamaris create report'})
 
 	if ($reportsettings{'RUN_BACKGROUND'} eq 'on') { $commandline.=" &"; }
 
+	if (!($commandline =~ /^[a-zA-Z0-9-\s]+$/))
+	{
+		die "Invalid input in\"$commandline\"";
+	}
 	system("${General::swroot}/proxy/calamaris/bin/mkreport $commandline")
 }
 
