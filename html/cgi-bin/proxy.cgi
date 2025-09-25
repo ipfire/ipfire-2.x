@@ -3973,6 +3973,7 @@ END
 	{
 		print FILE " $mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}\n\n";
 	} else {
+		$proxysettings{'VISIBLE_HOSTNAME'} = &Header::escape($proxysettings{'VISIBLE_HOSTNAME'});
 		print FILE " $proxysettings{'VISIBLE_HOSTNAME'}\n\n";
 	}
 
