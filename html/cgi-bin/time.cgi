@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team                                             #
+# Copyright (C) 2010-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -78,6 +78,7 @@ if ($timesettings{'ACTION'} eq $Lang::tr{'save'})
 	if (!($timesettings{'UPDATE_VALUE'} =~ /^\d+$/) || $timesettings{'UPDATE_VALUE'} <= 0)
 	{
 		$errormessage = $Lang::tr{'invalid time period'};
+		$timesettings{'UPDATE_VALUE'} = 0;
 		goto ERROR;
 	}
 
