@@ -102,8 +102,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 		$mail{'RECIPIENT'}		= $cgiparams{'txt_recipient'};
 
 		if ($cgiparams{'txt_mailuser'} && $cgiparams{'txt_mailpass'}) {
-			$auth{'AUTHNAME'}		= &Header::escape($cgiparams{'txt_mailuser'});
-			$auth{'AUTHPASS'}		= &Header::escape($cgiparams{'txt_mailpass'});
+			$auth{'AUTHNAME'}		= $cgiparams{'txt_mailuser'};
+			$auth{'AUTHPASS'}		= $cgiparams{'txt_mailpass'};
 			$auth{'AUTHHOST'}		= $cgiparams{'txt_mailserver'};
 			print TXT1 "$auth{'AUTHNAME'}|$auth{'AUTHHOST'}:$auth{'AUTHPASS'}\n";
 		}
@@ -218,11 +218,13 @@ END
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email mailuser'}</td>
-			<td><input type='text' name='txt_mailuser' value='$auth{'AUTHNAME'}' style='width:22em;'></td>
+			<td><input type='text' name='txt_mailuser'
+				value='@{[ &Header::escape($auth{'AUTHNAME'}) ]}' style='width:22em;'></td>
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email mailpass'}</td>
-			<td><input type='password' name='txt_mailpass' value='$auth{'AUTHPASS'}' style='width:22em;' ></td>
+			<td><input type='password' name='txt_mailpass'
+				value='@{[ &Header::escape($auth{'AUTHPASS'}) ]}' style='width:22em;' ></td>
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email tls'}</td>
