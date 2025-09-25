@@ -647,7 +647,7 @@ sub cleanhtml {
 	# decode the UTF-8 text so that characters with diacritical marks such as
 	# umlauts are treated correctly by the escape command
 	$outstring = &Encode::decode("UTF-8",$outstring);
-	escape($outstring);
+	$outstring = escape($outstring);
 	# encode the text back to UTF-8 after running the escape command
 	$outstring = &Encode::encode("UTF-8",$outstring);
 	return $outstring;
