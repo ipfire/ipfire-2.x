@@ -38,10 +38,10 @@ case "${1}" in
 		modprobe tun &>/dev/null
 
 		# Flush all firewall rules
-		iptables -F OVPNINPUTRW
+		iptables --wait -F OVPNINPUTRW
 
 		# Open the port
-		iptables -A OVPNINPUTRW \
+		iptables --wait -A OVPNINPUTRW \
 			-p "${DPROTOCOL}" --dport "${DDEST_PORT}" -j ACCEPT
 
 		boot_mesg "Starting OpenVPN Roadwarrior Server..."
@@ -60,7 +60,7 @@ case "${1}" in
 		killproc /usr/sbin/openvpn
 
 		# Flush all firewall rules
-		iptables -F OVPNINPUTRW
+		iptables --wait -F OVPNINPUTRW
 		;;
 
 	restart)

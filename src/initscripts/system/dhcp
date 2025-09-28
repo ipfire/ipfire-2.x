@@ -28,10 +28,10 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
 
 function flush_chains() {
-	iptables -F DHCPGREENINPUT
-	iptables -F DHCPGREENOUTPUT
-	iptables -F DHCPBLUEINPUT
-	iptables -F DHCPBLUEOUTPUT
+	iptables --wait -F DHCPGREENINPUT
+	iptables --wait -F DHCPGREENOUTPUT
+	iptables --wait -F DHCPBLUEINPUT
+	iptables --wait -F DHCPBLUEOUTPUT
 }
 
 case "$1" in
@@ -41,14 +41,14 @@ case "$1" in
 		if [ -n "${GREEN_DEV}" -a -e "/var/ipfire/dhcp/enable_green" ]; then
 			LISTEN_INTERFACES+=" ${GREEN_DEV}"
 
-			iptables -A DHCPGREENINPUT  -i "${GREEN_DEV}" -j DHCPINPUT
-			iptables -A DHCPGREENOUTPUT -o "${GREEN_DEV}" -j DHCPOUTPUT
+			iptables --wait -A DHCPGREENINPUT  -i "${GREEN_DEV}" -j DHCPINPUT
+			iptables --wait -A DHCPGREENOUTPUT -o "${GREEN_DEV}" -j DHCPOUTPUT
 		fi
 		if [ -n "${BLUE_DEV}" -a -e "/var/ipfire/dhcp/enable_blue" ]; then
 			LISTEN_INTERFACES+=" ${BLUE_DEV}"
 
-			iptables -A DHCPBLUEINPUT  -i "${BLUE_DEV}" -j DHCPINPUT
-			iptables -A DHCPBLUEOUTPUT -o "${BLUE_DEV}" -j DHCPOUTPUT
+			iptables --wait -A DHCPBLUEINPUT  -i "${BLUE_DEV}" -j DHCPINPUT
+			iptables --wait -A DHCPBLUEOUTPUT -o "${BLUE_DEV}" -j DHCPOUTPUT
 		fi
 
 		boot_mesg "Starting DHCP Server..."

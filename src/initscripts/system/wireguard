@@ -216,7 +216,7 @@ generate_config() {
 			ip addr add "${local_address}" dev "${intf}"
 
 			# Apply MASQUERADE
-			iptables -t nat -A WGNAT -o "${intf}" -j MASQUERADE
+			iptables --wait -t nat -A WGNAT -o "${intf}" -j MASQUERADE
 		fi
 
 		echo "[Interface]"
@@ -230,7 +230,7 @@ generate_config() {
 			echo "ListenPort = ${port}"
 
 			# Open the port
-			iptables -A WGINPUT -p udp --dport "${port}" -j ACCEPT
+			iptables --wait -A WGINPUT -p udp --dport "${port}" -j ACCEPT
 		fi
 
 		echo "[Peer]"
@@ -285,7 +285,7 @@ generate_config() {
 		# Set blocking rules
 		for local_subnet in ${local_subnets//|/ }; do
 			for remote_subnet in ${remote_subnets//|/ }; do
-				iptables -I WGBLOCK \
+				iptables --wait -I WGBLOCK \
 					-s "${remote_subnet}" -d "${local_subnet}" -j RETURN
 			done
 		done
@@ -297,23 +297,23 @@ generate_config() {
 
 reload_firewall() {
 	# Flush all previous rules
-	iptables -F WGINPUT
-	iptables -t nat -F WGNAT
+	iptables --wait -F WGINPUT
+	iptables --wait -t nat -F WGNAT
 
 	if [ "${ENABLED}" = "on" ]; then
-		iptables -A WGINPUT -p udp --dport "${PORT}" -j ACCEPT
+		iptables --wait -A WGINPUT -p udp --dport "${PORT}" -j ACCEPT
 	fi
 
-	iptables -F WGBLOCK
+	iptables --wait -F WGBLOCK
 
 	# Don't block any traffic from Roadwarrior peers
 	if [ -n "${CLIENT_POOL}" ]; then
-		iptables -A WGBLOCK -s "${CLIENT_POOL}" -i wg0 -j RETURN
-		iptables -A WGBLOCK -d "${CLIENT_POOL}" -o wg0 -j RETURN
+		iptables --wait -A WGBLOCK -s "${CLIENT_POOL}" -i wg0 -j RETURN
+		iptables --wait -A WGBLOCK -d "${CLIENT_POOL}" -o wg0 -j RETURN
 	fi
 
 	# Block all other traffic
-	iptables -A WGBLOCK -j REJECT --reject-with icmp-admin-prohibited
+	iptables --wait -A WGBLOCK -j REJECT --reject-with icmp-admin-prohibited
 
 	# Flush any custom routes
 	ip route flush table wg 2>/dev/null

@@ -37,19 +37,19 @@ function setup_firewall() {
 	# Allow incoming traffic to Tor relay (and directory) port and
 	# all outgoing TCP connections from Tor user.
 	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_PORT}" ]; then
-		iptables -A TOR_INPUT -p tcp --dport "${TOR_RELAY_PORT}" -j ACCEPT
-		iptables -A TOR_OUTPUT -p tcp -m owner --uid-owner tor -j ACCEPT
+		iptables --wait -A TOR_INPUT -p tcp --dport "${TOR_RELAY_PORT}" -j ACCEPT
+		iptables --wait -A TOR_OUTPUT -p tcp -m owner --uid-owner tor -j ACCEPT
 	fi
 
 	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_DIRPORT}" ] && [ "${TOR_RELAY_DIRPORT}" -ne 0 ]; then
-		iptables -A TOR_INPUT -p tcp --dport "${TOR_RELAY_DIRPORT}" -j ACCEPT
+		iptables --wait -A TOR_INPUT -p tcp --dport "${TOR_RELAY_DIRPORT}" -j ACCEPT
 	fi
 }
 
 function flush_firewall() {
 	# Flush all rules.
-	iptables -F TOR_INPUT
-	iptables -F TOR_OUTPUT
+	iptables --wait -F TOR_INPUT
+	iptables --wait -F TOR_OUTPUT
 }
 
 case "${1}" in

@@ -162,8 +162,8 @@ case "${1}" in
 
 		elif [ "${TYPE}" == "DHCP" ]; then
 			# Add firewall rules to allow comunication with the dhcp server on red.
-			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
-			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+			iptables --wait -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+			iptables --wait -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
 
 			echo -n "${DEVICE}" > /var/ipfire/red/iface
 
