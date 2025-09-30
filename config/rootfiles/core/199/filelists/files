@@ -3,5 +3,7 @@ etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/openvpn-n2n
 etc/rc.d/init.d/openvpn-rw
 etc/rc.d/init.d/wireguard
+etc/ssh/ssh_config
+etc/ssh/sshd_config
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/sbin/openvpn-authenticator
