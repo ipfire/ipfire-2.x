@@ -653,7 +653,7 @@
 'display hostname in window title' => 'Показать имя сервера в заголовке окна',
 'display traffic at home' => 'Показать суммарный трафик на Главной странице',
 'display webinterface effects' => 'Включить Эффекты веб-интерфейса',
-'dl client arch' => 'Скачать клиентский комплект (zip)',
+'dl client arch' => 'Скачать клиентский комплект (ovpn)',
 'dmz' => 'DMZ',
 'dmz pinhole configuration' => 'Настройка DMZ туннелей',
 'dmz pinhole rule added' => 'DMZ pinhole rule added; restarting DMZ pinhole',
