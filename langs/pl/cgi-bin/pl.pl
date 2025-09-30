@@ -657,7 +657,7 @@
 'display hostname in window title' => 'Wyświetlaj nazwę hosta w tytule okna',
 'display traffic at home' => 'Wyświetlaj dane o ruchu na stronie startowej',
 'display webinterface effects' => 'Aktywuj efekty interfejsu',
-'dl client arch' => 'Pobierz pakiet klienta (zip)',
+'dl client arch' => 'Pobierz pakiet klienta (ovpn)',
 'dmz' => 'DMZ',
 'dmz pinhole configuration' => 'Konfigracja DMZ pinhole',
 'dmz pinhole rule added' => 'Reguła DMZ pinhole dodana; restartowanie DMZ pinhole',
