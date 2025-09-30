@@ -1,2 +1,7 @@
+etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/openvpn-n2n
+etc/rc.d/init.d/openvpn-rw
+etc/rc.d/init.d/wireguard
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/sbin/openvpn-authenticator
