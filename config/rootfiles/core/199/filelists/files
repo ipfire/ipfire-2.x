@@ -7,3 +7,4 @@ etc/ssh/ssh_config
 etc/ssh/sshd_config
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/sbin/openvpn-authenticator
+var/ipfire/header.pl
