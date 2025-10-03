@@ -5530,10 +5530,12 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/man/man3/SSL_POLL_EVENT_E.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_EC.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_ECD.3ossl
+#usr/share/man/man3/SSL_POLL_EVENT_EL.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_ER.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_EW.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_F.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_I.3ossl
+#usr/share/man/man3/SSL_POLL_EVENT_IC.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_IS.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_ISB.3ossl
 #usr/share/man/man3/SSL_POLL_EVENT_ISE.3ossl
