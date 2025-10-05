@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 2.14.6
+VER        = 2.15.0
+#          https://download.gnome.org/sources/libxml2/
 
 THISAPP    = libxml2-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ad5d7cb64f8081559a671e9d79b3ebcd7313dada39d7f0c2854994153a9dff2ef85bc81336437f5881abe637bae51b62e9104b3a099113f4ee2252b604325291
+$(DL_FILE)_BLAKE2 = 07a570cd38528eb253d67f1eb88d375c5b3e32dfb23e97662c6243b8af2c4087f2cc931015cc183ff9bc231be88b6099fda42104d77d6fb0126f7804f277a088
 
 install : $(TARGET)
 
