@@ -51,6 +51,8 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/init.d/openvpn-n2n restart
+/etc/init.d/openvpn-rw restart
 /etc/init.d/unbound restart
 /etc/init.d/sshd restart
 
