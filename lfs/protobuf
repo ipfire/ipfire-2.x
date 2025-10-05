@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 30.2
+VER        = 32.1
 
 THISAPP    = protobuf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3a7d6bfa38500b16b1ce52b244fd9448fe7be2933a77224a1423a67e3ae3155846c0974ee1b6c579f6050f60b7784ace21b149b3cbdff2ef1e6bf954acbb1b51
+$(DL_FILE)_BLAKE2 = f6c1faa260ecb57c0a1a5d4be7d56e431cac9e325a02b86d9eecd0318a0964618063db218a4720fcb1121614016f112ba00880a5b743a5c34f19f79ea4420735
 
 install : $(TARGET)
 
