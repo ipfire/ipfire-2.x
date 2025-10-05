@@ -24,9 +24,8 @@
 
 include Config
 
-VER        = 1.56.4
-
-# https://download.gnome.org/sources/pango/
+VER        = 1.57.0
+#          https://download.gnome.org/sources/pango/
 
 THISAPP    = pango-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 727261844a914af5229379f7a0b41c2cc05df106523189f31112e50ba01a94bf45f17eacfb3e91fe51a2ea1d09132b6021cf51b8a0986ba258e651fc48e3f468
+$(DL_FILE)_BLAKE2 = b74cb272812132c83d3654a0f5b292639556c014adf6b917f3588f242f56804336cf9bf701e6b32469251315e454a50b88216412ba39204ee6c4440f83eaeeaa
 
 install : $(TARGET)
 
