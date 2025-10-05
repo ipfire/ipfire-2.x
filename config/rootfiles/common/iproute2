@@ -119,6 +119,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-ct.8
 #usr/share/man/man8/tc-ctinfo.8
 #usr/share/man/man8/tc-drr.8
+#usr/share/man/man8/tc-dualpi2.8
 #usr/share/man/man8/tc-ematch.8
 #usr/share/man/man8/tc-etf.8
 #usr/share/man/man8/tc-ets.8
