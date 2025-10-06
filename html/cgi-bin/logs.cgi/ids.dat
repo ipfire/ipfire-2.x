@@ -18,6 +18,12 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
+# Path where the suricata-report-generator binary lives.
+my $report_generator_binary = "/usr/bin/suricata-report-generator";
+
+# File which contais the alert SQlite database.
+my $database_file = "/var/log/suricata/reporter.db";
+
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -193,6 +199,60 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	exit;
 }
 
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
+	# Array which contains the report-generator command and it's arguments.
+	my @report_cmd = ("$report_generator_binary", " --database=$database_file", " --output=-");
+	
+	# Filename for the generated report.
+	my $filename = "suricata-report";
+	my $file_extension = "pdf";
+
+	# Assign easy to access variables.
+	my $day = $cgiparams{'DAY'};
+	my $month = $cgiparams{'MONTH'};
+	my $year = $year;
+
+	# Calculate the year value.
+	#
+	# Check if the given day and/or month is different from today.
+	if (($day ne $now[3]) || ($month ne $now[4])) {
+		# Check if the given date is in the future.
+		if (($month eq $now[4]) && ($day > $now[3]) || ($month > $now[4] )) {
+			# Assume we are looking for data from the past year.
+			$year = $year-1;
+		}
+	}
+
+	# Parse, which kind of report has been requested.
+	if ($cgiparams{'GENERATE_WHAT'} eq "YEAR") {
+		push(@report_cmd, " --year=$year");
+	} elsif ($cgiparams{'GENERATE_WHAT'} eq "MONTH") {
+		push(@report_cmd, " --month=$month");
+		push(@report_cmd, " --year=$year");
+	} elsif ($cgiparams{'GENERATE_WHAT'} eq "DAY") {
+		push(@report_cmd, " --day=$day");
+		push(@report_cmd, " --month=$month");
+		push(@report_cmd, " --year=$year");
+	} else {
+		# Assign an error message.
+		$errormessage = "Could not generate report - Unsupported request.\n";
+	}
+
+	# Check if there has been any error.
+	unless ($errormessage) {
+		# Call the suricata-report-generator binary and return it's output.
+		my @report = &General::system_output(@report_cmd);
+
+		# Send addition HTTP headers to the client and the generated report.
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$filename.$file_extension\n\n";
+		print @report;
+
+		# Exit gracefully.
+		exit (0);
+	}
+}
+
 &Header::showhttpheaders();
 
 &Header::openpage($Lang::tr{'ids log viewer'}, 1, '');
@@ -246,6 +306,34 @@ print <<END
 	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
 	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'export'}' /></td>
 </tr>
+</table>
+
+<br><br>
+
+<table width='100%'>
+	<tr>
+		<td>
+			<h5>$Lang::tr{'report exporting'}</h5>
+		</td>
+	</tr>
+
+	<tr>
+		<td width='50%' class='base'>
+			$Lang::tr{'generate pdf report for'}
+		</td>
+
+		<td witdh='25%'>
+			<select name='GENERATE_WHAT'>
+				<option value='DAY'>$Lang::tr{'selected date'}</option>
+				<option value='MONTH'>$Lang::tr{'selected month'}</option>
+				<option value='YEAR'>$Lang::tr{'selected year'}</option>
+			</select>
+		</td>
+
+		<td witch='25%'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'generate report'}'>
+		</td>
+	</tr>
 </table>
 </form>
 END
