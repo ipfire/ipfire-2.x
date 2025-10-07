@@ -18,6 +18,9 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
+# Path where the suricata-report-generator binary lives.
+my $report_generator_binary = "/usr/bin/suricata-report-generator";
+
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -193,6 +196,48 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	exit;
 }
 
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'download report'}") {
+	# Array which contains the report-generator command and it's arguments.
+	my @report_cmd = ("$report_generator_binary", "--output=-");
+
+	# Filename for the generated report.
+	my $filename = "suricata-report";
+	my $file_extension = "pdf";
+
+	# Assign easy to access variables.
+	my $day = $cgiparams{'DAY'};
+	my $month = $cgiparams{'MONTH'} + 1;
+	my $year = $year;
+
+	# Calculate the year value.
+	#
+	# Check if the given day and/or month is different from today.
+	if (($day ne $now[3]) || ($month ne $now[4])) {
+		# Check if the given date is in the future.
+		if (($month eq $now[4]) && ($day > $now[3]) || ($month > $now[4] )) {
+			# Assume we are looking for data from the past year.
+			$year = $year-1;
+		}
+	}
+
+	# Append the date
+	push(@report_cmd, "--day=$day", "--month=$month", "--year=$year");
+
+	# Check if there has been any error.
+	unless ($errormessage) {
+		# Call the suricata-report-generator binary and return it's output.
+		my @report = &General::system_output(@report_cmd);
+
+		# Send addition HTTP headers to the client and the generated report.
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$filename.$file_extension\n\n";
+		print @report;
+
+		# Exit gracefully.
+		exit (0);
+	}
+}
+
 &Header::showhttpheaders();
 
 &Header::openpage($Lang::tr{'ids log viewer'}, 1, '');
@@ -227,7 +272,7 @@ print <<END
 	</select>
 	</td>
 	<td width='10%' class='base' align='right'>&nbsp;$Lang::tr{'day'}:&nbsp;</td>
-	<td width='40%'>
+	<td width='30%'>
 	<select name='DAY'>
 END
 ;
@@ -245,6 +290,7 @@ print <<END
         <td width='5%' align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
 	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
 	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'export'}' /></td>
+	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'download report'}' /></td>
 </tr>
 </table>
 </form>

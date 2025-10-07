@@ -1,3 +1,5 @@
+etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/suricata
 var/ipfire/graphs.pl
+var/ipfire/header.pl
 var/ipfire/ids-functions.pl

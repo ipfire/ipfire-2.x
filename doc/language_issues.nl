@@ -1054,6 +1054,7 @@ WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: done = Done
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
+WARNING: untranslated string: download report = Download Report
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/blocklists/do-not-route-or-peer/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets

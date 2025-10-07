@@ -1003,6 +1003,7 @@ WARNING: untranslated string: configuration file = Configuration File
 WARNING: untranslated string: core notice 3 = available.
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: done = Done
+WARNING: untranslated string: download report = Download Report
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: endpoint = Endpoint

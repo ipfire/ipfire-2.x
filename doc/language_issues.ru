@@ -1014,6 +1014,7 @@ WARNING: untranslated string: done = Done
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: downlink = Downlink
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
+WARNING: untranslated string: download report = Download Report
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: dpd delay = Delay
 WARNING: untranslated string: dpd timeout = Timeout

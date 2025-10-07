@@ -654,6 +654,7 @@ WARNING: untranslated string: download ca certificate = Download CA certificate
 WARNING: untranslated string: download certificate = Download file
 WARNING: untranslated string: download host certificate = Download host certificate
 WARNING: untranslated string: download pkcs12 file = Download PKCS12 file
+WARNING: untranslated string: download report = Download Report
 WARNING: untranslated string: download root certificate = Download root certificate
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: dpd action = Action

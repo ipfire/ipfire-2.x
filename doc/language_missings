@@ -66,6 +66,8 @@
 < fwdfw syn flood protection
 < fwhost wg peers
 < g.dtm
+< generate pdf report for
+< generatereport
 < g.lite
 < hostile networks in
 < hostile networks out
@@ -113,6 +115,7 @@
 < reiserfs warning1
 < reiserfs warning2
 < remarks
+< report exporting
 < required
 < routing
 < rss
@@ -156,7 +159,9 @@
 < AES-256-GCM
 < CHACHA20-POLY1305
 < dns servers
+< download report
 < fwhost invalid country code
+< generate pdf report for
 < ids all including informational
 < ids email alerts
 < ids email alert severity
@@ -194,6 +199,7 @@
 < ovpn transport protocol
 < ovpn unsupported cipher selected
 < quality of service
+< report exporting
 < rss
 < rss long
 < smt not implemented
@@ -239,6 +245,7 @@
 < configuration file
 < data transfer
 < done
+< download report
 < endpoint
 < endpoint address
 < endpoint port
@@ -247,6 +254,7 @@
 < fwhost invalid country code
 < fwhost wg peers
 < g.dtm
+< generate pdf report for
 < g.lite
 < hostile networks total
 < ids all including informational
@@ -311,6 +319,7 @@
 < reg_file_data_sampling
 < remarks
 < remote subnets
+< report exporting
 < routing
 < rss
 < rss long
@@ -556,6 +565,7 @@
 < done
 < downfall gather data sampling
 < download apple profile
+< download report
 < drop hostile
 < drop spoofed martians
 < duration
@@ -626,6 +636,7 @@
 < fwhost newlocationgrp
 < fwhost wg peers
 < fw red
+< generate pdf report for
 < generate ptr
 < guaranteed bandwidth
 < guardian
@@ -862,6 +873,7 @@
 < release
 < remarks
 < remote subnets
+< report exporting
 < required
 < required field
 < retbleed
@@ -1239,6 +1251,7 @@
 < done
 < downfall gather data sampling
 < download apple profile
+< download report
 < download tls-auth key
 < drop hostile
 < drop outgoing
@@ -1312,6 +1325,7 @@
 < fwhost newlocationgrp
 < fwhost wg peers
 < fw red
+< generate pdf report for
 < generate ptr
 < guardian
 < hardware vulnerabilities
@@ -1565,6 +1579,7 @@
 < reiserfs warning2
 < remarks
 < remote subnets
+< report exporting
 < required
 < required field
 < retbleed
@@ -2019,6 +2034,7 @@
 < downfall gather data sampling
 < downlink
 < download apple profile
+< download report
 < download tls-auth key
 < dpd delay
 < dpd timeout
@@ -2298,6 +2314,7 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< generate pdf report for
 < generate ptr
 < grouptype
 < guardian
@@ -2609,6 +2626,7 @@
 < release
 < remarks
 < remote subnets
+< report exporting
 < required
 < required field
 < retbleed
@@ -3171,6 +3189,7 @@
 < downfall gather data sampling
 < downlink
 < download apple profile
+< download report
 < download tls-auth key
 < dpd delay
 < dpd timeout
@@ -3452,6 +3471,7 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< generate pdf report for
 < generate ptr
 < grouptype
 < guardian
@@ -3764,6 +3784,7 @@
 < release
 < remarks
 < remote subnets
+< report exporting
 < required
 < required field
 < retbleed
@@ -4175,6 +4196,7 @@
 < done
 < downfall gather data sampling
 < download apple profile
+< download report
 < drop hostile
 < drop spoofed martians
 < duration
@@ -4204,6 +4226,7 @@
 < fwhost invalid country code
 < fwhost wg peers
 < fw red
+< generate pdf report for
 < generate ptr
 < hardware vulnerabilities
 < hostile networks in
@@ -4401,6 +4424,7 @@
 < release
 < remarks
 < remote subnets
+< report exporting
 < required
 < retbleed
 < routing
@@ -4581,7 +4605,9 @@
 < Captive wrong type
 < CHACHA20-POLY1305
 < dns servers
+< download report
 < fwhost invalid country code
+< generate pdf report for
 < guaranteed bandwidth
 < ids all including informational
 < ids email alerts
@@ -4630,6 +4656,7 @@
 < pakfire remove package
 < pakfire updating
 < password has quotation mark
+< report exporting
 < rss
 < rss long
 < smt not implemented
@@ -4670,7 +4697,9 @@
 < Captive wrong type
 < CHACHA20-POLY1305
 < dns servers
+< download report
 < fwhost invalid country code
+< generate pdf report for
 < guaranteed bandwidth
 < ids all including informational
 < ids email alerts
@@ -4719,6 +4748,7 @@
 < pakfire remove package
 < pakfire updating
 < password has quotation mark
+< report exporting
 < rss
 < rss long
 < smt not implemented
