@@ -112,13 +112,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		ninja \
 			udevadm \
 			systemd-hwdb \
-			$$(ninja -n | grep -Eo '(src/(lib)?udev|rules.d|hwdb.d)/[^ ]*') \
+			$$(ninja -n | grep -Eo '(src/(lib)?udev|src/(lib)?systemd|rules.d|hwdb.d)/[^ ]*') \
+			$$(realpath libsystemd.so --relative-to .) \
 			$$(realpath libudev.so --relative-to .) \
 			$(UDEV_HELPERS)
 
+	# Install libsystemd
+	cd $(DIR_APP)/build && install -vm755 -d /usr/{lib,share}/pkgconfig
+	cd $(DIR_APP)/build && install -vm755 -d /usr/include/systemd
+	cd $(DIR_APP)/build && install -vm644 ../src/systemd/*.h          /usr/include/systemd
+	cd $(DIR_APP)/build && install -vm644 src/libsystemd/libsystemd.pc /usr/lib/pkgconfig/
+	cd $(DIR_APP)/build && cp      -av    libsystemd.so{,*[0-9]}      /usr/lib/
+
 	# Install udev
 	cd $(DIR_APP)/build && install -vm755 -d {/lib,/etc}/udev/{hwdb,rules}.d
-	cd $(DIR_APP)/build && install -vm755 -d /usr/{lib,share}/pkgconfig
 	cd $(DIR_APP)/build && install -vm755 udevadm                     /bin/
 	cd $(DIR_APP)/build && install -vm755 systemd-hwdb                /usr/bin/udev-hwdb
 	cd $(DIR_APP)/build && ln      -svfn  ../bin/udevadm              /sbin/udevd
