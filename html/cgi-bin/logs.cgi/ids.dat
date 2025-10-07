@@ -198,7 +198,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
 	# Array which contains the report-generator command and it's arguments.
-	my @report_cmd = ("$report_generator_binary", " --output=-");
+	my @report_cmd = ("$report_generator_binary", "--output=-");
 
 	# Filename for the generated report.
 	my $filename = "suricata-report";
@@ -222,14 +222,14 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
 
 	# Parse, which kind of report has been requested.
 	if ($cgiparams{'GENERATE_WHAT'} eq "YEAR") {
-		push(@report_cmd, " --year=$year");
+		push(@report_cmd, "--year=$year");
 	} elsif ($cgiparams{'GENERATE_WHAT'} eq "MONTH") {
-		push(@report_cmd, " --month=$month");
-		push(@report_cmd, " --year=$year");
+		push(@report_cmd, "--month=$month");
+		push(@report_cmd, "--year=$year");
 	} elsif ($cgiparams{'GENERATE_WHAT'} eq "DAY") {
-		push(@report_cmd, " --day=$day");
-		push(@report_cmd, " --month=$month");
-		push(@report_cmd, " --year=$year");
+		push(@report_cmd, "--day=$day");
+		push(@report_cmd, "--month=$month");
+		push(@report_cmd, "--year=$year");
 	} else {
 		# Assign an error message.
 		$errormessage = "Could not generate report - Unsupported request.\n";
