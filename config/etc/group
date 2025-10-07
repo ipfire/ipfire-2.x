@@ -8,7 +8,7 @@ lp:x:7:daemon
 mem:x:8:
 kmem:x:9:
 wheel:x:10:root
-mail:x:12:mail
+mail:x:12:mail,suricata
 uucp:x:14:
 dialout:x:16:nobody
 floppy:x:19:

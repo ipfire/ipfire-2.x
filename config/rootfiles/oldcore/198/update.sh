@@ -46,6 +46,13 @@ if ! [ -d "/var/run/suricata" ]; then
 	chown suricata:suricata /var/run/suricata
 fi
 
+# Add the suricata user to the mail group
+usermod -a -G mail suricata
+
+# Change ownership & permissions of auth.conf
+chmod 640 /var/ipfire/dma/auth.conf
+chown nobody:mail /var/ipfire/dma/auth.conf
+
 # update linker config
 ldconfig
 

@@ -358,6 +358,17 @@ restore_backup() {
 	/etc/init.d/openvpn-n2n restart
 	/etc/init.d/openvpn-rw restart
 
+	#
+	# Core Update 198
+	#
+
+	# Add the suricata user to the mail group
+	usermod -a -G mail suricata
+
+	# Change ownership & permissions of auth.conf
+	chmod 640 /var/ipfire/dma/auth.conf
+	chown nobody:mail /var/ipfire/dma/auth.conf
+
 	return 0
 }
 
