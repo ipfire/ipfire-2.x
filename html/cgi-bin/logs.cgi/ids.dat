@@ -21,9 +21,6 @@ use strict;
 # Path where the suricata-report-generator binary lives.
 my $report_generator_binary = "/usr/bin/suricata-report-generator";
 
-# File which contais the alert SQlite database.
-my $database_file = "/var/log/suricata/reporter.db";
-
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -201,8 +198,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
 	# Array which contains the report-generator command and it's arguments.
-	my @report_cmd = ("$report_generator_binary", " --database=$database_file", " --output=-");
-	
+	my @report_cmd = ("$report_generator_binary", " --output=-");
+
 	# Filename for the generated report.
 	my $filename = "suricata-report";
 	my $file_extension = "pdf";
