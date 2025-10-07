@@ -81,7 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install mailq-link install-spool-dirs install-etc
 	install -v -m 755 $(DIR_SRC)/config/dma/dma-cleanup-spool /usr/sbin
 	chown -R nobody.nobody /var/ipfire/dma
-	chown nobody.root /var/ipfire/dma/auth.conf
+	chown nobody.mail /var/ipfire/dma/auth.conf
+	chmod 640 /var/ipfire/dma/auth.conf
 	ln -svf dma /usr/sbin/sendmail.dma
 	/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.dma 20
 	@rm -rf $(DIR_APP)
