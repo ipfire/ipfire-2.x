@@ -1055,6 +1055,7 @@ WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: done = Done
 WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
+WARNING: untranslated string: download report = Download Report
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/blocklists/do-not-route-or-peer/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
@@ -1127,6 +1128,7 @@ WARNING: untranslated string: fwhost invalid country code = Invalid Country Code
 WARNING: untranslated string: fwhost newlocationgrp = Location Groups
 WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: generate ptr = Generate PTR
+WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: guardian = Guardian
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string

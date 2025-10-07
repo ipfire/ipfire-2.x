@@ -196,7 +196,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	exit;
 }
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'download report'}") {
 	# Array which contains the report-generator command and it's arguments.
 	my @report_cmd = ("$report_generator_binary", "--output=-");
 
@@ -220,20 +220,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
 		}
 	}
 
-	# Parse, which kind of report has been requested.
-	if ($cgiparams{'GENERATE_WHAT'} eq "YEAR") {
-		push(@report_cmd, "--year=$year");
-	} elsif ($cgiparams{'GENERATE_WHAT'} eq "MONTH") {
-		push(@report_cmd, "--month=$month");
-		push(@report_cmd, "--year=$year");
-	} elsif ($cgiparams{'GENERATE_WHAT'} eq "DAY") {
-		push(@report_cmd, "--day=$day");
-		push(@report_cmd, "--month=$month");
-		push(@report_cmd, "--year=$year");
-	} else {
-		# Assign an error message.
-		$errormessage = "Could not generate report - Unsupported request.\n";
-	}
+	# Append the date
+	push(@report_cmd, "--day=$day", "--month=$month", "--year=$year");
 
 	# Check if there has been any error.
 	unless ($errormessage) {
@@ -284,7 +272,7 @@ print <<END
 	</select>
 	</td>
 	<td width='10%' class='base' align='right'>&nbsp;$Lang::tr{'day'}:&nbsp;</td>
-	<td width='40%'>
+	<td width='30%'>
 	<select name='DAY'>
 END
 ;
@@ -302,35 +290,8 @@ print <<END
         <td width='5%' align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
 	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
 	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'export'}' /></td>
+	<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'download report'}' /></td>
 </tr>
-</table>
-
-<br><br>
-
-<table width='100%'>
-	<tr>
-		<td>
-			<h5>$Lang::tr{'report exporting'}</h5>
-		</td>
-	</tr>
-
-	<tr>
-		<td width='50%' class='base'>
-			$Lang::tr{'generate pdf report for'}
-		</td>
-
-		<td witdh='25%'>
-			<select name='GENERATE_WHAT'>
-				<option value='DAY'>$Lang::tr{'selected date'}</option>
-				<option value='MONTH'>$Lang::tr{'selected month'}</option>
-				<option value='YEAR'>$Lang::tr{'selected year'}</option>
-			</select>
-		</td>
-
-		<td witch='25%'>
-			<input type='submit' name='ACTION' value='$Lang::tr{'generate report'}'>
-		</td>
-	</tr>
 </table>
 </form>
 END

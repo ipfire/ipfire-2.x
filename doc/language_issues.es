@@ -1022,6 +1022,7 @@ WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
 WARNING: untranslated string: dns servers = DNS Servers
+WARNING: untranslated string: download report = Download Report
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: error message = unknown string
@@ -1029,6 +1030,7 @@ WARNING: untranslated string: extrahd because it is outside the allowed mount pa
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: fwhost invalid country code = Invalid Country Code
+WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string
