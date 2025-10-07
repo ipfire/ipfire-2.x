@@ -1563,7 +1563,7 @@ build_system() {
 	lfsmake2 python3-MarkupSafe
 	lfsmake2 python3-Jinja2
 	lfsmake2 kmod
-	lfsmake2 udev
+	lfsmake2 systemd
 	lfsmake2 libusb
 	lfsmake2 mdadm
 	lfsmake2 dracut-ng
