@@ -206,7 +206,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'generate report'}") {
 
 	# Assign easy to access variables.
 	my $day = $cgiparams{'DAY'};
-	my $month = $cgiparams{'MONTH'};
+	my $month = $cgiparams{'MONTH'} + 1;
 	my $year = $year;
 
 	# Calculate the year value.
