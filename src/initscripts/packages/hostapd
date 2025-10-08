@@ -47,13 +47,6 @@ declare -A HT_CAPS=(
 	[0x8000]="[LSIG-TXOP-PROT]"
 )
 
-declare -A HT_CAPS_DRIVER_FILTERS=(
-	# ath1[012]k does not support Greenfield or Delayed Block Ack
-	[ath10k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
-	[ath11k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
-	[ath12k_pci]="$(( 0xffff & ~0x0008 & ~0x0100 ))"
-)
-
 declare -A VHT_CAPS=(
 	# RX LDPC
 	[0x00000010]="[RXLDPC]"
@@ -79,11 +72,6 @@ declare -A VHT_CAPS=(
 	[0x10000000]="[RX-ANTENNA-PATTERN]"
 	# TX antenna pattern consistency
 	[0x20000000]="[TX-ANTENNA-PATTERN]"
-)
-
-declare -A VHT_CAPS_DRIVER_FILTERS=(
-	# ath12k does not support Short GI for 160 MHz
-	[ath12k_pci]="$(( 0xffffffff & ~0x00000020 ))"
 )
 
 declare -A HE_MAC_CAPS=(
@@ -171,18 +159,6 @@ write_config() {
 				;;
 		esac
 	done <<<"$(iw phy "${phy}" info)"
-
-	# Fix the HT caps because some drivers don't support everything
-	# that the actual hardware supports (or have it turned off because of bugs).
-	if [ -n "${HT_CAPS_DRIVER_FILTERS[${driver}]}" ]; then
-		ht_flags="$(( ${ht_flags} & ${HT_CAPS_DRIVER_FILTERS[${driver}]} ))"
-	fi
-
-	# Fix the VHT caps because some drivers don't support everything
-	# that the actual hardware supports (or have it turned off because of bugs).
-	if [ -n "${VHT_CAPS_DRIVER_FILTERS[${driver}]}" ]; then
-		vht_flags="$(( ${vht_flags} & ${VHT_CAPS_DRIVER_FILTERS[${driver}]} ))"
-	fi
 
 	# HT Capabilities
 	for flag in ${!HT_CAPS[@]}; do
