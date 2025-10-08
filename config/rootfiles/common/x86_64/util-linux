@@ -159,11 +159,13 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/cfdisk
 #usr/share/bash-completion/completions/chcpu
 #usr/share/bash-completion/completions/chmem
+#usr/share/bash-completion/completions/choom
 #usr/share/bash-completion/completions/chrt
 #usr/share/bash-completion/completions/col
 #usr/share/bash-completion/completions/colcrt
 #usr/share/bash-completion/completions/colrm
 #usr/share/bash-completion/completions/column
+#usr/share/bash-completion/completions/coresched
 #usr/share/bash-completion/completions/ctrlaltdel
 #usr/share/bash-completion/completions/delpart
 #usr/share/bash-completion/completions/dmesg
