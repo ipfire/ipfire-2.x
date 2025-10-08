@@ -27,30 +27,24 @@ declare -A HT_CAPS=(
 	[0x0001]="[LDPC]"
 	# 40 MHz Channel Width
 	[0x0002]="[HT40+][HT40-]"
-	# SM Power Save
-	# [0x0004] - not supported by hostapd
 	# Greenfield
-	[0x0008]="[GF]"
+	[0x0010]="[GF]"
 	# Short Guard Interval (SGI) for 20 MHz
-	[0x0010]="[SHORT-GI-20]"
+	[0x0020]="[SHORT-GI-20]"
 	# Short Guard Interval (SGI) for 40 MHz
-	[0x0020]="[SHORT-GI-40]"
+	[0x0040]="[SHORT-GI-40]"
 	# TX STBC support
-	[0x0040]="[TX-STBC]"
-	# RX STBC support (1 stream)
-	[0x0080]="[RX-STBC1]"
+	[0x0080]="[TX-STBC]"
 	# HT-delayed Block Ack
-	[0x0100]="[DELAYED-BA]"
+	[0x0400]="[DELAYED-BA]"
 	# Max A-MSDU length (7935 vs. 3839 bytes)
-	[0x0200]="[MAX-AMSDU-7935]"
+	[0x0800]="[MAX-AMSDU-7935]"
 	# DSSS/CCK Mode in 40 MHz
-	[0x0400]="[DSSS_CCK-40]"
-	# PSMP support
-	# [0x0800] - not supported by hostapd
+	[0x1000]="[DSSS_CCK-40]"
 	# 40 MHz Intolerant
-	[0x1000]="[40-INTOLERANT]"
+	[0x4000]="[40-INTOLERANT]"
 	# L-SIG TXOP protection support
-	[0x2000]="[LSIG-TXOP-PROT]"
+	[0x8000]="[LSIG-TXOP-PROT]"
 )
 
 declare -A HT_CAPS_DRIVER_FILTERS=(
@@ -196,6 +190,22 @@ write_config() {
 			ht_caps+=( "${HT_CAPS[${flag}]}" )
 		fi
 	done
+
+	# RX STBC
+	case "$(( (${ht_flags} >> 8) & 0x03 ))" in
+		0)
+			# No spacial stream support
+			;;
+		1)
+			ht_caps+=( "[RX-STBC1]" )
+			;;
+		2)
+			ht_caps+=( "[RX-STBC12]" )
+			;;
+		3)
+			ht_caps+=( "[RX-STBC123]" )
+			;;
+	esac
 
 	# VHT Capabilities
 	for flag in ${!VHT_CAPS[@]}; do
