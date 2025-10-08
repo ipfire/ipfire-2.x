@@ -83,8 +83,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Move mount.fuse3 to same location as mount.fuse was in previous version
 	mv -v /usr/sbin/mount.fuse3 /sbin
 
-	# Move 99-fuse3 rules to same udev location as in previous version of fuse
-	mv -v /lib/udev/rules.d/99-fuse3.rules /etc/udev/rules.d
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
