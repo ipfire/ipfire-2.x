@@ -98,6 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			-D ENABLE_MAN_PAGES=OFF \
 			-D ENABLE_EXTERNAL_MSPACK=OFF \
 			-D ENABLE_FRESHCLAM_DNS_FIX=ON \
+			-D ENABLE_SYSTEMD=OFF \
 			-D APP_CONFIG_DIRECTORY=/var/ipfire/clamav \
 			-D CURSES_LIBRARY=/usr/lib/libncurses.so \
 			-D DATABASE_DIRECTORY=$(DATABASE_DIR)
