@@ -241,6 +241,13 @@ sub writeserverconf {
     print CONF "dev tun\n";
     print CONF "proto $vpnsettings{'DPROTOCOL'}\n";
     print CONF "port $vpnsettings{'DDEST_PORT'}\n";
+
+    # Enable multihoming when running in UDP mode to send reply packets
+    # from the same IP address that the client was talking to.
+    if ($vpnsettings{'DPROTOCOL'} eq 'udp') {
+      print CONF "multihome\n";
+    }
+
     print CONF "script-security 3\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
     print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
