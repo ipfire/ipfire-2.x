@@ -95,6 +95,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Remve udev rule which requires a full systemd installation
 	cd $(DIR_APP) && sed '/systemd-sysctl/s/^/#/' -i rules.d/99-systemd.rules.in
 
+	# Fix udev linking
+	cd $(DIR_APP) && \
+		sed -i "/udev_dependencies,/a \                'link_with': udev_link_with," src/udev/meson.build
+
 	# Prepare udev for build.
 	cd $(DIR_APP) && mkdir -pv build
 	cd $(DIR_APP)/build &&meson setup \
