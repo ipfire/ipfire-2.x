@@ -90,7 +90,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-gnutls \
 		--enable-dns-over-tls \
 		--with-lua \
-		--without-net-snmp
+		--without-net-snmp \
+		--disable-systemd
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
