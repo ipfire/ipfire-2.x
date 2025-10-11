@@ -98,6 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				-D lame=enabled \
 				-D upnp=disabled \
 				-D icu=disabled \
+				-D systemd=disabled \
 				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
