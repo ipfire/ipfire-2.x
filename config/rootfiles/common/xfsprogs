@@ -1,6 +1,5 @@
 lib/libhandle.so.1
 lib/libhandle.so.1.0.3
-#lib/udev/rules.d/64-xfs.rules
 sbin/fsck.xfs
 sbin/mkfs.xfs
 sbin/xfs_repair
@@ -19,6 +18,7 @@ sbin/xfs_repair
 #usr/include/xfs/xqm.h
 #usr/lib/libhandle.la
 #usr/lib/libhandle.so
+usr/lib/udev/rules.d/64-xfs.rules
 usr/sbin/xfs_admin
 usr/sbin/xfs_bmap
 usr/sbin/xfs_copy
