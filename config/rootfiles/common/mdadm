@@ -1,10 +1,10 @@
-lib/udev/rules.d/01-md-raid-creating.rules
-lib/udev/rules.d/63-md-raid-arrays.rules
-lib/udev/rules.d/64-md-raid-assembly.rules
-lib/udev/rules.d/69-md-clustered-confirm-device.rules
 sbin/mdadm
 sbin/mdmon
 srv/web/ipfire/cgi-bin/mdstat.cgi
+usr/lib/udev/rules.d/01-md-raid-creating.rules
+usr/lib/udev/rules.d/63-md-raid-arrays.rules
+usr/lib/udev/rules.d/64-md-raid-assembly.rules
+usr/lib/udev/rules.d/69-md-clustered-confirm-device.rules
 #usr/share/man/man4/md.4
 #usr/share/man/man5/mdadm.conf.5
 #usr/share/man/man8/mdadm.8
