@@ -86,6 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				-D sysconfdir=/etc \
 				-D localstatedir=/var \
 				-D default_library=shared \
+				-D systemd=disabled \
 				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
