@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mympd
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       = mpd libmpdclient
 
@@ -81,14 +81,18 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mympd-22.0.4_Simplify_ending_newline_detection.patch
 
 	# Do not try to re-define _FORTIFY_SOURCE
 	cd $(DIR_APP) && sed -e "/D_FORTIFY_SOURCE/d" -i CMakeLists.txt
 
 	cd $(DIR_APP) && mkdir -p build
 	cd $(DIR_APP)/build && cmake -Wno-dev \
-					-DCMAKE_INSTALL_PREFIX=/usr \
-					-DCMAKE_BUILD_TYPE=Release ..
+					-D CMAKE_INSTALL_PREFIX=/usr \
+					-D MYMPD_DOC=OFF \
+					-D MYMPD_ENABLE_SYSTEMD=OFF \
+					-D MYMPD_MANPAGES=OFF \
+					-D CMAKE_BUILD_TYPE=Release ..
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 

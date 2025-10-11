@@ -5,14 +5,6 @@ usr/bin/mympd-script
 #usr/lib/systemd/system/mympd.service
 #usr/lib/systemd/user
 #usr/lib/systemd/user/mympd.service
-#usr/share/doc/mympd
-#usr/share/doc/mympd/CHANGELOG.md
-#usr/share/doc/mympd/LICENSE.md
-#usr/share/doc/mympd/README.md
-#usr/share/doc/mympd/SECURITY.md
-#usr/share/man/man1/mympd-config.1.gz
-#usr/share/man/man1/mympd-script.1.gz
-#usr/share/man/man1/mympd.1.gz
 var/ipfire/backup/addons/includes/mympd
 var/lib/mympd
 #var/lib/mympd/config
