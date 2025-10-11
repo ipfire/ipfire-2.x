@@ -47,6 +47,7 @@ usr/libexec/wireshark/extcap/androiddump
 usr/libexec/wireshark/extcap/ciscodump
 usr/libexec/wireshark/extcap/dpauxmon
 usr/libexec/wireshark/extcap/randpktdump
+usr/libexec/wireshark/extcap/sdjournal
 usr/libexec/wireshark/extcap/sshdump
 usr/libexec/wireshark/extcap/udpdump
 usr/libexec/wireshark/extcap/wifidump
@@ -72,6 +73,7 @@ usr/libexec/wireshark/extcap/wifidump
 #usr/share/doc/wireshark/rawshark.html
 #usr/share/doc/wireshark/reordercap.html
 #usr/share/doc/wireshark/sshdig.html
+#usr/share/doc/wireshark/sdjournal.html
 #usr/share/doc/wireshark/sshdump.html
 #usr/share/doc/wireshark/strato.html
 #usr/share/doc/wireshark/stratoshark.html
@@ -97,6 +99,7 @@ usr/libexec/wireshark/extcap/wifidump
 #usr/share/man/man1/rawshark.1
 #usr/share/man/man1/reordercap.1
 #usr/share/man/man1/sshdig.1
+#usr/share/man/man1/sdjournal.1
 #usr/share/man/man1/sshdump.1
 #usr/share/man/man1/strato.1
 #usr/share/man/man1/stratoshark.1
