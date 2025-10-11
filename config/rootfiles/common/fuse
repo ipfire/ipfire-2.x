@@ -14,5 +14,6 @@ usr/bin/fusermount3
 usr/lib/libfuse3.so.3.17.4
 usr/lib/libfuse3.so.4
 #usr/lib/pkgconfig/fuse3.pc
+usr/lib/udev/rules.d/99-fuse3.rules
 #usr/share/man/man1/fusermount3.1
 #usr/share/man/man8/mount.fuse3.8
