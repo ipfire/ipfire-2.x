@@ -2,9 +2,6 @@ etc/rc.d/init.d/mympd
 usr/bin/mympd
 usr/bin/mympd-config
 usr/bin/mympd-script
-#usr/lib/systemd/system/mympd.service
-#usr/lib/systemd/user
-#usr/lib/systemd/user/mympd.service
 var/ipfire/backup/addons/includes/mympd
 var/lib/mympd
 #var/lib/mympd/config

@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Webfrontend for Music Player Daemon
 
-VER        = 22.0.4
+VER        = 22.1.1
 
 THISAPP    = myMPD-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mympd
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       = mpd libmpdclient
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d59eba43d083adb2bc58bf31ec03bea1105143d681e409c92e60303b9ede75285aec04d0f70a6dcc52ca62f3eb27a8287840d3fcc3ff9489a4dc9d53e61e9a89
+$(DL_FILE)_BLAKE2 = a64c9691e552c63fcdaf7cbca71a33d812293477f5676ffeb63fb1b7d230d69f3c4f6efdd188afa2a596543644bb3920d12e00f59fd3f5ebce1f04a6a4d01dda
 
 install : $(TARGET)
 
@@ -81,7 +81,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mympd-22.0.4_Simplify_ending_newline_detection.patch
 
 	# Do not try to re-define _FORTIFY_SOURCE
 	cd $(DIR_APP) && sed -e "/D_FORTIFY_SOURCE/d" -i CMakeLists.txt
@@ -92,6 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 					-D MYMPD_DOC=OFF \
 					-D MYMPD_ENABLE_SYSTEMD=OFF \
 					-D MYMPD_MANPAGES=OFF \
+					-D MYMPD_STARTUP_SCRIPT=OFF \
 					-D CMAKE_BUILD_TYPE=Release ..
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
