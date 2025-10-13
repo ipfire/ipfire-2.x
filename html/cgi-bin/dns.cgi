@@ -777,7 +777,7 @@ sub show_add_edit_nameserver() {
 			# Assign cgiparams values.
 			$cgiparams{'NAMESERVER'} = &Header::escape($dns_servers{$cgiparams{'ID'}}[0]);
 			$cgiparams{'TLS_HOSTNAME'} = $dns_servers{$cgiparams{'ID'}}[1];
-			$cgiparams{'REMARK'} = $Header::escape($dns_servers{$cgiparams{'ID'}}[3]);
+			$cgiparams{'REMARK'} = &Header::escape($dns_servers{$cgiparams{'ID'}}[3]);
 		}
 	} else {
 		&Header::openbox('100%', 'left', $Lang::tr{'dnsforward add a new entry'});
