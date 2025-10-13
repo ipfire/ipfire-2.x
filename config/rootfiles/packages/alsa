@@ -1,5 +1,4 @@
 etc/rc.d/init.d/alsa
-lib/udev/rules.d/90-alsa-restore.rules
 usr/bin/aconnect
 usr/bin/alsabat
 usr/bin/alsaloop
@@ -88,6 +87,7 @@ usr/lib/libatopology.so.2
 usr/lib/libatopology.so.2.0.0
 #usr/lib/pkgconfig/alsa-topology.pc
 #usr/lib/pkgconfig/alsa.pc
+usr/lib/udev/rules.d/90-alsa-restore.rules
 usr/sbin/alsa-info.sh
 usr/sbin/alsabat-test.sh
 usr/sbin/alsaconf
