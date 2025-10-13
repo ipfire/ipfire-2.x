@@ -20,11 +20,11 @@
 ###############################################################################
 use strict;
 
-# enable only the following on debugging purpose
+# only enable the following for debugging purposes
 #use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 use Sort::Naturally;
-use CGI::Carp 'fatalsToBrowser';
 no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/network-functions.pl';
