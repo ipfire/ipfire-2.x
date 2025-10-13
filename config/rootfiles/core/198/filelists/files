@@ -1,5 +1,6 @@
 etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/suricata
+srv/web/ipfire/cgi-bin/dns.cgi
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/ids-functions.pl
