@@ -6,5 +6,6 @@ etc/rc.d/init.d/wireguard
 etc/ssh/ssh_config
 etc/ssh/sshd_config
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+srv/web/ipfire/cgi-bin/wireguard.cgi
 usr/sbin/openvpn-authenticator
 var/ipfire/header.pl
