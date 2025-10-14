@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.16
+VER        = 6.17
 
 # https://mirrors.edge.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/
 
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 375c60a93bc5b62d7c3a94d5ed108b81786b27f2beba27d85bcede94a892d84e71b1fe00a1574cc53066fe77bb37408b2b382db4a1664fefcc676c1c3efa1c60
+$(DL_FILE)_BLAKE2 = 301409e4f0e17c25620070bab0aedc1e57ad672bc7b4e4c1f9db2cd34c6104667800df2979ff456554c94e415be649dd7b8f43859d6539f84a1c050c2db27dd4
 
 install : $(TARGET)
 
