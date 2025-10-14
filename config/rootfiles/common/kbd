@@ -361,6 +361,8 @@ lib/kbd/keymaps/i386
 #lib/kbd/keymaps/i386/fgGIod
 #lib/kbd/keymaps/i386/fgGIod/tr_f-latin5.map.gz
 #lib/kbd/keymaps/i386/fgGIod/trf.map.gz
+#lib/kbd/keymaps/i386/hcesar
+#lib/kbd/keymaps/i386/hcesar/hcesar.map.gz
 lib/kbd/keymaps/i386/include
 #lib/kbd/keymaps/i386/include/applkey.map.gz
 #lib/kbd/keymaps/i386/include/azerty-layout.inc
@@ -532,6 +534,7 @@ lib/kbd/keymaps/i386/include
 #lib/kbd/keymaps/i386/qwertz/hu.map.gz
 #lib/kbd/keymaps/i386/qwertz/sg-latin1-lk450.map.gz
 #lib/kbd/keymaps/i386/qwertz/sg-latin1.map.gz
+#lib/kbd/keymaps/i386/qwertz/sg-mac.map.gz
 #lib/kbd/keymaps/i386/qwertz/sg.map.gz
 #lib/kbd/keymaps/i386/qwertz/sk-prog-qwertz.map.gz
 #lib/kbd/keymaps/i386/qwertz/sk-qwertz.map.gz
