@@ -8,11 +8,11 @@ Origin:                  Armin K. <krejzi at email dot com> and Debian.
                          ".orig" file creation, and change
                          %LOCALSTATEDIR%/run to /run because /var/run has
                          been deprecated.
-
-diff -Naurp openldap-2.6.2.orig/doc/man/man5/slapd.conf.5 openldap-2.6.2/doc/man/man5/slapd.conf.5
---- openldap-2.6.2.orig/doc/man/man5/slapd.conf.5	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/doc/man/man5/slapd.conf.5	2022-05-05 12:05:53.309727745 +0200
-@@ -2122,7 +2122,7 @@ suffix    "dc=our\-domain,dc=com"
+ 
+diff -Naur openldap-2.6.10.orig/doc/man/man5/slapd.conf.5 openldap-2.6.10/doc/man/man5/slapd.conf.5
+--- openldap-2.6.10.orig/doc/man/man5/slapd.conf.5	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/doc/man/man5/slapd.conf.5	2025-05-24 08:34:23.764901721 +0200
+@@ -2123,7 +2123,7 @@
  # The database directory MUST exist prior to
  # running slapd AND should only be accessible
  # by the slapd/tools. Mode 0700 recommended.
@@ -21,10 +21,10 @@ diff -Naurp openldap-2.6.2.orig/doc/man/man5/slapd.conf.5 openldap-2.6.2/doc/man
  # Indices to maintain
  index     objectClass  eq
  index     cn,sn,mail   pres,eq,approx,sub
-diff -Naurp openldap-2.6.2.orig/doc/man/man5/slapd-config.5 openldap-2.6.2/doc/man/man5/slapd-config.5
---- openldap-2.6.2.orig/doc/man/man5/slapd-config.5	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/doc/man/man5/slapd-config.5	2022-05-05 12:05:53.312727754 +0200
-@@ -2233,7 +2233,7 @@ olcSuffix: "dc=our\-domain,dc=com"
+diff -Naur openldap-2.6.10.orig/doc/man/man5/slapd-config.5 openldap-2.6.10/doc/man/man5/slapd-config.5
+--- openldap-2.6.10.orig/doc/man/man5/slapd-config.5	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/doc/man/man5/slapd-config.5	2025-05-24 08:34:23.765394800 +0200
+@@ -2248,7 +2248,7 @@
  # The database directory MUST exist prior to
  # running slapd AND should only be accessible
  # by the slapd/tools. Mode 0700 recommended.
@@ -33,10 +33,9 @@ diff -Naurp openldap-2.6.2.orig/doc/man/man5/slapd-config.5 openldap-2.6.2/doc/m
  # Indices to maintain
  olcDbIndex:     objectClass  eq
  olcDbIndex:     cn,sn,mail   pres,eq,approx,sub
-
-diff -Naurp openldap-2.6.2.orig/include/ldap_defaults.h openldap-2.6.2/include/ldap_defaults.h
---- openldap-2.6.2.orig/include/ldap_defaults.h	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/include/ldap_defaults.h	2022-05-05 12:07:08.783961875 +0200
+diff -Naur openldap-2.6.10.orig/include/ldap_defaults.h openldap-2.6.10/include/ldap_defaults.h
+--- openldap-2.6.10.orig/include/ldap_defaults.h	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/include/ldap_defaults.h	2025-05-24 08:34:23.765728292 +0200
 @@ -40,7 +40,8 @@
  
  /* default ldapi:// socket */
@@ -57,10 +56,10 @@ diff -Naurp openldap-2.6.2.orig/include/ldap_defaults.h openldap-2.6.2/include/l
  #endif
  #define SLAPD_DEFAULT_DB_MODE		0600
  	/* default max deref depth for aliases */
-diff -Naurp openldap-2.6.2.orig/libraries/liblber/Makefile.in openldap-2.6.2/libraries/liblber/Makefile.in
---- openldap-2.6.2.orig/libraries/liblber/Makefile.in	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/libraries/liblber/Makefile.in	2022-05-05 12:05:53.313727757 +0200
-@@ -51,6 +51,6 @@ idtest:  $(XLIBS) idtest.o
+diff -Naur openldap-2.6.10.orig/libraries/liblber/Makefile.in openldap-2.6.10/libraries/liblber/Makefile.in
+--- openldap-2.6.10.orig/libraries/liblber/Makefile.in	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/libraries/liblber/Makefile.in	2025-05-24 08:34:23.765979302 +0200
+@@ -49,6 +49,6 @@
  
  install-local: FORCE
  	-$(MKDIR) $(DESTDIR)$(libdir)
@@ -68,10 +67,10 @@ diff -Naurp openldap-2.6.2.orig/libraries/liblber/Makefile.in openldap-2.6.2/lib
 +	$(LTINSTALL) $(INSTALLFLAGS) -m 755 $(LIBRARY) $(DESTDIR)$(libdir)
  	$(LTFINISH) $(DESTDIR)$(libdir)
  
-diff -Naurp openldap-2.6.2.orig/libraries/libldap/Makefile.in openldap-2.6.2/libraries/libldap/Makefile.in
---- openldap-2.6.2.orig/libraries/libldap/Makefile.in	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/libraries/libldap/Makefile.in	2022-05-05 12:05:53.327727801 +0200
-@@ -82,7 +82,7 @@ CFFILES=ldap.conf
+diff -Naur openldap-2.6.10.orig/libraries/libldap/Makefile.in openldap-2.6.10/libraries/libldap/Makefile.in
+--- openldap-2.6.10.orig/libraries/libldap/Makefile.in	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/libraries/libldap/Makefile.in	2025-05-24 08:34:23.766163823 +0200
+@@ -80,7 +80,7 @@
  
  install-local: $(CFFILES) FORCE
  	-$(MKDIR) $(DESTDIR)$(libdir)
@@ -80,10 +79,10 @@ diff -Naurp openldap-2.6.2.orig/libraries/libldap/Makefile.in openldap-2.6.2/lib
  	$(LTFINISH) $(DESTDIR)$(libdir)
  	-$(MKDIR) $(DESTDIR)$(sysconfdir)
  	@for i in $(CFFILES); do \
-diff -Naurp openldap-2.6.2.orig/servers/slapd/Makefile.in openldap-2.6.2/servers/slapd/Makefile.in
---- openldap-2.6.2.orig/servers/slapd/Makefile.in	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/servers/slapd/Makefile.in	2022-05-05 12:05:53.329727807 +0200
-@@ -374,9 +374,10 @@ install-local-srv: install-slapd install
+diff -Naur openldap-2.6.10.orig/servers/slapd/Makefile.in openldap-2.6.10/servers/slapd/Makefile.in
+--- openldap-2.6.10.orig/servers/slapd/Makefile.in	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/servers/slapd/Makefile.in	2025-05-24 08:34:23.766418813 +0200
+@@ -374,9 +374,10 @@
  
  install-slapd: FORCE
  	-$(MKDIR) $(DESTDIR)$(libexecdir)
@@ -95,7 +94,7 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/Makefile.in openldap-2.6.2/servers
  	@for i in $(SUBDIRS); do \
  	    if test -d $$i && test -f $$i/Makefile ; then \
  		echo; echo "  cd $$i && $(MAKE) $(MFLAGS) install"; \
-@@ -452,9 +453,9 @@ install-conf: FORCE
+@@ -452,9 +453,9 @@
  
  install-db-config: FORCE
  	@-$(MKDIR) $(DESTDIR)$(localstatedir) $(DESTDIR)$(sysconfdir)
@@ -107,7 +106,7 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/Makefile.in openldap-2.6.2/servers
  	$(INSTALL) $(INSTALLFLAGS) -m 600 $(srcdir)/DB_CONFIG \
  		$(DESTDIR)$(sysconfdir)/DB_CONFIG.example
  
-@@ -462,6 +463,6 @@ install-tools: FORCE
+@@ -462,6 +463,6 @@
  	-$(MKDIR) $(DESTDIR)$(sbindir)
  	for i in $(SLAPTOOLS); do \
  		$(RM) $(DESTDIR)$(sbindir)/$$i$(EXEEXT); \
@@ -115,10 +114,10 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/Makefile.in openldap-2.6.2/servers
 +		$(LN_S) -f $(DESTDIR)$(sbindir)/slapd$(EXEEXT) $(DESTDIR)$(sbindir)/$$i$(EXEEXT); \
  	done
  
-diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.conf openldap-2.6.2/servers/slapd/slapd.conf
---- openldap-2.6.2.orig/servers/slapd/slapd.conf	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/servers/slapd/slapd.conf	2022-05-05 12:05:53.331727813 +0200
-@@ -10,8 +10,9 @@ include		%SYSCONFDIR%/schema/core.schema
+diff -Naur openldap-2.6.10.orig/servers/slapd/slapd.conf openldap-2.6.10/servers/slapd/slapd.conf
+--- openldap-2.6.10.orig/servers/slapd/slapd.conf	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/servers/slapd/slapd.conf	2025-05-24 08:34:23.769027944 +0200
+@@ -10,8 +10,9 @@
  # service AND an understanding of referrals.
  #referral	ldap://root.openldap.org
  
@@ -130,7 +129,7 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.conf openldap-2.6.2/servers/
  
  # Load dynamic backend modules:
  modulepath	%MODULEDIR%
-@@ -69,7 +70,7 @@ rootpw		secret
+@@ -69,7 +70,7 @@
  # The database directory MUST exist prior to running slapd AND 
  # should only be accessible by the slapd and slap tools.
  # Mode 700 recommended.
@@ -139,10 +138,10 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.conf openldap-2.6.2/servers/
  # Indices to maintain
  index	objectClass	eq
  
-diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.ldif openldap-2.6.2/servers/slapd/slapd.ldif
---- openldap-2.6.2.orig/servers/slapd/slapd.ldif	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/servers/slapd/slapd.ldif	2022-05-05 12:05:53.332727816 +0200
-@@ -9,8 +9,8 @@ cn: config
+diff -Naur openldap-2.6.10.orig/servers/slapd/slapd.ldif openldap-2.6.10/servers/slapd/slapd.ldif
+--- openldap-2.6.10.orig/servers/slapd/slapd.ldif	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/servers/slapd/slapd.ldif	2025-05-24 08:34:23.770185354 +0200
+@@ -9,8 +9,8 @@
  #
  # Define global ACLs to disable default read access.
  #
@@ -153,7 +152,7 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.ldif openldap-2.6.2/servers/
  #
  # Do not enable referrals until AFTER you have a working directory
  # service AND an understanding of referrals.
-@@ -88,7 +88,7 @@ olcRootPW: secret
+@@ -88,7 +88,7 @@
  # The database directory MUST exist prior to running slapd AND 
  # should only be accessible by the slapd and slap tools.
  # Mode 700 recommended.
@@ -162,10 +161,10 @@ diff -Naurp openldap-2.6.2.orig/servers/slapd/slapd.ldif openldap-2.6.2/servers/
  # Indices to maintain
  olcDbIndex: objectClass eq
  
-diff -Naurp openldap-2.6.2.orig/servers/slapd/slapi/Makefile.in openldap-2.6.2/servers/slapd/slapi/Makefile.in
---- openldap-2.6.2.orig/servers/slapd/slapi/Makefile.in	2022-05-04 16:55:23.000000000 +0200
-+++ openldap-2.6.2/servers/slapd/slapi/Makefile.in	2022-05-05 12:05:53.333727819 +0200
-@@ -46,6 +46,6 @@ BUILD_MOD = @BUILD_SLAPI@
+diff -Naur openldap-2.6.10.orig/servers/slapd/slapi/Makefile.in openldap-2.6.10/servers/slapd/slapi/Makefile.in
+--- openldap-2.6.10.orig/servers/slapd/slapi/Makefile.in	2025-05-22 19:56:21.000000000 +0200
++++ openldap-2.6.10/servers/slapd/slapi/Makefile.in	2025-05-24 08:34:23.773956854 +0200
+@@ -46,6 +46,6 @@
  install-local: FORCE
  	if test "$(BUILD_MOD)" = "yes"; then \
  		$(MKDIR) $(DESTDIR)$(libdir); \
