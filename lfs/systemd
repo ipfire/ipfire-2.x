@@ -25,7 +25,6 @@
 include Config
 
 VER        = 258
-RULES_VER  = 20230818
 
 THISAPP    = systemd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -47,13 +46,11 @@ UDEV_HELPERS = \
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.xz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-udev-lfs-$(RULES_VER).tar.xz = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.xz
 
 $(DL_FILE)_BLAKE2 = c63bc09bff11ba4cf6e87bef689250a6b354bf8f5bfb5af6d2a173fa1e1838aa457a8a7db66f7aad20dae25b7a0defddcb052d53f18a688a2dd6d5f323d4692a
-udev-lfs-$(RULES_VER).tar.xz_BLAKE2 = e8c20bdddb5191381bad11bf46b0d605ce952afb697e8bf3e80b216c64eacbb327d0d961c5a1f49291576c82452e8472bb62f31f8bacc81eb832aa746a5234d4
 
 install : $(TARGET)
 
@@ -83,7 +80,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.xz
 
 	# Don't fail if the linker shows a warning
 	cd $(DIR_APP) && sed -e "/fatal-warnings/d" -i meson.build
@@ -129,67 +125,59 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/build && cp      -av    libsystemd.so{,*[0-9]}      /usr/lib/
 
 	# Install udev
-	cd $(DIR_APP)/build && install -vm755 -d {/lib,/etc}/udev/{hwdb,rules}.d
+	cd $(DIR_APP)/build && install -vm755 -d {/usr/lib,/etc}/udev/{hwdb,rules}.d
 	cd $(DIR_APP)/build && install -vm755 udevadm                     /bin/
 	cd $(DIR_APP)/build && install -vm755 systemd-hwdb                /usr/bin/udev-hwdb
 	cd $(DIR_APP)/build && ln      -svfn  ../bin/udevadm              /sbin/udevd
-	cd $(DIR_APP)/build && ln      -svfn  ../bin/udevadm              /sbin/udevadm
-	cd $(DIR_APP)/build && cp      -av    libudev.so{,*[0-9]}         /lib/
+	cd $(DIR_APP)/build && cp      -av    libudev.so{,*[0-9]}         /usr/lib/
 	cd $(DIR_APP)/build && install -vm644 ../src/libudev/libudev.h    /usr/include/
 	cd $(DIR_APP)/build && install -vm644 src/libudev/*.pc            /usr/lib/pkgconfig/
 	cd $(DIR_APP)/build && install -vm644 src/udev/*.pc               /usr/share/pkgconfig/
 	cd $(DIR_APP)/build && install -vm644 ../src/udev/udev.conf       /etc/udev/
-	cd $(DIR_APP)/build && install -vm644 rules.d/* ../rules.d/{*.rules,README} /lib/udev/rules.d/
-	cd $(DIR_APP)/build && install -vm644 hwdb.d/*  ../hwdb.d/{*.hwdb,README}   /etc/udev/hwdb.d/
-	cd $(DIR_APP)/build && install -vm755 $(UDEV_HELPERS) /lib/udev
+	cd $(DIR_APP)/build && install -vm644 rules.d/* ../rules.d/{*.rules,README} /usr/lib/udev/rules.d/
+	cd $(DIR_APP)/build && install -vm644 hwdb.d/*  ../hwdb.d/{*.hwdb,README}   /usr/lib/udev/hwdb.d/
+	cd $(DIR_APP)/build && install -vm755 $(UDEV_HELPERS) /usr/lib/udev
 
 	# Generate hardware database
 	udev-hwdb update
 
-	# Install rules
-	cd $(DIR_APP) && make -f udev-lfs-$(RULES_VER)/Makefile.lfs install
-
 	# Disable net generator rule. This does not work with the setup.
-	rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
-	rm -f /lib/udev/rules.d/80-net-name-slot.rules
+	rm -f /usr/lib/udev/rules.d/75-persistent-net-generator.rules
+	rm -f /usr/lib/udev/rules.d/80-net-name-slot.rules
 
 	# Blacklist some modules
 	cp -vf $(DIR_SRC)/config/udev/blacklist.conf \
 		/etc/modprobe.d/blacklist.conf
 
-	# Install config file
-	install -v -m 644 $(DIR_SRC)/config/udev/udev.conf \
-		/etc/udev/
-
 	# Install alsa rules.
 	install -v -m 644 $(DIR_SRC)/config/udev/25-alsa.rules \
-		/lib/udev/rules.d
+		/usr/lib/udev/rules.d
 
 	# Install network rules.
 	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-rename \
-		/lib/udev/network-hotplug-rename
+		/usr/lib/udev/network-hotplug-rename
 	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-vlan \
-		/lib/udev/network-hotplug-vlan
+		/usr/lib/udev/network-hotplug-vlan
 	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-master \
-		/lib/udev/network-hotplug-master
+		/usr/lib/udev/network-hotplug-master
 	install -v -m 644 $(DIR_SRC)/config/udev/60-net.rules \
-		/lib/udev/rules.d
+		/usr/lib/udev/rules.d
 
 	# Install ExtraHD rules
 	install -v -m 644 $(DIR_SRC)/config/udev/61-extrahd.rules \
-		/lib/udev/rules.d
+		/usr/lib/udev/rules.d
 
 	# Install AQM rules
 	install -v -m 644 $(DIR_SRC)/config/udev/99-aqm.rules \
-		/lib/udev/rules.d
+		/usr/lib/udev/rules.d
 	install -m 755 $(DIR_SRC)/config/udev/network-aqm \
-		/lib/udev/network-aqm
+		/usr/lib/udev/network-aqm
 
 	# Install offloading rules
 	install -v -m 644 $(DIR_SRC)/config/udev/99-offloading.rules \
-		/lib/udev/rules.d
+		/usr/lib/udev/rules.d
 	install -m 755 $(DIR_SRC)/config/udev/network-offloading \
-		/lib/udev/network-offloading
+		/usr/lib/udev/network-offloading
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

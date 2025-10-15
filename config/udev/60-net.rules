@@ -1,10 +1,10 @@
 # Call a script that checks for the right name of the new device.
 # If it matches the configuration it will be renamed accordingly.
-ACTION=="add", SUBSYSTEM=="net", PROGRAM="/lib/udev/network-hotplug-rename", RESULT=="?*", NAME="$result"
+ACTION=="add", SUBSYSTEM=="net", PROGRAM="/usr/lib/udev/network-hotplug-rename", RESULT=="?*", NAME="$result"
 
 # Call a script that will create all virtual devices for a parent device
 # that has just come up.
-ACTION=="add", SUBSYSTEM=="net", RUN+="/lib/udev/network-hotplug-vlan"
+ACTION=="add", SUBSYSTEM=="net", RUN+="/usr/lib/udev/network-hotplug-vlan"
 
 # Call a script that will set up interfaces that have a master interface (bridges, bonding, ..)
-ACTION=="add", SUBSYSTEM=="net", RUN+="/lib/udev/network-hotplug-master"
+ACTION=="add", SUBSYSTEM=="net", RUN+="/usr/lib/udev/network-hotplug-master"
