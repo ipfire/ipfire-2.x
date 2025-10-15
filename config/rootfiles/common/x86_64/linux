@@ -7877,7 +7877,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/DEBUG_KERNEL
 #lib/modules/KVER/build/include/config/DEBUG_LIST
 #lib/modules/KVER/build/include/config/DEBUG_MISC
-#lib/modules/KVER/build/include/config/DEBUG_PREEMPT
 #lib/modules/KVER/build/include/config/DEBUG_WX
 #lib/modules/KVER/build/include/config/DECOMPRESS_BZIP2
 #lib/modules/KVER/build/include/config/DECOMPRESS_GZIP
@@ -7986,6 +7985,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDCP_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDMI_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HELPER
+#lib/modules/KVER/build/include/config/DRM_DRAW
 #lib/modules/KVER/build/include/config/DRM_ETNAVIV
 #lib/modules/KVER/build/include/config/DRM_ETNAVIV_THERMAL
 #lib/modules/KVER/build/include/config/DRM_EXEC
@@ -9493,6 +9493,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/MITIGATION_TAA
 #lib/modules/KVER/build/include/config/MITIGATION_TSA
 #lib/modules/KVER/build/include/config/MITIGATION_UNRET_ENTRY
+#lib/modules/KVER/build/include/config/MITIGATION_VMSCAPE
 #lib/modules/KVER/build/include/config/MLX4_CORE
 #lib/modules/KVER/build/include/config/MLX4_CORE_GEN2
 #lib/modules/KVER/build/include/config/MLX4_EN
@@ -11821,6 +11822,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/VGA_CONSOLE
 #lib/modules/KVER/build/include/config/VGA_SWITCHEROO
 #lib/modules/KVER/build/include/config/VHOST
+#lib/modules/KVER/build/include/config/VHOST_ENABLE_FORK_OWNER_CONTROL
 #lib/modules/KVER/build/include/config/VHOST_IOTLB
 #lib/modules/KVER/build/include/config/VHOST_MENU
 #lib/modules/KVER/build/include/config/VHOST_NET
@@ -15236,6 +15238,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/linux/personality.h
 #lib/modules/KVER/build/include/linux/pfn.h
 #lib/modules/KVER/build/include/linux/pfn_t.h
+#lib/modules/KVER/build/include/linux/pgalloc.h
 #lib/modules/KVER/build/include/linux/pgalloc_tag.h
 #lib/modules/KVER/build/include/linux/pgtable.h
 #lib/modules/KVER/build/include/linux/pgtable_api.h
