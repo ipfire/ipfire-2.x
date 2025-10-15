@@ -109,6 +109,7 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 # Start services
 /etc/init.d/openvpn-n2n restart
 /etc/init.d/openvpn-rw restart
+/etc/init.d/suricata restart
 /etc/init.d/unbound restart
 /etc/init.d/sshd restart
 
