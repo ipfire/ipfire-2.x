@@ -66,12 +66,12 @@ sub system_output($) {
 		die "Could not execute @command: $!";
 	}
 
-	waitpid($pid, 0);
-
 	while (<OUTPUT>) {
 		push(@output, $_);
 	}
 	close(OUTPUT);
+
+	waitpid($pid, 0);
 
 	return @output;
 }
