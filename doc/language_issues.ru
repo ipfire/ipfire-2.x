@@ -1244,7 +1244,6 @@ WARNING: untranslated string: fwhost used = Used
 WARNING: untranslated string: fwhost welcome = Over here, you can group single hosts, networks and services together, which will creating new rules more easy and faster.
 WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: generate ptr = Generate PTR
-WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: grouptype = Grouptype:
 WARNING: untranslated string: guardian = Guardian
 WARNING: untranslated string: guardian block a host = unknown string

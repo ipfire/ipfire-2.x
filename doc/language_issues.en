@@ -969,7 +969,6 @@ WARNING: untranslated string: gateway ip = Gateway IP
 WARNING: untranslated string: generate a certificate = Generate a certificate:
 WARNING: untranslated string: generate iso = Generate ISO
 WARNING: untranslated string: generate ptr = Generate PTR
-WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: generate root/host certificates = Generate root/host certificates
 WARNING: untranslated string: generating the root and host certificates may take a long time. it can take up to several minutes on older hardware. please be patient = Generating the root and host certificates may take a long time.  It can take up to several minutes on older hardware. Please be patient.
 WARNING: untranslated string: global settings = Global Settings

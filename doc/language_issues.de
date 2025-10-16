@@ -995,7 +995,6 @@ WARNING: untranslated string: fwdfw syn flood protection = Enable SYN Flood Prot
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: fwhost wg peers = WireGuard Peers
-WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string

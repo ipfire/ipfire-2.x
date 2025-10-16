@@ -1030,7 +1030,6 @@ WARNING: untranslated string: extrahd because it is outside the allowed mount pa
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: fwhost invalid country code = Invalid Country Code
-WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string

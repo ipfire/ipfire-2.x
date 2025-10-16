@@ -1128,7 +1128,6 @@ WARNING: untranslated string: fwhost invalid country code = Invalid Country Code
 WARNING: untranslated string: fwhost newlocationgrp = Location Groups
 WARNING: untranslated string: fwhost wg peers = WireGuard Peers
 WARNING: untranslated string: generate ptr = Generate PTR
-WARNING: untranslated string: generate report = unknown string
 WARNING: untranslated string: guardian = Guardian
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
