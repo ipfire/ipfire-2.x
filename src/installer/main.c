@@ -767,7 +767,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* trigger udev to add disk-by-uuid entries */
-	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /sbin/udevadm trigger");
+	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /bin/udevadm trigger");
 	if (runcommandwithstatus(commandstring, title, _("Trigger udev to redetect partitions..."), logfile)) {
 		errorbox(_("Error triggering udev to redetect partitions."));
 		goto EXIT;
