@@ -83,7 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-libjansson-libraries=/usr/lib \
 		--with-libjansson-includes=/usr/include \
 		--disable-suricata-update \
-		--enable-rust
+		--enable-rust \
+		--enable-unix-socket
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
