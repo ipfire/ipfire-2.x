@@ -3109,6 +3109,7 @@ sub writeconfig
 shutdown_lifetime 5 seconds
 icp_port 0
 httpd_suppress_version_string on
+email_err_data off
 
 END
 	;
