@@ -1,22 +1,23 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR The IPFire Project (www.ipfire.org)
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
-# ipfire <qiwenqiu@yahoo.com.hk>, 2015
+# ipfire <fxneng@gmail.com>, 2025
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2017-09-20 09:45+0000\n"
-"Last-Translator: ipfire <qiwenqiu@yahoo.com.hk>\n"
+"PO-Revision-Date: 2025-10-21 17:02+0800\n"
+"Last-Translator: opnwall <fxneng@gmail.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/mstremer/ipfire/language/zh/)\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.8\n"
 
 #: dhcp.c:50
 msgid "Start address:"
@@ -44,13 +45,12 @@ msgstr "最大租约(分钟)"
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr "域名后缀"
+msgstr "域名后缀："
 
-#: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
-#: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
-#: networking.c:134 networking.c:255 networking.c:291 networking.c:346
-#: networking.c:442 networking.c:552 networking.c:603 networking.c:610
-#: networking.c:713 timezone.c:63
+#: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70 misc.c:40
+#: misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704 networking.c:134
+#: networking.c:255 networking.c:291 networking.c:346 networking.c:442 networking.c:552
+#: networking.c:603 networking.c:610 networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
 msgstr "无法打开配置文件"
 
@@ -60,24 +60,22 @@ msgstr "DHCP服务器配置"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr "DHCP服务器配置信息"
+msgstr "通过输入设置信息来配置 DHCP 服务器。"
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr "应用"
+msgstr "启用"
 
-#: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
-#: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
-#: networking.c:269 networking.c:305 networking.c:409 networking.c:560
-#: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
-#: timezone.c:78
+#: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172 main.c:174
+#: netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163 networking.c:269
+#: networking.c:305 networking.c:409 networking.c:560 networking.c:642 networking.c:653
+#: networking.c:746 passwords.c:89 timezone.c:78
 msgid "OK"
 msgstr "确定"
 
-#: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
-#: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
-#: networking.c:410 networking.c:560 networking.c:653 networking.c:746
-#: passwords.c:89 timezone.c:78
+#: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158 netstuff.c:673
+#: netstuff.c:733 netstuff.c:756 networking.c:305 networking.c:410 networking.c:560
+#: networking.c:653 networking.c:746 passwords.c:89 timezone.c:78
 msgid "Cancel"
 msgstr "取消"
 
@@ -86,353 +84,355 @@ msgid ""
 "The following fields are invalid:\n"
 "\n"
 msgstr ""
+"以下字段无效：\n"
+"\n"
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr ""
+msgstr "起始地址"
 
 #: dhcp.c:165
 msgid "End address"
-msgstr ""
+msgstr "结束地址"
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr ""
+msgstr "主 DNS"
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr ""
+msgstr "次 DNS"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr ""
+msgstr "默认租约时间"
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr ""
+msgstr "最大租约时间"
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr ""
+msgstr "域名"
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr ""
+msgstr "请输入域名"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr ""
+msgstr "域名不能为空。"
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr ""
+msgstr "域名不能包含空格。"
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr ""
+msgstr "域名只能包含字母、数字、连字符和句点。"
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr ""
+msgstr "主机名"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr ""
+msgstr "请输入此设备的主机名。"
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr ""
+msgstr "主机名不能为空。"
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr ""
+msgstr "主机名不能包含空格。"
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr ""
+msgstr "主机名只能包含字母、数字和连字符。"
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr ""
+msgstr "键盘映射"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr ""
+msgstr "请从下方列表中选择您所使用的键盘类型。"
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr ""
+msgstr "时区"
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr ""
+msgstr "网络设置"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
-msgstr ""
+msgstr "ISDN 设置"
 
 #: main.c:73
 msgid "'root' password"
-msgstr ""
+msgstr "root 用户密码"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr ""
+msgstr "admin 用户密码"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr ""
+msgstr "              使用 <Tab>/<Alt-Tab> 在选项间切换  |  使用 <空格键> 选择"
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "设置菜单"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "请选择要配置的项目。"
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "退出"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "设置已完成。"
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 #: main.c:175
 msgid ""
-"Initial setup was not entirely complete. You must ensure that Setup is "
-"properly finished by running setup again at the shell."
-msgstr ""
+"Initial setup was not entirely complete. You must ensure that Setup is properly "
+"finished by running setup again at the shell."
+msgstr "初始设置未完全完成。请在命令行中重新运行 setup 以确保配置正确完成。"
 
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "无法写入 %s/main/hostname.conf"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "无法打开主机 hosts 文件。"
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "无法写入 /etc/hosts。"
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "无法写入 /etc/hosts.deny。"
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "无法写入 /etc/hosts.allow。"
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "无法设置主机名。"
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "正在扫描并配置 ISDN 设备。"
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "无法扫描 ISDN 设备。"
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "接口 - %s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "请输入 %s 接口的 IP 地址信息。"
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "静态"
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "拨号连接 (PPPoE、调制解调器、ATM 等)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "DHCP 主机名："
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "强制 DHCP MTU："
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "IP地址："
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "子网掩码："
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "以下字段无效："
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "IP地址"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "子网掩码"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "DHCP主机名"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "未设置"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "请为接口-%s 选择一个网卡。"
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "扩展网络菜单"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "选择"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "识别"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "设备识别"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "所选端口的指示灯现在应闪烁约 10 秒..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "此接口不支持端口灯识别功能。"
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "系统中没有未分配的网络接口。"
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "确定要删除分配的%s接口？"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "选择网络驱动程序"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "设置额外的模块参数"
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "正在加载模块..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "无法加载驱动模块。"
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "模块名称不能为空。"
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "正在停止网络..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "正在重启网络..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "未分配绿色接口。"
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "绿色接口缺少IP地址。"
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "忽略"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "未分配红色接口。"
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "红色接口缺少IP地址。"
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "未分配橙色接口。"
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "橙色接口缺少IP地址。"
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "未分配蓝色接口。"
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "蓝色接口缺少IP地址。"
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "缺少DNS。"
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "缺少默认网关。"
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "网络配置类型"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "驱动程序与网卡分配"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "地址设置"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "DNS和网关设置"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "配置完成后，将需要重新启动网络。"
 
 #: networking.c:267
 #, c-format
@@ -441,23 +441,27 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"当前配置：%s\n"
+"\n"
+"%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "网络配置菜单"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "完成"
 
 #: networking.c:300
 #, c-format
 msgid ""
-"Select the network configuration for %s. The following configuration types "
-"list those interfaces which have ethernet attached. If you change this "
-"setting, a network restart will be required, and you will have to "
-"reconfigure the network driver assignments."
+"Select the network configuration for %s. The following configuration types list those "
+"interfaces which have ethernet attached. If you change this setting, a network restart "
+"will be required, and you will have to reconfigure the network driver assignments."
 msgstr ""
+"请选择 %s 的网络配置。以下类型列出了已连接以太网的接口。若修改此设置，系统将需要重启网"
+"络，并重新配置网络驱动分配。"
 
 #: networking.c:307
 #, c-format
@@ -466,120 +470,131 @@ msgid ""
 "\n"
 "Needed: %d - Available: %d\n"
 msgstr ""
+"网卡数量不足。\n"
+"\n"
+"需要：%d - 可用：%d\n"
 
 #: networking.c:359
 msgid ""
-"Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
+"Configure network drivers, and which interface each card is assigned to. The current "
+"configuration is as follows:\n"
 "\n"
 msgstr ""
+"配置网络驱动程序，并设置每个网卡对应的接口。当前配置如下：\n"
+"\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "是否要修改这些设置？"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "正在重启非本地网络..."
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
 msgstr ""
+"请选择要修改的接口。\n"
+"\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "已分配网卡"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "移除"
 
 #: networking.c:556 networking.c:649
 #, c-format
 msgid ""
-"If you change this IP address, and you are logged in remotely, your "
-"connection to the %s machine will be broken, and you will have to reconnect "
-"on the new IP. This is a risky operation, and should only be attempted if "
-"you have physical access to the machine, should something go wrong."
+"If you change this IP address, and you are logged in remotely, your connection to the "
+"%s machine will be broken, and you will have to reconnect on the new IP. This is a "
+"risky operation, and should only be attempted if you have physical access to the "
+"machine, should something go wrong."
 msgstr ""
+"如果更改此 IP 地址，并且您当前是远程登录，那么与 %s 设备的连接将被中断，您需要在新的 "
+"IP 地址上重新连接。此操作具有风险，仅在您可直接访问设备时执行。"
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "请选择要重新配置的接口。"
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "默认网关："
 
 #: networking.c:744
 msgid ""
-"Enter the DNS and gateway information. These settings are used only with "
-"Static IP (and DHCP if DNS set) on the RED interface."
+"Enter the DNS and gateway information. These settings are used only with Static IP "
+"(and DHCP if DNS set) on the RED interface."
 msgstr ""
+"请输入 DNS 与网关信息。这些设置仅在 RED 接口使用静态 IP（或在 DHCP 模式下手动设置 DNS "
+"时）生效。"
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "默认网关"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "指定了次 DNS，但未设置主 DNS"
 
 #: passwords.c:33
-msgid ""
-"Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgid "Enter the 'root' user password. Login as this user for commandline access."
+msgstr "请输入 root 用户的密码。该用户用于命令行访问系统。"
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "正在设置密码"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "正在设置 root 用户密码..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "设置 root 用户密码时出现问题。"
 
 #: passwords.c:53
 #, c-format
 msgid ""
-"Enter %s 'admin' user password. This is the user to use for logging into the"
-" %s web administration pages."
-msgstr ""
+"Enter %s 'admin' user password. This is the user to use for logging into the %s web "
+"administration pages."
+msgstr "请输入 %s 的 admin 用户密码。该用户用于登录 %s 的 Web 管理界面。"
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "正在设置 %s 的 admin 用户密码..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "设置 %s 的 admin 用户密码时出现问题。"
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "密码："
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "再次输入："
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "密码不能为空。"
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "两次输入的密码不一致。"
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "密码不能包含空格。"
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "请从下方列表中选择您所在的时区。"
