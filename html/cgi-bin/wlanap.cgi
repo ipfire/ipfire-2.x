@@ -118,7 +118,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	$wlanapsettings{'NOSCAN'} = ($cgiparams{'NOSCAN'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'ENC'} = $cgiparams{'ENC'};
 	$wlanapsettings{'PWD'} = $cgiparams{'PWD'};
-	$wlanapsettings{'IEEE80211W'} = ($cgiparams{'IEEE80211W'} eq 'on') ? 'on' : 'off';
+	$wlanapsettings{'IEEE80211W'} = ($cgiparams{'IEEE80211W'} eq 'on' || $cgiparams{'IEEE80211W'} eq 'optional') ? $cgiparams{'IEEE80211W'} : 'off';
 	$wlanapsettings{'TX_POWER'} = $cgiparams{'TX_POWER'};
 
 	if ($errormessage eq '') {
