@@ -9,7 +9,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo base bash drm mdraid shutdown
+    echo base bash drm i18n mdraid shutdown
     return 0
 }
 
