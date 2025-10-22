@@ -53,6 +53,10 @@ usermod -a -G mail suricata
 chmod 640 /var/ipfire/dma/auth.conf
 chown nobody:mail /var/ipfire/dma/auth.conf
 
+# Upgrade the proxy configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
+/etc/init.d/squid reload
+
 # update linker config
 ldconfig
 
