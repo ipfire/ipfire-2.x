@@ -75,6 +75,7 @@ telinit u
 # Start services
 /etc/init.d/suricata restart
 /etc/init.d/fcron restart
+/etc/init.d/apache reload
 
 # Build initial ramdisks (for intel-microcode)
 dracut --regenerate-all --force
