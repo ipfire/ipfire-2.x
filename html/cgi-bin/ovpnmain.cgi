@@ -571,7 +571,7 @@ sub get_ccd_client_routes($) {
 
 	foreach my $key (keys %client_routes) {
 		if ($client_routes{$key}[0] eq $name) {
-			push(@routes, $client_routes{$key}[1]);
+			push(@routes, @{$client_routes{$key}}[1 .. $#{$client_routes{$key}}]);
 		}
 	}
 
@@ -589,11 +589,7 @@ sub get_ccd_server_routes($) {
 
 	foreach my $key (keys %server_routes) {
 		if ($server_routes{$key}[0] eq $name) {
-			my $i = 1;
-
-			while (my $route = $server_routes{$key}[$i++]) {
-				push(@routes, $route);
-			}
+			push(@routes, @{$server_routes{$key}}[1 .. $#{$server_routes{$key}}]);
 		}
 	}
 
