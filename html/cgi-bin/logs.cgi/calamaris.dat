@@ -166,14 +166,15 @@ if ($reportsettings{'ACTION'} eq $Lang::tr{'calamaris create report'})
 		$commandline.=' -s';
 	}
 
-	$commandline.=' < /dev/null > /dev/null 2>&1';
-
-	if ($reportsettings{'RUN_BACKGROUND'} eq 'on') { $commandline.=" &"; }
-
 	if (!($commandline =~ /^[a-zA-Z0-9-\s]+$/))
 	{
 		die "Invalid input in\"$commandline\"";
 	}
+
+	$commandline.=' < /dev/null > /dev/null 2>&1';
+
+	if ($reportsettings{'RUN_BACKGROUND'} eq 'on') { $commandline.=" &"; }
+
 	system("${General::swroot}/proxy/calamaris/bin/mkreport $commandline")
 }
 
