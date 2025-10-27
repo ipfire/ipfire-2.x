@@ -687,7 +687,7 @@ sub write_ccd_configs() {
 			),
 		);
 
-		print CONF "# DHCP Options";
+		print CONF "# DHCP Options\n";
 
 		foreach my $option (keys %options) {
 			foreach (@options{$option}) {
