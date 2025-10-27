@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,9 +24,8 @@
 
 include Config
 
-VER        = 018
-
-# https://www.kernel.org/pub/linux/utils/usb/usbutils/
+VER        = 019
+#          https://www.kernel.org/pub/linux/utils/usb/usbutils/
 
 THISAPP    = usbutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 030f45afd5867ee38c8284a0741d1de63653a98746bfef42281390c5bdefbbb99c318d708e88ea2e28810d519d735da3103fe438befa889fc9b5ae9e21200992
+$(DL_FILE)_BLAKE2 = 8267a36ec9670e83a0df5d5d34aee70d37e773ca25a20978cd6c99df29426e926af4308f97bb38463f50abdea2a764e98752bc4a5ca703bfcfdf9fcc361a7638
 
 install : $(TARGET)
 
