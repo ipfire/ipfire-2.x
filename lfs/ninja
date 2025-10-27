@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.12.1
+VER        = 1.13.1
 
 THISAPP    = ninja-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 915545888cbd7d9e6e7e4fb0bad42f6c36ecef2de93356966541de0f8f4315e59e47cf20f189de5de11ba2a038488c7964ec709bad8868488cc03524a88483f4
+$(DL_FILE)_BLAKE2 = 610faa82e23ad23ec949f8a75cb4d8533c654bbfea63f2105e214d49cbf739af29d3ceebb4ead52693c7d925220817970073cd14ac8e948c5130b9ecfbac26ba
 
 install : $(TARGET)
 
