@@ -22,8 +22,22 @@
 # This is a helper script that is called after we have created the new
 # namespaces to perform further setup. This will be executed on the host.
 
-# Bring up the loopback interface
-ip link set lo up &>/dev/null
+set -euo pipefail
 
-# Execute the given command
-exec "$@"
+main() {
+	local r=0
+
+	# Bring up the loopback interface
+	ip link set lo up &>/dev/null
+
+	# Trap SIGINT & SIGTERM but actually don't do anything
+	trap "" SIGINT SIGTERM
+
+	# Execute the given command and save the return code
+	"$@" || r="${?}"
+
+	# Terminate with the code from the command
+	exit "${r}"
+}
+
+main "$@"
