@@ -19,6 +19,7 @@ ntp:x:38:
 dip:x:40:
 ftp:x:45:
 rsyncd:x:48:
+messagebus:x:50:
 stunnel:x:51:
 dhcpcd:x:52:
 lock:x:54:
