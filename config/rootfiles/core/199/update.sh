@@ -91,6 +91,10 @@ rm -rvf \
 # Extract files
 extract_files
 
+# Remove the older version of Boost
+rm -vf \
+	/usr/lib/libboost*.so.1.88.0
+
 # update linker config
 ldconfig
 
