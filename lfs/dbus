@@ -24,20 +24,12 @@
 
 include Config
 
-SUMMARY    = D-Bus Message Bus System
-
 VER        = 1.16.2
 THISAPP    = dbus-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = dbus
-PAK_VER    = 13
-
-DEPS       =
-
-SERVICES   = messagebus
 
 ###############################################################################
 # Top-level Rules
@@ -90,9 +82,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
-
-	#install initscripts
-	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Fix permissions of the launch helper
 	chown root:messagebus /usr/libexec/dbus-daemon-launch-helper

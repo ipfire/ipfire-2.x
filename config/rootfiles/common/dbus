@@ -1,7 +1,6 @@
 #etc/dbus-1
 etc/dbus-1/session.conf
 etc/dbus-1/system.conf
-etc/rc.d/init.d/messagebus
 usr/bin/dbus-cleanup-sockets
 usr/bin/dbus-daemon
 usr/bin/dbus-launch
