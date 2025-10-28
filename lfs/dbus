@@ -94,5 +94,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
+	# Fix permissions of the launch helper
+	chown root:messagebus /usr/libexec/dbus-daemon-launch-helper
+	chmod 4750 /usr/libexec/dbus-daemon-launch-helper
+
 	@rm -rf $(DIR_SRC)/dbus*
 	@$(POSTBUILD)
