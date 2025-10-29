@@ -7608,6 +7608,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDCP_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDMI_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HELPER
+#lib/modules/KVER/build/include/config/DRM_DRAW
 #lib/modules/KVER/build/include/config/DRM_ETNAVIV
 #lib/modules/KVER/build/include/config/DRM_ETNAVIV_THERMAL
 #lib/modules/KVER/build/include/config/DRM_EXEC
@@ -11105,6 +11106,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/VGA_ARB
 #lib/modules/KVER/build/include/config/VGA_ARB_MAX_GPUS
 #lib/modules/KVER/build/include/config/VHOST
+#lib/modules/KVER/build/include/config/VHOST_ENABLE_FORK_OWNER_CONTROL
 #lib/modules/KVER/build/include/config/VHOST_IOTLB
 #lib/modules/KVER/build/include/config/VHOST_MENU
 #lib/modules/KVER/build/include/config/VHOST_NET
@@ -14403,6 +14405,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/linux/personality.h
 #lib/modules/KVER/build/include/linux/pfn.h
 #lib/modules/KVER/build/include/linux/pfn_t.h
+#lib/modules/KVER/build/include/linux/pgalloc.h
 #lib/modules/KVER/build/include/linux/pgalloc_tag.h
 #lib/modules/KVER/build/include/linux/pgtable.h
 #lib/modules/KVER/build/include/linux/pgtable_api.h
