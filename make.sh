@@ -1559,6 +1559,7 @@ build_system() {
 	lfsmake2 cmake
 	lfsmake2 json-c
 	lfsmake2 tcl
+	lfsmake2 expect
 	lfsmake2 python3-MarkupSafe
 	lfsmake2 python3-Jinja2
 	lfsmake2 kmod
@@ -2067,7 +2068,6 @@ build_system() {
 	lfsmake2 mcelog
 	lfsmake2 socat
 	lfsmake2 libtpms
-	lfsmake2 expect
 	lfsmake2 swtpm
 	lfsmake2 libpciaccess
 	lfsmake2 ovmf
