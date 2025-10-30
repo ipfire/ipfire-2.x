@@ -351,8 +351,11 @@ sub writeserverconf {
         print CONF "push \"dhcp-option DOMAIN $vpnsettings{DHCP_DOMAIN}\"\n";
     }
 
-    if ($vpnsettings{DHCP_DNS} ne '') {
-        print CONF "push \"dhcp-option DNS $vpnsettings{DHCP_DNS}\"\n";
+    my @dns_servers = split(/\|/, $vpnsettings{'DHCP_DNS'});
+
+    # Write DNS servers
+    foreach my $dns_server (@dns_servers) {
+        print CONF "push \"dhcp-option DNS $dns_server\"\n";
     }
 
     if ($vpnsettings{DHCP_WINS} ne '') {
@@ -1122,12 +1125,20 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 	goto ADV_ERROR;
     	}
     }
-    if ($cgiparams{'DHCP_DNS'} ne ''){
-	unless (&General::validfqdn($cgiparams{'DHCP_DNS'}) || &General::validip($cgiparams{'DHCP_DNS'})) {
-		$errormessage = $Lang::tr{'invalid input for dhcp dns'};
-	goto ADV_ERROR;
-    	}
+
+    my @dns_servers = split(/[,\s]+/, $cgiparams{'DHCP_DNS'});
+
+    # Check if all DNS servers are valid
+    foreach my $dns_server (@dns_servers) {
+        unless (&General::validfqdn($dns_server) || &General::validip($dns_server)) {
+            $errormessage = $Lang::tr{'invalid input for dhcp dns'} . ": ${dns_server}";
+            goto ADV_ERROR;
+        }
     }
+
+    # Store the DNS servers
+    $vpnsettings{'DHCP_DNS'} = join("|", @dns_servers);
+
     if ($cgiparams{'DHCP_WINS'} ne ''){
 	unless (&General::validfqdn($cgiparams{'DHCP_WINS'}) || &General::validip($cgiparams{'DHCP_WINS'})) {
 		$errormessage = $Lang::tr{'invalid input for dhcp wins'};
@@ -2811,6 +2822,9 @@ END
 END
 	}
 
+	# Format DNS servers as comma-separated
+	my $dns_servers = join(", ", split(/\|/, $vpnsettings{'DHCP_DNS'}));
+
 	print <<END;
 						</select>
 					</td>
@@ -2889,7 +2903,7 @@ END
 				<tr>
 					<td>DNS</td>
 					<td>
-						<input type='TEXT' name='DHCP_DNS' value='$vpnsettings{'DHCP_DNS'}' size='30' />
+						<input type='TEXT' name='DHCP_DNS' value='$dns_servers' size='30' />
 					</td>
 				</tr>
 				<tr>
