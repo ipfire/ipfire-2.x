@@ -677,24 +677,24 @@ sub write_ccd_configs() {
 
 		# DHCP Options
 		my %options = (
-			"DNS" => (
+			"DNS" => [
 				$conns{$key}[35],
 				$conns{$key}[36],
-			),
+			],
 
-			"WINS" => (
+			"WINS" => [
 				$conns{$key}[37],
-			),
+			],
 		);
 
 		print CONF "# DHCP Options\n";
 
 		foreach my $option (keys %options) {
-			foreach (@options{$option}) {
-				# Skip empty options
-				next if ($_ eq "");
+			foreach my $address (@{ $options{$option} }) {
+				# Skip empty addresses
+				next if ($address eq "");
 
-				print CONF "push \"dhcp-option $option $_\"\n";
+				print CONF "push \"dhcp-option $option $address\"\n";
 			}
 		}
 
