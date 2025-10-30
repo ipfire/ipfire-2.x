@@ -2847,7 +2847,7 @@ END
 
 					<td>
 						<select name='DAUTH'>
-							<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
+							<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
 							<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
 							<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
 							<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
@@ -2883,12 +2883,12 @@ END
 							<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
 							<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
 							<option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
-							<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
-							<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+							<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
 						</select>
 					</td>
 				</tr>
@@ -5115,6 +5115,18 @@ END
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
 
+	my @warnings = ();
+
+	# Check if a legacy cipher is being used
+	if (&is_legacy_cipher($vpnsettings{'DCIPHER'})) {
+		push(@warnings, $Lang::tr{'ovpn legacy cipher used'});
+	}
+
+	# Check if a legacy auth algorithm is being used
+	if (&is_legacy_auth($vpnsettings{'DAUTH'})) {
+		push(@warnings, $Lang::tr{'ovpn legacy auth used'});
+	}
+
 	# Show any errors and warnings
 	&Header::errorbox($errormessage);
 
@@ -5127,6 +5139,8 @@ END
 		&Header::closepage();
 		exit 0;
 	}
+
+	&Header::warningbox(@warnings);
 
     &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn roadwarrior settings'});
 

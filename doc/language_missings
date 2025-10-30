@@ -190,6 +190,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -204,6 +206,7 @@
 < rss long
 < smt not implemented
 < transient sheduler attacks
+< vpn deprecated
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
 < wlanap 802.11ac 20mhz
@@ -302,6 +305,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -330,6 +335,7 @@
 < total
 < transient sheduler attacks
 < upload fcdsl.o
+< vpn deprecated
 < warning
 < wg
 < wg client configuration file
@@ -828,6 +834,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -946,6 +954,7 @@
 < version
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn on-demand
@@ -1537,6 +1546,8 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -1653,6 +1664,7 @@
 < vendor
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn on-demand
@@ -2562,6 +2574,8 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn mgmt in root range
 < ovpn misc settings
 < ovpn mtu-disc
@@ -2773,6 +2787,7 @@
 < visit us at
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn keyexchange
@@ -3721,6 +3736,8 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn mgmt in root range
 < ovpn misc settings
 < ovpn mtu-disc
@@ -3931,6 +3948,7 @@
 < visit us at
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn keyexchange
@@ -4383,6 +4401,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -4480,6 +4500,7 @@
 < updxlrtr passive mode
 < user management
 < version
+< vpn deprecated
 < vpn start action add
 < vpn subjectaltname missing
 < vpn wait
@@ -4636,6 +4657,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -4661,6 +4684,7 @@
 < rss long
 < smt not implemented
 < transient sheduler attacks
+< vpn deprecated
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
 < wlanap 802.11ac 20mhz
@@ -4728,6 +4752,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -4753,6 +4779,7 @@
 < rss long
 < smt not implemented
 < transient sheduler attacks
+< vpn deprecated
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
 < wlanap 802.11ac 20mhz
