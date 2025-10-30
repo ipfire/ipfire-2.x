@@ -115,7 +115,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# OrangePi Zero Plus
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-" DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 ARCH=aarch64 CROSS_COMPILE="aarch64-unknown-linux-gnu-" DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/sun50i_a64/release/bl31.bin bl31.bin
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/orangepi_zero_plus
@@ -130,7 +130,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# OrangePi PC 2
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-" DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 ARCH=aarch64 CROSS_COMPILE="aarch64-unknown-linux-gnu-" DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/sun50i_a64/release/bl31.bin bl31.bin
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/orangepi_pc2
@@ -149,7 +149,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Nanopi R2S
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-" DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-unknown-linux-gnu-" DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/nanopi_r2s
@@ -167,7 +167,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Nanopi R2C
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-"  DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-unknown-linux-gnu-"  DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/nanopi_r2c
@@ -185,7 +185,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Orangepi R1 plus lts
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-pc-linux-gnu-"  DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 CROSS_COMPILE="aarch64-unknown-linux-gnu-"  DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/orangepi_r1_plus_lts
