@@ -358,8 +358,11 @@ sub writeserverconf {
         print CONF "push \"dhcp-option DNS $dns_server\"\n";
     }
 
-    if ($vpnsettings{DHCP_WINS} ne '') {
-        print CONF "push \"dhcp-option WINS $vpnsettings{DHCP_WINS}\"\n";
+    my @wins_servers = split(/\|/, $vpnsettings{'DHCP_WINS'});
+
+    # Write WINS servers
+    foreach my $wins_server (@wins_servers) {
+        print CONF "push \"dhcp-option WINS $wins_server\"\n";
     }
 
     if ($vpnsettings{MAX_CLIENTS} eq '') {
@@ -1139,12 +1142,18 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     # Store the DNS servers
     $vpnsettings{'DHCP_DNS'} = join("|", @dns_servers);
 
-    if ($cgiparams{'DHCP_WINS'} ne ''){
-	unless (&General::validfqdn($cgiparams{'DHCP_WINS'}) || &General::validip($cgiparams{'DHCP_WINS'})) {
-		$errormessage = $Lang::tr{'invalid input for dhcp wins'};
-		goto ADV_ERROR;
-    	}
-    }
+	my @wins_servers = split(/[,\s]+/, $cgiparams{'DHCP_WINS'});
+
+	# Check if all WINS servers are valid
+	foreach my $wins_server (@wins_servers) {
+        unless (&General::validfqdn($wins_server) || &General::validip($wins_server)) {
+            $errormessage = $Lang::tr{'invalid input for dhcp wins'} . ": ${wins_server}";
+            goto ADV_ERROR;
+        }
+	}
+
+    # Store the WINS servers
+    $vpnsettings{'DHCP_WINS'} = join("|", @wins_servers);
 
 	# Validate pushed routes
     if ($cgiparams{'ROUTES_PUSH'} ne ''){
@@ -2822,8 +2831,9 @@ END
 END
 	}
 
-	# Format DNS servers as comma-separated
-	my $dns_servers = join(", ", split(/\|/, $vpnsettings{'DHCP_DNS'}));
+	# Format DNS and WINS servers as comma-separated
+	my $dns_servers  = join(", ", split(/\|/, $vpnsettings{'DHCP_DNS'}));
+	my $wins_servers = join(", ", split(/\|/, $vpnsettings{'DHCP_WINS'}));
 
 	print <<END;
 						</select>
@@ -2909,7 +2919,7 @@ END
 				<tr>
 					<td>WINS</td>
 					<td>
-						<input type='TEXT' name='DHCP_WINS' value='$vpnsettings{'DHCP_WINS'}' size='30' />
+						<input type='TEXT' name='DHCP_WINS' value='$wins_servers' size='30' />
 					</td>
 				</tr>
 			</table>
