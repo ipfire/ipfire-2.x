@@ -2067,7 +2067,8 @@ build_system() {
 	lfsmake2 mcelog
 	lfsmake2 socat
 	lfsmake2 libtpms
-	lfsmake2 --enable-toolchain swtpm # requires expect from the toolchain
+	lfsmake2 expect
+	lfsmake2 swtpm
 	lfsmake2 libpciaccess
 	lfsmake2 ovmf
 	lfsmake2 libvirt
