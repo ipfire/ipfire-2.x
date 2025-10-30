@@ -429,8 +429,8 @@ usr/share/libvirt/schemas/storagecommon.rng
 usr/share/libvirt/schemas/storagepool.rng
 usr/share/libvirt/schemas/storagepoolcaps.rng
 usr/share/libvirt/schemas/storagevol.rng
-#usr/share/libvirt/schemas/sysinfo.rng
-#usr/share/libvirt/schemas/sysinfocommon.rng
+usr/share/libvirt/schemas/sysinfo.rng
+usr/share/libvirt/schemas/sysinfocommon.rng
 #usr/share/libvirt/test-screenshot.png
 #usr/share/locale/as/LC_MESSAGES/libvirt.mo
 #usr/share/locale/bg/LC_MESSAGES/libvirt.mo
