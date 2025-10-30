@@ -80,8 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/unix && ./configure --prefix=$(PREFIX)
 	cd $(DIR_APP)/unix && make $(MAKETUNING)
 	cd $(DIR_APP)/unix && make install
-ifneq "$(ROOT)" ""
 	cd $(DIR_APP)/unix && make install-private-headers
+ifneq "$(ROOT)" ""
 	ln -sf tclsh8.6 $(TOOLS_DIR)/bin/tclsh
 else
 	ln -sf tclsh8.6 /usr/bin/tclsh
