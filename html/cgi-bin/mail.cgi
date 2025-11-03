@@ -68,8 +68,8 @@ if (exists $dma{'AUTHPATH'}){
 	foreach my $line (<FILE>) {
 		$authline = $line;
 	}
-	my @part1 = split(/\|/,$authline);
-	my @part2 = split(/\:/,$part1[1]);
+	my @part1 = split(/\|/,$authline, 2);
+	my @part2 = split(/\:/,$part1[1], 2);
 	$auth{'AUTHNAME'} = $part1[0];
 	$auth{'AUTHHOST'} = $part2[0];
 	$auth{'AUTHPASS'} = $part2[1];
