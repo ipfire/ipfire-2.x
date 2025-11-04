@@ -933,7 +933,7 @@
 'donation' => '捐款',
 'donation-link' => 'https://www.paypal.com/en_US/GB/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong>由志愿者在空闲时间进行维护。为了保持该项目的运行成本，如果您愿意，请您为我们提供一小笔捐款。',
-'done' => '去做',
+'done' => '完成',
 'dos charset' => 'DOS字符集',
 'down and up speed' => '输入您的下载和上传速度<br /> 然后点击<i>保存</i>。',
 'downfall gather data sampling' => 'Downfall/Gather Data Sampling',
