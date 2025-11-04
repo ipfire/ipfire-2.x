@@ -86,7 +86,30 @@ rm -rvf \
 
 # Stop services
 
+# Remove dropped packages
+for package in dbus; do \
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+                stop_service "${package}"
+                for i in $(</opt/pakfire/db/rootfiles/${package}); do
+                        rm -rfv "/${i}"
+                done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # Remove files
+rm -rfv \
+	/lib/udev
+
+# Create the messagebus group
+if ! getent group messagebus >/dev/null; then
+	groupadd -g 50 messagebus
+fi
+if ! getent passwd messagebus >/dev/null; then
+	useradd -g messagebus -u 50 -d /var/empty -s /bin/false messagebus
+fi
 
 # Extract files
 extract_files
@@ -111,6 +134,7 @@ ldconfig
 sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 
 # Start services
+/etc/init.d/udev restart
 /etc/init.d/openvpn-n2n restart
 /etc/init.d/openvpn-rw restart
 /etc/init.d/suricata restart
