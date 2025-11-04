@@ -933,7 +933,7 @@
 'donation' => '捐款',
 'donation-link' => 'https://www.paypal.com/en_US/GB/i/btn/btn_donateCC_LG.gif',
 'donation-text' => '<strong>IPFire</strong>由志願者在空閒時間進行維護。為了保持該項目的運行成本，如果您願意，請您為我們提供一小筆捐款。',
-'done' => '去做',
+'done' => '完成',
 'dos charset' => 'DOS字符集',
 'down and up speed' => '輸入您的下載和上傳速度<br /> 然後點擊<i>保存</i>。',
 'downfall gather data sampling' => 'Downfall/Gather Data Sampling',
@@ -3256,5 +3256,6 @@
 'zoneconf val vlan tag range error' => 'VLAN標識必須在1-4094之間。',
 'zoneconf val zoneslave amount error' => '未處於橋接模式的區域不能分配多個NIC',
 );
+
 
 #EOF
