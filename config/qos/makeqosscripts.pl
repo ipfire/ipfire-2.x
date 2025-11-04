@@ -503,7 +503,7 @@ print <<END
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'RED_DEV'} ingress >/dev/null 2>&1
-	INTERFACE="$qossettings{'RED_DEV'}" ACTION="add" /lib/udev/network-aqm &>/dev/null
+	INTERFACE="$qossettings{'RED_DEV'}" ACTION="add" /usr/lib/udev/network-aqm &>/dev/null
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
 	ip link del $qossettings{'IMQ_DEV'} >/dev/null 2>&1
