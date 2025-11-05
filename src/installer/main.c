@@ -217,7 +217,7 @@ static char* center_string(const char* str, int width) {
 }
 
 #define DEFAULT_LANG "en.utf8"
-#define NUM_LANGS 13
+#define NUM_LANGS 15
 
 static struct lang {
 	const char* code;
@@ -236,6 +236,8 @@ static struct lang {
 	{ "pt.utf8",    "Portuguese (Brasil)" },
 	{ "ru.utf8",    "Русский (Russian)" },
 	{ "tr.utf8",    "Türkçe (Turkish)" },
+	{ "cn.utf8",    "简体中文 (Simplified)" },
+	{ "tw.utf8",    "繁体中文 (Traditional)" },
 	{ NULL, NULL },
 };
 
