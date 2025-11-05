@@ -20,36 +20,36 @@ msgstr ""
 
 #: main.c:80 main.c:181 main.c:436 main.c:714 main.c:741 main.c:961
 msgid "OK"
-msgstr ""
+msgstr "确定"
 
 #: main.c:81 main.c:493 main.c:520 main.c:549 main.c:656 main.c:666 main.c:714
 #: main.c:741
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: main.c:178
 msgid "I accept this license"
-msgstr ""
+msgstr "我接受此许可协议"
 
 #: main.c:415
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "警告：无人值守安装将在 10 秒后开始..."
 
 #: main.c:435
 msgid "Language selection"
-msgstr ""
+msgstr "语言选择"
 
 #: main.c:435
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "请选择您希望用于安装的语言。"
 
 #: main.c:450
 msgid "Unattended mode"
-msgstr ""
+msgstr "无人值守模式"
 
 #: main.c:452
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> 切换项目 | <Space> 选择 | <F12> 下一页"
 
 #: main.c:459
 #, c-format
@@ -58,15 +58,18 @@ msgid ""
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
 msgstr ""
+"欢迎使用 %s 安装程序。\n"
+"\n"
+"在以下任何界面选择“取消”都将重启计算机。"
 
 #: main.c:461
 msgid "Start installation"
-msgstr ""
+msgstr "开始安装"
 
 #: main.c:482
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "安装程序现在将尝试下载安装映像。"
 
 #: main.c:485
 #, c-format
@@ -75,20 +78,23 @@ msgid ""
 "\n"
 "You can try downloading the required installation image."
 msgstr ""
+"未找到源驱动器。\n"
+"\n"
+"您可以尝试下载所需的安装映像。"
 
 #: main.c:489
 msgid ""
 "Please make sure to connect your machine to a network and the installer will "
 "try connect to acquire an IP address."
-msgstr ""
+msgstr "请确保您的计算机已连接到网络，安装程序将尝试通过 DHCP 获取 IP 地址。"
 
 #: main.c:493
 msgid "Download installation image"
-msgstr ""
+msgstr "下载安装映像"
 
 #: main.c:506
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "正在尝试启动网络（DHCP）..."
 
 #: main.c:517
 msgid ""
@@ -97,19 +103,22 @@ msgid ""
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
 msgstr ""
+"无法启动网络，但继续安装需要网络连接。\n"
+"\n"
+"请将计算机连接到具有 DHCP 服务器的网络，然后重试。"
 
 #: main.c:520 main.c:549
 msgid "Retry"
-msgstr ""
+msgstr "重试"
 
 #: main.c:534
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "正在下载安装映像..."
 
 #: main.c:543
 #, c-format
 msgid "BLAKE2 checksum mismatch"
-msgstr ""
+msgstr "BLAKE2 校验和不匹配"
 
 #: main.c:546
 #, c-format
@@ -119,6 +128,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"无法下载安装映像。\n"
+"  原因：%s\n"
+"\n"
+"%s"
 
 #: main.c:564
 #, c-format
@@ -126,22 +139,24 @@ msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
 msgstr ""
+"无法将 %s 挂载到 %s：\n"
+"  %s\n"
 
 #: main.c:579
 msgid "License Agreement"
-msgstr ""
+msgstr "许可协议"
 
 #: main.c:580
 msgid "License not accepted!"
-msgstr ""
+msgstr "未接受许可协议！"
 
 #: main.c:602
 msgid "No hard disk found."
-msgstr ""
+msgstr "未找到硬盘。"
 
 #: main.c:623
 msgid "Disk Selection"
-msgstr ""
+msgstr "磁盘选择"
 
 #: main.c:624
 msgid ""
@@ -150,6 +165,9 @@ msgid ""
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
 msgstr ""
+"请选择要安装 IPFire 的磁盘。安装程序将首先对其进行分区，然后创建文件系统。\n"
+"\n"
+"磁盘上的所有数据都将被销毁！"
 
 #: main.c:635
 msgid ""
@@ -157,6 +175,9 @@ msgid ""
 "\n"
 "Please select one or more disks you want to install IPFire on."
 msgstr ""
+"尚未选择磁盘。\n"
+"\n"
+"请选择一个或多个要安装 IPFire 的磁盘。"
 
 #: main.c:653
 #, c-format
@@ -167,14 +188,19 @@ msgid ""
 "\n"
 "Do you agree to continue?"
 msgstr ""
+"安装程序现在将准备所选硬盘：\n"
+"\n"
+"  %s\n"
+"\n"
+"是否继续？"
 
 #: main.c:655
 msgid "Disk Setup"
-msgstr ""
+msgstr "磁盘设置"
 
 #: main.c:656 main.c:666
 msgid "Delete all data"
-msgstr ""
+msgstr "删除所有数据"
 
 #: main.c:663
 #, c-format
@@ -187,111 +213,117 @@ msgid ""
 "\n"
 "Do you agree to continue?"
 msgstr ""
+"安装程序将为所选硬盘设置 RAID 配置：\n"
+"\n"
+"  %s\n"
+"  %s\n"
+"\n"
+"是否继续？"
 
 #: main.c:665
 msgid "RAID Setup"
-msgstr ""
+msgstr "RAID 设置"
 
 #: main.c:676
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "当前不支持您的磁盘配置。"
 
 #: main.c:696
 msgid "ext4 Filesystem"
-msgstr ""
+msgstr "ext4 文件系统"
 
 #: main.c:697
 msgid "ext4 Filesystem without journal"
-msgstr ""
+msgstr "ext4 文件系统（无日志）"
 
 #: main.c:698
 msgid "XFS Filesystem"
-msgstr ""
+msgstr "XFS 文件系统"
 
 #: main.c:699
 msgid "BTRFS Filesystem (EXPERIMENTAL)"
-msgstr ""
+msgstr "BTRFS 文件系统（实验性）"
 
 #: main.c:713
 msgid "Filesystem Selection"
-msgstr ""
+msgstr "文件系统选择"
 
 #: main.c:713
 msgid "Please choose your filesystem:"
-msgstr ""
+msgstr "请选择文件系统："
 
 #: main.c:726
 msgid "Your harddisk is too small."
-msgstr ""
+msgstr "您的硬盘空间太小。"
 
 #: main.c:742
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "您的硬盘空间较小，但仍可继续安装（不创建交换分区）。"
 
 #: main.c:751
 msgid "Building RAID..."
-msgstr ""
+msgstr "正在创建 RAID..."
 
 #: main.c:755
 msgid "Unable to build the RAID."
-msgstr ""
+msgstr "无法创建 RAID。"
 
 #: main.c:767
 msgid "Partitioning disk..."
-msgstr ""
+msgstr "正在分区磁盘..."
 
 #: main.c:771
 msgid "Unable to partition the disk."
-msgstr ""
+msgstr "无法对磁盘进行分区。"
 
 #: main.c:778
 msgid "Creating filesystems..."
-msgstr ""
+msgstr "正在创建文件系统..."
 
 #: main.c:782
 msgid "Unable to create filesystems."
-msgstr ""
+msgstr "无法创建文件系统。"
 
 #: main.c:788
 msgid "Unable to mount filesystems."
-msgstr ""
+msgstr "无法挂载文件系统。"
 
 #: main.c:799
 msgid "Installing the system..."
-msgstr ""
+msgstr "正在安装系统..."
 
 #: main.c:800
 msgid "Unable to install the system."
-msgstr ""
+msgstr "无法安装系统。"
 
 #: main.c:816
 msgid "Installing the language cache..."
-msgstr ""
+msgstr "正在安装语言缓存..."
 
 #: main.c:817
 msgid "Unable to install the language cache."
-msgstr ""
+msgstr "无法安装语言缓存。"
 
 #: main.c:823
 msgid "Trigger udev to redetect partitions..."
-msgstr ""
+msgstr "正在触发 udev 重新检测分区..."
 
 #: main.c:824
 msgid "Error triggering udev to redetect partitions."
-msgstr ""
+msgstr "触发 udev 重新检测分区时出错。"
 
 #: main.c:829
 msgid "Installing the bootloader..."
-msgstr ""
+msgstr "正在安装引导程序..."
 
 #: main.c:836 main.c:852
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "无法打开 /etc/default/grub 进行写入。"
 
 #: main.c:862
 msgid "Unable to install the bootloader."
-msgstr ""
+msgstr "无法安装引导程序。"
 
 #: main.c:879
 msgid ""
@@ -299,30 +331,33 @@ msgid ""
 "\n"
 "Do you want to restore the backup?"
 msgstr ""
+"在安装映像中发现了备份文件。\n"
+"\n"
+"是否要恢复备份？"
 
 #: main.c:880
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: main.c:880
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #: main.c:887
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "恢复备份文件时发生错误。"
 
 #: main.c:900
 msgid "Running post-install script..."
-msgstr ""
+msgstr "正在运行安装后脚本..."
 
 #: main.c:901
 msgid "Post-install script failed."
-msgstr ""
+msgstr "安装后脚本执行失败。"
 
 #: main.c:907
 msgid "Umounting filesystems..."
-msgstr ""
+msgstr "正在卸载文件系统..."
 
 #: main.c:913
 #, c-format
@@ -331,12 +366,15 @@ msgid ""
 "\n"
 "  %s"
 msgstr ""
+"未能成功卸载所有文件系统：\n"
+"\n"
+"  %s"
 
 #: main.c:941
 msgid ""
 "Unattended installation has finished. The system will be shutting down in a "
 "moment..."
-msgstr ""
+msgstr "无人值守安装已完成，系统即将关闭..."
 
 #: main.c:945
 #, c-format
@@ -349,15 +387,19 @@ msgid ""
 "https://%s:444 (or what ever you name your %s) for the web configuration "
 "console."
 msgstr ""
+"%s 已成功安装！\n"
+"\n"
+"请移除安装介质并点击重启按钮。系统重启后，您将被要求设置网络和系统密码。然后，请使用浏览器访问 "
+"https://%s:444（或您为 %s 命名的地址）进入 Web 配置控制台。"
 
 #: main.c:950
 msgid "Congratulations!"
-msgstr ""
+msgstr "恭喜！"
 
 #: main.c:950
 msgid "Reboot"
-msgstr ""
+msgstr "重启"
 
 #: main.c:961
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "安装失败。请按“确定”重启系统。"
