@@ -236,8 +236,7 @@ static struct lang {
 	{ "pt.utf8",    "Portuguese (Brasil)" },
 	{ "ru.utf8",    "Русский (Russian)" },
 	{ "tr.utf8",    "Türkçe (Turkish)" },
-	{ "cn.utf8",    "简体中文 (Simplified)" },
-	{ "tw.utf8",    "繁体中文 (Traditional)" },
+	{ "zh.utf8",    "简体中文 (Simplified)" },
 	{ NULL, NULL },
 };
 
