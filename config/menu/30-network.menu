@@ -34,6 +34,11 @@
 				 'title' => "$Lang::tr{'dhcp server'}",
 				 'enabled' => 1,
 				 };
+    $subnetwork->{'31.lldp'} = {'caption' => $Lang::tr{'lldp'},
+				 'uri' => '/cgi-bin/lldp.cgi',
+				 'title' => "$Lang::tr{'lldp'}",
+				 'enabled' => 1,
+				 };
 	$subnetwork->{'32.captive'} = {'caption' => $Lang::tr{'Captive'},
 			        'uri' => '/cgi-bin/captive.cgi',
 			        'title' => $Lang::tr{'Captive'},
