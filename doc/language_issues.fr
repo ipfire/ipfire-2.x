@@ -240,7 +240,6 @@ WARNING: translation string unused: delete pc
 WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
 WARNING: translation string unused: deprecated fs warn
-WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
@@ -1071,6 +1070,9 @@ WARNING: untranslated string: invalid keepalive interval = Invalid Keepalive Int
 WARNING: untranslated string: invalid network = Invalid Network
 WARNING: untranslated string: ips throughput = Throughput
 WARNING: untranslated string: last updated = Last Updated
+WARNING: untranslated string: lldp = Link Layer Discovery Protocol
+WARNING: untranslated string: lldp neighbors = Neighbors
+WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: local port = Local Port
 WARNING: untranslated string: local subnets = Local Subnets
@@ -1120,6 +1122,7 @@ WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z
 WARNING: untranslated string: total = Total
 WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
+WARNING: untranslated string: vlan = VLAN
 WARNING: untranslated string: vpn deprecated = Deprecated
 WARNING: untranslated string: warning = Warning
 WARNING: untranslated string: wg client pool = Client Pool

@@ -179,6 +179,9 @@
 < ids reports weekly
 < ids send email on alert
 < indirect target selection
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < mdstat
 < offloaded
 < online
@@ -206,6 +209,7 @@
 < rss long
 < smt not implemented
 < transient sheduler attacks
+< vlan
 < vpn deprecated
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
@@ -287,6 +291,9 @@
 < invalid network
 < ips throughput
 < last updated
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local port
 < local subnets
@@ -335,6 +342,7 @@
 < total
 < transient sheduler attacks
 < upload fcdsl.o
+< vlan
 < vpn deprecated
 < warning
 < wg
@@ -768,6 +776,9 @@
 < last updated
 < legacy architecture warning
 < link-layer encapsulation
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -952,6 +963,7 @@
 < uplink bit rate
 < user management
 < version
+< vlan
 < vpn broken
 < vpn connecting
 < vpn deprecated
@@ -1461,6 +1473,9 @@
 < last updated
 < legacy architecture warning
 < link-layer encapsulation
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -1662,6 +1677,7 @@
 < uplink bit rate
 < user management
 < vendor
+< vlan
 < vpn broken
 < vpn connecting
 < vpn deprecated
@@ -2464,6 +2480,9 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -2785,6 +2804,7 @@
 < vendor
 < version
 < visit us at
+< vlan
 < vpn broken
 < vpn connecting
 < vpn deprecated
@@ -3626,6 +3646,9 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -3946,6 +3969,7 @@
 < vendor
 < version
 < visit us at
+< vlan
 < vpn broken
 < vpn connecting
 < vpn deprecated
@@ -4363,6 +4387,9 @@
 < last updated
 < legacy architecture warning
 < link-layer encapsulation
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -4500,6 +4527,7 @@
 < updxlrtr passive mode
 < user management
 < version
+< vlan
 < vpn deprecated
 < vpn start action add
 < vpn subjectaltname missing
@@ -4646,6 +4674,9 @@
 < ids reports weekly
 < ids send email on alert
 < indirect target selection
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < max bandwidth
 < offloaded
 < online
@@ -4684,6 +4715,7 @@
 < rss long
 < smt not implemented
 < transient sheduler attacks
+< vlan
 < vpn deprecated
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz
@@ -4741,6 +4773,9 @@
 < ids reports weekly
 < ids send email on alert
 < indirect target selection
+< lldp
+< lldp neighbors
+< lldp there are no neighbors
 < max bandwidth
 < offloaded
 < online
@@ -4779,6 +4814,7 @@
 < rss long
 < smt not implemented
 < transient sheduler attacks
+< vlan
 < vpn deprecated
 < wlanap 802.11ac
 < wlanap 802.11ac 160mhz

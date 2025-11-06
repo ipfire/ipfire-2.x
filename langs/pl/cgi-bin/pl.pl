@@ -1429,7 +1429,7 @@
 'profile saved' => 'Zapisano profil: ',
 'profiles' => 'Profile:',
 'proto' => 'Proto',
-'protocol' => 'Protokół:',
+'protocol' => 'Protokół',
 'proxy' => 'Proxy',
 'proxy access graphs' => 'Wykresy dostępu do Proxy',
 'proxy admin password' => 'Hasło administratora Cache',

@@ -1935,7 +1935,7 @@
 'profile saved' => 'Kaydedilen profiller: ',
 'profiles' => 'Profiller:',
 'proto' => 'Kural',
-'protocol' => 'Kural ',
+'protocol' => 'Kural',
 'proxy' => 'Vekil sunucu',
 'proxy access graphs' => 'Vekil sunucu erişim grafiği',
 'proxy admin password' => 'Önbellek yönetici parolası',

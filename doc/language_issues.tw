@@ -242,7 +242,6 @@ WARNING: translation string unused: delete pc
 WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
 WARNING: translation string unused: deprecated fs warn
-WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
@@ -1083,6 +1082,9 @@ WARNING: untranslated string: ids reports weekly = Send a weekly report
 WARNING: untranslated string: ids send email on alert = Send email on alert
 WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: lldp = Link Layer Discovery Protocol
+WARNING: untranslated string: lldp neighbors = Neighbors
+WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: max bandwidth = Maximum bandwidth
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: offloaded = Offloaded
@@ -1125,6 +1127,7 @@ WARNING: untranslated string: rss = RSS
 WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: smt not implemented = Not Implemented
 WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
+WARNING: untranslated string: vlan = VLAN
 WARNING: untranslated string: vpn deprecated = Deprecated
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string

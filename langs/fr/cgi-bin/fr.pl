@@ -2161,7 +2161,7 @@
 'profile saved' => 'Profil sauvegardé:',
 'profiles' => 'Profils :',
 'proto' => 'Proto',
-'protocol' => 'Protocole :',
+'protocol' => 'Protocole',
 'proxy' => 'Proxy',
 'proxy access graphs' => 'Graphiques des accès proxy',
 'proxy admin password' => 'Mot de passe admnistrateur du cache',

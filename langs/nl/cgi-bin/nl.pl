@@ -1764,7 +1764,7 @@
 'profile saved' => 'Profiel opgeslagen: ',
 'profiles' => 'Profielen:',
 'proto' => 'Proto',
-'protocol' => 'Protocol:',
+'protocol' => 'Protocol',
 'proxy' => 'Proxy',
 'proxy access graphs' => 'Proxy toegangsgrafieken',
 'proxy admin password' => 'Cache beheerder wachtwoord',

@@ -209,7 +209,6 @@ WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
 WARNING: translation string unused: demon login script
 WARNING: translation string unused: deprecated fs warn
-WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
@@ -1270,6 +1269,9 @@ WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
+WARNING: untranslated string: lldp = Link Layer Discovery Protocol
+WARNING: untranslated string: lldp neighbors = Neighbors
+WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: local port = Local Port
@@ -1457,6 +1459,7 @@ WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download 
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: vendor = Vendor
+WARNING: untranslated string: vlan = VLAN
 WARNING: untranslated string: vpn broken = Broken
 WARNING: untranslated string: vpn connecting = CONNECTING
 WARNING: untranslated string: vpn deprecated = Deprecated

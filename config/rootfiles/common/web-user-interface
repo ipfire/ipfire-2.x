@@ -29,6 +29,7 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipblocklist.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
+srv/web/ipfire/cgi-bin/lldp.cgi
 srv/web/ipfire/cgi-bin/location-block.cgi
 srv/web/ipfire/cgi-bin/logs.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/calamaris.dat

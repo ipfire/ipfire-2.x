@@ -1424,7 +1424,7 @@
 'profile saved' => 'Профиль сохранён: ',
 'profiles' => 'Профили:',
 'proto' => 'Proto',
-'protocol' => 'Протокол:',
+'protocol' => 'Протокол',
 'proxy' => 'Proxy',
 'proxy access graphs' => 'Proxy access graphs',
 'proxy admin password' => 'Cache administrator password',
