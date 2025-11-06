@@ -100,6 +100,8 @@ var/ipfire/langs
 #var/ipfire/langs/tr.pl
 #var/ipfire/langs/tw.pl
 #var/ipfire/langs/zh.pl
+var/ipfire/lldp
+#var/ipfire/lldp/settings
 var/ipfire/location-functions.pl
 var/ipfire/logging
 #var/ipfire/logging/settings
