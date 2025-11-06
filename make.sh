@@ -2125,6 +2125,7 @@ build_system() {
 	lfsmake2 fort-validator
 	lfsmake2 arpwatch
 	lfsmake2 suricata-reporter
+	lfsmake2 lldpd
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au
