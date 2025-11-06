@@ -1,5 +1,5 @@
 etc/usb_modeswitch.conf
-lib/udev/usb_modeswitch
+usr/lib/udev/usb_modeswitch
 usr/sbin/usb_modeswitch
 usr/sbin/usb_modeswitch_dispatcher
 #usr/share/man/man1/usb_modeswitch.1

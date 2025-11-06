@@ -75,6 +75,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && make all $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install UDEVDIR=/usr/lib/udev
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

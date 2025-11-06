@@ -1,5 +1,5 @@
 etc/usb_modeswitch.d
-lib/udev/rules.d/40-usb_modeswitch.rules
+usr/lib/udev/rules.d/40-usb_modeswitch.rules
 #usr/share/usb_modeswitch
 usr/share/usb_modeswitch/03f0:002a
 usr/share/usb_modeswitch/03f0:032a
