@@ -1,0 +1,79 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Read the configuration
+readhash CONFIG "/var/ipfire/lldp/settings"
+
+generate_config() {
+	# Set the description (if given)
+	if [ -n "${CONFIG["DESCRIPTION"]}" ]; then
+		echo "configure system description ${CONFIG["DESCRIPTION"]}"
+	fi
+
+	return 0
+}
+
+case "${1}" in
+	start)
+		# Do nothing if the service is not enabled
+		if [ "${CONFIG["ENABLED"]}" != "on" ]; then
+			exit 0
+		fi
+
+		# Generate the configuration file
+		if ! generate_config > /etc/lldpd.d/lldpd.conf; then
+			boot_mesg -n "Failed to generate configuration for lldpd" ${WARNING}
+			boot_mesg "" ${NORMAL}
+			exit 1
+		fi
+
+		boot_mesg "Starting Link-Layer Discovery Protocol Daemon..."
+		loadproc /usr/sbin/lldpd
+		;;
+
+	stop)
+		boot_mesg "Stopping Link-Layer Discovery Protocol Daemon..."
+		killproc /usr/sbin/lldpd
+		;;
+
+	reload)
+		boot_mesg "Reloading Link-Layer Discovery Protocol Daemoon..."
+		reloadproc /usr/sbin/lldpd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/lldpd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
