@@ -140,6 +140,7 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 /etc/init.d/suricata restart
 /etc/init.d/unbound restart
 /etc/init.d/sshd restart
+/etc/init.d/ipsec restart
 
 # Build initial ramdisks
 dracut --regenerate-all --force
