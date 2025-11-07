@@ -156,6 +156,9 @@ endif
 	echo "ANSI_COLOR=\"0:31\"" >> /etc/os-release
 	echo "BUG_REPORT_URL=\"https://bugzilla.ipfire.org/\"" >> /etc/os-release
 
+	# Set the locale
+	echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
 	# Pakfire
 	-mkdir -pv /opt/pakfire/db/core
 	echo "$(CORE)" > /opt/pakfire/db/core/mine
