@@ -52,7 +52,7 @@ case "$1" in
 		fi
 
 		boot_mesg "Starting DHCP Server..."
-		loadproc /usr/sbin/dhcpd -q ${LISTEN_INTERFACES}
+		loadproc -f /usr/sbin/dhcpd -q ${LISTEN_INTERFACES}
 
 		# Start Unbound DHCP Lease Bridge unless RFC2136 is used
 		if [ "${DNS_UPDATE_ENABLED}" != on ]; then
