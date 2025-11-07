@@ -149,13 +149,6 @@ case "$1" in
 
 				echo_ok
 			fi
-
-			# Kill any redirector processes that might have been left running
-			killproc /usr/bin/squidGuard >/dev/null &
-			killproc /usr/sbin/updxlrator >/dev/null &
-			killproc /usr/bin/squidclamav >/dev/null &
-			killproc /usr/sbin/redirect_wrapper >/dev/null &
-			wait
 		fi
 
 		# Trash remain pid file from squid.
