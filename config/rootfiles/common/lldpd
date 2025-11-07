@@ -3,7 +3,6 @@
 #usr/include/lldp-const.h
 #usr/include/lldpctl.h
 #usr/include/lldpctl.hpp
-#usr/lib/liblldpctl.a
 #usr/lib/liblldpctl.la
 #usr/lib/liblldpctl.so
 usr/lib/liblldpctl.so.4
