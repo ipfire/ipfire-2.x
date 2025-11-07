@@ -1,3 +1,4 @@
+etc/locale.conf
 etc/rc.d/init.d/dhcp
 etc/rc.d/init.d/lldpd
 etc/rc.d/init.d/messagebus
