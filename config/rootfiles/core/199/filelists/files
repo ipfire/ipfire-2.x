@@ -1,12 +1,16 @@
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/lldpd
 etc/rc.d/init.d/messagebus
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/openvpn-n2n
 etc/rc.d/init.d/openvpn-rw
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/wireguard
+etc/rc.d/rc0.d/K09lldpd
 etc/rc.d/rc0.d/K85messagebus
 etc/rc.d/rc3.d/S15messagebus
+etc/rc.d/rc3.d/S41lldpd
+etc/rc.d/rc6.d/K09lldpd
 etc/rc.d/rc6.d/K85messagebus
 etc/ssh/ssh_config
 etc/ssh/sshd_config
@@ -18,6 +22,9 @@ srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wireguard.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
+usr/local/bin/lldpdctrl
 usr/sbin/openvpn-authenticator
 var/ipfire/header.pl
+var/ipfire/lldp
+var/ipfire/menu.d/30-network.menu
 var/ipfire/qos/bin/makeqosscripts.pl
