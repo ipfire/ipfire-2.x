@@ -270,7 +270,6 @@ $proxysettings{'IDENT_ENABLE_ACL'} = 'off';
 $proxysettings{'IDENT_USER_ACL'} = 'positive';
 $proxysettings{'ENABLE_FILTER'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
-$proxysettings{'ENABLE_CLAMAV'} = 'off';
 
 $ncsa_buttontext = $Lang::tr{'advproxy NCSA create user'};
 
@@ -643,7 +642,6 @@ ERROR:
 		$stdproxysettings{'UPSTREAM_PASSWORD'} = $proxysettings{'UPSTREAM_PASSWORD'};
 		$stdproxysettings{'ENABLE_FILTER'} = $proxysettings{'ENABLE_FILTER'};
 		$stdproxysettings{'ENABLE_UPDXLRATOR'} = $proxysettings{'ENABLE_UPDXLRATOR'};
-		$stdproxysettings{'ENABLE_CLAMAV'} = $proxysettings{'ENABLE_CLAMAV'};
 		&General::writehash("${General::swroot}/proxy/settings", \%stdproxysettings);
 
 		&writeconfig;
@@ -894,10 +892,6 @@ $checked{'ENABLE_UPDXLRATOR'}{'off'} = '';
 $checked{'ENABLE_UPDXLRATOR'}{'on'} = '';
 $checked{'ENABLE_UPDXLRATOR'}{$proxysettings{'ENABLE_UPDXLRATOR'}} = "checked='checked'";
 
-$checked{'ENABLE_CLAMAV'}{'off'} = '';
-$checked{'ENABLE_CLAMAV'}{'on'} = '';
-$checked{'ENABLE_CLAMAV'}{$proxysettings{'ENABLE_CLAMAV'}} = "checked='checked'";
-
 &Header::openpage($Lang::tr{'advproxy advanced web proxy configuration'}, 1, '');
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -997,19 +991,6 @@ print <<END
 <table width='100%'>
 END
 ;
-if ( -e "/usr/bin/squidclamav" ) {
-	print "<td class='base'><b>".$Lang::tr{'advproxy squidclamav'}."</b><br />";
-	if ( ! -e "/var/run/clamav/clamd.pid" ){
-		print "<font color='red'>clamav not running</font><br /><br />";
-		$proxysettings{'ENABLE_CLAMAV'} = 'off';
-		}
-	else {
-		print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_CLAMAV' ".$checked{'ENABLE_CLAMAV'}{'on'}." /><br />";
-}
-	print "</td>";
-} else {
-	print "<td></td>";
-}
 print "<td class='base'><a href='/cgi-bin/urlfilter.cgi'><b>".$Lang::tr{'advproxy url filter'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_FILTER' ".$checked{'ENABLE_FILTER'}{'on'}." /><br />";
 print "</td>";
@@ -3533,17 +3514,6 @@ END
 	}
 	if ((!-z $extgrp) && ($proxysettings{'AUTH_METHOD'} eq 'ncsa') && ($proxysettings{'NCSA_BYPASS_REDIR'} eq 'on')) { print FILE "\nredirector_access deny for_extended_users\n"; }
 
-	# Check if squidclamav is enabled.
-	if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
-		print FILE "\n#Settings for squidclamav:\n";
-		print FILE "http_port 127.0.0.1:$proxysettings{'PROXY_PORT'}\n";
-		print FILE "acl purge method PURGE\n";
-		print FILE "http_access deny to_localhost\n";
-		print FILE "http_access allow localhost\n";
-		print FILE "http_access allow purge localhost\n";
-		print FILE "http_access deny purge\n";
-		print FILE "url_rewrite_access deny localhost\n";
-	}
 	print FILE <<END;
 
 #Access to squid:
@@ -4016,7 +3986,7 @@ END
 		print FILE "\nalways_direct allow IPFire_ips\n";
 		print FILE "never_direct  allow all\n\n";
 	}
-	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') || ($proxysettings{'ENABLE_CLAMAV'} eq 'on'))
+	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on'))
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
 		print FILE "url_rewrite_children ", &General::number_cpu_cores();
@@ -4030,18 +4000,6 @@ END
 		print FILE "include /etc/squid/squid.conf.local\n";
 	}
 	close FILE;
-
-	# Proxy settings for squidclamav - if installed.
-	#
-	# Check if squidclamav is enabled.
-	if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
-
-		my $configfile='/etc/squidclamav.conf';
-
-		my $data = &General::read_file_utf8($configfile);
-		$data =~ s/squid_port [0-9]+/squid_port $proxysettings{'PROXY_PORT'}/g;
-		&General::write_file_utf8($configfile, $data);
-	}
 }
 
 # -------------------------------------------------------------------
