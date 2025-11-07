@@ -142,6 +142,9 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 /etc/init.d/sshd restart
 /etc/init.d/ipsec restart
 
+# Re-import the updated crontab
+fcrontab -z
+
 # Build initial ramdisks
 dracut --regenerate-all --force
 KVER="xxxKVERxxx"

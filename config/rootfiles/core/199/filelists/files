@@ -31,3 +31,4 @@ var/ipfire/header.pl
 var/ipfire/lldp
 var/ipfire/menu.d/30-network.menu
 var/ipfire/qos/bin/makeqosscripts.pl
+var/spool/cron/root.orig
