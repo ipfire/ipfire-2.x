@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 49
+PAK_VER    = 50
 
 DEPS       = alsa libusbredir spice libseccomp libslirp
 
@@ -110,9 +110,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# install wrapper for old kvm parameter handling
 	install -m 755 $(DIR_SRC)/config/qemu/qemu /usr/bin/qemu
-
-	# install an udev script to set the permissions of /dev/kvm
-	cp -avf $(DIR_SRC)/config/qemu/65-kvm.rules /usr/lib/udev/rules.d/65-kvm.rules
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
