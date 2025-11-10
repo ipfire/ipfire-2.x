@@ -32,6 +32,13 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+EXTRA_ARGS =
+
+# The seccomp filter is only available for x86_64
+ifeq "$(BUILD_ARCH)" "x86_64"
+	EXTRA_ARGS += --with-seccomp
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -78,10 +85,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--sysconfdir=/etc \
 		--localstatedir=/var \
 		--disable-static \
-		--with-seccomp \
 		--with-privsep-user=nobody \
 		--with-privsep-group=nobody \
-		--without-embedded-libevent
+		--without-embedded-libevent \
+		$(EXTRA_ARGS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
