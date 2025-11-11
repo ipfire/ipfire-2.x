@@ -27,6 +27,9 @@ LLDPDARGS=""
 # Read the configuration
 readhash CONFIG "/var/ipfire/lldp/settings"
 
+# Read-in network settings
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
 generate_config() {
 	# Set the description (if given)
 	if [ -n "${CONFIG["DESCRIPTION"]}" ]; then
@@ -51,6 +54,11 @@ case "${1}" in
 			boot_mesg -n "Failed to generate configuration for lldpd" ${WARNING}
 			boot_mesg "" ${NORMAL}
 			exit 1
+		fi
+
+		# Set green address as management address if there is one.
+		if [ -n ${GREEN_ADDRESS} ]; then
+			LLDPDARGS+=" -m ${GREEN_ADDRESS}"
 		fi
 
 		boot_mesg "Starting Link-Layer Discovery Protocol Daemon..."
