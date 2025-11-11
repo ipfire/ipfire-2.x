@@ -3,6 +3,9 @@
 # IPFire Installer RC
 #
 
+# Enable UTF-8 mode for the console before the installer starts
+export LC_ALL="en_US.utf-8"
+
 # wait for udev settle
 /bin/udevadm settle
 
