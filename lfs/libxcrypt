@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.4.38
+VER        = 4.5.1
 
 THISAPP    = libxcrypt-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 42d594fe36f61a1b5343d9fda22541b09373fe74c587537db8203f9c92120b6c73edef2e1b3d7febda14ae979845405b5fdaeb31dd2b89eedc423b0924ea7cff
+$(DL_FILE)_BLAKE2 = d21b2ed29b8fdc1ca99e64651e984c859a988064d1ca7e9c87e1c808b451307c56400dd802112bbe732c71f6468b55db5847cc5e4184771baf44f9c5cad0d1dc
 
 install : $(TARGET)
 
