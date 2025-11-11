@@ -216,26 +216,26 @@ static char* center_string(const char* str, int width) {
 	return string;
 }
 
-#define DEFAULT_LANG "en.utf8"
+#define DEFAULT_LANG "en_US.utf8"
 #define NUM_LANGS 13
 
 static struct lang {
 	const char* code;
 	char* name;
 } languages[NUM_LANGS + 1] = {
-	{ "fa.utf8",    "فارسی (Persian)" },
-	{ "da.utf8",    "Dansk (Danish)" },
-	{ "es.utf8",    "Español (Spanish)" },
-	{ "en.utf8",    "English" },
-	{ "fr.utf8",    "Français (French)" },
-	{ "hr.utf8",    "Hrvatski (Croatian)" },
-	{ "it.utf8",    "Italiano (Italian)" },
-	{ "de.utf8",    "Deutsch (German)" },
-	{ "nl.utf8",    "Nederlands (Dutch)" },
-	{ "pl.utf8",    "Polski (Polish)" },
-	{ "pt.utf8",    "Portuguese (Brasil)" },
-	{ "ru.utf8",    "Русский (Russian)" },
-	{ "tr.utf8",    "Türkçe (Turkish)" },
+	{ "da_DK.utf8", "Dansk (Danish)" },
+	{ "de_DE.utf8", "Deutsch (German)" },
+	{ "en_US.utf8", "English" },
+	{ "es_ES.utf8", "Español (Spanish)" },
+	{ "fa_IR.utf8", "فارسی (Persian)" },
+	{ "fr_FR.utf8", "Français (French)" },
+	{ "hr_HR.utf8", "Hrvatski (Croatian)" },
+	{ "it_IT.utf8", "Italiano (Italian)" },
+	{ "nl_NL.utf8", "Nederlands (Dutch)" },
+	{ "pl_PL.utf8", "Polski (Polish)" },
+	{ "pt_PT.utf8", "Portuguese (Brasil)" },
+	{ "ru_RU.utf8", "Русский (Russian)" },
+	{ "tr_TR.utf8", "Türkçe (Turkish)" },
 	{ NULL, NULL },
 };
 
