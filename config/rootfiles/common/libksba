@@ -1,0 +1,7 @@
+#usr/include/ksba.h
+#usr/lib/libksba.la
+#usr/lib/libksba.so
+usr/lib/libksba.so.8
+usr/lib/libksba.so.8.14.7
+#usr/lib/pkgconfig/ksba.pc
+#usr/share/aclocal/ksba.m4
