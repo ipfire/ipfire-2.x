@@ -1,0 +1,7 @@
+#usr/include/npth.h
+#usr/lib/libnpth.la
+#usr/lib/libnpth.so
+usr/lib/libnpth.so.0
+usr/lib/libnpth.so.0.3.0
+#usr/lib/pkgconfig/npth.pc
+#usr/share/aclocal/npth.m4
