@@ -39,6 +39,9 @@ my @errormessages = ();
 my %settings = ();
 &General::readhash("${General::swroot}/lldp/settings", \%settings);
 
+# Hash which will contain any discovered peers.
+my %peerhash = ();
+
 # Save on main page
 if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 	# Store whether enabled or not
@@ -136,6 +139,14 @@ END
 		# Fetch the interface object
 		my $interface = $json->{"lldp"}[0]->{"interface"};
 
+		# Loop through all detected peers and add their sent names as keys
+		# and their data as values to the peerhash.
+		foreach my $peer (@{ $interface}) {
+			my $name = &Header::escape($peer->{"chassis"}[0]->{"name"}[0]->{"value"});
+
+			$peerhash{$name} = $peer;
+		}
+
 		print <<END;
 			<table class='tbl'>
 				<tr>
@@ -165,16 +176,17 @@ END
 				</tr>
 END
 
-				foreach my $peer (@{ $interface }) {
-					my $intf = $peer->{"name"};
-					my $proto = $peer->{"via"};
+				# Sort the detected peers alphabetically and loop over them.
+				foreach my $peer (sort { $a cmp $b } keys %peerhash) {
+					my $intf = $peerhash{$peer}{"name"};
+					my $proto = $peerhash{$peer}{"via"};
 					my $name = "";
 					my $descr = "";
 					my $port_name = "";
 					my $vlan_id = "";
 
 					# Fetch the chassis
-					foreach my $chassis (@{ $peer->{"chassis"} }) {
+					foreach my $chassis (@{ $peerhash{$peer}{"chassis"} }) {
 						$name = &Header::escape(
 							$chassis->{"name"}[0]->{"value"}
 						);;
@@ -187,12 +199,12 @@ END
 					}
 
 					# Fetch the port
-					foreach my $port (@{ $peer->{"port"} }) {
+					foreach my $port (@{ $peerhash{$peer}{"port"} }) {
 						$port_name = $port->{"descr"}[0]->{"value"};
 					}
 
 					# Fetch the VLAN
-					foreach my $vlan (@{ $peer->{"vlan"} }) {
+					foreach my $vlan (@{ $peerhash{$peer}{"vlan"} }) {
 						$vlan_id = $vlan->{"vlan-id"};
 					}
 
@@ -226,7 +238,7 @@ END
 				}
 
 				# Show a message if there are no neighbors
-				unless (scalar @{ $interface }) {
+				unless (keys %peerhash) {
 					print <<END;
 						<tr>
 							<td colspan="6" style="text-align: center;">
