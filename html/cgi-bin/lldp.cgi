@@ -116,21 +116,21 @@ MAIN:
 END
 	&Header::closebox();
 
-	# Load data about all peers
-	my @output = &General::system_output("lldpctl", "-f", "json0");
-
-	my $json;
-
-	# Parse the JSON output
-	eval {
-		$json = decode_json join("\n", @output);
-		1;
-	} or do {
-		$json = undef;
-	};
-
 	# Show a list with all peers if the service is enabled
 	if ($settings{"ENABLED"} eq "on") {
+		# Load data about all peers
+		my @output = &General::system_output("lldpctl", "-f", "json0");
+
+		my $json;
+
+		# Parse the JSON output
+		eval {
+			$json = decode_json join("\n", @output);
+			1;
+		} or do {
+			$json = undef;
+		};
+
 		&Header::opensection($Lang::tr{'lldp neighbors'});
 
 		# Fetch the interface object
