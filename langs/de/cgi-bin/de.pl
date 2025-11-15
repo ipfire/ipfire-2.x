@@ -1640,6 +1640,7 @@
 'line' => 'Leitung',
 'linkq' => 'Antwortzeit',
 'lldp' => 'Link-Layer-Discovery-Protokoll',
+'lldp invalid description' => 'Ungültige Beschreibung. Erlaubte Zeichen sind A-Z, a-Z, Zahlen, Bindestriche und Unterstriche.',
 'lldp neighbors' => 'Nachbarn',
 'lldp there are no neighbors' => 'Aktuell gibt es keine Nachbarn',
 'load average' => 'Load Average',

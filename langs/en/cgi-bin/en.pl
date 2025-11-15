@@ -1706,6 +1706,7 @@
 'link-layer encapsulation' => 'Link-Layer Encapsulation',
 'linkq' => 'Link Quality',
 'lldp' => 'Link Layer Discovery Protocol',
+'lldp invalid description' => 'Invalid description. Allowed characters are A-Z, a-z, numbers, hypen and underscrores.',
 'lldp neighbors' => 'Neighbors',
 'lldp there are no neighbors' => 'There are currently no neighbors',
 'load average' => 'Load Average',
