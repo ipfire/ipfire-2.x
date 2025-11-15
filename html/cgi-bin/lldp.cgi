@@ -46,8 +46,13 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{'save'}) {
 		$settings{'ENABLED'} = $cgiparams{'ENABLED'};
 	}
 
-	# XXX Validate the description
-	$settings{"DESCRIPTION"} = $cgiparams{"DESCRIPTION"};
+	# Validate the description
+	if (($cgiparams{"DESCRIPTION"} eq "") || ($cgiparams{"DESCRIPTION"} =~ /^[A-Za-z0-9_\-]+$/)) {
+		$settings{"DESCRIPTION"} = $cgiparams{"DESCRIPTION"};
+	} else {
+		# Add error message about invalid characters in description.
+		push(@errormessages, "$Lang::tr{'lldp invalid description'}");
+	}
 
 	# Don't continue on error
 	goto MAIN if (scalar @errormessages);
@@ -81,6 +86,9 @@ MAIN:
 		"ENABLED" => ($settings{"ENABLED"} eq "on") ? "checked" : "",
 	);
 
+	# Description field, defaults to CGI input otherwise use configured description.
+	my $description = $cgiparams{'DESCRIPTION'} // $settings{'DESCRIPTION'};
+
 	print <<END;
 		<form method="POST" action="">
 			<table class="form">
@@ -94,7 +102,7 @@ MAIN:
 				<tr>
 					<td>$Lang::tr{'description'}</td>
 					<td>
-						<input type="text" name="DESCRIPTION" value="$settings{'DESCRIPTION'}" />
+						<input type="text" name="DESCRIPTION" value="$description" />
 					</td>
 				</tr>
 
