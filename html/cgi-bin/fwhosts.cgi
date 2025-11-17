@@ -703,8 +703,10 @@ if ($fwhostsettings{'ACTION'} eq 'savelocationgrp')
 	# Check name
 	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
 
-	unless (&General::validcc($fwhostsettings{'COUNTRY_CODE'})) {
-		$errormessage = $Lang::tr{'fwhost invalid country code'};
+	if ($fwhostsettings{'COUNTRY_CODE'} ne ''){
+		unless (&General::validcc($fwhostsettings{'COUNTRY_CODE'})) {
+			$errormessage = $Lang::tr{'fwhost invalid country code'};
+		}
 	}
 
 	# Check for existing group name.
