@@ -11,10 +11,10 @@ usr/bin/dumpcap
 usr/bin/tshark
 #usr/lib/libwireshark.so
 usr/lib/libwireshark.so.19
-usr/lib/libwireshark.so.19.0.0
+usr/lib/libwireshark.so.19.0.1
 #usr/lib/libwiretap.so
 usr/lib/libwiretap.so.16
-usr/lib/libwiretap.so.16.0.0
+usr/lib/libwiretap.so.16.0.1
 #usr/lib/libwsutil.so
 usr/lib/libwsutil.so.17
 usr/lib/libwsutil.so.17.0.0
@@ -72,8 +72,8 @@ usr/libexec/wireshark/extcap/wifidump
 #usr/share/doc/wireshark/randpktdump.html
 #usr/share/doc/wireshark/rawshark.html
 #usr/share/doc/wireshark/reordercap.html
-#usr/share/doc/wireshark/sshdig.html
 #usr/share/doc/wireshark/sdjournal.html
+#usr/share/doc/wireshark/sshdig.html
 #usr/share/doc/wireshark/sshdump.html
 #usr/share/doc/wireshark/strato.html
 #usr/share/doc/wireshark/stratoshark.html
@@ -98,8 +98,8 @@ usr/libexec/wireshark/extcap/wifidump
 #usr/share/man/man1/randpktdump.1
 #usr/share/man/man1/rawshark.1
 #usr/share/man/man1/reordercap.1
-#usr/share/man/man1/sshdig.1
 #usr/share/man/man1/sdjournal.1
+#usr/share/man/man1/sshdig.1
 #usr/share/man/man1/sshdump.1
 #usr/share/man/man1/strato.1
 #usr/share/man/man1/stratoshark.1

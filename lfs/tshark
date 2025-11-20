@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Network Traffic Analyser
 
-VER        = 4.6.0
+VER        = 4.6.1
 
 THISAPP    = wireshark-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tshark
 DEPS       = c-ares
-PAK_VER    = 29
+PAK_VER    = 30
 
 SERVICES   =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = df4245158422dae95bb6a68d8093cf5d1456290f25a8b8f664e6f9bf7f70661fc881e100c48c616ca077621dbb0ff55a5b14c1e385e8b6d52a7dc2d7fd1acd0a
+$(DL_FILE)_BLAKE2 = 4ca4b482ec58003c78413e29b11d3b628c835ffc0a635150415a91d570952b958f80a3baf0da7fc952fd338697c06631d20dbb7a29a42a46a22bb1be32ab2265
 
 install : $(TARGET)
 
@@ -82,10 +82,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && mkdir build
 	cd $(DIR_APP)/build && cmake .. \
-				-DBUILD_wireshark=OFF \
-				-DCMAKE_INSTALL_PREFIX=/usr \
-				-DCMAKE_BUILD_TYPE=Release \
-				-DBUILD_mmdbresolve=OFF
+				-D BUILD_wireshark=OFF \
+				-D CMAKE_INSTALL_PREFIX=/usr \
+				-D CMAKE_BUILD_TYPE=Release \
+				-D BUILD_mmdbresolve=OFF
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	@rm -rf $(DIR_APP)
