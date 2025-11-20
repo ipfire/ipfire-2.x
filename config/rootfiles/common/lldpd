@@ -1,4 +1,4 @@
-#etc/lldpd.d
+etc/lldpd.d
 #etc/lldpd.d/README.conf
 #usr/include/lldp-const.h
 #usr/include/lldpctl.h
