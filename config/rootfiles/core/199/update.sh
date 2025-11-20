@@ -87,7 +87,7 @@ rm -rvf \
 # Stop services
 
 # Remove dropped packages
-for package in dbus; do \
+for package in dbus libseccomp; do \
         if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
                 stop_service "${package}"
                 for i in $(</opt/pakfire/db/rootfiles/${package}); do

@@ -24,8 +24,6 @@
 
 include Config
 
-SUMMARY    = A Seccomp (mode 2) helper library
-
 VER        = 2.6.0
 
 THISAPP    = libseccomp-$(VER)
@@ -33,12 +31,6 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = libseccomp
-PAK_VER    = 11
-
-DEPS       =
-
-SERVICES   =
 
 ###############################################################################
 # Top-level Rules
