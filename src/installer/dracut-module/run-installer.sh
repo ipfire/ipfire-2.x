@@ -19,6 +19,9 @@ if [ -d "/sys/firmware/efi" ]; then
 	mount -t efivarfs efivarfs /sys/firmware/efi/efivars
 fi
 
+# Load default console font
+setfont latarcyrheb-sun16
+
 # Silence the kernel
 echo >/proc/sys/kernel/printk "1 4 1 7"
 echo -n -e "\033[9;0]"
