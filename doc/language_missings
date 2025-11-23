@@ -180,6 +180,7 @@
 < ids send email on alert
 < indirect target selection
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < mdstat
@@ -292,6 +293,7 @@
 < ips throughput
 < last updated
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < load average
@@ -777,6 +779,7 @@
 < legacy architecture warning
 < link-layer encapsulation
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < load average
@@ -1474,6 +1477,7 @@
 < legacy architecture warning
 < link-layer encapsulation
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < load average
@@ -2481,6 +2485,7 @@
 < lifetime
 < link-layer encapsulation
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < load average
@@ -3647,6 +3652,7 @@
 < lifetime
 < link-layer encapsulation
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < load average
@@ -4388,6 +4394,7 @@
 < legacy architecture warning
 < link-layer encapsulation
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < load average
@@ -4675,6 +4682,7 @@
 < ids send email on alert
 < indirect target selection
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < max bandwidth
@@ -4774,6 +4782,7 @@
 < ids send email on alert
 < indirect target selection
 < lldp
+< lldp invalid description
 < lldp neighbors
 < lldp there are no neighbors
 < max bandwidth

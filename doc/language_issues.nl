@@ -76,6 +76,7 @@ WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy squid version
+WARNING: translation string unused: advproxy squidclamav
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
@@ -1270,6 +1271,7 @@ WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
 WARNING: untranslated string: lldp = Link Layer Discovery Protocol
+WARNING: untranslated string: lldp invalid description = Invalid description. Allowed characters are A-Z, a-z, numbers, hypen and underscrores.
 WARNING: untranslated string: lldp neighbors = Neighbors
 WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: load average = Load Average

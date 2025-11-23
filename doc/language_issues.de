@@ -102,6 +102,7 @@ WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy squid version
+WARNING: translation string unused: advproxy squidclamav
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
