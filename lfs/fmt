@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Open-source formatting library for C++
 
-VER        = 11.2.0
+VER        = 12.1.0
 
 THISAPP    = fmt-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fmt
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 59fc93577eebe11b003ec3fbaaaf1d955117f7aa389a899d20364f44034e0c8073f195ef33d8bee14eda804ea6102f35047c2ca5eab7d645e9a2accbafba61bf
+$(DL_FILE)_BLAKE2 = 9e9cc77bd6f5ec31f0b43091e54eb508349d278e7873bcdff4eb9388d78584467da5837bdd10de1de84feb8ab0d63880df1c9fe0f6f0db40e47598646179b06e
 
 install : $(TARGET)
 
@@ -81,8 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && mkdir -pv build
 	cd $(DIR_APP)/build && cmake .. \
-	                    -DCMAKE_INSTALL_PREFIX=/usr \
-	                    -DBUILD_SHARED_LIBS=TRUE
+	                    -D CMAKE_INSTALL_PREFIX=/usr \
+	                    -D BUILD_SHARED_LIBS=TRUE
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	@rm -rf $(DIR_APP)

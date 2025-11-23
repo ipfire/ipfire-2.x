@@ -63,10 +63,10 @@ update_firewall_rules() {
 	local local_address
 
 	# Flush the block chain
-	iptables -F OVPNBLOCK
+	iptables --wait -F OVPNBLOCK
 
 	# Flush the NAT chain
-	iptables -t nat -F OVPNNAT
+	iptables --wait -t nat -F OVPNNAT
 
 	local IFS=','
 
@@ -85,10 +85,10 @@ update_firewall_rules() {
 		fi
 
 		# Open port
-		iptables -A OVPNINPUTN2N -p "${proto}" --dport "${port}" -j ACCEPT
+		iptables --wait -A OVPNINPUTN2N -p "${proto}" --dport "${port}" -j ACCEPT
 
 		# Block all communication from transfer networks
-		iptables -A OVPNBLOCK -s "${transfer_subnet}" -j DROP
+		iptables --wait -A OVPNBLOCK -s "${transfer_subnet}" -j DROP
 
 		# Calculate NAT addresses
 		transfer_address="$(calculate_transfer_address "${transfer_subnet}" "${role}")"
@@ -96,7 +96,7 @@ update_firewall_rules() {
 
 		# NAT all outgoing connections away from the transfer net
 		if [ -n "${transfer_address}" -a -n "${local_address}" ]; then
-			iptables -t nat -A OVPNNAT -s "${transfer_address}" \
+			iptables --wait -t nat -A OVPNNAT -s "${transfer_address}" \
 				-j SNAT --to-source "${local_address}"
 		fi
 	done < /var/ipfire/ovpn/ovpnconfig

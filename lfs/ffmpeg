@@ -26,7 +26,7 @@ include Config
 
 SUMMARY	   = Library for working with various multimedia formats
 
-VER        = 7.1.1
+VER        = 8.0
 
 THISAPP    = ffmpeg-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 20
+PAK_VER    = 22
 
 DEPS       = sdl2 lame libvorbis
 
@@ -52,7 +52,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 85d1850bfa39ec28d358b5454daa7c1cf8580af73a6f83e7c070ea94db40ad485adbaeb89e886e0b3908e0f1765bd9f2b40ddd838e33e0a76e5b286917535310
+$(DL_FILE)_BLAKE2 = 8c45093665131e9aef07cc49726a2de008760728723cf9ee1833fe0697624ca2572c13eb319bd567b79fcb2db110b73fbbf0889237c10fc589d6f895a0e5aa88
 
 install : $(TARGET)
 
@@ -95,6 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--enable-gpl \
 			--enable-version3 \
 			--enable-avfilter \
+			--enable-libmp3lame \
+			--enable-openssl \
 			--disable-doc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

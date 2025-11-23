@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1_88_0
+VER        = 1_89_0
 
 THISAPP    = boost_$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -65,7 +65,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b42daa4b3ee840715f3b2cd689e585521839345d88d3e318cf96feeb3f48cb6f6723be5fffa5440a350956aecfab9fd36cbbf0dee54318c572aa1d14eeedd158
+$(DL_FILE)_BLAKE2 = e55139e80d01fa837322c0ef3ed4dfd07fbea87cb55dac7777cc68a1f3b288addba789253542ee84740e94d7e9701c1356e104078cc9a8e6ec61f282c8158204
 
 install : $(TARGET)
 

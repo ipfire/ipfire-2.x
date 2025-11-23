@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.03.35
+VER        = 2.03.36
 
 THISAPP    = LVM2.$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f1612a98de3bc9080a514acefc1c9c057e9b2e6915ee6b6755c809eaec960e87f35f67d48ef7e5ef2ccd8f79203af7ef41a43e5318f024159bbef91906097730
+$(DL_FILE)_BLAKE2 = 487acd55d640d9f8265f62165485f6e3d94f3a4378f10e7086aa3bcc1adf0e82b2ae04f9f6a055d26d92554f219143013dc233ee45296437d5b73fd9e96fc150
 
 install : $(TARGET)
 
@@ -78,13 +78,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--prefix=/usr \
 				--with-usrlibdir=/usr/lib \
 				--enable-pkgconfig \
-				--with-udevdir=/lib/udev/rules.d \
+				--with-udevdir=/usr/lib/udev/rules.d \
 				--with-default-locking-dir=/run/lvm \
 				--enable-udev_rules \
 				--enable-udev_sync
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	# copy the tailored lvm udev rules file that will mount volumes without systemd
-	cp -rf $(DIR_SRC)/config/lvm/69-dm-lvm.rules /lib/udev/rules.d/
+	cp -rf $(DIR_SRC)/config/lvm/69-dm-lvm.rules /usr/lib/udev/rules.d/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="198"							# Core Level (Filename)
+CORE="199"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 
@@ -676,7 +676,7 @@ execute() {
 
 				# Update some variables
 				environ+=(
-					[PATH]="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
+					[PATH]="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin"
 					[HOME]="/root"
 
 					# Paths
@@ -706,6 +706,13 @@ execute() {
 						[UTS_MACHINE]="${BUILD_ARCH}"
 					)
 				fi
+				;;
+
+			# Make the toolchain available in PATH
+			--enable-toolchain)
+				environ+=(
+					[PATH]="${environ[PATH]}:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
+				)
 				;;
 
 			--interactive)
@@ -949,20 +956,40 @@ lfsmake1() {
 }
 
 lfsmake2() {
-	local pkg="${1}"
-	shift
+	local args=()
+	local pkg
+
+	# Parse command line arguments
+	while [ $# -gt 0 ]; do
+		local arg="${1}"
+		shift
+
+		case "${arg}" in
+			# Collect any arguments
+			--*)
+				args+=( "${arg}" )
+				;;
+
+			# Abort once we found the package
+			*)
+				pkg="${arg}"
+				break
+				;;
+		esac
+	done
 
 	# Run the common check
 	lfsmakecommoncheck "${pkg}" "$@"
 	[ $? == 1 ] && return 0
 
 	# Download source outside of the toolchain
-	if ! make_pkg --network "${pkg}" download "$@"; then
+	if ! make_pkg --network "${args[@]}" "${pkg}" download "$@"; then
 		exiterror "Downloading ${pkg}"
 	fi
 
 	# Run install on the package
-	if ! make_pkg --chroot --timer="update_runtime" "${pkg}" b2 install "$@"; then
+	if ! make_pkg --chroot --timer="update_runtime" \
+			"${args[@]}" "${pkg}" b2 install "$@"; then
 		print_status FAIL
 
 		exiterror "Building ${pkg}"
@@ -1402,76 +1429,78 @@ build_toolchain() {
 build_system() {
 	local LOGFILE="${LOG_DIR}/_build.${SNAME}.log"
 
-	lfsmake2 stage2
-	lfsmake2 linux			HEADERS=1
-	lfsmake2 man-pages
-	lfsmake2 glibc
-	lfsmake2 tzdata
-	lfsmake2 cleanup-toolchain
-	lfsmake2 zlib-ng
-	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 gcc PASS=A
-	lfsmake2 zstd
-	lfsmake2 autoconf
-	lfsmake2 autoconf-archive
-	lfsmake2 automake
-	lfsmake2 help2man
-	lfsmake2 libtool
-	lfsmake2 binutils
-	lfsmake2 gmp
-	lfsmake2 mpfr
-	lfsmake2 libmpc
-	lfsmake2 pkg-config
-	lfsmake2 libxcrypt
-	lfsmake2 file
-	lfsmake2 gcc
-	lfsmake2 attr
-	lfsmake2 acl
-	lfsmake2 sed
-	lfsmake2 berkeley
-	lfsmake2 coreutils
-	lfsmake2 iana-etc
-	lfsmake2 m4
-	lfsmake2 bison
-	lfsmake2 ncurses
-	lfsmake2 perl
-	lfsmake2 readline
-	lfsmake2 bzip2
-	lfsmake2 xz
-	lfsmake2 lzip
-	lfsmake2 pcre
-	lfsmake2 pcre2
-	lfsmake2 gettext
-	lfsmake2 bash
-	lfsmake2 diffutils
-	lfsmake2 ed
-	lfsmake2 findutils
-	lfsmake2 flex
-	lfsmake2 gawk
-	lfsmake2 go
-	lfsmake2 grep
-	lfsmake2 groff
-	lfsmake2 gperf
-	lfsmake2 gzip
-	lfsmake2 hostname
-	lfsmake2 whois
-	lfsmake2 kbd
-	lfsmake2 less
-	lfsmake2 procps
-	lfsmake2 make
-	lfsmake2 libpipeline
-	lfsmake2 man
-	lfsmake2 net-tools
-	lfsmake2 patch
-	lfsmake2 psmisc
-	lfsmake2 shadow
-	lfsmake2 sysklogd
-	lfsmake2 sysvinit
-	lfsmake2 tar
-	lfsmake2 texinfo
-	lfsmake2 util-linux
-	lfsmake2 vim
-	lfsmake2 e2fsprogs
-	lfsmake2 jq
+	lfsmake2 --enable-toolchain stage2
+	lfsmake2 --enable-toolchain linux			HEADERS=1
+	lfsmake2 --enable-toolchain man-pages
+	lfsmake2 --enable-toolchain glibc
+	lfsmake2 --enable-toolchain tzdata
+	lfsmake2 --enable-toolchain cleanup-toolchain
+	lfsmake2 --enable-toolchain zlib-ng
+	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 --enable-toolchain gcc PASS=A
+	lfsmake2 --enable-toolchain zstd
+	lfsmake2 --enable-toolchain autoconf
+	lfsmake2 --enable-toolchain autoconf-archive
+	lfsmake2 --enable-toolchain automake
+	lfsmake2 --enable-toolchain help2man
+	lfsmake2 --enable-toolchain libtool
+	lfsmake2 --enable-toolchain binutils
+	lfsmake2 --enable-toolchain gmp
+	lfsmake2 --enable-toolchain mpfr
+	lfsmake2 --enable-toolchain libmpc
+	lfsmake2 --enable-toolchain pkg-config
+	lfsmake2 --enable-toolchain libxcrypt
+	lfsmake2 --enable-toolchain file
+	lfsmake2 --enable-toolchain gcc
+	lfsmake2 --enable-toolchain attr
+	lfsmake2 --enable-toolchain acl
+	lfsmake2 --enable-toolchain sed
+	lfsmake2 --enable-toolchain berkeley
+	lfsmake2 --enable-toolchain coreutils
+	lfsmake2 --enable-toolchain iana-etc
+	lfsmake2 --enable-toolchain m4
+	lfsmake2 --enable-toolchain bison
+	lfsmake2 --enable-toolchain ncurses
+	lfsmake2 --enable-toolchain perl
+	lfsmake2 --enable-toolchain readline
+	lfsmake2 --enable-toolchain bzip2
+	lfsmake2 --enable-toolchain xz
+	lfsmake2 --enable-toolchain lzip
+	lfsmake2 --enable-toolchain pcre
+	lfsmake2 --enable-toolchain pcre2
+	lfsmake2 --enable-toolchain gettext
+	lfsmake2 --enable-toolchain bash
+	lfsmake2 --enable-toolchain diffutils
+	lfsmake2 --enable-toolchain ed
+	lfsmake2 --enable-toolchain findutils
+	lfsmake2 --enable-toolchain flex
+	lfsmake2 --enable-toolchain gawk
+	lfsmake2 --enable-toolchain go
+	lfsmake2 --enable-toolchain grep
+	lfsmake2 --enable-toolchain groff
+	lfsmake2 --enable-toolchain gperf
+	lfsmake2 --enable-toolchain gzip
+	lfsmake2 --enable-toolchain hostname
+	lfsmake2 --enable-toolchain whois
+	lfsmake2 --enable-toolchain kbd
+	lfsmake2 --enable-toolchain less
+	lfsmake2 --enable-toolchain procps
+	lfsmake2 --enable-toolchain make
+	lfsmake2 --enable-toolchain libpipeline
+	lfsmake2 --enable-toolchain man
+	lfsmake2 --enable-toolchain net-tools
+	lfsmake2 --enable-toolchain patch
+	lfsmake2 --enable-toolchain psmisc
+	lfsmake2 --enable-toolchain shadow
+	lfsmake2 --enable-toolchain sysklogd
+	lfsmake2 --enable-toolchain sysvinit
+	lfsmake2 --enable-toolchain tar
+	lfsmake2 --enable-toolchain texinfo
+	lfsmake2 --enable-toolchain util-linux
+	lfsmake2 --enable-toolchain vim
+	lfsmake2 --enable-toolchain e2fsprogs
+	lfsmake2 --enable-toolchain jq
+
+	# From here, build without having the toolchain available
 	lfsmake2 configroot
 	lfsmake2 initscripts
 	lfsmake2 backup
@@ -1530,13 +1559,14 @@ build_system() {
 	lfsmake2 cmake
 	lfsmake2 json-c
 	lfsmake2 tcl
+	lfsmake2 expect
 	lfsmake2 python3-MarkupSafe
 	lfsmake2 python3-Jinja2
 	lfsmake2 kmod
-	lfsmake2 udev
+	lfsmake2 systemd
 	lfsmake2 libusb
 	lfsmake2 mdadm
-	lfsmake2 dracut
+	lfsmake2 dracut-ng
 	lfsmake2 lvm2
 	lfsmake2 multipath-tools
 	lfsmake2 glib
@@ -2095,6 +2125,7 @@ build_system() {
 	lfsmake2 fort-validator
 	lfsmake2 arpwatch
 	lfsmake2 suricata-reporter
+	lfsmake2 lldpd
 
 	lfsmake2 linux
 	lfsmake2 rtl8812au

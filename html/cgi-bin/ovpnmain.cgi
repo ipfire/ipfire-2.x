@@ -241,6 +241,13 @@ sub writeserverconf {
     print CONF "dev tun\n";
     print CONF "proto $vpnsettings{'DPROTOCOL'}\n";
     print CONF "port $vpnsettings{'DDEST_PORT'}\n";
+
+    # Enable multihoming when running in UDP mode to send reply packets
+    # from the same IP address that the client was talking to.
+    if ($vpnsettings{'DPROTOCOL'} eq 'udp') {
+      print CONF "multihome\n";
+    }
+
     print CONF "script-security 3\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
     print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
@@ -344,12 +351,18 @@ sub writeserverconf {
         print CONF "push \"dhcp-option DOMAIN $vpnsettings{DHCP_DOMAIN}\"\n";
     }
 
-    if ($vpnsettings{DHCP_DNS} ne '') {
-        print CONF "push \"dhcp-option DNS $vpnsettings{DHCP_DNS}\"\n";
+    my @dns_servers = split(/\|/, $vpnsettings{'DHCP_DNS'});
+
+    # Write DNS servers
+    foreach my $dns_server (@dns_servers) {
+        print CONF "push \"dhcp-option DNS $dns_server\"\n";
     }
 
-    if ($vpnsettings{DHCP_WINS} ne '') {
-        print CONF "push \"dhcp-option WINS $vpnsettings{DHCP_WINS}\"\n";
+    my @wins_servers = split(/\|/, $vpnsettings{'DHCP_WINS'});
+
+    # Write WINS servers
+    foreach my $wins_server (@wins_servers) {
+        print CONF "push \"dhcp-option WINS $wins_server\"\n";
     }
 
     if ($vpnsettings{MAX_CLIENTS} eq '') {
@@ -564,7 +577,7 @@ sub get_ccd_client_routes($) {
 
 	foreach my $key (keys %client_routes) {
 		if ($client_routes{$key}[0] eq $name) {
-			push(@routes, $client_routes{$key}[1]);
+			push(@routes, @{$client_routes{$key}}[1 .. $#{$client_routes{$key}}]);
 		}
 	}
 
@@ -582,11 +595,7 @@ sub get_ccd_server_routes($) {
 
 	foreach my $key (keys %server_routes) {
 		if ($server_routes{$key}[0] eq $name) {
-			my $i = 1;
-
-			while (my $route = $server_routes{$key}[$i++]) {
-				push(@routes, $route);
-			}
+			push(@routes, @{$server_routes{$key}}[1 .. $#{$server_routes{$key}}]);
 		}
 	}
 
@@ -674,24 +683,24 @@ sub write_ccd_configs() {
 
 		# DHCP Options
 		my %options = (
-			"DNS" => (
+			"DNS" => [
 				$conns{$key}[35],
 				$conns{$key}[36],
-			),
+			],
 
-			"WINS" => (
+			"WINS" => [
 				$conns{$key}[37],
-			),
+			],
 		);
 
-		print CONF "# DHCP Options";
+		print CONF "# DHCP Options\n";
 
 		foreach my $option (keys %options) {
-			foreach (@options{$option}) {
-				# Skip empty options
-				next if ($_ eq "");
+			foreach my $address (@{ $options{$option} }) {
+				# Skip empty addresses
+				next if ($address eq "");
 
-				print CONF "push \"dhcp-option $option $_\"\n";
+				print CONF "push \"dhcp-option $option $address\"\n";
 			}
 		}
 
@@ -1119,18 +1128,32 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 	goto ADV_ERROR;
     	}
     }
-    if ($cgiparams{'DHCP_DNS'} ne ''){
-	unless (&General::validfqdn($cgiparams{'DHCP_DNS'}) || &General::validip($cgiparams{'DHCP_DNS'})) {
-		$errormessage = $Lang::tr{'invalid input for dhcp dns'};
-	goto ADV_ERROR;
-    	}
+
+    my @dns_servers = split(/[,\s]+/, $cgiparams{'DHCP_DNS'});
+
+    # Check if all DNS servers are valid
+    foreach my $dns_server (@dns_servers) {
+        unless (&General::validfqdn($dns_server) || &General::validip($dns_server)) {
+            $errormessage = $Lang::tr{'invalid input for dhcp dns'} . ": ${dns_server}";
+            goto ADV_ERROR;
+        }
     }
-    if ($cgiparams{'DHCP_WINS'} ne ''){
-	unless (&General::validfqdn($cgiparams{'DHCP_WINS'}) || &General::validip($cgiparams{'DHCP_WINS'})) {
-		$errormessage = $Lang::tr{'invalid input for dhcp wins'};
-		goto ADV_ERROR;
-    	}
-    }
+
+    # Store the DNS servers
+    $vpnsettings{'DHCP_DNS'} = join("|", @dns_servers);
+
+	my @wins_servers = split(/[,\s]+/, $cgiparams{'DHCP_WINS'});
+
+	# Check if all WINS servers are valid
+	foreach my $wins_server (@wins_servers) {
+        unless (&General::validfqdn($wins_server) || &General::validip($wins_server)) {
+            $errormessage = $Lang::tr{'invalid input for dhcp wins'} . ": ${wins_server}";
+            goto ADV_ERROR;
+        }
+	}
+
+    # Store the WINS servers
+    $vpnsettings{'DHCP_WINS'} = join("|", @wins_servers);
 
 	# Validate pushed routes
     if ($cgiparams{'ROUTES_PUSH'} ne ''){
@@ -2439,10 +2462,8 @@ END
 			print "auth $vpnsettings{'DAUTH'}\n";
 		}
 
-		# Disable storing any credentials in memory
-		print "auth-nocache\n";
-
 		# Set a fake user name for authentication
+		print "auth-user-pass\n";
 		print "auth-token-user USER\n";
 		print "auth-token TOTP\n";
 
@@ -2810,6 +2831,10 @@ END
 END
 	}
 
+	# Format DNS and WINS servers as comma-separated
+	my $dns_servers  = join(", ", split(/\|/, $vpnsettings{'DHCP_DNS'}));
+	my $wins_servers = join(", ", split(/\|/, $vpnsettings{'DHCP_WINS'}));
+
 	print <<END;
 						</select>
 					</td>
@@ -2822,7 +2847,7 @@ END
 
 					<td>
 						<select name='DAUTH'>
-							<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
+							<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
 							<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
 							<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
 							<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
@@ -2858,12 +2883,12 @@ END
 							<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
 							<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
 							<option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
-							<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
-							<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-							<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+							<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
+							<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn deprecated'})</option>
 						</select>
 					</td>
 				</tr>
@@ -2888,13 +2913,13 @@ END
 				<tr>
 					<td>DNS</td>
 					<td>
-						<input type='TEXT' name='DHCP_DNS' value='$vpnsettings{'DHCP_DNS'}' size='30' />
+						<input type='TEXT' name='DHCP_DNS' value='$dns_servers' size='30' />
 					</td>
 				</tr>
 				<tr>
 					<td>WINS</td>
 					<td>
-						<input type='TEXT' name='DHCP_WINS' value='$vpnsettings{'DHCP_WINS'}' size='30' />
+						<input type='TEXT' name='DHCP_WINS' value='$wins_servers' size='30' />
 					</td>
 				</tr>
 			</table>
@@ -5090,6 +5115,18 @@ END
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
 
+	my @warnings = ();
+
+	# Check if a legacy cipher is being used
+	if (&is_legacy_cipher($vpnsettings{'DCIPHER'})) {
+		push(@warnings, $Lang::tr{'ovpn legacy cipher used'});
+	}
+
+	# Check if a legacy auth algorithm is being used
+	if (&is_legacy_auth($vpnsettings{'DAUTH'})) {
+		push(@warnings, $Lang::tr{'ovpn legacy auth used'});
+	}
+
 	# Show any errors and warnings
 	&Header::errorbox($errormessage);
 
@@ -5102,6 +5139,8 @@ END
 		&Header::closepage();
 		exit 0;
 	}
+
+	&Header::warningbox(@warnings);
 
     &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn roadwarrior settings'});
 

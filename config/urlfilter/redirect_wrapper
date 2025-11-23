@@ -28,7 +28,6 @@ require '/var/ipfire/general-functions.pl';
 
 my %proxysettings=();
 $proxysettings{'ENABLE_FILTER'} = 'off';
-$proxysettings{'ENABLE_CLAMAV'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
@@ -37,10 +36,6 @@ my @redirectors = ();
 
 if ($proxysettings{'ENABLE_FILTER'} eq 'on') {
 	push(@redirectors, "/usr/bin/squidGuard");
-}
-
-if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
-	push(@redirectors, "/usr/bin/squidclamav");
 }
 
 if ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') {
@@ -61,7 +56,7 @@ STDOUT->autoflush(1);
 my $debug=0; # enable only for debugging
 
 if (-e "/var/ipfire/proxy/enable_redirector_debug") {
-	writetolog("Urlfilter = ".$proxysettings{'ENABLE_FILTER'}." Clamav = ".$proxysettings{'ENABLE_CLAMAV'}." Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'});
+	writetolog("Urlfilter = ".$proxysettings{'ENABLE_FILTER'}." Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'});
 	$debug = 1;
 }
 

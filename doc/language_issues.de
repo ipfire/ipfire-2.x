@@ -102,6 +102,7 @@ WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy squid version
+WARNING: translation string unused: advproxy squidclamav
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
@@ -218,7 +219,6 @@ WARNING: translation string unused: delete pc
 WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
 WARNING: translation string unused: deprecated fs warn
-WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
@@ -241,7 +241,6 @@ WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
-WARNING: translation string unused: dl client arch insecure
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed

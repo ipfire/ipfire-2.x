@@ -103,6 +103,7 @@ WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy squid version
+WARNING: translation string unused: advproxy squidclamav
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
@@ -240,7 +241,6 @@ WARNING: translation string unused: delete pc
 WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
 WARNING: translation string unused: deprecated fs warn
-WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
@@ -265,7 +265,6 @@ WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
-WARNING: translation string unused: dl client arch insecure
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
@@ -1076,6 +1075,10 @@ WARNING: untranslated string: ids reports weekly = Send a weekly report
 WARNING: untranslated string: ids send email on alert = Send email on alert
 WARNING: untranslated string: indirect target selection = Indirect target selection
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: lldp = Link Layer Discovery Protocol
+WARNING: untranslated string: lldp invalid description = Invalid description. Allowed characters are A-Z, a-z, numbers, hypen and underscrores.
+WARNING: untranslated string: lldp neighbors = Neighbors
+WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: offloaded = Offloaded
@@ -1088,6 +1091,8 @@ WARNING: untranslated string: ovpn errmsg invalid route = Invalid route
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn fqdn = FQDN
+WARNING: untranslated string: ovpn legacy auth used = You are using a legacy hash which will not be supported in OpenVPN clients of version 2.6 or later
+WARNING: untranslated string: ovpn legacy cipher used = You are using a legacy cipher which will not be supported in OpenVPN clients of version 2.6 or later
 WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
 WARNING: untranslated string: ovpn protocol settings = Protocol Settings
@@ -1104,7 +1109,10 @@ WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: rss = RSS
 WARNING: untranslated string: rss long = Resident Set Size
+WARNING: untranslated string: smt not implemented = Not Implemented
 WARNING: untranslated string: transient sheduler attacks = Transient sheduler attacks
+WARNING: untranslated string: vlan = VLAN
+WARNING: untranslated string: vpn deprecated = Deprecated
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string
@@ -1236,4 +1244,28 @@ WARNING: untranslated string: wio_wan_up = unknown string
 WARNING: untranslated string: wio_wanname = unknown string
 WARNING: untranslated string: wio_webinterface = unknown string
 WARNING: untranslated string: wio_webinterface_link = unknown string
+WARNING: untranslated string: wlanap 802.11ac = IEEE 802.11ac
+WARNING: untranslated string: wlanap 802.11ac 160mhz = IEEE 802.11ac @ 160 MHz
+WARNING: untranslated string: wlanap 802.11ac 20mhz = IEEE 802.11ac @ 20 MHz
+WARNING: untranslated string: wlanap 802.11ac 40mhz = IEEE 802.11ac @ 40 MHz
+WARNING: untranslated string: wlanap 802.11ac 80mhz = IEEE 802.11ac @ 80 MHz
+WARNING: untranslated string: wlanap 802.11agn = IEEE 802.11an/gn
+WARNING: untranslated string: wlanap 802.11agn 20mhz = IEEE 802.11an/gn @ 20 MHz
+WARNING: untranslated string: wlanap 802.11agn 40mhz = IEEE 802.11an/gn @ 40 MHz
+WARNING: untranslated string: wlanap 802.11ax = IEEE 802.11ax
+WARNING: untranslated string: wlanap 802.11ax 160mhz = IEEE 802.11ax @ 160 MHz
+WARNING: untranslated string: wlanap 802.11ax 20mhz = IEEE 802.11ax @ 20 MHz
+WARNING: untranslated string: wlanap 802.11ax 40mhz = IEEE 802.11ax @ 40 MHz
+WARNING: untranslated string: wlanap 802.11ax 80mhz = IEEE 802.11ax @ 80 MHz
+WARNING: untranslated string: wlanap 802.11be = IEEE 802.11be
+WARNING: untranslated string: wlanap 802.11be 160mhz = IEEE 802.11be @ 160 MHz
+WARNING: untranslated string: wlanap 802.11be 20mhz = IEEE 802.11be @ 20 MHz
+WARNING: untranslated string: wlanap 802.11be 320mhz = IEEE 802.11be @ 320 MHz
+WARNING: untranslated string: wlanap 802.11be 40mhz = IEEE 802.11be @ 40 MHz
+WARNING: untranslated string: wlanap 802.11be 80mhz = IEEE 802.11be @ 80 MHz
+WARNING: untranslated string: wlanap band = Band
+WARNING: untranslated string: wlanap band 2.4ghz = 2.4 GHz
+WARNING: untranslated string: wlanap band 5ghz = 5 GHz
 WARNING: untranslated string: wlanap clients = unknown string
+WARNING: untranslated string: wlanap invalid band = Invalid band
+WARNING: untranslated string: wlanap invalid mode = Invalid mode

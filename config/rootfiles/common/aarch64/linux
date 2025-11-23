@@ -8388,7 +8388,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/DEBUG_KERNEL
 #lib/modules/KVER/build/include/config/DEBUG_LIST
 #lib/modules/KVER/build/include/config/DEBUG_MISC
-#lib/modules/KVER/build/include/config/DEBUG_PREEMPT
 #lib/modules/KVER/build/include/config/DEBUG_SHIRQ
 #lib/modules/KVER/build/include/config/DEBUG_WX
 #lib/modules/KVER/build/include/config/DECOMPRESS_BZIP2
@@ -8502,6 +8501,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDMI_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HDMI_STATE_HELPER
 #lib/modules/KVER/build/include/config/DRM_DISPLAY_HELPER
+#lib/modules/KVER/build/include/config/DRM_DRAW
 #lib/modules/KVER/build/include/config/DRM_DW_HDMI
 #lib/modules/KVER/build/include/config/DRM_DW_HDMI_AHB_AUDIO
 #lib/modules/KVER/build/include/config/DRM_DW_HDMI_CEC
@@ -11074,6 +11074,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/RENESAS_PHY
 #lib/modules/KVER/build/include/config/RESET_ATTACK_MITIGATION
 #lib/modules/KVER/build/include/config/RESET_BERLIN
+#lib/modules/KVER/build/include/config/RESET_BRCMSTB
+#lib/modules/KVER/build/include/config/RESET_BRCMSTB_RESCAL
 #lib/modules/KVER/build/include/config/RESET_CONTROLLER
 #lib/modules/KVER/build/include/config/RESET_GPIO
 #lib/modules/KVER/build/include/config/RESET_IMX7
@@ -12240,6 +12242,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/config/VFIO_VIRQFD
 #lib/modules/KVER/build/include/config/VGA_ARB
 #lib/modules/KVER/build/include/config/VGA_ARB_MAX_GPUS
+#lib/modules/KVER/build/include/config/VHOST_ENABLE_FORK_OWNER_CONTROL
 #lib/modules/KVER/build/include/config/VHOST_MENU
 #lib/modules/KVER/build/include/config/VIA_RHINE
 #lib/modules/KVER/build/include/config/VIA_VELOCITY
@@ -15500,6 +15503,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER/build/include/linux/personality.h
 #lib/modules/KVER/build/include/linux/pfn.h
 #lib/modules/KVER/build/include/linux/pfn_t.h
+#lib/modules/KVER/build/include/linux/pgalloc.h
 #lib/modules/KVER/build/include/linux/pgalloc_tag.h
 #lib/modules/KVER/build/include/linux/pgtable.h
 #lib/modules/KVER/build/include/linux/pgtable_api.h

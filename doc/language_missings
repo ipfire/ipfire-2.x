@@ -179,6 +179,10 @@
 < ids reports weekly
 < ids send email on alert
 < indirect target selection
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < mdstat
 < offloaded
 < online
@@ -190,6 +194,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -202,7 +208,34 @@
 < report exporting
 < rss
 < rss long
+< smt not implemented
 < transient sheduler attacks
+< vlan
+< vpn deprecated
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
+< wlanap invalid band
+< wlanap invalid mode
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -259,6 +292,10 @@
 < invalid network
 < ips throughput
 < last updated
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local port
 < local subnets
@@ -277,6 +314,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -299,11 +338,14 @@
 < rss
 < rss long
 < scanned
+< smt not implemented
 < system time
 < timeformat
 < total
 < transient sheduler attacks
 < upload fcdsl.o
+< vlan
+< vpn deprecated
 < warning
 < wg
 < wg client configuration file
@@ -350,7 +392,31 @@
 < wg warning configuration only shown once
 < whitelisted
 < wireguard
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap psk
 < wlanap wireless mode
 < wlanap wlan clients
@@ -712,6 +778,10 @@
 < last updated
 < legacy architecture warning
 < link-layer encapsulation
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -778,6 +848,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -845,6 +917,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < spec rstack overflow
 < spectre variant 1
@@ -893,8 +966,10 @@
 < uplink bit rate
 < user management
 < version
+< vlan
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn on-demand
@@ -960,13 +1035,37 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -1377,6 +1476,10 @@
 < last updated
 < legacy architecture warning
 < link-layer encapsulation
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -1462,6 +1565,8 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -1526,6 +1631,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < software version
 < source ip country
@@ -1575,8 +1681,10 @@
 < uplink bit rate
 < user management
 < vendor
+< vlan
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn on-demand
@@ -1642,13 +1750,37 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -2352,6 +2484,10 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -2462,6 +2598,8 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn mgmt in root range
 < ovpn misc settings
 < ovpn mtu-disc
@@ -2550,6 +2688,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < snat new source ip address
 < software version
@@ -2670,8 +2809,10 @@
 < vendor
 < version
 < visit us at
+< vlan
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn keyexchange
@@ -2738,14 +2879,38 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -3486,6 +3651,10 @@
 < legacy architecture warning
 < lifetime
 < link-layer encapsulation
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -3596,6 +3765,8 @@
 < ovpn fqdn
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn mgmt in root range
 < ovpn misc settings
 < ovpn mtu-disc
@@ -3683,6 +3854,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < snat new source ip address
 < software version
@@ -3803,8 +3975,10 @@
 < vendor
 < version
 < visit us at
+< vlan
 < vpn broken
 < vpn connecting
+< vpn deprecated
 < vpn force mobike
 < vpn inactivity timeout
 < vpn keyexchange
@@ -3872,14 +4046,38 @@
 < wireguard
 < wireless network
 < wlanap
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap configuration
 < wlanap country
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -4195,6 +4393,10 @@
 < last updated
 < legacy architecture warning
 < link-layer encapsulation
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < load average
 < local ip address
 < local port
@@ -4233,6 +4435,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -4292,6 +4496,7 @@
 < smb daemon
 < smt disabled
 < smt enabled
+< smt not implemented
 < smt not supported
 < spec rstack overflow
 < spectre variant 1
@@ -4329,6 +4534,8 @@
 < updxlrtr passive mode
 < user management
 < version
+< vlan
+< vpn deprecated
 < vpn start action add
 < vpn subjectaltname missing
 < vpn wait
@@ -4383,12 +4590,36 @@
 < whois results from
 < winbind daemon
 < wireguard
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlanap auto
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
 < wlanap client isolation
 < wlanap hide ssid
+< wlanap invalid band
+< wlanap invalid mode
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -4450,6 +4681,10 @@
 < ids reports weekly
 < ids send email on alert
 < indirect target selection
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < max bandwidth
 < offloaded
 < online
@@ -4461,6 +4696,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -4484,7 +4721,34 @@
 < report exporting
 < rss
 < rss long
+< smt not implemented
 < transient sheduler attacks
+< vlan
+< vpn deprecated
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
+< wlanap invalid band
+< wlanap invalid mode
 ############################################################################
 # Checking cgi-bin translations for language: zh                           #
 ############################################################################
@@ -4517,6 +4781,10 @@
 < ids reports weekly
 < ids send email on alert
 < indirect target selection
+< lldp
+< lldp invalid description
+< lldp neighbors
+< lldp there are no neighbors
 < max bandwidth
 < offloaded
 < online
@@ -4528,6 +4796,8 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn fqdn
+< ovpn legacy auth used
+< ovpn legacy cipher used
 < ovpn misc settings
 < ovpn no cipher selected
 < ovpn protocol settings
@@ -4551,4 +4821,31 @@
 < report exporting
 < rss
 < rss long
+< smt not implemented
 < transient sheduler attacks
+< vlan
+< vpn deprecated
+< wlanap 802.11ac
+< wlanap 802.11ac 160mhz
+< wlanap 802.11ac 20mhz
+< wlanap 802.11ac 40mhz
+< wlanap 802.11ac 80mhz
+< wlanap 802.11agn
+< wlanap 802.11agn 20mhz
+< wlanap 802.11agn 40mhz
+< wlanap 802.11ax
+< wlanap 802.11ax 160mhz
+< wlanap 802.11ax 20mhz
+< wlanap 802.11ax 40mhz
+< wlanap 802.11ax 80mhz
+< wlanap 802.11be
+< wlanap 802.11be 160mhz
+< wlanap 802.11be 20mhz
+< wlanap 802.11be 320mhz
+< wlanap 802.11be 40mhz
+< wlanap 802.11be 80mhz
+< wlanap band
+< wlanap band 2.4ghz
+< wlanap band 5ghz
+< wlanap invalid band
+< wlanap invalid mode

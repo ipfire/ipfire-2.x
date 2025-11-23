@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -30,7 +30,27 @@ THISAPP    = expect$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)-tools
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+# Normal build or $(TOOLS_DIR) build.
+ifeq "$(ROOT)" ""
+	TARGET = $(DIR_INFO)/$(THISAPP)
+	EXTRA_CONFIG = \
+			--prefix=/usr \
+			--with-tcl=/usr/lib \
+			--with-tclinclude=/usr/include \
+			--with-x=no \
+			--disable-nls
+else
+	TARGET = $(DIR_INFO)/$(THISAPP)-tools
+	EXTRA_CONFIG = \
+			--prefix=$(TOOLS_DIR) \
+			--build=$(BUILDTARGET) \
+			--with-tcl=$(TOOLS_DIR)/lib \
+			--with-tclinclude=$(TOOLS_DIR)/include \
+			--with-x=no \
+			--disable-nls
+endif
 
 # Fix build with GCC 15
 CFLAGS += -std=gnu17
@@ -75,13 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/expect-5.45.4-gcc15-1.patch
-	cd $(DIR_APP) && ./configure \
-			--prefix=$(TOOLS_DIR) \
-			--build=$(BUILDTARGET) \
-			--with-tcl=$(TOOLS_DIR)/lib \
-			--with-tclinclude=$(TOOLS_DIR)/include \
-			--with-x=no \
-			--disable-nls
+	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make SCRIPTS="" install
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl*

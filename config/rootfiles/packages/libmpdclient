@@ -11,6 +11,7 @@
 #usr/include/mpd/directory.h
 #usr/include/mpd/entity.h
 #usr/include/mpd/error.h
+#usr/include/mpd/feature.h
 #usr/include/mpd/fingerprint.h
 #usr/include/mpd/idle.h
 #usr/include/mpd/list.h
@@ -44,7 +45,7 @@
 #usr/include/mpd/version.h
 usr/lib/libmpdclient.so
 usr/lib/libmpdclient.so.2
-usr/lib/libmpdclient.so.2.22
+usr/lib/libmpdclient.so.2.23
 #usr/lib/pkgconfig/libmpdclient.pc
 #usr/share/doc/libmpdclient
 #usr/share/doc/libmpdclient/AUTHORS

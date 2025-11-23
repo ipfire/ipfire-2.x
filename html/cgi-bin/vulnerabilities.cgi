@@ -249,6 +249,8 @@ sub smt_status() {
 		return $Lang::tr{'smt disabled'};
 	} elsif ($status eq "notsupported") {
 		return $Lang::tr{'smt not supported'};
+	} elsif ($status eq "notimplemented") {
+		return $Lang::tr{'smt not implemented'};
 	}
 
 	return $status;

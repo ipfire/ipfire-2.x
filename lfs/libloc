@@ -90,7 +90,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--sysconfdir=/etc \
 		--localstatedir=/var \
 		--disable-man-pages \
-		--with-database-path=/var/lib/location/database.db
+		--with-database-path=/var/lib/location/database.db \
+		--without-systemd
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

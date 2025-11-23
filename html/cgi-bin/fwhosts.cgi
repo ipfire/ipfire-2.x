@@ -20,11 +20,11 @@
 ###############################################################################
 use strict;
 
-# enable only the following on debugging purpose
+# only enable the following for debugging purposes
 #use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 use Sort::Naturally;
-use CGI::Carp 'fatalsToBrowser';
 no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/network-functions.pl';
@@ -703,8 +703,10 @@ if ($fwhostsettings{'ACTION'} eq 'savelocationgrp')
 	# Check name
 	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
 
-	unless (&General::validcc($fwhostsettings{'COUNTRY_CODE'})) {
-		$errormessage = $Lang::tr{'fwhost invalid country code'};
+	if ($fwhostsettings{'COUNTRY_CODE'} ne ''){
+		unless (&General::validcc($fwhostsettings{'COUNTRY_CODE'})) {
+			$errormessage = $Lang::tr{'fwhost invalid country code'};
+		}
 	}
 
 	# Check for existing group name.

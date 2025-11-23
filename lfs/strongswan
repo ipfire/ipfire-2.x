@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.0.2
+VER        = 6.0.3
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3cfc248831832a9b75da549fcaf490a4a0c33e2f680e04a02d04a035c05215ae0236f1fdcdb4a00b71b5a08d07626e8028959045aff1b77827c21fe7e1fb13ad
+$(DL_FILE)_BLAKE2 = 355dff5de259e545b1bb5e24853dc91148c3d400b1977a2de35271e019dfc236c838ccac4552974a4999e2768900150c432753fc0d422444d4cc34486566e192
 
 install : $(TARGET)
 
@@ -75,36 +75,34 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-disable-ipv6.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-ipfire.patch
-
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
-		--prefix="/usr" \
-		--sysconfdir="/etc" \
-		--enable-curl \
-		--enable-dhcp \
-		--enable-farp \
-		--enable-openssl \
-		--enable-gcrypt \
-		--enable-ccm \
-		--enable-ctr \
-		--enable-gcm \
-		--enable-xauth-eap \
-		--enable-xauth-noauth \
-		--enable-eap-radius \
-		--enable-eap-tls \
-		--enable-eap-ttls \
-		--enable-eap-peap \
-		--enable-eap-mschapv2 \
-		--enable-eap-identity \
-		--enable-chapoly \
-		--enable-sha3 \
-		--enable-stroke \
-		--enable-fips-prf \
-		--enable-mgf1 \
-		--enable-hmac \
-		--enable-ml \
-		$(CONFIGURE_OPTIONS)
-
+				--prefix="/usr" \
+				--sysconfdir="/etc" \
+				--enable-curl \
+				--enable-dhcp \
+				--enable-farp \
+				--enable-openssl \
+				--enable-gcrypt \
+				--enable-ccm \
+				--enable-ctr \
+				--enable-gcm \
+				--enable-xauth-eap \
+				--enable-xauth-noauth \
+				--enable-eap-radius \
+				--enable-eap-tls \
+				--enable-eap-ttls \
+				--enable-eap-peap \
+				--enable-eap-mschapv2 \
+				--enable-eap-identity \
+				--enable-chapoly \
+				--enable-sha3 \
+				--enable-stroke \
+				--enable-fips-prf \
+				--enable-mgf1 \
+				--enable-hmac \
+				--enable-ml \
+				$(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

@@ -728,7 +728,7 @@
 'display hostname in window title' => 'Visualizza il nome hostname sulla barra del titolo della finestra',
 'display traffic at home' => 'Display calculated traffic on startpage',
 'display webinterface effects' => 'Activate effects',
-'dl client arch' => 'Download Client Package (zip)',
+'dl client arch' => 'Download Client Package (ovpn)',
 'dmz' => 'DMZ',
 'dmz pinhole configuration' => 'DMZ pinhole configuration',
 'dmz pinhole rule added' => 'DMZ pinhole rule added; restarting DMZ pinhole',

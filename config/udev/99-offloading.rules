@@ -1,2 +1,2 @@
 # Call the offloading script
-SUBSYSTEM=="net", RUN+="/lib/udev/network-offloading"
+SUBSYSTEM=="net", RUN+="/usr/lib/udev/network-offloading"

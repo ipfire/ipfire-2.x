@@ -17,6 +17,7 @@ etc/ipsec.user.conf
 etc/ipsec.user.secrets
 etc/issue
 etc/ld.so.conf
+etc/locale.conf
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d

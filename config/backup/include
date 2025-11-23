@@ -6,6 +6,7 @@ etc/httpd/server-ecdsa.csr
 etc/httpd/server-ecdsa.key
 etc/ipsec.user.*
 etc/ipsec.user-post.conf
+etc/locale.conf
 etc/logrotate.d
 etc/passwd
 etc/shadow

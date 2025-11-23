@@ -1,0 +1,183 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 258
+
+THISAPP    = systemd-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+UDEV_HELPERS = \
+	ata_id \
+	cdrom_id \
+	dmi_memory_id \
+	fido_id \
+	iocost \
+	mtd_probe \
+	scsi_id \
+	v4l_id
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_BLAKE2 = c63bc09bff11ba4cf6e87bef689250a6b354bf8f5bfb5af6d2a173fa1e1838aa457a8a7db66f7aad20dae25b7a0defddcb052d53f18a688a2dd6d5f323d4692a
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+b2 : $(subst %,%_BLAKE2,$(objects))
+
+###############################################################################
+# Downloading, checking, b2sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	# Don't fail if the linker shows a warning
+	cd $(DIR_APP) && sed -e "/fatal-warnings/d" -i meson.build
+
+	# Remove two unneeded groups (render and sgx) from the default udev rules
+	cd $(DIR_APP) && sed -i -e 's/GROUP="render"/GROUP="video"/' \
+		-e 's/GROUP="sgx", //' rules.d/50-udev-default.rules.in
+
+	# Remve udev rule which requires a full systemd installation
+	cd $(DIR_APP) && sed '/systemd-sysctl/s/^/#/' -i rules.d/99-systemd.rules.in
+
+	# Fix udev linking
+	cd $(DIR_APP) && \
+		sed -i "/udev_dependencies,/a \                'link_with': udev_link_with," src/udev/meson.build
+
+	# Prepare udev for build.
+	cd $(DIR_APP) && mkdir -pv build
+	cd $(DIR_APP)/build &&meson setup \
+		--prefix=/usr \
+		--buildtype=release \
+		-D mode=release \
+		-D dev-kvm-mode=0660 \
+		-D link-udev-shared=false \
+		-D logind=false \
+		-D vconsole=false \
+		..
+
+	# Only build udev and required components
+	cd $(DIR_APP)/build && \
+		ninja \
+			udevadm \
+			systemd-hwdb \
+			$$(ninja -n | grep -Eo '(src/(lib)?udev|src/(lib)?systemd|rules.d|hwdb.d)/[^ ]*') \
+			$$(realpath libsystemd.so --relative-to .) \
+			$$(realpath libudev.so --relative-to .) \
+			$(UDEV_HELPERS)
+
+	# Install libsystemd
+	cd $(DIR_APP)/build && install -vm755 -d /usr/{lib,share}/pkgconfig
+	cd $(DIR_APP)/build && install -vm755 -d /usr/include/systemd
+	cd $(DIR_APP)/build && install -vm644 ../src/systemd/*.h          /usr/include/systemd
+	cd $(DIR_APP)/build && install -vm644 src/libsystemd/libsystemd.pc /usr/lib/pkgconfig/
+	cd $(DIR_APP)/build && cp      -av    libsystemd.so{,*[0-9]}      /usr/lib/
+
+	# Install udev
+	cd $(DIR_APP)/build && install -vm755 -d {/usr/lib,/etc}/udev/{hwdb,rules}.d
+	cd $(DIR_APP)/build && install -vm755 udevadm                     /bin/
+	cd $(DIR_APP)/build && install -vm755 systemd-hwdb                /usr/bin/udev-hwdb
+	cd $(DIR_APP)/build && ln      -svfn  ../bin/udevadm              /sbin/udevd
+	cd $(DIR_APP)/build && cp      -av    libudev.so{,*[0-9]}         /usr/lib/
+	cd $(DIR_APP)/build && install -vm644 ../src/libudev/libudev.h    /usr/include/
+	cd $(DIR_APP)/build && install -vm644 src/libudev/*.pc            /usr/lib/pkgconfig/
+	cd $(DIR_APP)/build && install -vm644 src/udev/*.pc               /usr/share/pkgconfig/
+	cd $(DIR_APP)/build && install -vm644 ../src/udev/udev.conf       /etc/udev/
+	cd $(DIR_APP)/build && install -vm644 rules.d/* ../rules.d/{*.rules,README} /usr/lib/udev/rules.d/
+	cd $(DIR_APP)/build && install -vm644 hwdb.d/*  ../hwdb.d/{*.hwdb,README}   /usr/lib/udev/hwdb.d/
+	cd $(DIR_APP)/build && install -vm755 $(UDEV_HELPERS) /usr/lib/udev
+
+	# Generate hardware database
+	udev-hwdb update
+
+	# Disable net generator rule. This does not work with the setup.
+	rm -f /usr/lib/udev/rules.d/75-persistent-net-generator.rules
+	rm -f /usr/lib/udev/rules.d/80-net-name-slot.rules
+
+	# Blacklist some modules
+	cp -vf $(DIR_SRC)/config/udev/blacklist.conf \
+		/etc/modprobe.d/blacklist.conf
+
+	# Install alsa rules.
+	install -v -m 644 $(DIR_SRC)/config/udev/25-alsa.rules \
+		/usr/lib/udev/rules.d
+
+	# Install network rules.
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-rename \
+		/usr/lib/udev/network-hotplug-rename
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-vlan \
+		/usr/lib/udev/network-hotplug-vlan
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-master \
+		/usr/lib/udev/network-hotplug-master
+	install -v -m 644 $(DIR_SRC)/config/udev/60-net.rules \
+		/usr/lib/udev/rules.d
+
+	# Install ExtraHD rules
+	install -v -m 644 $(DIR_SRC)/config/udev/61-extrahd.rules \
+		/usr/lib/udev/rules.d
+
+	# Install AQM rules
+	install -v -m 644 $(DIR_SRC)/config/udev/99-aqm.rules \
+		/usr/lib/udev/rules.d
+	install -m 755 $(DIR_SRC)/config/udev/network-aqm \
+		/usr/lib/udev/network-aqm
+
+	# Install offloading rules
+	install -v -m 644 $(DIR_SRC)/config/udev/99-offloading.rules \
+		/usr/lib/udev/rules.d
+	install -m 755 $(DIR_SRC)/config/udev/network-offloading \
+		/usr/lib/udev/network-offloading
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

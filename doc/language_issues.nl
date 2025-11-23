@@ -76,6 +76,7 @@ WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy squid version
+WARNING: translation string unused: advproxy squidclamav
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
@@ -209,7 +210,6 @@ WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
 WARNING: translation string unused: demon login script
 WARNING: translation string unused: deprecated fs warn
-WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
@@ -233,7 +233,6 @@ WARNING: translation string unused: disk access
 WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
-WARNING: translation string unused: dl client arch insecure
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
@@ -1271,6 +1270,10 @@ WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: last updated = Last Updated
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
+WARNING: untranslated string: lldp = Link Layer Discovery Protocol
+WARNING: untranslated string: lldp invalid description = Invalid description. Allowed characters are A-Z, a-z, numbers, hypen and underscrores.
+WARNING: untranslated string: lldp neighbors = Neighbors
+WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: load average = Load Average
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: local port = Local Port
@@ -1347,6 +1350,8 @@ WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn fqdn = FQDN
 WARNING: untranslated string: ovpn ha = Hash algorithm
+WARNING: untranslated string: ovpn legacy auth used = You are using a legacy hash which will not be supported in OpenVPN clients of version 2.6 or later
+WARNING: untranslated string: ovpn legacy cipher used = You are using a legacy cipher which will not be supported in OpenVPN clients of version 2.6 or later
 WARNING: untranslated string: ovpn misc settings = Miscellaneous Settings
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
 WARNING: untranslated string: ovpn protocol settings = Protocol Settings
@@ -1409,6 +1414,7 @@ WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
+WARNING: untranslated string: smt not implemented = Not Implemented
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
 WARNING: untranslated string: software version = Software Version
 WARNING: untranslated string: source ip country = Source IP Country
@@ -1455,8 +1461,10 @@ WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download 
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: vendor = Vendor
+WARNING: untranslated string: vlan = VLAN
 WARNING: untranslated string: vpn broken = Broken
 WARNING: untranslated string: vpn connecting = CONNECTING
+WARNING: untranslated string: vpn deprecated = Deprecated
 WARNING: untranslated string: vpn force mobike = Force using MOBIKE (only IKEv2)
 WARNING: untranslated string: vpn inactivity timeout = Inactivity Timeout
 WARNING: untranslated string: vpn on-demand = ON-DEMAND
@@ -1660,14 +1668,38 @@ WARNING: untranslated string: wlan client password = Password
 WARNING: untranslated string: wlan client tls cipher = TLS Cipher
 WARNING: untranslated string: wlan client tls version = TLS Version
 WARNING: untranslated string: wlanap = Wireless Access Point
+WARNING: untranslated string: wlanap 802.11ac = IEEE 802.11ac
+WARNING: untranslated string: wlanap 802.11ac 160mhz = IEEE 802.11ac @ 160 MHz
+WARNING: untranslated string: wlanap 802.11ac 20mhz = IEEE 802.11ac @ 20 MHz
+WARNING: untranslated string: wlanap 802.11ac 40mhz = IEEE 802.11ac @ 40 MHz
+WARNING: untranslated string: wlanap 802.11ac 80mhz = IEEE 802.11ac @ 80 MHz
+WARNING: untranslated string: wlanap 802.11agn = IEEE 802.11an/gn
+WARNING: untranslated string: wlanap 802.11agn 20mhz = IEEE 802.11an/gn @ 20 MHz
+WARNING: untranslated string: wlanap 802.11agn 40mhz = IEEE 802.11an/gn @ 40 MHz
+WARNING: untranslated string: wlanap 802.11ax = IEEE 802.11ax
+WARNING: untranslated string: wlanap 802.11ax 160mhz = IEEE 802.11ax @ 160 MHz
+WARNING: untranslated string: wlanap 802.11ax 20mhz = IEEE 802.11ax @ 20 MHz
+WARNING: untranslated string: wlanap 802.11ax 40mhz = IEEE 802.11ax @ 40 MHz
+WARNING: untranslated string: wlanap 802.11ax 80mhz = IEEE 802.11ax @ 80 MHz
+WARNING: untranslated string: wlanap 802.11be = IEEE 802.11be
+WARNING: untranslated string: wlanap 802.11be 160mhz = IEEE 802.11be @ 160 MHz
+WARNING: untranslated string: wlanap 802.11be 20mhz = IEEE 802.11be @ 20 MHz
+WARNING: untranslated string: wlanap 802.11be 320mhz = IEEE 802.11be @ 320 MHz
+WARNING: untranslated string: wlanap 802.11be 40mhz = IEEE 802.11be @ 40 MHz
+WARNING: untranslated string: wlanap 802.11be 80mhz = IEEE 802.11be @ 80 MHz
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced
 WARNING: untranslated string: wlanap 802.11w optional = Optional
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
+WARNING: untranslated string: wlanap band = Band
+WARNING: untranslated string: wlanap band 2.4ghz = 2.4 GHz
+WARNING: untranslated string: wlanap band 5ghz = 5 GHz
 WARNING: untranslated string: wlanap client isolation = Client Isolation
 WARNING: untranslated string: wlanap clients = unknown string
 WARNING: untranslated string: wlanap configuration = Wireless Access Point Configuration
 WARNING: untranslated string: wlanap hide ssid = Hide SSID
+WARNING: untranslated string: wlanap invalid band = Invalid band
+WARNING: untranslated string: wlanap invalid mode = Invalid mode
 WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood Scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning: Disabling may violate regulatory rules

@@ -82,7 +82,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	export "LANG=de_DE"
 	cp $(DIR_SRC)/config/vdradmin/install-ipfire.sh $(DIR_APP)/
 	cd $(DIR_APP) && ./install-ipfire.sh
 

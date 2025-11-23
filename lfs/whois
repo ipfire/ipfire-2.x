@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.6.4
+VER        = 5.6.5
 
 THISAPP    = whois-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 212ad7c3ce09804fa988b913cc0fc664bc09aa0fabd35570b3038da5d2c6df4eb4866fab083002549c2e3ac734765a139be67f74c019e22c0b93f3d222146196
+$(DL_FILE)_BLAKE2 = 65008f6251d005cab594fc558247f9ceb47a0a848fd4257dc0956190b0cd0e8174bb86f4a73722e5be36b5e910aeeb4df4f11f08bda1681cf12905f1a5ea78c6
 
 install : $(TARGET)
 
@@ -71,12 +71,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-
 	cd $(DIR_SRC)/$(THISAPP) && make $(MAKETUNING) \
 	                            CONFIG_FILE=/etc/whois.conf \
 	                            whois
 	cd $(DIR_SRC)/$(THISAPP) && make prefix=/usr install-whois
 	cd $(DIR_SRC)/$(THISAPP) && install -v -m 644 whois.conf -t /etc/
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

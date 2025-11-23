@@ -37,6 +37,20 @@ my %wlanapsettings=();
 # Read the configuration file
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 
+# Set MODE from HW_MODE
+unless (defined $wlanapsettings{'MODE'}) {
+	if ($wlanapsettings{'HW_MODE'} eq "ac") {
+		$wlanapsettings{'BAND'} = '5g';
+		$wlanapsettings{'MODE'} = "VHT20";
+	} elsif ($wlanapsettings{'HW_MODE'} eq "an" || $wlanapsettings{'HW_MODE'} eq "gn") {
+		$wlanapsettings{'BAND'} = '2g';
+		$wlanapsettings{'MODE'} = "HT20";
+	}
+
+	# Remove the old value
+	undef $wlanapsettings{'HW_MODE'};
+}
+
 # Set defaults
 &General::set_defaults(\%wlanapsettings, {
 	"APMODE" => "on",
@@ -46,10 +60,9 @@ my %wlanapsettings=();
 	"TXPOWER" => "auto",
 	"CHANNEL" => "0",
 	"COUNTRY" => "00",
-	"HW_MODE" => "g",
+	"BAND" => "5g",
+	"MODE" => "HT20",
 	"PWD" => "",
-	"HTCAPS" => "",
-	"VHTCAPS" => "",
 	"NOSCAN" => "on",
 	"CLIENTISOLATION" => "off",
 	"IEEE80211W" => "off",
@@ -83,25 +96,33 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 		}
 	}
 
+	# Validate BAND
+	unless ($cgiparams{'BAND'} =~ m/^[25]g$/) {
+		$errormessage .= "$Lang::tr{'wlanap invalid band'}<br />";
+	}
+
+	# Validate MODE
+	unless ($cgiparams{'MODE'} =~ m/^(HT|HE|VHT|EHT)(20|40|80|160|320)$/) {
+		$errormessage .= "$Lang::tr{'wlanap invalid mode'}<br />";
+	}
+
 	# XXX This needs validation
 	$wlanapsettings{'INTERFACE'} = $cgiparams{'INTERFACE'};
 	$wlanapsettings{'SSID'} = $cgiparams{'SSID'};
 	$wlanapsettings{'HIDESSID'} = ($cgiparams{'HIDESSID'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'CLIENTISOLATION'} = ($cgiparams{'CLIENTISOLATION'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'COUNTRY'} = $cgiparams{'COUNTRY'};
-	$wlanapsettings{'HW_MODE'} = $cgiparams{'HW_MODE'};
+	$wlanapsettings{'MODE'} = $cgiparams{'MODE'};
+	$wlanapsettings{'BAND'} = $cgiparams{'BAND'};
 	$wlanapsettings{'CHANNEL'} = $cgiparams{'CHANNEL'};
 	$wlanapsettings{'NOSCAN'} = ($cgiparams{'NOSCAN'} eq 'on') ? 'on' : 'off';
 	$wlanapsettings{'ENC'} = $cgiparams{'ENC'};
 	$wlanapsettings{'PWD'} = $cgiparams{'PWD'};
-	$wlanapsettings{'IEEE80211W'} = ($cgiparams{'IEEE80211W'} eq 'on') ? 'on' : 'off';
-	$wlanapsettings{'HTCAPS'} = $cgiparams{'HTCAPS'};
-	$wlanapsettings{'VHTCAPS'} = $cgiparams{'VHTCAPS'};
+	$wlanapsettings{'IEEE80211W'} = ($cgiparams{'IEEE80211W'} eq 'on' || $cgiparams{'IEEE80211W'} eq 'optional') ? $cgiparams{'IEEE80211W'} : 'off';
 	$wlanapsettings{'TX_POWER'} = $cgiparams{'TX_POWER'};
 
 	if ($errormessage eq '') {
 		&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
-		&WriteConfig_hostapd();
 
 		&General::system("/usr/local/bin/wlanapctrl", "restart");
 	}
@@ -159,7 +180,9 @@ $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'COUNTRY'}{$wlanapsettings{'COUNTRY'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
-$selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
+
+$selected{'MODE'}{$wlanapsettings{'MODE'}} = "selected";
+$selected{'BAND'}{$wlanapsettings{'BAND'}} = "selected";
 
 # Fetch all available channels
 my @channellist = &get_channellist($INTF);
@@ -263,13 +286,77 @@ print <<END;
 			<tr>
 				<td>$Lang::tr{'wlanap wireless mode'}</td>
 				<td>
-					<select name='HW_MODE'>
-						<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
-						<option value='b' $selected{'HW_MODE'}{'b'}>802.11b</option>
-						<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
-						<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
-						<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
-						<option value='ac' $selected{'HW_MODE'}{'ac'}>802.11ac</option>
+					<select name='MODE'>
+						<optgroup label="$Lang::tr{'wlanap 802.11be'}">
+							<option value="EHT320" $selected{'MODE'}{'EHT320'}>
+								$Lang::tr{'wlanap 802.11be 320mhz'}
+							</option>
+							<option value="EHT160" $selected{'MODE'}{'EHT160'}>
+								$Lang::tr{'wlanap 802.11be 160mhz'}
+							</option>
+							<option value="EHT80" $selected{'MODE'}{'EHT80'}>
+								$Lang::tr{'wlanap 802.11be 80mhz'}
+							</option>
+							<option value="EHT40" $selected{'MODE'}{'EHT40'}>
+								$Lang::tr{'wlanap 802.11be 40mhz'}
+							</option>
+							<option value="EHT20" $selected{'MODE'}{'EHT20'}>
+								$Lang::tr{'wlanap 802.11be 20mhz'}
+							</option>
+						</optgroup>
+
+						<optgroup label="$Lang::tr{'wlanap 802.11ax'}">
+							<option value="HE160" $selected{'MODE'}{'HE160'}>
+								$Lang::tr{'wlanap 802.11ax 160mhz'}
+							</option>
+							<option value="HE80" $selected{'MODE'}{'HE80'}>
+								$Lang::tr{'wlanap 802.11ax 80mhz'}
+							</option>
+							<option value="HE40" $selected{'MODE'}{'HE40'}>
+								$Lang::tr{'wlanap 802.11ax 40mhz'}
+							</option>
+							<option value="HE20" $selected{'MODE'}{'HE20'}>
+								$Lang::tr{'wlanap 802.11ax 20mhz'}
+							</option>
+						</optgroup>
+
+						<optgroup label="$Lang::tr{'wlanap 802.11ac'}">
+							<option value="VHT160" $selected{'MODE'}{'VHT160'}>
+								$Lang::tr{'wlanap 802.11ac 160mhz'}
+							</option>
+							<option value="VHT80" $selected{'MODE'}{'VHT80'}>
+								$Lang::tr{'wlanap 802.11ac 80mhz'}
+							</option>
+							<option value="VHT40" $selected{'MODE'}{'VHT40'}>
+								$Lang::tr{'wlanap 802.11ac 40mhz'}
+							</option>
+							<option value="VHT20" $selected{'MODE'}{'VHT20'}>
+								$Lang::tr{'wlanap 802.11ac 20mhz'}
+							</option>
+						</optgroup>
+
+						<optgroup label="$Lang::tr{'wlanap 802.11agn'}">
+							<option value="HT40" $selected{'MODE'}{'HT40'}>
+								$Lang::tr{'wlanap 802.11agn 40mhz'}
+							</option>
+							<option value="HT20" $selected{'MODE'}{'HT20'}>
+								$Lang::tr{'wlanap 802.11agn 20mhz'}
+							</option>
+						</optgroup>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'wlanap band'}</td>
+				<td>
+					<select name='BAND'>
+						<option value="5g" $selected{'BAND'}{'5g'}>
+							$Lang::tr{'wlanap band 5ghz'}
+						</option>
+						<option value="2g" $selected{'BAND'}{'2g'}>
+							$Lang::tr{'wlanap band 2.4ghz'}
+						</option>
 					</select>
 				</td>
 			</tr>
@@ -343,20 +430,6 @@ print <<END;
 			</tr>
 
 			<tr>
-				<td>HT Caps</td>
-				<td>
-					<input type='text' name='HTCAPS' value='$wlanapsettings{'HTCAPS'}' />
-				</td>
-			</tr>
-
-			<tr>
-				<td>VHT Caps</td>
-				<td>
-					<input type='text' name='VHTCAPS' value='$wlanapsettings{'VHTCAPS'}' />
-				</td>
-			</tr>
-
-			<tr>
 				<td>Tx Power</td>
 				<td>
 					<input type='text' name='TXPOWER' value='$wlanapsettings{'TXPOWER'}' />
@@ -403,169 +476,6 @@ END
 
 &Header::closebigbox();
 &Header::closepage();
-
-sub WriteConfig_hostapd{
-	open (CONFIGFILE, ">/var/ipfire/wlanap/hostapd.conf");
-	print CONFIGFILE <<END
-driver=nl80211
-######################### basic hostapd configuration ##########################
-#
-country_code=$wlanapsettings{'COUNTRY'}
-country3=0x49 # indoor
-ieee80211d=1
-ieee80211h=1
-channel=$wlanapsettings{'CHANNEL'}
-
-# Always advertise TPC
-local_pwr_constraint=3
-spectrum_mgmt_required=1
-END
-;
- if ( $wlanapsettings{'HW_MODE'} eq 'an' ){
-	print CONFIGFILE <<END
-hw_mode=a
-ieee80211n=1
-wmm_enabled=1
-ht_capab=$wlanapsettings{'HTCAPS'}
-END
-;
-
- }elsif ( $wlanapsettings{'HW_MODE'} eq 'gn' ){
-	print CONFIGFILE <<END
-hw_mode=g
-ieee80211n=1
-wmm_enabled=1
-ht_capab=$wlanapsettings{'HTCAPS'}
-END
-;
-
- }elsif ( $wlanapsettings{'HW_MODE'} eq 'ac' ){
-	print CONFIGFILE <<END
-hw_mode=a
-ieee80211ac=1
-ieee80211n=1
-wmm_enabled=1
-ht_capab=$wlanapsettings{'HTCAPS'}
-vht_capab=$wlanapsettings{'VHTCAPS'}
-vht_oper_chwidth=1
-END
-;
-
- }else{
- 	print CONFIGFILE <<END
-hw_mode=$wlanapsettings{'HW_MODE'}
-END
-;
-
- }
-
-print CONFIGFILE <<END;
-# Enable logging
-logger_syslog=-1
-logger_syslog_level=4
-auth_algs=1
-ctrl_interface=/var/run/hostapd
-ctrl_interface_group=0
-disassoc_low_ack=1
-
-# SSID
-ssid2=\"$wlanapsettings{'SSID'}\"
-utf8_ssid=1
-
-END
-
-if ( $wlanapsettings{'HIDESSID'} eq 'on' ){
-	print CONFIGFILE <<END
-ignore_broadcast_ssid=2
-END
-;
- }
-
- # https://forum.ipfire.org/viewtopic.php?f=22&t=12274&p=79070#p79070
- if ( $wlanapsettings{'CLIENTISOLATION'} eq 'on' ){
-	print CONFIGFILE <<END
-ap_isolate=1
-END
-;
- }
-
- if ( $wlanapsettings{'NOSCAN'} eq 'on' ){
-	print CONFIGFILE <<END
-noscan=1
-END
-;
-
- }else{
- 	print CONFIGFILE <<END
-noscan=0
-END
-;
-
- }
-
- # Management Frame Protection (802.11w)
- if ($wlanapsettings{'IEEE80211W'} eq "on") {
-	print CONFIGFILE "ieee80211w=2\n";
- } elsif ($wlanapsettings{'IEEE80211W'} eq "optional") {
-	print CONFIGFILE "ieee80211w=1\n";
- } else {
-	print CONFIGFILE "ieee80211w=0\n";
- }
-
- if ( $wlanapsettings{'ENC'} eq 'wpa1'){
-	print CONFIGFILE <<END
-######################### wpa hostapd configuration ############################
-#
-wpa=1
-wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-END
-;
- }elsif ( $wlanapsettings{'ENC'} eq 'wpa2'){
-	print CONFIGFILE <<END
-######################### wpa hostapd configuration ############################
-#
-wpa=2
-wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=WPA-PSK
-rsn_pairwise=CCMP
-END
-;
- }elsif ( $wlanapsettings{'ENC'} eq 'wpa3'){
-	print CONFIGFILE <<END
-######################### wpa hostapd configuration ############################
-#
-wpa=2
-wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=SAE
-rsn_pairwise=CCMP
-END
-;
- } elsif ( $wlanapsettings{'ENC'} eq 'wpa1+2'){
-	print CONFIGFILE <<END
-######################### wpa hostapd configuration ############################
-#
-wpa=3
-wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP
-END
-;
- }elsif ( $wlanapsettings{'ENC'} eq 'wpa2+3'){
-	print CONFIGFILE <<END
-######################### wpa hostapd configuration ############################
-#
-wpa=2
-wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=WPA-PSK SAE
-rsn_pairwise=CCMP
-END
-;
- }
-	close CONFIGFILE;
-}
 
 sub get_phy($) {
 	my $intf = shift;

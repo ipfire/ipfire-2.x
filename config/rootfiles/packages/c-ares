@@ -7,7 +7,7 @@
 #usr/lib/libcares.la
 #usr/lib/libcares.so
 usr/lib/libcares.so.2
-usr/lib/libcares.so.2.19.2
+usr/lib/libcares.so.2.19.4
 #usr/lib/pkgconfig/libcares.pc
 #usr/share/man/man3/ares_cancel.3
 #usr/share/man/man3/ares_create_query.3

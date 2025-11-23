@@ -130,8 +130,6 @@ usr/lib/ipsec/plugins/libstrongswan-kdf.so
 usr/lib/ipsec/plugins/libstrongswan-kernel-netlink.so
 usr/lib/ipsec/plugins/libstrongswan-mgf1.so
 usr/lib/ipsec/plugins/libstrongswan-ml.so
-usr/lib/ipsec/plugins/libstrongswan-ml.so.0
-usr/lib/ipsec/plugins/libstrongswan-ml.so.0.0.0
 usr/lib/ipsec/plugins/libstrongswan-nonce.so
 usr/lib/ipsec/plugins/libstrongswan-openssl.so
 usr/lib/ipsec/plugins/libstrongswan-pem.so
