@@ -47,6 +47,9 @@ for package in libassuan; do \
 done
 
 # Remove files
+rm -vrf \
+	/usr/bin/gpg-zip \
+	/usr/lib/gnupg
 
 # Extract files
 extract_files
