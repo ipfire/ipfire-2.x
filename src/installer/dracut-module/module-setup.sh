@@ -31,7 +31,7 @@ install() {
 
     # Filesystem support
     inst_multiple parted mkswap mke2fs mkfs.xfs mkfs.vfat mkfs.btrfs
-    instmods ext4 iso9660 vfat xfs ntfs3 btrfs
+    instmods ext4 iso9660 vfat xfs btrfs
 
     # Extraction
     inst_multiple tar gzip zstd

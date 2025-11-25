@@ -386,7 +386,6 @@ int main(int argc, char *argv[]) {
 
 	// Load common modules
 	mysystem(logfile, "/sbin/modprobe vfat");  // USB key
-	mysystem(logfile, "/sbin/modprobe ntfs3"); // USB key
 	hw_stop_all_raid_arrays(logfile);
 
 	if (!config.unattended) {
