@@ -118,10 +118,6 @@ write_config() {
 	# Fetch the PHY
 	local phy="$(</sys/class/net/${interface}/phy80211/name)"
 
-	# Fetch the driver
-	local driver="$(readlink /sys/class/net/${interface}/device/driver)"
-	driver="${driver##*/}"
-
 	local flag
 	local ht_flags=0
 	local vht_flags=0
