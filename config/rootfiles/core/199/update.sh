@@ -141,6 +141,8 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 /etc/init.d/unbound restart
 /etc/init.d/sshd restart
 /etc/init.d/ipsec restart
+/usr/local/bin/qosctrl generate
+/usr/local/bin/qosctrl start
 
 # Re-import the updated crontab
 fcrontab -z
