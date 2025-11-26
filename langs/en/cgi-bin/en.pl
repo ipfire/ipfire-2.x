@@ -1839,6 +1839,7 @@
 'memory' => 'Memory',
 'memory information' => 'Memory information',
 'memory usage per' => 'Memory Usage per',
+'messagebus' => 'Messagebus (DBus)',
 'messages' => 'Messages',
 'messages logging' => 'Logsettings for /var/log/messages',
 'method' => 'Method:',

@@ -120,6 +120,12 @@ $querry[1] = 'hour' unless defined $querry[1];
 		# LLDPD
 		$Lang::tr{'lldp'} => {
 			"process" => "lldpd",
+		},
+
+		# DBus
+		$Lang::tr{'messagebus'} => {
+			"process" => "dbus-daemon",
+			"pidfile" => "/var/run/dbus/pid",
 		}
 	});
 
