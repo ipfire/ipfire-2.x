@@ -89,11 +89,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--bindir=/sbin \
 		--sbindir=/sbin \
 		--mandir=/usr/share/man \
-		--disable-nftables \
+		--sysconfdir=/etc \
+		--enable-nftables \
 		--with-pkgconfigdir=/usr/lib/pkgconfig
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Use iptables-nft by default
+	ln -svf xtables-nft-multi /sbin/iptables
 
 	@rm -rf $(DIR_APP) $(DIR_SRC)/netfilter-layer7*
 	@$(POSTBUILD)
