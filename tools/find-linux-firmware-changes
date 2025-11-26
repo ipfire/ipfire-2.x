@@ -44,10 +44,10 @@ compare() {
 		if [[ ${line} =~ ^Files\ OLD/(.*)\ and ]]; then
 			changed_files+=( "${BASH_REMATCH[1]}" )
 
-		elif [[ ${line} =~ ^Only\ in\ NEW/(.*):\ (.*)$ ]]; then
+		elif [[ ${line} =~ ^Only\ in\ NEW/(.*):\ \'?([^\']*)\'?$ ]]; then
 			changed_files+=( "${BASH_REMATCH[1]}/${BASH_REMATCH[2]}" )
 
-		elif [[ ${line} =~ ^Only\ in\ OLD/(.*):\ (.*)$ ]]; then
+		elif [[ ${line} =~ ^Only\ in\ OLD/(.*):\ \'?([^\']*)\'?$ ]]; then
 			removed_files+=( "${BASH_REMATCH[1]}/${BASH_REMATCH[2]}" )
 
 		# Handle unknown lines
