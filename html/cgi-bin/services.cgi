@@ -115,6 +115,11 @@ $querry[1] = 'hour' unless defined $querry[1];
 		$Lang::tr{'ovpn roadwarrior server'} => {
 			"process" => "openvpn",
 			"pidfile" => "/var/run/openvpn-rw.pid",
+		},
+
+		# LLDPD
+		$Lang::tr{'lldp'} => {
+			"process" => "lldpd",
 		}
 	});
 
