@@ -1035,6 +1035,7 @@ WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulatio
 WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
 WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: mdstat = Mdstat
+WARNING: untranslated string: messagebus = D-Bus Daemon
 WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...

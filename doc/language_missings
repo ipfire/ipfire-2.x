@@ -84,6 +84,7 @@
 < log drop hostile in
 < log drop hostile out
 < mdstat
+< messagebus
 < netbios nameserver daemon
 < no entries
 < notes
@@ -184,6 +185,7 @@
 < lldp neighbors
 < lldp there are no neighbors
 < mdstat
+< messagebus
 < offloaded
 < online
 < ovpn ciphers
@@ -303,6 +305,7 @@
 < malformed private key
 < malformed public key
 < mdstat
+< messagebus
 < offloaded
 < online
 < oops something went wrong
@@ -811,6 +814,7 @@
 < masquerading enabled
 < mdstat
 < meltdown
+< messagebus
 < messages
 < mitigated
 < mmio stale data
@@ -1509,6 +1513,7 @@
 < masquerading enabled
 < mdstat
 < meltdown
+< messagebus
 < messages
 < mitigated
 < mmio stale data
@@ -2521,6 +2526,7 @@
 < MB written
 < mdstat
 < meltdown
+< messagebus
 < messages
 < minimum
 < minute
@@ -3688,6 +3694,7 @@
 < MB written
 < mdstat
 < meltdown
+< messagebus
 < messages
 < minimum
 < minute
@@ -4409,6 +4416,7 @@
 < malformed public key
 < mdstat
 < meltdown
+< messagebus
 < mitigated
 < mmio stale data
 < mtu
@@ -4686,6 +4694,7 @@
 < lldp neighbors
 < lldp there are no neighbors
 < max bandwidth
+< messagebus
 < offloaded
 < online
 < ovpn ciphers
@@ -4786,6 +4795,7 @@
 < lldp neighbors
 < lldp there are no neighbors
 < max bandwidth
+< messagebus
 < offloaded
 < online
 < ovpn ciphers
