@@ -1543,6 +1543,7 @@ build_system() {
 	lfsmake2 cpio
 	lfsmake2 libaio
 	lfsmake2 freetype
+	lfsmake2 jansson
 	lfsmake2 libmnl
 	lfsmake2 libnfnetlink
 	lfsmake2 libnetfilter_queue
@@ -1828,7 +1829,6 @@ build_system() {
 	lfsmake2 pango
 	lfsmake2 rrdtool
 	lfsmake2 setup
-	lfsmake2 jansson
 	lfsmake2 yaml
 	lfsmake2 colm
 	lfsmake2 ragel
