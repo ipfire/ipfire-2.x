@@ -1088,6 +1088,7 @@ WARNING: untranslated string: lldp invalid description = Invalid description. Al
 WARNING: untranslated string: lldp neighbors = Neighbors
 WARNING: untranslated string: lldp there are no neighbors = There are currently no neighbors
 WARNING: untranslated string: max bandwidth = Maximum bandwidth
+WARNING: untranslated string: messagebus = D-Bus Daemon
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: offloaded = Offloaded
 WARNING: untranslated string: online = Online

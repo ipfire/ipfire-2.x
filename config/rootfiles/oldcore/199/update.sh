@@ -101,7 +101,8 @@ done
 
 # Remove files
 rm -rfv \
-	/lib/udev
+	/lib/udev \
+	/usr/lib/dracut/dracut.conf.d
 
 # Create the messagebus group
 if ! getent group messagebus >/dev/null; then
@@ -141,6 +142,8 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 /etc/init.d/unbound restart
 /etc/init.d/sshd restart
 /etc/init.d/ipsec restart
+/usr/local/bin/qosctrl generate
+/usr/local/bin/qosctrl start
 
 # Re-import the updated crontab
 fcrontab -z

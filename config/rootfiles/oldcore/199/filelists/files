@@ -30,6 +30,7 @@ var/ipfire/backup/include
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/lldp
+var/ipfire/main/manualpages
 var/ipfire/menu.d/30-network.menu
 var/ipfire/qos/bin/makeqosscripts.pl
 var/spool/cron/root.orig

@@ -1217,6 +1217,7 @@ WARNING: untranslated string: malformed private key = Malformed Private Key
 WARNING: untranslated string: malformed public key = Malformed Public Key
 WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: meltdown = Meltdown
+WARNING: untranslated string: messagebus = D-Bus Daemon
 WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: mmio stale data = MMIO Stale Data
 WARNING: untranslated string: mtu = MTU

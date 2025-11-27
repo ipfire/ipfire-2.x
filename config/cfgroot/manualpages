@@ -38,6 +38,7 @@ proxy.cgi=configuration/network/proxy
 urlfilter.cgi=configuration/network/proxy/url-filter
 updatexlrator.cgi=configuration/network/proxy/update_accelerator
 dhcp.cgi=configuration/network/dhcp
+lldp.cgi=configuration/network/lldp
 captive.cgi=configuration/network/captive
 connscheduler.cgi=configuration/network/connectionscheduler
 hosts.cgi=configuration/network/hosts

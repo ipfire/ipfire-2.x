@@ -1300,6 +1300,7 @@ WARNING: untranslated string: masquerading disabled = Masquerading disabled
 WARNING: untranslated string: masquerading enabled = Masquerading enabled
 WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: meltdown = Meltdown
+WARNING: untranslated string: messagebus = D-Bus Daemon
 WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: mmio stale data = MMIO Stale Data

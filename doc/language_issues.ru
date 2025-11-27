@@ -1429,6 +1429,7 @@ WARNING: untranslated string: masquerading enabled = Masquerading enabled
 WARNING: untranslated string: maximum = Maximum
 WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: meltdown = Meltdown
+WARNING: untranslated string: messagebus = D-Bus Daemon
 WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: minimum = Minimum
 WARNING: untranslated string: minute = Minute

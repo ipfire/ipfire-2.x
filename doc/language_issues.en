@@ -1320,6 +1320,7 @@ WARNING: untranslated string: medium = Medium
 WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: memory = Memory
 WARNING: untranslated string: memory information = Memory information
+WARNING: untranslated string: messagebus = D-Bus Daemon
 WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: method = Method:
 WARNING: untranslated string: min costs = Minimum costs
