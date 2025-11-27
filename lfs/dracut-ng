@@ -81,6 +81,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				sbindir=/sbin \
 				sysconfdir=/etc
 
+	# Remove any default configuration
+	rm -rvf /usr/lib/dracut/dracut.conf.d/*
+
+	# Install the IPFire configuration
 	cp -vf $(DIR_SRC)/config/dracut/ipfire.conf \
 		/usr/lib/dracut/dracut.conf.d/01-ipfire.conf
 

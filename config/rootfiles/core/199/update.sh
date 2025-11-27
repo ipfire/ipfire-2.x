@@ -102,7 +102,7 @@ done
 # Remove files
 rm -rfv \
 	/lib/udev \
-	/usr/lib/dracut/dracut.conf.d/ipfire.conf
+	/usr/lib/dracut/dracut.conf.d
 
 # Create the messagebus group
 if ! getent group messagebus >/dev/null; then
