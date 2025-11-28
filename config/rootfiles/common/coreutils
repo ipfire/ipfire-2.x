@@ -27,7 +27,6 @@ usr/bin/base32
 usr/bin/base64
 usr/bin/basename
 usr/bin/basenc
-usr/bin/chcon
 usr/bin/cksum
 usr/bin/comm
 usr/bin/csplit
@@ -66,7 +65,6 @@ usr/bin/printf
 usr/bin/ptx
 usr/bin/readlink
 usr/bin/realpath
-usr/bin/runcon
 usr/bin/seq
 usr/bin/sha1sum
 usr/bin/sha224sum
@@ -259,7 +257,6 @@ usr/sbin/chroot
 #usr/share/man/man1/basename.1
 #usr/share/man/man1/basenc.1
 #usr/share/man/man1/cat.1
-#usr/share/man/man1/chcon.1
 #usr/share/man/man1/chgrp.1
 #usr/share/man/man1/chmod.1
 #usr/share/man/man1/chown.1
@@ -318,7 +315,6 @@ usr/sbin/chroot
 #usr/share/man/man1/realpath.1
 #usr/share/man/man1/rm.1
 #usr/share/man/man1/rmdir.1
-#usr/share/man/man1/runcon.1
 #usr/share/man/man1/seq.1
 #usr/share/man/man1/sha1sum.1
 #usr/share/man/man1/sha224sum.1
