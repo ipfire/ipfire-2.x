@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.86.0
+VER        = 2.87.0
 #          https://download.gnome.org/sources/glib/
 
 THISAPP    = glib-$(VER)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 089fa2d34dacb360943cb18ce95ad880769300540e9f8ce56045cd19d0285526b8058fa79f9f0fede1ae6b4a6d9a73f3aa0f0e0ebfa18e728dbadbee3bd30d0a
+$(DL_FILE)_BLAKE2 = 799fc394e15c90c357687b681041530d9035af1c1d9ec16eaeb2453f3041e8c2a9d64b3e4e033e186975a3551edb95a4b1605300fa1384d7bf5f6600ce89ac18
 
 install : $(TARGET)
 
