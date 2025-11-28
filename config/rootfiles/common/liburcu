@@ -76,6 +76,7 @@
 #usr/include/urcu/uatomic/api.h
 #usr/include/urcu/uatomic/arm.h
 #usr/include/urcu/uatomic/builtins-generic.h
+#usr/include/urcu/uatomic/builtins-x86.h
 #usr/include/urcu/uatomic/builtins.h
 #usr/include/urcu/uatomic/gcc.h
 #usr/include/urcu/uatomic/generic.h
@@ -90,6 +91,7 @@
 #usr/include/urcu/uatomic/s390.h
 #usr/include/urcu/uatomic/sparc64.h
 #usr/include/urcu/uatomic/tile.h
+#usr/include/urcu/uatomic/uassert.h
 #usr/include/urcu/uatomic/x86.h
 #usr/include/urcu/uatomic_arch.h
 #usr/include/urcu/urcu-bp.h
