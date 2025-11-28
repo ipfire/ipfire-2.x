@@ -73,6 +73,7 @@ usr/libexec/git-core/git-get-tar-commit-id
 usr/libexec/git-core/git-grep
 #usr/libexec/git-core/git-gui
 #usr/libexec/git-core/git-gui--askpass
+#usr/libexec/git-core/git-gui--askyesno
 usr/libexec/git-core/git-hash-object
 usr/libexec/git-core/git-help
 usr/libexec/git-core/git-hook
@@ -85,6 +86,7 @@ usr/libexec/git-core/git-init
 usr/libexec/git-core/git-init-db
 usr/libexec/git-core/git-instaweb
 usr/libexec/git-core/git-interpret-trailers
+usr/libexec/git-core/git-last-modified
 usr/libexec/git-core/git-log
 usr/libexec/git-core/git-ls-files
 usr/libexec/git-core/git-ls-remote
@@ -137,6 +139,7 @@ usr/libexec/git-core/git-remote-https
 usr/libexec/git-core/git-repack
 usr/libexec/git-core/git-replace
 usr/libexec/git-core/git-replay
+usr/libexec/git-core/git-repo
 usr/libexec/git-core/git-request-pull
 usr/libexec/git-core/git-rerere
 usr/libexec/git-core/git-reset

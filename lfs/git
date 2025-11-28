@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.51.0
+VER        = 2.52.0
 SUMMARY    = Fast, scalable, distributed revision control system
 
 THISAPP    = git-$(VER)
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b385ee2c7aed601435952c983045055c970cdda607d83ae8ba904ee10e5e76bca097ccbe0f22e4e1467c6d606c9eecb952ffb382f351124325b6fd5d87083596
+$(DL_FILE)_BLAKE2 = f228174814b1048f12543a6a20f771017991f9a23778f12fc32020b38837990eb19bc69e891078692ac4ad4ae1cb2e0e77400760964e09c491046e4ed8b16f96
 
 install : $(TARGET)
 
