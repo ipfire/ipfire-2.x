@@ -41,9 +41,9 @@ rm -f /etc/rc.d/rc*.d/*virtlogd
 #
 
 # creates a new user and group called libvirt-remote if they not exist
-getent group libvirt-remote >/dev/null || groupadd  libvirt-remote
+getent group libvirt-remote >/dev/null || groupadd -r libvirt-remote
 getent passwd libvirt-remote >/dev/null || \
-useradd -m -g libvirt-remote -s /bin/bash "libvirt-remote"
+	useradd -r -m -g libvirt-remote -s /bin/bash "libvirt-remote"
 
 extract_files
 
