@@ -69,8 +69,12 @@ ldconfig
 # Apply SSH configuration
 /usr/local/bin/sshctrl
 
+# Update the OpenVPN configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
+
 # Start services
 /etc/init.d/unbound restart
+/etc/init.d/openvpn-rw restart
 
 # Build initial ramdisks (for intel-microcode)
 dracut --regenerate-all --force
