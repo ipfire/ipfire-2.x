@@ -265,7 +265,10 @@ sub writeserverconf {
     my $subnetmask = &Network::get_netmask($vpnsettings{'DOVPN_SUBNET'});
 
     print CONF "server $netaddress $subnetmask\n";
+
+    # Set the MTU and push it to the clients
     print CONF "tun-mtu $vpnsettings{'DMTU'}\n";
+    print CONF "push \"tun-mtu $vpnsettings{'DMTU'}\"\n";
 
 	# Write custom routes
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
@@ -2435,9 +2438,6 @@ END
 		# Point the client to this server
 		print "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\n";
 		print "proto $vpnsettings{'DPROTOCOL'}\n";
-
-		# Configure the MTU of the tunnel interface
-		print "tun-mtu $vpnsettings{'DMTU'}\n";
 
 		# Ask the client to verify the server certificate
 		if (&is_cert_rfc3280_compliant("${General::swroot}/ovpn/certs/servercert.pem")) {
