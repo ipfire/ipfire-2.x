@@ -24,9 +24,12 @@
 . /opt/pakfire/lib/functions.sh
 
 # creates a new user and group called libvirt-remote if they not exist
-getent group libvirt-remote >/dev/null || groupadd  libvirt-remote
-getent passwd libvirt-remote >/dev/null || \
-useradd -m -g libvirt-remote -s /bin/bash "libvirt-remote"
+if ! getent group libvirt-remote >/dev/null; then
+	groupadd -r libvirt-remote
+fi
+if ! getent passwd libvirt-remote >/dev/null; then
+	useradd -r -m -g libvirt-remote -s /bin/bash "libvirt-remote"
+fi
 
 extract_files
 
