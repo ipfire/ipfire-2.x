@@ -627,6 +627,11 @@ sub write_ccd_configs() {
 		# Write a header
 		print CONF "# OpenVPN Client Configuration File\n\n";
 
+		# Push the auth-token if the client is using OTP
+		if ($conns{$key}[43] eq 'on') {
+			print CONF "push \"auth-token TOTP\"\n\n";
+		}
+
 		# Fetch the allocated IP address (if any)
 		my $pool    = $conns{$key}[32];
 		my $address = $conns{$key}[33];
@@ -2465,7 +2470,6 @@ END
 		# Set a fake user name for authentication
 		print "auth-user-pass\n";
 		print "auth-token-user USER\n";
-		print "auth-token TOTP\n";
 
 		# If the server is asking for TOTP this needs to happen interactively
 		print "auth-retry interact\n";
