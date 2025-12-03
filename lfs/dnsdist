@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A highly DNS-, DoS- and abuse-aware loadbalancer
 
-VER        = 2.0.1
+VER        = 2.0.2
 
 THISAPP    = dnsdist-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dnsdist
-PAK_VER    = 30
+PAK_VER    = 31
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6eee67a678ef1a044f60f8989befdcf84ce487bcbe03d2aedbb196b1393f7b5227e93ca25a56e4c400c4159e6e7ec1474e26311ae76c55116f438de234b724d7
+$(DL_FILE)_BLAKE2 = 87a4179f474d7f8117e4e03c4ff680f79207c8056765c6925ee21b3011e4555e47ad9c97950f30ab2876ac0978ee07555017cb1bbc6b93792992c1821f8da27a
 
 install : $(TARGET)
 
@@ -83,6 +83,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np3 < $(DIR_SRC)/src/patches/dnsdist-2.0.2-vloginfo.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
