@@ -25,7 +25,7 @@
 include Config
 
 VER        = 5.3
-PATCHVER   = 3
+PATCHVER   = 8
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
