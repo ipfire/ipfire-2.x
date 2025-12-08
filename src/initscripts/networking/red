@@ -436,7 +436,8 @@ case "${1}" in
 			PPP_STD_OPTIONS="$PLUGOPTS usepeerdns defaultroute noipdefault noauth"
 			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach noipv6"
 			PPP_STD_OPTIONS+=" noaccomp nodeflate nopcomp novj novjccomp"
-			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
+			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME}"
+			PPP_STD_OPTIONS+=" lcp-echo-adaptive lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 5 ${AUTH}"
 
 			if [ -n "${MTU}" ]; then
