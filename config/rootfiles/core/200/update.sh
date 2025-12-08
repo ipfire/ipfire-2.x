@@ -73,6 +73,7 @@ ldconfig
 sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 
 # Start services
+/etc/init.d/apache restart
 /etc/init.d/unbound restart
 /etc/init.d/openvpn-rw restart
 
