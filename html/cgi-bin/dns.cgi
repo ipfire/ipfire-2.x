@@ -708,10 +708,18 @@ END
 
 		print"</table>\n";
 
-		print"<table width='100%'>\n";
+		my $show_legend = 0;
 
 		# Check if the usage of the ISP nameservers is enabled and there are more than 2 servers.
-		if (($settings{'USE_ISP_NAMESERVERS'} eq "on") && ($server_amount > 2)) {
+		if ($settings{'USE_ISP_NAMESERVERS'} eq "on") {
+			$show_legend = $server_amount > 2;
+		} else {
+			$show_legend = $server_amount > 0;
+		}
+
+		print"<table width='100%'>\n";
+
+		if ($show_legend) {
 print <<END;
 			<tr>
 				<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
