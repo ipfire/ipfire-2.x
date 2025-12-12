@@ -1,6 +1,7 @@
 etc/sysconfig/lm_sensors
 etc/unbound/unbound.conf
 *.tmp
+var/cache/suricata/sgh/*
 var/ipfire/ethernet/settings
 var/ipfire/firewall/bin/*
 var/ipfire/ovpn/openssl/*
