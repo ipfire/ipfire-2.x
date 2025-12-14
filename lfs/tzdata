@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 2025b
+VER        = 2025c
+
 TZDATA_VER = $(VER)
 TZCODE_VER = $(VER)
 
@@ -45,8 +46,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_BLAKE2 = 07421e756cd33f003f1173c320a2e454f767a2ba299b76b54e34dc5cf1c126b00ab3186bc61d4989201a83cb8b3e4c005c0bc080fb39a1e48ff9555d50c84f1d
-tzcode$(TZCODE_VER).tar.gz_BLAKE2 = 1c9fa834ccdf0a73dd4ca5956e913506b01dc10cd0e278dc2ee0099b08fa726af56cc2d7276e41ab1d3d57faacab97a0b0eab7e1623ef2de46dd576aaded0001
+tzdata$(TZDATA_VER).tar.gz_BLAKE2 = f7d8fa0286f72e90058693dcdc39b8e9ddca198b157807b8d7d33969c07a2ee5a0391c6ebe8f3d86990de765216f563cf7ca75d8ea6f5c3b2950a16b973827de
+tzcode$(TZCODE_VER).tar.gz_BLAKE2 = b649847fcc59db2e43bc3f942e9ee4abb5968ac45114f6dcf362ec0ec23bd60117f976b539412cf062d8ba097a9d9a85f642ba46c5fbd96e2fb1a5e7b6f2ed53
 
 install : $(TARGET)
 
