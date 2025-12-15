@@ -77,7 +77,7 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 /etc/init.d/unbound restart
 /etc/init.d/openvpn-rw restart
 
-# Build initial ramdisks (for intel-microcode)
+# Build initial ramdisks (for intel-microcode & dracut-ng)
 dracut --regenerate-all --force
 KVER="xxxKVERxxx"
 case "$(uname -m)" in
