@@ -76,6 +76,7 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/ovpnmain.cgi
 /etc/init.d/apache restart
 /etc/init.d/unbound restart
 /etc/init.d/openvpn-rw restart
+/etc/init.d/ipsec restart
 
 # Build initial ramdisks (for intel-microcode & dracut-ng)
 dracut --regenerate-all --force
