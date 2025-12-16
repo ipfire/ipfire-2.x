@@ -25,8 +25,8 @@
 include Config
 
 VER        = 8.3
-PATCHVER   = 1
-#		https://ftp.gnu.org/gnu/readline/
+PATCHVER   = 3
+#            https://ftp.gnu.org/gnu/readline/
 
 THISAPP    = readline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
