@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.56
+VER        = 1.58
 
 THISAPP    = libgpg-error-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 2c84fe5cef8c77dc01f481aeacada815baf7fff85369a9c877dc4a11f2e3f84f37ad69a04213bc79765677dd2829a5074d7c8239b298429484378234cb4d2a66
+$(DL_FILE)_BLAKE2 = 7d1c0d54094d870e9e92aebadc4a8a3cf0e7a1ae7841b445896105583a8885439ca8364b2e364639759912ea46f801b41e5025db9aa292c4fce43713430711e1
 
 install : $(TARGET)
 
