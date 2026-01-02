@@ -3,3 +3,4 @@ etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 var/ipfire/backup/exclude
+var/ipfire/urlfilter/autoupdate/autoupdate.urls
