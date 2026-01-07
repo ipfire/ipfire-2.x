@@ -22,6 +22,8 @@
 ############################################################################
 
 use strict;
+use File::Copy;
+use File::Spec;
 
 package IDS;
 
@@ -391,7 +393,7 @@ sub extractruleset ($) {
 			my $destination;
 
 			# Splitt the packed file into chunks.
-			my $file = fileparse($packed_file);
+			my ($file, $path) = fileparse($packed_file);
 
 			# Handle msg-id.map file.
 			if ("$file" eq "sid-msg.map") {
@@ -447,6 +449,13 @@ sub extractruleset ($) {
 
 				# Set extract destination to temporaray rules_dir.
 				$destination = "$tmp_rules_directory/$rulesfilename";
+
+			# Extract any datasets in the datasets/ sub-directory
+			} elsif ($path eq "datasets/") {
+				$destination = "$tmp_rules_directory/$path/$file";
+
+				# Ensure the directory exists
+				mkdir("$tmp_rules_directory/$path") unless (-d "$tmp_rules_directory/$path");
 			} else {
 				# Skip all other files.
 				return;
@@ -514,6 +523,7 @@ sub process_ruleset(@) {
 
 	# Array to store the extracted rulefile from the temporary rules directory.
 	my @extracted_rulefiles;
+	my @extracted_datafiles;
 
 	# Get names of the extracted raw rulefiles.
 	opendir(DIR, $tmp_rules_directory) or die "Could not read from $tmp_rules_directory. $!\n";
@@ -522,7 +532,11 @@ sub process_ruleset(@) {
 		next if $file =~ /^\.\.?$/;
 
 		# Add file to the array of extracted files.
-		push(@extracted_rulefiles, $file);
+		if ($file =~ m/\.rules$/) {
+			push(@extracted_rulefiles, $file);
+		} else {
+			push(@extracted_datafiles, $file),
+		}
 	}
 
 	# Close directory handle.
@@ -618,6 +632,32 @@ sub process_ruleset(@) {
 			close(RULEFILE);
 			close(TMP_RULEFILE);
 		}
+	}
+
+	# Copy all extracted data files
+	foreach my $datafile (@extracted_datafiles) {
+		my $src = File::Spec->catfile($tmp_rules_directory, $datafile);
+		my $dst = File::Spec->catfile($rulespath, $datafile);
+
+		# If we found a directory, we will descend into it
+		if (-d $src) {
+			# Find all files that need to be copied
+			opendir(DIR, $src);
+			while (my $file = readdir(DIR)) {
+				next if ($file eq "." || $file eq "..");
+
+				push(@extracted_datafiles, "$datafile/$file");
+			}
+			closedir(DIR);
+
+			# Create the destination
+			mkdir($dst) unless (-d $dst);
+
+			next;
+		}
+
+		# Copy the content
+		File::Copy::copy($src, $dst) or die "Failed to copy datafile $src -> $dst: $!\n";
 	}
 }
 
