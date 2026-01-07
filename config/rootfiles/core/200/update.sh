@@ -49,7 +49,8 @@ done
 # Remove files
 rm -vrf \
 	/usr/bin/gpg-zip \
-	/usr/lib/gnupg
+	/usr/lib/gnupg \
+	/var/ipfire/main/gpl_accepted
 
 # Extract files
 extract_files
