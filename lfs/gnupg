@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.8
+VER        = 2.4.9
 
 THISAPP    = gnupg-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ab7126aac6c7bf323075c68084c963f75d93c729d8918b6ca10ef0a4466879636433c682a5437776d2ce9f5d432e1f66995dd94a4f44d7f184542f030087dbb2
+$(DL_FILE)_BLAKE2 = 5bbd278c570d3e389ab26dd37e1adac6c1b19f9bd369ebf30d75f48d0ab901c6f5fe4e4713b763f57b9e74efab654186ebff1a968348b0b9f70c82618b4b3b62
 
 install : $(TARGET)
 
