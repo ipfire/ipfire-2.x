@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.03.37
+VER        = 2.03.38
 
 THISAPP    = LVM2.$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4762ebe827b886c0e72a91c545c8c4fa9c9d1629e987f13d0c52ee41b80444c3c5c8a81a90566ed9bd7b68d67684749a7ad2cc066b20a3fa44eb8466ae0cc82e
+$(DL_FILE)_BLAKE2 = 2cdec7e7256855ec1d40f690e3b3b2d0538cef275c68bfaa15235b10890f05c4d9e861607fc611e420619e9e07a0dd431b1a0d9258c8ccf4af7a5b772281f33e
 
 install : $(TARGET)
 
