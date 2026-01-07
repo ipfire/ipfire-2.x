@@ -26,6 +26,7 @@
 #usr/share/gdb/python/gdb/dap/__init__.py
 #usr/share/gdb/python/gdb/dap/breakpoint.py
 #usr/share/gdb/python/gdb/dap/bt.py
+#usr/share/gdb/python/gdb/dap/completions.py
 #usr/share/gdb/python/gdb/dap/disassemble.py
 #usr/share/gdb/python/gdb/dap/evaluate.py
 #usr/share/gdb/python/gdb/dap/events.py
