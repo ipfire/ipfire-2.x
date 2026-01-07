@@ -26,16 +26,16 @@ include Config
 
 SUMMARY    = Advanced Linux Sound Architecture
 
-VER        = 1.2.14
-UVER       = 1.2.14
-CVER       = 1.2.14
+VER        = 1.2.15.1
+UVER       = 1.2.15.1
+CVER       = 1.2.15.1
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       =
 
@@ -54,9 +54,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-ucm-conf-$(CVER).tar.bz2 = $(DL_FROM)/alsa-ucm-conf-$(CVER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = 6fee05f859a19b8ef0d9896d37442c55f602e8b4aaa7698f30c01e03a339d7a74b3214493b095a64b59ee581fb7756d903d4965e080db552e062e2001e0662ff
-alsa-utils-$(UVER).tar.bz2_BLAKE2 = 0f15f6f684bf17c0508b01eabd21917d8501b965074d3b42f6915e9bbafeafad894dcbd1a219008db0064fb98d6fb2be311e98c0b8bc7e91d1a0b8146dd02dfe
-alsa-ucm-conf-$(CVER).tar.bz2_BLAKE2 = cbb4b81db7670207cac5b85ba9cd4d9df93e4aca573da4caffe0f1e0386a9685b837e58b7ed85ddcfecf3c0f2469e706833dad6f0ef020440c943aa41520f8f0
+$(DL_FILE)_BLAKE2 = 96910ecadafdf5bd12d98c765598f06f7dda94cdfb554e972663b77dc19646700962d6984a228a652f0fb3339e8dc44565d3695aa06971e084f5b951793679e1
+alsa-utils-$(UVER).tar.bz2_BLAKE2 = e3bd56822ec092f96386be3f8ae6772ced899884dfdef2341700be877a4822a3168d55a5aa9ba269e8e1b9fc61ae33a027abfa2e1c4f7fc68e0d8ce8780d3586
+alsa-ucm-conf-$(CVER).tar.bz2_BLAKE2 = c8c0ef9872f6c2bb69f2a43585a7833663e0f559dc51a5f2c0d361f6dd8fad2d6180dfdebbd4c63f094216570f6109097d1f788bf90b75149ca42871d493ef1d
 
 install : $(TARGET)
 
