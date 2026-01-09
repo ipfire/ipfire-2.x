@@ -22,6 +22,14 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+# If the KVM group has already been created as a non-system group, we will
+# remove it and create it again as a system group
+kvm_id="$(getent group kvm | cut -d: -f3)"
+if [ -n "${kvm_id}" -a "${kvm_id}" -ge 1000 ]; then
+	groupdel kvm
+fi
+
 #create the group kvm when they not exist
 getent group kvm >/dev/null || groupadd -r kvm
 extract_files
