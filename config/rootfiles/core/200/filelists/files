@@ -2,5 +2,6 @@ etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+usr/local/bin/filesystem-cleanup
 var/ipfire/backup/exclude
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
