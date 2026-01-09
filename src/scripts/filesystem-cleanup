@@ -56,6 +56,10 @@ main() {
 				*/libboost*)
 					continue
 					;;
+				# libfuse does not seem to understand how to version their libraries
+				*/libfuse.*)
+					continue
+					;;
 			esac
 
 			# Read the name of the linked library

@@ -23,6 +23,7 @@ srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wireguard.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
+usr/local/bin/filesystem-cleanup
 usr/local/bin/lldpdctrl
 usr/sbin/openvpn-authenticator
 usr/sbin/redirect_wrapper
