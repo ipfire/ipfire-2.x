@@ -1,2 +1,2 @@
-IPFire DNSBL,https://dnsbl.ipfire.org/lists/squidguard.tar.gz
+IPFire DBL,https://dbl.ipfire.org/lists/squidguard.tar.gz
 Univ. Toulouse,https://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz

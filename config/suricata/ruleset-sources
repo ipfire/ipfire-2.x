@@ -142,12 +142,12 @@ our %Providers = (
 		dl_type => "plain",
 	},
 
-	ipfire_dnsbl => {
-		summary => "IPFire DNSBL - Domain Blocklist",
-		website => "https://www.ipfire.org/dnsbl/",
-		tr_string => "ipfire dnsbl",
+	ipfire_dbl => {
+		summary => "IPFire DBL - Domain Blocklist",
+		website => "https://www.ipfire.org/dbl/",
+		tr_string => "ipfire dbl",
 		requires_subscription => "False",
-		dl_url => "https://dnsbl.ipfire.org/lists/suricata.tar.gz",
+		dl_url => "https://dbl.ipfire.org/lists/suricata.tar.gz",
 		dl_type => "archive",
 	},
 );
