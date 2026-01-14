@@ -1543,12 +1543,15 @@ build_system() {
 	lfsmake2 cpio
 	lfsmake2 libaio
 	lfsmake2 freetype
+	lfsmake2 jansson
 	lfsmake2 libmnl
 	lfsmake2 libnfnetlink
 	lfsmake2 libnetfilter_queue
 	lfsmake2 libnetfilter_conntrack
 	lfsmake2 libnetfilter_cthelper
 	lfsmake2 libnetfilter_cttimeout
+	lfsmake2 libnftnl
+	lfsmake2 nftables
 	lfsmake2 iptables
 	lfsmake2 iproute2
 	lfsmake2 screen
@@ -1826,7 +1829,6 @@ build_system() {
 	lfsmake2 pango
 	lfsmake2 rrdtool
 	lfsmake2 setup
-	lfsmake2 jansson
 	lfsmake2 yaml
 	lfsmake2 colm
 	lfsmake2 ragel
@@ -1922,7 +1924,6 @@ build_system() {
 	lfsmake2 nagios_nrpe
 	lfsmake2 nagios-plugins
 	lfsmake2 observium-agent
-	lfsmake2 ebtables
 	lfsmake2 faad2
 	lfsmake2 alac
 	lfsmake2 ffmpeg
