@@ -75,9 +75,13 @@
 #usr/include/asm/ucontext.h
 #usr/include/asm/unistd.h
 #usr/include/asm/unistd_64.h
+#usr/include/cxl
+#usr/include/cxl/features.h
 #usr/include/drm
 #usr/include/drm/amdgpu_drm.h
+#usr/include/drm/amdxdna_accel.h
 #usr/include/drm/armada_drm.h
+#usr/include/drm/asahi_drm.h
 #usr/include/drm/drm.h
 #usr/include/drm/drm_fourcc.h
 #usr/include/drm/drm_mode.h
@@ -90,6 +94,7 @@
 #usr/include/drm/lima_drm.h
 #usr/include/drm/msm_drm.h
 #usr/include/drm/nouveau_drm.h
+#usr/include/drm/nova_drm.h
 #usr/include/drm/omap_drm.h
 #usr/include/drm/panfrost_drm.h
 #usr/include/drm/panthor_drm.h
@@ -97,6 +102,7 @@
 #usr/include/drm/qaic_accel.h
 #usr/include/drm/qxl_drm.h
 #usr/include/drm/radeon_drm.h
+#usr/include/drm/rocket_accel.h
 #usr/include/drm/tegra_drm.h
 #usr/include/drm/v3d_drm.h
 #usr/include/drm/vc4_drm.h
@@ -104,6 +110,11 @@
 #usr/include/drm/virtgpu_drm.h
 #usr/include/drm/vmwgfx_drm.h
 #usr/include/drm/xe_drm.h
+#usr/include/fwctl
+#usr/include/fwctl/cxl.h
+#usr/include/fwctl/fwctl.h
+#usr/include/fwctl/mlx5.h
+#usr/include/fwctl/pds.h
 #usr/include/headers_check.pl
 #usr/include/linux
 #usr/include/linux/acct.h
@@ -117,6 +128,7 @@
 #usr/include/linux/amt.h
 #usr/include/linux/android
 #usr/include/linux/android/binder.h
+#usr/include/linux/android/binder_netlink.h
 #usr/include/linux/android/binderfs.h
 #usr/include/linux/apm_bios.h
 #usr/include/linux/arcfb.h
@@ -156,6 +168,7 @@
 #usr/include/linux/bfs_fs.h
 #usr/include/linux/binfmts.h
 #usr/include/linux/bits.h
+#usr/include/linux/blk-crypto.h
 #usr/include/linux/blkdev.h
 #usr/include/linux/blkpg.h
 #usr/include/linux/blktrace_api.h
@@ -207,8 +220,11 @@
 #usr/include/linux/comedi.h
 #usr/include/linux/connector.h
 #usr/include/linux/const.h
+#usr/include/linux/coredump.h
 #usr/include/linux/coresight-stm.h
+#usr/include/linux/counter
 #usr/include/linux/counter.h
+#usr/include/linux/counter/microchip-tcb-capture.h
 #usr/include/linux/cramfs_fs.h
 #usr/include/linux/cryptouser.h
 #usr/include/linux/cuda.h
@@ -249,6 +265,7 @@
 #usr/include/linux/erspan.h
 #usr/include/linux/ethtool.h
 #usr/include/linux/ethtool_netlink.h
+#usr/include/linux/ethtool_netlink_generated.h
 #usr/include/linux/eventfd.h
 #usr/include/linux/eventpoll.h
 #usr/include/linux/exfat.h
@@ -318,7 +335,6 @@
 #usr/include/linux/if_arp.h
 #usr/include/linux/if_bonding.h
 #usr/include/linux/if_bridge.h
-#usr/include/linux/if_cablemodem.h
 #usr/include/linux/if_eql.h
 #usr/include/linux/if_ether.h
 #usr/include/linux/if_fc.h
@@ -355,7 +371,10 @@
 #usr/include/linux/inotify.h
 #usr/include/linux/input-event-codes.h
 #usr/include/linux/input.h
+#usr/include/linux/io_uring
 #usr/include/linux/io_uring.h
+#usr/include/linux/io_uring/mock_file.h
+#usr/include/linux/io_uring/query.h
 #usr/include/linux/ioam6.h
 #usr/include/linux/ioam6_genl.h
 #usr/include/linux/ioam6_iptunnel.h
@@ -404,6 +423,7 @@
 #usr/include/linux/lirc.h
 #usr/include/linux/llc.h
 #usr/include/linux/loadpin.h
+#usr/include/linux/lockd_netlink.h
 #usr/include/linux/loop.h
 #usr/include/linux/lp.h
 #usr/include/linux/lsm.h
@@ -419,9 +439,13 @@
 #usr/include/linux/media
 #usr/include/linux/media-bus-format.h
 #usr/include/linux/media.h
+#usr/include/linux/media/amlogic
+#usr/include/linux/media/amlogic/c3-isp-config.h
 #usr/include/linux/media/raspberrypi
 #usr/include/linux/media/raspberrypi/pisp_be_config.h
 #usr/include/linux/media/raspberrypi/pisp_common.h
+#usr/include/linux/media/raspberrypi/pisp_fe_config.h
+#usr/include/linux/media/raspberrypi/pisp_fe_statistics.h
 #usr/include/linux/mei.h
 #usr/include/linux/mei_uuid.h
 #usr/include/linux/membarrier.h
@@ -447,6 +471,7 @@
 #usr/include/linux/mrp_bridge.h
 #usr/include/linux/msdos_fs.h
 #usr/include/linux/msg.h
+#usr/include/linux/mshv.h
 #usr/include/linux/mtio.h
 #usr/include/linux/nbd-netlink.h
 #usr/include/linux/nbd.h
@@ -456,6 +481,7 @@
 #usr/include/linux/net.h
 #usr/include/linux/net_dropmon.h
 #usr/include/linux/net_namespace.h
+#usr/include/linux/net_shaper.h
 #usr/include/linux/net_tstamp.h
 #usr/include/linux/netconf.h
 #usr/include/linux/netdev.h
@@ -644,6 +670,7 @@
 #usr/include/linux/oom.h
 #usr/include/linux/openat2.h
 #usr/include/linux/openvswitch.h
+#usr/include/linux/ovpn.h
 #usr/include/linux/packet_diag.h
 #usr/include/linux/papr_pdsm.h
 #usr/include/linux/param.h
@@ -673,14 +700,18 @@
 #usr/include/linux/ppp-ioctl.h
 #usr/include/linux/ppp_defs.h
 #usr/include/linux/pps.h
+#usr/include/linux/pps_gen.h
 #usr/include/linux/pr.h
 #usr/include/linux/prctl.h
 #usr/include/linux/psample.h
 #usr/include/linux/psci.h
 #usr/include/linux/psp-dbc.h
 #usr/include/linux/psp-sev.h
+#usr/include/linux/psp-sfs.h
+#usr/include/linux/psp.h
 #usr/include/linux/ptp_clock.h
 #usr/include/linux/ptrace.h
+#usr/include/linux/pwm.h
 #usr/include/linux/qemu_fw_cfg.h
 #usr/include/linux/qnx4_fs.h
 #usr/include/linux/qnxtypes.h
@@ -693,8 +724,6 @@
 #usr/include/linux/random.h
 #usr/include/linux/rds.h
 #usr/include/linux/reboot.h
-#usr/include/linux/reiserfs_fs.h
-#usr/include/linux/reiserfs_xattr.h
 #usr/include/linux/remoteproc_cdev.h
 #usr/include/linux/resource.h
 #usr/include/linux/rfkill.h
@@ -897,13 +926,16 @@
 #usr/include/linux/virtio_pmem.h
 #usr/include/linux/virtio_ring.h
 #usr/include/linux/virtio_rng.h
+#usr/include/linux/virtio_rtc.h
 #usr/include/linux/virtio_scmi.h
 #usr/include/linux/virtio_scsi.h
 #usr/include/linux/virtio_snd.h
+#usr/include/linux/virtio_spi.h
 #usr/include/linux/virtio_types.h
 #usr/include/linux/virtio_vsock.h
 #usr/include/linux/vm_sockets.h
 #usr/include/linux/vm_sockets_diag.h
+#usr/include/linux/vmclock-abi.h
 #usr/include/linux/vmcore.h
 #usr/include/linux/vsockmon.h
 #usr/include/linux/vt.h
@@ -923,7 +955,7 @@
 #usr/include/linux/zorro.h
 #usr/include/linux/zorro_ids.h
 #usr/include/misc
-#usr/include/misc/cxl.h
+#usr/include/misc/amd-apml.h
 #usr/include/misc/fastrpc.h
 #usr/include/misc/mrvl_cn10k_dpi.h
 #usr/include/misc/ocxl.h
@@ -952,6 +984,7 @@
 #usr/include/rdma/ib_user_mad.h
 #usr/include/rdma/ib_user_sa.h
 #usr/include/rdma/ib_user_verbs.h
+#usr/include/rdma/ionic-abi.h
 #usr/include/rdma/irdma-abi.h
 #usr/include/rdma/mana-abi.h
 #usr/include/rdma/mlx4-abi.h
@@ -972,7 +1005,6 @@
 #usr/include/regulator
 #usr/include/regulator/regulator.h
 #usr/include/scsi
-#usr/include/scsi/cxlflash_ioctl.h
 #usr/include/scsi/fc
 #usr/include/scsi/fc/fc_els.h
 #usr/include/scsi/fc/fc_fs.h
@@ -991,6 +1023,7 @@
 #usr/include/sound/compress_offload.h
 #usr/include/sound/compress_params.h
 #usr/include/sound/emu10k1.h
+#usr/include/sound/fcp.h
 #usr/include/sound/firewire.h
 #usr/include/sound/hdsp.h
 #usr/include/sound/hdspm.h

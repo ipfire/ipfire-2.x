@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2026  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.12.58
+VER         = 6.18.5
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -69,7 +69,7 @@ objects = \
 
 $(DL_FILE) = $(URL_IPFIRE)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d92ad02e2ae734e8d38fa0ad00bbe5cccef3f816639bb6a1f453d0b130242ffdd11fe66853ed77d5908f95fb3beead75cb79d84afd10ae64e0d51b445ce86f4b
+$(DL_FILE)_BLAKE2 = 9294ae977d7b8b929c476e649cbb116969a674d3923e5a4cddf8615ee5ba373761630f1a6397045d9ebe7eeaa87a3fffae3628aebc1ca4c7db5561b1c4513289
 
 install : $(TARGET)
 
@@ -104,7 +104,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.12-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.18-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
@@ -125,18 +125,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Patch performance monitoring restrictions to allow further hardening
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15.17-security-perf-allow-further-restriction-of-perf_event_open.patch
 
-	# Fix external module compile
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
-
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Apply Arm kernel patches.
 	cd $(DIR_APP) && cat patch $(DIR_SRC)/src/patches/linux/aarch64/* | patch -Np1
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
-
-	# Linux 6.13 backported patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-6.12-wireguard-device-omit-unnecessary-memset.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-6.12-wireguard-big-tcp-gso.patch
 
 	# Customise the release
 	cd $(DIR_APP) && echo "$(KVER_SUFFIX)" > localversion.10-$(SNAME)
@@ -187,9 +180,6 @@ endif
 	rm -rf /lib/modules/$(KVER)/{build,source}
 	mkdir -p /lib/modules/$(KVER)/build
 	ln -sf build /lib/modules/$(KVER)/source
-
-	# Create dirs for extra modules
-	mkdir -p /lib/modules/$(KVER)/extra
 
 	cd $(DIR_APP) && cp --parents $$(find -type f -name "Makefile*" -o -name "Kconfig*") \
 		/lib/modules/$(KVER)/build

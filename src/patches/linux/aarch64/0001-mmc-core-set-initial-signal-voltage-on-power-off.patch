@@ -1,7 +1,7 @@
-From 2c8d6b4d375cbd20a4c96155485817417586043a Mon Sep 17 00:00:00 2001
+From 9e17da39802f11b2afda17102114f3ca239aac3a Mon Sep 17 00:00:00 2001
 From: Jonas Karlman <jonas@kwiboo.se>
 Date: Sun, 17 Feb 2019 22:14:38 +0000
-Subject: [PATCH 5/8] mmc: core: set initial signal voltage on power off
+Subject: [PATCH 1/8] mmc: core: set initial signal voltage on power off
 
 Some boards have SD card connectors where the power rail cannot be switched
 off by the driver. If the card has not been power cycled, it may still be
@@ -23,10 +23,10 @@ Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
  1 file changed, 8 insertions(+)
 
 diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index d6c819dd68ed..f4caf47f6691 100644
+index 860378bea557..6d3759730127 100644
 --- a/drivers/mmc/core/core.c
 +++ b/drivers/mmc/core/core.c
-@@ -1368,6 +1368,14 @@ void mmc_power_off(struct mmc_host *host)
+@@ -1373,6 +1373,14 @@ void mmc_power_off(struct mmc_host *host)
  	if (host->ios.power_mode == MMC_POWER_OFF)
  		return;
  
@@ -42,5 +42,5 @@ index d6c819dd68ed..f4caf47f6691 100644
  
  	host->ios.clock = 0;
 -- 
-2.39.5
+2.43.0
 

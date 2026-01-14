@@ -1,0 +1,30 @@
+From c300cfc4cd39c7710b465822892a8fd96f61b2b0 Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Mon, 8 Dec 2025 14:25:00 +0100
+Subject: [PATCH 5/8] rockchip: dt: nanopi-r2: change button from restart to
+ power
+
+Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
+index 691d17022afb..2b91bdf53378 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
+@@ -33,9 +33,9 @@ keys {
+ 		pinctrl-names = "default";
+ 
+ 		key-reset {
+-			label = "reset";
++			label = "power";
+ 			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
+-			linux,code = <KEY_RESTART>;
++			linux,code = <KEY_POWER>;
+ 			debounce-interval = <50>;
+ 		};
+ 	};
+-- 
+2.43.0
+

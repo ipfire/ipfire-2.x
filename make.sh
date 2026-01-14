@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2025  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2026  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -2131,7 +2131,6 @@ build_system() {
 	lfsmake2 lldpd
 
 	lfsmake2 linux
-	lfsmake2 rtl8812au
 	lfsmake2 linux-initrd
 
 	lfsmake2 memtest
