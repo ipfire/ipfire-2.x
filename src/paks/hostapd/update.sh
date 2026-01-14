@@ -23,5 +23,11 @@
 #
 . /opt/pakfire/lib/functions.sh
 exctract_backup_includes
+
+# Remove any previous DEBUG= statements
+if [ -e "/var/ipfire/wlanap/settings" ]; then
+	sed -e "/^DEBUG=/d" -i /var/ipfire/wlanap/settings
+fi
+
 ./uninstall.sh
 ./install.sh
