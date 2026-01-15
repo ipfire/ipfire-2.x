@@ -2216,8 +2216,6 @@
 'refresh update list' => 'Actualiser la liste des mises à jour',
 'regenerate host certificate' => 'Renouveler le certificat hôte',
 'registered user rules' => 'Règles Sourcefire VRT pour les utilisateurs enregistrés',
-'reiserfs warning1' => 'Reiserfs est obsolète et devrait être supprimé du noyau en 2025.',
-'reiserfs warning2' => 'Assurez-vous qu\'une nouvelle installation est effectuée à l\'aide des systèmes de fichiers ext4 ou xfs avant cette date.',
 'release' => 'Révision',
 'released' => 'Disponible',
 'reload' => 'Recharger',

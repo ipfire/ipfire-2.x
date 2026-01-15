@@ -2244,8 +2244,6 @@
 'reg_file_data_sampling' => '寄存器文件数据采样 (RFDS)',
 'regenerate host certificate' => '更新主机证书',
 'registered user rules' => '注册用户的 Talos VRT 规则',
-'reiserfs warning1' => 'Reiserfs 已过时，计划在 2025 年从内核中删除。',
-'reiserfs warning2' => '请确保在该日期之前使用 ext4 或 xfs 文件系统进行全新安装。',
 'release' => '发布',
 'released' => '已发行',
 'reload' => '重新加载',

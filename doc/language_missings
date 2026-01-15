@@ -113,8 +113,6 @@
 < random number generator daemon
 < regenerate host certificate
 < reg_file_data_sampling
-< reiserfs warning1
-< reiserfs warning2
 < remarks
 < report exporting
 < required
@@ -894,8 +892,6 @@
 < received
 < regenerate host certificate
 < reg_file_data_sampling
-< reiserfs warning1
-< reiserfs warning2
 < release
 < remarks
 < remote subnets
@@ -1610,8 +1606,6 @@
 < received
 < regenerate host certificate
 < reg_file_data_sampling
-< reiserfs warning1
-< reiserfs warning2
 < remarks
 < remote subnets
 < report exporting
@@ -2665,8 +2659,6 @@
 < red1
 < regenerate host certificate
 < reg_file_data_sampling
-< reiserfs warning1
-< reiserfs warning2
 < release
 < remarks
 < remote subnets
@@ -3832,8 +3824,6 @@
 < red1
 < regenerate host certificate
 < reg_file_data_sampling
-< reiserfs warning1
-< reiserfs warning2
 < release
 < remarks
 < remote subnets
@@ -4481,8 +4471,6 @@
 < received
 < regenerate host certificate
 < reg_file_data_sampling
-< reiserfs warning1
-< reiserfs warning2
 < release
 < remarks
 < remote subnets

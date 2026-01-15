@@ -2252,8 +2252,6 @@
 'reg_file_data_sampling' => 'Registro de archivos de muestreo (RFDS)',
 'regenerate host certificate' => 'Renovar certificado de host',
 'registered user rules' => 'Reglas VRT talos para usuarios registrados',
-'reiserfs warning1' => 'Reiserfs está obsoleto y su eliminación del kernel está prevista para 2025.',
-'reiserfs warning2' => 'Asegúrese de realizar una nueva instalación utilizando sistemas de archivos ext4 o xfs antes de esa fecha.',
 'release' => 'Liberación',
 'released' => 'Liberado',
 'reload' => 'recargar',

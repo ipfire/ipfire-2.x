@@ -2291,8 +2291,6 @@
 'reg_file_data_sampling' => 'Register File Data Sampling (RFDS)',
 'regenerate host certificate' => 'Renew Host Certificate',
 'registered user rules' => 'Talos VRT rules for registered users',
-'reiserfs warning1' => 'Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.',
-'reiserfs warning2' => 'Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.',
 'release' => 'Release',
 'released' => 'Released',
 'reload' => 'reload',
