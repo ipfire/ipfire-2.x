@@ -71,6 +71,10 @@ if [ $BOOTSIZE -lt 100000 ]; then
     exit_with_error "ERROR cannot update. BOOT partition is to small." 3
 fi
 
+# Check if reiser filesystem is used
+if [ `/bin/grep -c "reiserfs" /proc/self/mounts` > 0 ]; then
+	exit_with_error "ERROR cannot update because reiserfs no longer supported by kernel." 4
+
 # Remove the old kernel
 rm -rvf \
 	/boot/System.map-* \
