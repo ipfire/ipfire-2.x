@@ -2479,16 +2479,6 @@ END
 			print "providers legacy default\n";
 		}
 
-		# CA
-		open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
-		print "\n<ca>\n";
-		while (<FILE>) {
-			chomp($_);
-			print "$_\n";
-		}
-		print "</ca>\n";
-		close(FILE);
-
 		# PKCS12
 		open(FILE, "<${General::swroot}/ovpn/certs/${name}.p12");
 		print "\n<pkcs12>\n";
