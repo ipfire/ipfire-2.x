@@ -106,8 +106,16 @@ done
 rm -vrf \
 	/usr/bin/gpg-zip \
 	/usr/lib/gnupg \
-	/var/ipfire/main/gpl_accepted
-
+	/var/ipfire/main/gpl_accepted \
+	/sbin/fsck.reiserfs \
+	/sbin/mkfs.reiserfs \
+	/sbin/mkreiserfs \
+	/sbin/reiserfsck \
+	/sbin/reiserfstune \
+	/sbin/resize_reiserfs \
+	/sbin/tunefs.reiserfs \
+	/usr/lib/libreiserfscore.so.0 \
+	/usr/lib/libreiserfscore.so.0.0.0
 
 # Extract files
 extract_files
