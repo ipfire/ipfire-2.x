@@ -1922,6 +1922,7 @@ build_system() {
 	lfsmake2 nagios_nrpe
 	lfsmake2 nagios-plugins
 	lfsmake2 observium-agent
+	lfsmake2 ebtables
 	lfsmake2 faad2
 	lfsmake2 alac
 	lfsmake2 ffmpeg

@@ -1,0 +1,11 @@
+etc/ethertypes
+usr/lib/libebtc.la
+usr/lib/libebtc.so
+usr/lib/libebtc.so.0
+usr/lib/libebtc.so.0.0.0
+usr/sbin/ebtables-legacy
+usr/sbin/ebtables-legacy-restore
+usr/sbin/ebtables-legacy-save
+usr/sbin/ebtablesd
+usr/sbin/ebtablesu
+#usr/share/man/man8/ebtables-legacy.8
