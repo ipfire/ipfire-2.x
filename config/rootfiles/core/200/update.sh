@@ -90,7 +90,7 @@ rm -rvf \
 
 
 # Remove dropped packages
-for package in ebtables libassuan; do \
+for package in libassuan; do \
         if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
                 stop_service "${package}"
                 for i in $(</opt/pakfire/db/rootfiles/${package}); do
