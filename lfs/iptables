@@ -98,12 +98,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Use iptables-nft by default
 	ln -svf xtables-nft-multi /sbin/iptables
-	ln -svf xtables-nft-multi /sbin/iptables-restore
-	ln -svf xtables-nft-multi /sbin/iptables-save
-	ln -svf xtables-nft-multi /sbin/iptables-xml
-	ln -svf xtables-nft-multi /sbin/ip6tables
-	ln -svf xtables-nft-multi /sbin/ip6tables-restore
-	ln -svf xtables-nft-multi /sbin/ip6tables-save
 
 	@rm -rf $(DIR_APP) $(DIR_SRC)/netfilter-layer7*
 	@$(POSTBUILD)
