@@ -1550,7 +1550,6 @@ build_system() {
 	lfsmake2 libnetfilter_conntrack
 	lfsmake2 libnetfilter_cthelper
 	lfsmake2 libnetfilter_cttimeout
-	lfsmake2 libnftnl
 	lfsmake2 iptables
 	lfsmake2 iproute2
 	lfsmake2 screen
